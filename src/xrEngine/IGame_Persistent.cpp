@@ -5,12 +5,12 @@
 
 #ifndef _EDITOR
 #include "environment.h"
-# include "x_ray.h"
-# include "IGame_Level.h"
-# include "XR_IOConsole.h"
-# include "Render.h"
-# include "ps_instance.h"
-# include "CustomHUD.h"
+#include "x_ray.h"
+#include "IGame_Level.h"
+#include "XR_IOConsole.h"
+#include "Render.h"
+#include "ps_instance.h"
+#include "CustomHUD.h"
 #endif
 
 #ifdef _EDITOR
@@ -18,12 +18,15 @@ bool g_dedicated_server = false;
 #endif
 
 #ifdef INGAME_EDITOR
-# include "editor_environment_manager.hpp"
+#include "editor_environment_manager.hpp"
 #endif // INGAME_EDITOR
 
 ENGINE_API IGame_Persistent* g_pGamePersistent = NULL;
 
-bool IsMainMenuActive() { return  g_pGamePersistent && g_pGamePersistent->m_pMainMenu && g_pGamePersistent->m_pMainMenu->IsActive(); } //ECO_RENDER add
+bool IsMainMenuActive()
+{
+    return g_pGamePersistent && g_pGamePersistent->m_pMainMenu && g_pGamePersistent->m_pMainMenu->IsActive();
+} // ECO_RENDER add
 
 IGame_Persistent::IGame_Persistent()
 {
@@ -59,13 +62,9 @@ IGame_Persistent::~IGame_Persistent()
 #endif
 }
 
-void IGame_Persistent::OnAppActivate()
-{
-}
+void IGame_Persistent::OnAppActivate() {}
 
-void IGame_Persistent::OnAppDeactivate()
-{
-}
+void IGame_Persistent::OnAppDeactivate() {}
 
 void IGame_Persistent::OnAppStart()
 {
@@ -85,7 +84,6 @@ void IGame_Persistent::OnAppEnd()
     DEL_INSTANCE(g_hud);
 #endif
 }
-
 
 void IGame_Persistent::PreStart(LPCSTR op)
 {
@@ -115,7 +113,8 @@ void IGame_Persistent::Start(LPCSTR op)
             DEL_INSTANCE(g_hud);
 #endif
     }
-    else UpdateGameType();
+    else
+        UpdateGameType();
 
     VERIFY(ps_destroy.empty());
 }
@@ -128,7 +127,7 @@ void IGame_Persistent::Disconnect()
 
     if (g_hud)
         DEL_INSTANCE(g_hud);
-    //. g_hud->OnDisconnected ();
+        //. g_hud->OnDisconnected ();
 #endif
 }
 
@@ -146,24 +145,23 @@ void IGame_Persistent::OnGameStart()
 void IGame_Persistent::Prefetch()
 {
     // prefetch game objects & models
-    float p_time = 1000.f*Device.GetTimerGlobal()->GetElapsed_sec();
-	size_t mem_0 = Memory.mem_usage();
+    float p_time = 1000.f * Device.GetTimerGlobal()->GetElapsed_sec();
+    size_t mem_0 = Memory.mem_usage();
 
     Log("Loading objects...");
     ObjectPool.prefetch();
     Log("Loading models...");
     Render->models_Prefetch();
-    //Device.Resources->DeferredUpload ();
+    // Device.Resources->DeferredUpload ();
     Device.m_pRender->ResourcesDeferredUpload();
 
-    p_time = 1000.f*Device.GetTimerGlobal()->GetElapsed_sec() - p_time;
-	size_t p_mem = Memory.mem_usage() - mem_0;
+    p_time = 1000.f * Device.GetTimerGlobal()->GetElapsed_sec() - p_time;
+    size_t p_mem = Memory.mem_usage() - mem_0;
 
     Msg("* [prefetch] time:   %d ms", iFloor(p_time));
     Msg("* [prefetch] memory: %lldKb", p_mem / 1024);
 }
 #endif
-
 
 void IGame_Persistent::OnGameEnd()
 {
@@ -179,7 +177,6 @@ void IGame_Persistent::OnFrame()
 
     if (!Device.Paused() || Device.dwPrecacheFrame)
         Environment().OnFrame();
-
 
     Device.Statistic->Particles_starting = ps_needtoplay.size();
     Device.Statistic->Particles_active = ps_active.size();
@@ -232,15 +229,12 @@ void IGame_Persistent::destroy_particles(const bool& all_particles)
     else
     {
         u32 active_size = ps_active.size();
-        CPS_Instance** I = (CPS_Instance**)_alloca(active_size*sizeof(CPS_Instance*));
+        CPS_Instance** I = (CPS_Instance**)_alloca(active_size * sizeof(CPS_Instance*));
         std::copy(ps_active.begin(), ps_active.end(), I);
 
         struct destroy_on_game_load
         {
-            static IC bool predicate(CPS_Instance* const& object)
-            {
-                return (!object->destroy_on_game_load());
-            }
+            static IC bool predicate(CPS_Instance* const& object) { return (!object->destroy_on_game_load()); }
         };
 
         CPS_Instance** E = std::remove_if(I, I + active_size, &destroy_on_game_load::predicate);
@@ -255,6 +249,6 @@ void IGame_Persistent::destroy_particles(const bool& all_particles)
 void IGame_Persistent::OnAssetsChanged()
 {
 #ifndef _EDITOR
-    Device.m_pRender->OnAssetsChanged(); //Resources->m_textures_description.Load();
+    Device.m_pRender->OnAssetsChanged(); // Resources->m_textures_description.Load();
 #endif
 }

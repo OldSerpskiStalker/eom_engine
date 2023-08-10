@@ -27,10 +27,7 @@ namespace weathers
 
 class weather;
 
-class time :
-    public CEnvDescriptorMixer,
-    public editor::property_holder_holder,
-    private boost::noncopyable
+class time : public CEnvDescriptorMixer, public editor::property_holder_holder, private boost::noncopyable
 {
 private:
     typedef CEnvDescriptorMixer inherited;
@@ -39,11 +36,7 @@ public:
     typedef editor::property_holder property_holder_type;
 
 public:
-    time(
-        editor::environment::manager* manager,
-        weather const* weather,
-        shared_str const& id
-    );
+    time(editor::environment::manager* manager, weather const* weather, shared_str const& id);
     virtual ~time();
     void load(CInifile& config);
     void load_from(shared_str const& id, CInifile& config, shared_str const& new_id);
@@ -51,7 +44,8 @@ public:
     void fill(::editor::property_holder_collection* holder);
     inline shared_str const& id() const { return m_identifier; }
     virtual property_holder_type* object() { return m_property_holder; }
-    virtual void lerp(CEnvironment* parent, CEnvDescriptor& A, CEnvDescriptor& B, float f, CEnvModifier& M, float m_power);
+    virtual void lerp(
+        CEnvironment* parent, CEnvDescriptor& A, CEnvDescriptor& B, float f, CEnvModifier& M, float m_power);
 
 private:
     LPCSTR const* xr_stdcall ambients_collection();

@@ -3,10 +3,10 @@
 #pragma hdrstop
 
 #include "GameMtlLib.h"
-//#include "../include/xrapi/xrapi.h"
+// #include "../include/xrapi/xrapi.h"
 
 CGameMtlLibrary GMLib;
-//CSound_manager_interface* Sound = NULL;
+// CSound_manager_interface* Sound = NULL;
 #ifdef _EDITOR
 CGameMtlLibrary* PGMLib = NULL;
 #endif
@@ -46,7 +46,6 @@ void SGameMtl::Load(IReader& fs)
     fBounceDamageFactor = fs.r_float();
     fVisTransparencyFactor = fs.r_float();
     fSndOcclusionFactor = fs.r_float();
-
 
     if (fs.find_chunk(GAMEMTL_CHUNK_FACTORS_MP))
         fShootFactorMP = fs.r_float();
@@ -122,12 +121,12 @@ void CGameMtlLibrary::Load()
 
 #ifndef _EDITOR
     material_count = (u32)materials.size();
-    material_pairs_rt.resize(material_count*material_count, 0);
+    material_pairs_rt.resize(material_count * material_count, 0);
     for (GameMtlPairIt p_it = material_pairs.begin(); material_pairs.end() != p_it; ++p_it)
     {
         SGameMtlPair* S = *p_it;
-        int idx0 = GetMaterialIdx(S->mtl0)*material_count + GetMaterialIdx(S->mtl1);
-        int idx1 = GetMaterialIdx(S->mtl1)*material_count + GetMaterialIdx(S->mtl0);
+        int idx0 = GetMaterialIdx(S->mtl0) * material_count + GetMaterialIdx(S->mtl1);
+        int idx1 = GetMaterialIdx(S->mtl1) * material_count + GetMaterialIdx(S->mtl0);
         material_pairs_rt[idx0] = S;
         material_pairs_rt[idx1] = S;
     }
@@ -141,13 +140,11 @@ void CGameMtlLibrary::Load()
      }
      }
      */
-    FS.r_close (F);
+    FS.r_close(F);
 }
 
 #ifdef GM_NON_GAME
-SGameMtlPair::~SGameMtlPair ()
-{
-}
+SGameMtlPair::~SGameMtlPair() {}
 void SGameMtlPair::Load(IReader& fs)
 {
     shared_str buf;
@@ -158,12 +155,14 @@ void SGameMtlPair::Load(IReader& fs)
     ID = fs.r_u32();
     ID_parent = fs.r_u32();
     u32 own_mask = fs.r_u32();
-    if (GAMEMTL_NONE_ID==ID_parent) OwnProps.one ();
-    else OwnProps.assign (own_mask);
+    if (GAMEMTL_NONE_ID == ID_parent)
+        OwnProps.one();
+    else
+        OwnProps.assign(own_mask);
 
     R_ASSERT(fs.find_chunk(GAMEMTLPAIR_CHUNK_BREAKING));
-    fs.r_stringZ (buf);
-    BreakingSounds = buf.size()?*buf:"";
+    fs.r_stringZ(buf);
+    BreakingSounds = buf.size() ? *buf : "";
 
     R_ASSERT(fs.find_chunk(GAMEMTLPAIR_CHUNK_STEP));
     fs.r_stringZ(buf);

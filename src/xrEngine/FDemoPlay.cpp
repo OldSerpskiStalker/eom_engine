@@ -16,7 +16,8 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CDemoPlay::CDemoPlay(const char* name, float ms, u32 cycles, float life_time) : CEffectorCam(cefDemo, life_time/*,FALSE*/)
+CDemoPlay::CDemoPlay(const char* name, float ms, u32 cycles, float life_time)
+    : CEffectorCam(cefDemo, life_time /*,FALSE*/)
 {
     Msg("*** Playing demo: %s", name);
     Console->Execute("hud_weapon 0");
@@ -51,7 +52,7 @@ CDemoPlay::CDemoPlay(const char* name, float ms, u32 cycles, float life_time) : 
         }
         IReader* fs = FS.r_open(name);
         u32 sz = fs->length();
-        if (sz%sizeof(Fmatrix) != 0)
+        if (sz % sizeof(Fmatrix) != 0)
         {
             FS.r_close(fs);
             g_pGameLevel->Cameras().RemoveCamEffector(cefDemo);
@@ -80,7 +81,7 @@ CDemoPlay::~CDemoPlay()
 
 void CDemoPlay::stat_Start()
 {
-    //if (stat_started) return;
+    // if (stat_started) return;
     VERIFY(!stat_started);
     stat_started = TRUE;
     Sleep(1);
@@ -96,9 +97,10 @@ extern string512 g_sBenchmarkName;
 
 void CDemoPlay::stat_Stop()
 {
-    if (!stat_started) return;
+    if (!stat_started)
+        return;
 
-    //g_SASH.EndBenchmark();
+    // g_SASH.EndBenchmark();
 
     stat_started = FALSE;
     float stat_total = stat_Timer_total.GetElapsed_sec();
@@ -126,8 +128,10 @@ void CDemoPlay::stat_Stop()
             for (u32 i = 0; i < WindowSize; ++i)
                 fTime += stat_table[it + i];
             float fps = WindowSize / fTime;
-            if (fps < rfps_min) rfps_min = fps;
-            if (fps > rfps_max) rfps_max = fps;
+            if (fps < rfps_min)
+                rfps_min = fps;
+            if (fps > rfps_max)
+                rfps_max = fps;
             rfps_middlepoint += fps;
         }
 
@@ -138,8 +142,10 @@ void CDemoPlay::stat_Stop()
         for (u32 it = 1; it < stat_table.size(); it++)
         {
             float fps = 1.f / stat_table[it];
-            if (fps < rfps_min) rfps_min = fps;
-            if (fps > rfps_max) rfps_max = fps;
+            if (fps < rfps_min)
+                rfps_min = fps;
+            if (fps > rfps_max)
+                rfps_max = fps;
             rfps_middlepoint += fps;
         }
         rfps_middlepoint /= float(stat_table.size() - 1);
@@ -167,7 +173,6 @@ void CDemoPlay::stat_Stop()
         else
             xr_strcpy(fname, sizeof(fname), "benchmark.result");
 
-
         FS.update_path(fname, "$app_data_root$", fname);
         CInifile res(fname, FALSE, FALSE, TRUE);
         res.w_float("general", "renderer", float(::Render->get_generation()) / 10.f, "dx-level required");
@@ -179,7 +184,9 @@ void CDemoPlay::stat_Stop()
         {
             string32 id;
             xr_sprintf(id, sizeof(id), "%7d", it);
-            for (u32 c = 0; id[c]; c++) if (' ' == id[c]) id[c] = '0';
+            for (u32 c = 0; id[c]; c++)
+                if (' ' == id[c])
+                    id[c] = '0';
             res.w_float("per_frame_stats", id, 1.f / stat_table[it]);
         }
 
@@ -187,7 +194,9 @@ void CDemoPlay::stat_Stop()
     }
 }
 
-#define FIX(a) while (a>=m_count) a-=m_count
+#define FIX(a)                                                                                                         \
+    while (a >= m_count)                                                                                               \
+    a -= m_count
 void spline1(float t, Fvector* p, Fvector* ret)
 {
     float t2 = t * t;
@@ -213,15 +222,16 @@ void spline1(float t, Fvector* p, Fvector* ret)
 BOOL CDemoPlay::ProcessCam(SCamEffectorInfo& info)
 {
     // skeep a few frames before counting
-    if (Device.dwPrecacheFrame) return TRUE;
+    if (Device.dwPrecacheFrame)
+        return TRUE;
 
     if (stat_started)
     {
-        //g_SASH.DisplayFrame(Device.fTimeGlobal);
+        // g_SASH.DisplayFrame(Device.fTimeGlobal);
     }
     else
     {
-        //g_SASH.StartBenchmark();
+        // g_SASH.StartBenchmark();
         stat_Start();
     }
 
@@ -239,7 +249,11 @@ BOOL CDemoPlay::ProcessCam(SCamEffectorInfo& info)
         m_pMotion->_Evaluate(m_MParam->Frame(), info.p, R);
         m_MParam->Update(Device.fTimeDelta, 1.f, true);
         fLifeTime -= Device.fTimeDelta;
-        if (m_MParam->bWrapped) { stat_Stop(); stat_Start(); }
+        if (m_MParam->bWrapped)
+        {
+            stat_Stop();
+            stat_Start();
+        }
         mRotate.setXYZi(R.x, R.y, R.z);
         info.d.set(mRotate.k);
         info.n.set(mRotate.j);
@@ -263,7 +277,8 @@ BOOL CDemoPlay::ProcessCam(SCamEffectorInfo& info)
         if (frame >= m_count)
         {
             dwCyclesLeft--;
-            if (0 == dwCyclesLeft) return FALSE;
+            if (0 == dwCyclesLeft)
+                return FALSE;
             fStartTime = 0;
             // just continue
             // stat_Stop ();
@@ -279,7 +294,7 @@ BOOL CDemoPlay::ProcessCam(SCamEffectorInfo& info)
         int f4 = f3 + 1;
         FIX(f4);
 
-        Fmatrix* m1, *m2, *m3, *m4;
+        Fmatrix *m1, *m2, *m3, *m4;
         Fvector v[4];
         m1 = (Fmatrix*)&seq[f1];
         m2 = (Fmatrix*)&seq[f2];

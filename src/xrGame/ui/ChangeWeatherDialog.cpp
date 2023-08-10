@@ -20,7 +20,7 @@ ButtonListDialog::ButtonListDialog()
     AttachChild(Header);
     CancelButton = xr_new<CUI3tButton>();
     CancelButton->SetAutoDelete(true);
-    AttachChild(CancelButton);    
+    AttachChild(CancelButton);
 }
 
 void ButtonListDialog::Initialize(int buttonCount)
@@ -39,15 +39,9 @@ void ButtonListDialog::Initialize(int buttonCount)
     }
 }
 
-void ButtonListDialog::OnCancel()
-{
-    HideDialog();
-}
+void ButtonListDialog::OnCancel() { HideDialog(); }
 
-const ButtonListDialog::NamedButton& ButtonListDialog::GetButton(int i) const
-{
-    return buttons[i];
-}
+const ButtonListDialog::NamedButton& ButtonListDialog::GetButton(int i) const { return buttons[i]; }
 
 bool ButtonListDialog::OnKeyboardAction(int dik, EUIMessages keyboardAction)
 {
@@ -60,9 +54,9 @@ bool ButtonListDialog::OnKeyboardAction(int dik, EUIMessages keyboardAction)
             return true;
         }
         int btnCount = buttons.size();
-        if (dik >= DIK_1 && dik <= DIK_1-1+btnCount && btnCount <= 9) // handle 1..9 keys only
+        if (dik >= DIK_1 && dik <= DIK_1 - 1 + btnCount && btnCount <= 9) // handle 1..9 keys only
         {
-            OnButtonClick(dik-DIK_1);
+            OnButtonClick(dik - DIK_1);
             return true;
         }
     }
@@ -95,7 +89,7 @@ void ChangeWeatherDialog::InitChangeWeather(CUIXml& xmlDoc)
     auto& gameWeathers = gMapListHelper.GetGameWeathers();
     Initialize(gameWeathers.size());
     weathers.resize(gameWeathers.size());
-	string256 path;
+    string256 path;
     for (u32 i = 0; i < weathers.size(); i++)
     {
         xr_sprintf(path, "change_weather:btn_%s", gameWeathers[i].Name.c_str());
@@ -128,9 +122,9 @@ void ChangeGameTypeDialog::InitChangeGameType(CUIXml& xmlDoc)
     string256 path;
     for (u32 i = 0; i < gameTypes.size(); i++)
     {
-        xr_sprintf(path, "change_gametype:btn_%d", i+1);
+        xr_sprintf(path, "change_gametype:btn_%d", i + 1);
         CUIXmlInit::Init3tButton(xmlDoc, path, 0, GetButton(i).Button);
-        xr_sprintf(path, "change_gametype:txt_%d", i+1);
+        xr_sprintf(path, "change_gametype:txt_%d", i + 1);
         CUIXmlInit::InitTextWnd(xmlDoc, path, 0, GetButton(i).Text);
         gameTypes[i] = xmlDoc.ReadAttrib(path, 0, "id");
     }

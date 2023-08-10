@@ -13,22 +13,19 @@
 #include "UICursor.h"
 #include "string_table.h"
 #include "game_cl_base.h"
-#ifdef	DEBUG
+#ifdef DEBUG
 #include "phdebug.h"
 #endif
 
-extern CUIGameCustom*	CurrentGameUI()
-{
-    return HUD().GetGameUI();
-}
+extern CUIGameCustom* CurrentGameUI() { return HUD().GetGameUI(); }
 
 CFontManager::CFontManager()
 {
     Device.seqDeviceReset.Add(this, REG_PRIORITY_HIGH);
 
-    m_all_fonts.push_back(&pFontMedium);// used cpp
-    m_all_fonts.push_back(&pFontDI);// used cpp
-    m_all_fonts.push_back(&pFontArial14);// used xml
+    m_all_fonts.push_back(&pFontMedium); // used cpp
+    m_all_fonts.push_back(&pFontDI); // used cpp
+    m_all_fonts.push_back(&pFontArial14); // used xml
     m_all_fonts.push_back(&pFontGraffiti19Russian);
     m_all_fonts.push_back(&pFontGraffiti22Russian);
     m_all_fonts.push_back(&pFontLetterica16Russian);
@@ -65,7 +62,7 @@ void CFontManager::InitializeFonts()
 LPCSTR CFontManager::GetFontTexName(LPCSTR section)
 {
     static char* tex_names[] = {"texture800", "texture", "texture1600"};
-    int def_idx = 1;//default 1024x768
+    int def_idx = 1; // default 1024x768
     int idx = def_idx;
 #if 0
     u32 w = Device.dwWidth;
@@ -76,9 +73,12 @@ LPCSTR CFontManager::GetFontTexName(LPCSTR section)
 #else
     u32 h = Device.dwHeight;
 
-    if (h <= 600)		idx = 0;
-    else if (h < 1024)	idx = 1;
-    else 			idx = 2;
+    if (h <= 600)
+        idx = 0;
+    else if (h < 1024)
+        idx = 1;
+    else
+        idx = 2;
 #endif
 
     while (idx >= 0)
@@ -122,14 +122,10 @@ void CFontManager::Render()
     for (; it != it_e; ++it)
         (**it)->OnRender();
 }
-void CFontManager::OnDeviceReset()
-{
-    InitializeFonts();
-}
+void CFontManager::OnDeviceReset() { InitializeFonts(); }
 
 //--------------------------------------------------------------------
-CHUDManager::CHUDManager() : pUIGame(NULL), m_pHUDTarget(xr_new<CHUDTarget>()), b_online(false)
-{}
+CHUDManager::CHUDManager() : pUIGame(NULL), m_pHUDTarget(xr_new<CHUDTarget>()), b_online(false) {}
 //--------------------------------------------------------------------
 CHUDManager::~CHUDManager()
 {
@@ -162,13 +158,18 @@ ENGINE_API extern float psHUD_FOV;
 
 void CHUDManager::Render_First()
 {
-    if (!psHUD_Flags.is(HUD_WEAPON | HUD_WEAPON_RT | HUD_WEAPON_RT2 | HUD_DRAW_RT2))return;
-    if (0 == pUIGame)					return;
-    CObject*	O = g_pGameLevel->CurrentViewEntity();
-    if (0 == O)						return;
-    CActor*		A = smart_cast<CActor*> (O);
-    if (!A)							return;
-    if (A && !A->HUDview())			return;
+    if (!psHUD_Flags.is(HUD_WEAPON | HUD_WEAPON_RT | HUD_WEAPON_RT2 | HUD_DRAW_RT2))
+        return;
+    if (0 == pUIGame)
+        return;
+    CObject* O = g_pGameLevel->CurrentViewEntity();
+    if (0 == O)
+        return;
+    CActor* A = smart_cast<CActor*>(O);
+    if (!A)
+        return;
+    if (A && !A->HUDview())
+        return;
 
     // only shadow
     ::Render->set_Invisible(TRUE);
@@ -179,11 +180,11 @@ void CHUDManager::Render_First()
 
 bool need_render_hud()
 {
-    CObject*	O = g_pGameLevel ? g_pGameLevel->CurrentViewEntity() : NULL;
+    CObject* O = g_pGameLevel ? g_pGameLevel->CurrentViewEntity() : NULL;
     if (0 == O)
         return false;
 
-    CActor*		A = smart_cast<CActor*> (O);
+    CActor* A = smart_cast<CActor*>(O);
     if (A && (!A->HUDview() || !A->g_Alive()))
         return false;
 
@@ -195,12 +196,15 @@ bool need_render_hud()
 
 void CHUDManager::Render_Last()
 {
-    if (!psHUD_Flags.is(HUD_WEAPON | HUD_WEAPON_RT | HUD_WEAPON_RT2 | HUD_DRAW_RT2))return;
-    if (0 == pUIGame)					return;
+    if (!psHUD_Flags.is(HUD_WEAPON | HUD_WEAPON_RT | HUD_WEAPON_RT2 | HUD_DRAW_RT2))
+        return;
+    if (0 == pUIGame)
+        return;
 
-    if (!need_render_hud())			return;
+    if (!need_render_hud())
+        return;
 
-    CObject*	O = g_pGameLevel->CurrentViewEntity();
+    CObject* O = g_pGameLevel->CurrentViewEntity();
     // hud itself
     ::Render->set_HUD(TRUE);
     ::Render->set_Object(O->H_Root());
@@ -208,15 +212,19 @@ void CHUDManager::Render_Last()
     ::Render->set_HUD(FALSE);
 }
 
-//Swartz: actor shadow
+// Swartz: actor shadow
 void CHUDManager::Render_Actor_Shadow() // added by KD
 {
-    if (0 == pUIGame) return;
+    if (0 == pUIGame)
+        return;
     CObject* O = g_pGameLevel->CurrentViewEntity();
-    if (0 == O) return;
-    CActor* A = smart_cast<CActor*> (O);
-    if (!A) return;
-    if (A->active_cam() != eacFirstEye) return; // KD: we need to render actor shadow only in first eye cam mode because
+    if (0 == O)
+        return;
+    CActor* A = smart_cast<CActor*>(O);
+    if (!A)
+        return;
+    if (A->active_cam() != eacFirstEye)
+        return; // KD: we need to render actor shadow only in first eye cam mode because
     // in other modes actor model already in scene graph and renders well
     ::Render->set_Object(O->H_Root());
     O->renderable_Render();
@@ -224,19 +232,21 @@ void CHUDManager::Render_Actor_Shadow() // added by KD
 //-Swartz
 
 #include "player_hud.h"
-bool   CHUDManager::RenderActiveItemUIQuery()
+bool CHUDManager::RenderActiveItemUIQuery()
 {
     if (!psHUD_Flags.is(HUD_DRAW_RT2))
         return false;
 
-    if (!psHUD_Flags.is(HUD_WEAPON | HUD_WEAPON_RT | HUD_WEAPON_RT2))return false;
+    if (!psHUD_Flags.is(HUD_WEAPON | HUD_WEAPON_RT | HUD_WEAPON_RT2))
+        return false;
 
-    if (!need_render_hud())			return false;
+    if (!need_render_hud())
+        return false;
 
     return (g_player_hud && g_player_hud->render_item_ui_query());
 }
 
-void   CHUDManager::RenderActiveItemUI()
+void CHUDManager::RenderActiveItemUI()
 {
     if (!psHUD_Flags.is(HUD_DRAW_RT2))
         return;
@@ -245,13 +255,14 @@ void   CHUDManager::RenderActiveItemUI()
 }
 
 extern ENGINE_API BOOL bShowPauseString;
-//отрисовка элементов интерфейса
-void  CHUDManager::RenderUI()
+// отрисовка элементов интерфейса
+void CHUDManager::RenderUI()
 {
     if (!psHUD_Flags.is(HUD_DRAW_RT2))
         return;
 
-    if (!b_online)					return;
+    if (!b_online)
+        return;
 
     if (true /*|| psHUD_Flags.is(HUD_DRAW | HUD_DRAW_RT)*/)
     {
@@ -270,7 +281,7 @@ void  CHUDManager::RenderUI()
         pFont->SetColor(0x80FF0000);
         LPCSTR _str = CStringTable().translate("st_game_paused").c_str();
 
-        Fvector2			_pos;
+        Fvector2 _pos;
         _pos.set(UI_BASE_WIDTH / 2.0f, UI_BASE_HEIGHT / 2.0f);
         UI().ClientToScreenScaled(_pos);
         pFont->SetAligment(CGameFont::alCenter);
@@ -279,13 +290,9 @@ void  CHUDManager::RenderUI()
     }
 }
 
-void CHUDManager::OnEvent(EVENT E, u64 P1, u64 P2)
-{}
+void CHUDManager::OnEvent(EVENT E, u64 P1, u64 P2) {}
 
-collide::rq_result&	CHUDManager::GetCurrentRayQuery()
-{
-    return m_pHUDTarget->GetRQ();
-}
+collide::rq_result& CHUDManager::GetCurrentRayQuery() { return m_pHUDTarget->GetRQ(); }
 
 void CHUDManager::SetCrosshairDisp(float dispf, float disps)
 {
@@ -299,42 +306,27 @@ void CHUDManager::SetFirstBulletCrosshairDisp(float fbdispf)
 }
 #endif
 
-void  CHUDManager::ShowCrosshair(bool show)
-{
-    m_pHUDTarget->ShowCrosshair(show);
-}
+void CHUDManager::ShowCrosshair(bool show) { m_pHUDTarget->ShowCrosshair(show); }
 
 void CHUDManager::HitMarked(int idx, float power, const Fvector& dir)
 {
     HitMarker.Hit(dir);
     clamp(power, 0.0f, 1.0f);
-    pInput->feedback(u16(iFloor(u16(-1)*power)), u16(iFloor(u16(-1)*power)), 0.5f);
+    pInput->feedback(u16(iFloor(u16(-1) * power)), u16(iFloor(u16(-1) * power)), 0.5f);
 }
 
-bool CHUDManager::AddGrenade_ForMark(CGrenade* grn)
-{
-    return HitMarker.AddGrenade_ForMark(grn);
-}
+bool CHUDManager::AddGrenade_ForMark(CGrenade* grn) { return HitMarker.AddGrenade_ForMark(grn); }
 
-void CHUDManager::Update_GrenadeView(Fvector& pos_actor)
-{
-    HitMarker.Update_GrenadeView(pos_actor);
-}
+void CHUDManager::Update_GrenadeView(Fvector& pos_actor) { HitMarker.Update_GrenadeView(pos_actor); }
 
-void CHUDManager::SetHitmarkType(LPCSTR tex_name)
-{
-    HitMarker.InitShader(tex_name);
-}
+void CHUDManager::SetHitmarkType(LPCSTR tex_name) { HitMarker.InitShader(tex_name); }
 
-void CHUDManager::SetGrenadeMarkType(LPCSTR tex_name)
-{
-    HitMarker.InitShader_Grenade(tex_name);
-}
+void CHUDManager::SetGrenadeMarkType(LPCSTR tex_name) { HitMarker.InitShader_Grenade(tex_name); }
 
 // ------------------------------------------------------------------------------------
 
 #include "ui\UIMainInGameWnd.h"
-extern CUIXml*			pWpnScopeXml;
+extern CUIXml* pWpnScopeXml;
 
 void CHUDManager::Load()
 {
@@ -369,7 +361,8 @@ void CHUDManager::OnDisconnected()
 
 void CHUDManager::OnConnected()
 {
-    if (b_online)			return;
+    if (b_online)
+        return;
     b_online = true;
     if (pUIGame)
         Device.seqFrame.Add(pUIGame, REG_PRIORITY_LOW - 1000);
@@ -381,8 +374,8 @@ void CHUDManager::net_Relcase(CObject* obj)
 
     VERIFY(m_pHUDTarget);
     m_pHUDTarget->net_Relcase(obj);
-#ifdef	DEBUG
-    DBG_PH_NetRelcase( obj );
+#ifdef DEBUG
+    DBG_PH_NetRelcase(obj);
 #endif
 }
 

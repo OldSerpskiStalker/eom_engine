@@ -24,9 +24,7 @@ namespace environment
 namespace sound_channels
 {
 
-class source :
-    public editor::property_holder_holder,
-    private boost::noncopyable
+class source : public editor::property_holder_holder, private boost::noncopyable
 {
 public:
     source(shared_str const& source);

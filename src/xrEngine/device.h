@@ -6,15 +6,15 @@
 // ZNear - always 0.0f
 // ZFar - always 1.0f
 
-//class ENGINE_API CResourceManager;
-//class ENGINE_API CGammaControl;
+// class ENGINE_API CResourceManager;
+// class ENGINE_API CGammaControl;
 
 #include "pure.h"
-//#include "hw.h"
+// #include "hw.h"
 #include "../xrcore/ftimer.h"
 #include "stats.h"
-//#include "shader.h"
-//#include "R_Backend.h"
+// #include "shader.h"
+// #include "R_Backend.h"
 
 #define VIEWPORT_NEAR 0.2f
 
@@ -24,12 +24,12 @@
 #include "../Include/xrRender/RenderDeviceRender.h"
 
 #ifdef INGAME_EDITOR
-# include "../Include/editor/interfaces.hpp"
+#include "../Include/editor/interfaces.hpp"
 #endif // #ifdef INGAME_EDITOR
 
 class engine_impl;
 
-#pragma pack(push,4)
+#pragma pack(push, 4)
 
 class IRenderDevice
 {
@@ -41,7 +41,6 @@ public:
 
 class ENGINE_API CRenderDeviceData
 {
-
 public:
     u32 dwWidth;
     u32 dwHeight;
@@ -49,8 +48,8 @@ public:
     u32 dwPrecacheFrame;
     BOOL b_is_Ready;
     BOOL b_is_Active;
-public:
 
+public:
     // Engine flow-control
     u32 dwFrame;
 
@@ -78,35 +77,31 @@ public:
 
     float fFOV;
     float fASPECT;
-protected:
 
+protected:
     u32 Timer_MM_Delta;
     CTimer_paused Timer;
     CTimer_paused TimerGlobal;
 
-    //AVO: 
-    CTimer frame_timer;   //TODO: проверить, не дублируется-ли схожий таймер (alpet)
+    // AVO:
+    CTimer frame_timer; // TODO: проверить, не дублируется-ли схожий таймер (alpet)
     //-AVO
 
 public:
-
     // Registrators
-    CRegistrator <pureRender > seqRender;
-    CRegistrator <pureAppActivate > seqAppActivate;
-    CRegistrator <pureAppDeactivate > seqAppDeactivate;
-    CRegistrator <pureAppStart > seqAppStart;
-    CRegistrator <pureAppEnd > seqAppEnd;
-    CRegistrator <pureFrame > seqFrame;
-    CRegistrator <pureScreenResolutionChanged> seqResolutionChanged;
+    CRegistrator<pureRender> seqRender;
+    CRegistrator<pureAppActivate> seqAppActivate;
+    CRegistrator<pureAppDeactivate> seqAppDeactivate;
+    CRegistrator<pureAppStart> seqAppStart;
+    CRegistrator<pureAppEnd> seqAppEnd;
+    CRegistrator<pureFrame> seqFrame;
+    CRegistrator<pureScreenResolutionChanged> seqResolutionChanged;
 
     HWND m_hWnd;
     // CStats* Statistic;
-
 };
 
-class ENGINE_API CRenderDeviceBase :
-    public IRenderDevice,
-    public CRenderDeviceData
+class ENGINE_API CRenderDeviceBase : public IRenderDevice, public CRenderDeviceData
 {
 public:
 };
@@ -121,14 +116,15 @@ private:
     RECT m_rcWindowBounds;
     RECT m_rcWindowClient;
 
-    //u32 Timer_MM_Delta;
-    //CTimer_paused Timer;
-    //CTimer_paused TimerGlobal;
+    // u32 Timer_MM_Delta;
+    // CTimer_paused Timer;
+    // CTimer_paused TimerGlobal;
     CTimer TimerMM;
 
     void _Create(LPCSTR shName);
     void _Destroy(BOOL bKeepTextures);
     void _SetupStates();
+
 public:
     // HWND m_hWnd;
     LRESULT MsgProc(HWND, UINT, WPARAM, LPARAM);
@@ -142,84 +138,83 @@ public:
     // BOOL b_is_Ready;
     // BOOL b_is_Active;
     void OnWM_Activate(WPARAM wParam, LPARAM lParam);
+
 public:
-    //ref_shader m_WireShader;
-    //ref_shader m_SelectionShader;
+    // ref_shader m_WireShader;
+    // ref_shader m_SelectionShader;
 
     IRenderDeviceRender* m_pRender;
 
     BOOL m_bNearer;
     void SetNearer(BOOL enabled)
     {
-        if (enabled&&!m_bNearer)
+        if (enabled && !m_bNearer)
         {
             m_bNearer = TRUE;
             mProject._43 -= EPS_L;
         }
-        else if (!enabled&&m_bNearer)
+        else if (!enabled && m_bNearer)
         {
             m_bNearer = FALSE;
             mProject._43 += EPS_L;
         }
         m_pRender->SetCacheXform(mView, mProject);
-        //R_ASSERT(0);
-        // TODO: re-implement set projection
-        //RCache.set_xform_project (mProject);
+        // R_ASSERT(0);
+        //  TODO: re-implement set projection
+        // RCache.set_xform_project (mProject);
     }
 
     void DumpResourcesMemoryUsage() { m_pRender->ResourcesDumpMemoryUsage(); }
+
 public:
     // Registrators
-    //CRegistrator <pureRender > seqRender;
+    // CRegistrator <pureRender > seqRender;
     // CRegistrator <pureAppActivate > seqAppActivate;
     // CRegistrator <pureAppDeactivate > seqAppDeactivate;
     // CRegistrator <pureAppStart > seqAppStart;
     // CRegistrator <pureAppEnd > seqAppEnd;
-    //CRegistrator <pureFrame > seqFrame;
-    CRegistrator <pureFrame > seqFrameMT;
-    CRegistrator <pureDeviceReset > seqDeviceReset;
-    xr_vector <fastdelegate::FastDelegate0<> > seqParallel;
+    // CRegistrator <pureFrame > seqFrame;
+    CRegistrator<pureFrame> seqFrameMT;
+    CRegistrator<pureDeviceReset> seqDeviceReset;
+    xr_vector<fastdelegate::FastDelegate0<>> seqParallel;
 
     // Dependent classes
-    //CResourceManager* Resources;
+    // CResourceManager* Resources;
 
     CStats* Statistic;
 
     // Engine flow-control
-    //float fTimeDelta;
-    //float fTimeGlobal;
-    //u32 dwTimeDelta;
-    //u32 dwTimeGlobal;
-    //u32 dwTimeContinual;
+    // float fTimeDelta;
+    // float fTimeGlobal;
+    // u32 dwTimeDelta;
+    // u32 dwTimeGlobal;
+    // u32 dwTimeContinual;
 
     // Cameras & projection
-    //Fvector vCameraPosition;
-    //Fvector vCameraDirection;
-    //Fvector vCameraTop;
-    //Fvector vCameraRight;
+    // Fvector vCameraPosition;
+    // Fvector vCameraDirection;
+    // Fvector vCameraTop;
+    // Fvector vCameraRight;
 
-    //Fmatrix mView;
-    //Fmatrix mProject;
-    //Fmatrix mFullTransform;
+    // Fmatrix mView;
+    // Fmatrix mProject;
+    // Fmatrix mFullTransform;
 
     Fmatrix mInvFullTransform;
 
-    //float fFOV;
-    //float fASPECT;
+    // float fFOV;
+    // float fASPECT;
 
     CRenderDevice()
-        :
-        m_pRender(0)
+        : m_pRender(0)
 #ifdef INGAME_EDITOR
-        , m_editor_module(0),
-        m_editor_initialize(0),
-        m_editor_finalize(0),
-        m_editor(0),
-        m_engine(0)
+          ,
+          m_editor_module(0), m_editor_initialize(0), m_editor_finalize(0), m_editor(0), m_engine(0)
 #endif // #ifdef INGAME_EDITOR
 #ifdef PROFILE_CRITICAL_SECTIONS
-        ,mt_csEnter(MUTEX_PROFILE_ID(CRenderDevice::mt_csEnter))
-        ,mt_csLeave(MUTEX_PROFILE_ID(CRenderDevice::mt_csLeave))
+          ,
+          mt_csEnter(MUTEX_PROFILE_ID(CRenderDevice::mt_csEnter)),
+          mt_csLeave(MUTEX_PROFILE_ID(CRenderDevice::mt_csLeave))
 #endif // #ifdef PROFILE_CRITICAL_SECTIONS
     {
         m_hWnd = NULL;
@@ -278,20 +273,14 @@ public:
 
     ICF void remove_from_seq_parallel(const fastdelegate::FastDelegate0<>& delegate)
     {
-        xr_vector<fastdelegate::FastDelegate0<> >::iterator I = std::find(
-                    seqParallel.begin(),
-                    seqParallel.end(),
-                    delegate
-                );
+        xr_vector<fastdelegate::FastDelegate0<>>::iterator I =
+            std::find(seqParallel.begin(), seqParallel.end(), delegate);
         if (I != seqParallel.end())
             seqParallel.erase(I);
     }
 
-    //AVO: elapsed famed counter (by alpet)
-    IC u32 frame_elapsed()
-    {
-        return frame_timer.GetElapsed_ms();
-    }
+    // AVO: elapsed famed counter (by alpet)
+    IC u32 frame_elapsed() { return frame_timer.GetElapsed_ms(); }
 
 public:
     void xr_stdcall on_idle();
@@ -331,13 +320,12 @@ extern ENGINE_API CRenderDevice Device;
 #define RDEVICE EDevice
 #endif
 
-
 extern ENGINE_API bool g_bBenchmark;
 
 typedef fastdelegate::FastDelegate0<bool> LOADING_EVENT;
 extern ENGINE_API xr_list<LOADING_EVENT> g_loading_events;
 
-class ENGINE_API CLoadScreenRenderer :public pureRender
+class ENGINE_API CLoadScreenRenderer : public pureRender
 {
 public:
     CLoadScreenRenderer();

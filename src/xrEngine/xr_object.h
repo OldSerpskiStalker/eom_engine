@@ -3,13 +3,13 @@
 
 #include "../xrcdb/ispatial.h"
 #include "isheduled.h"
-//#include "iinputreceiver.h"
+// #include "iinputreceiver.h"
 #include "irenderable.h"
 #include "icollidable.h"
 #include "engineapi.h"
 #include "device.h"
 // refs
-//class ENGINE_API IRender_Visual;
+// class ENGINE_API IRender_Visual;
 class ENGINE_API IRender_Sector;
 class ENGINE_API IRender_ObjectSpecific;
 class ENGINE_API CCustomHUD;
@@ -24,13 +24,8 @@ class CSE_Abstract;
 //-----------------------------------------------------------------------------------------------------------
 class IPhysicsShell;
 xr_pure_interface IObjectPhysicsCollision;
-#pragma pack(push,4)
-class ENGINE_API CObject :
-    public DLL_Pure,
-    public ISpatial,
-    public ISheduled,
-    public IRenderable,
-    public ICollidable
+#pragma pack(push, 4)
+class ENGINE_API CObject : public DLL_Pure, public ISpatial, public ISheduled, public IRenderable, public ICollidable
 {
 public:
     struct SavedPosition
@@ -55,6 +50,7 @@ public:
         };
         u32 storage;
     };
+
 private:
     BENCH_SEC_SCRAMBLEMEMBER1
     BENCH_SEC_SCRAMBLEVTBL2
@@ -63,12 +59,14 @@ private:
     shared_str NameObject;
     shared_str NameSection;
     shared_str NameVisual;
+
 protected:
     // Parentness
     CObject* Parent;
 
     // Geometric (transformation)
     svector<SavedPosition, 4> PositionStack;
+
 public:
 #ifdef DEBUG
     u32 dbg_update_cl;
@@ -109,7 +107,11 @@ public:
 
     // Geometry xform
     virtual void Center(Fvector& C) const;
-    IC const Fmatrix& XFORM() const { VERIFY(_valid(renderable.xform)); return renderable.xform; }
+    IC const Fmatrix& XFORM() const
+    {
+        VERIFY(_valid(renderable.xform));
+        return renderable.xform;
+    }
     ICF Fmatrix& XFORM() { return renderable.xform; }
     virtual void spatial_register();
     virtual void spatial_unregister();
@@ -133,7 +135,7 @@ public:
     ICF ICollisionForm* CFORM() const { return collidable.model; }
     virtual CObject* dcast_CObject() { return this; }
     virtual IRenderable* dcast_Renderable() { return this; }
-    virtual void OnChangeVisual() { }
+    virtual void OnChangeVisual() {}
     virtual IPhysicsShell* physics_shell() { return 0; }
 
     virtual const IObjectPhysicsCollision* physics_collision() { return 0; }
@@ -178,21 +180,21 @@ public:
     virtual void UpdateCL(); // Called each frame, so no need for dt
     virtual BOOL net_Spawn(CSE_Abstract* data);
     virtual void net_Destroy();
-    virtual void net_Export(NET_Packet& P) {}; // export to server
-    virtual void net_Import(NET_Packet& P) {}; // import from server
-    virtual void net_ImportInput(NET_Packet& P) {};
+    virtual void net_Export(NET_Packet& P){}; // export to server
+    virtual void net_Import(NET_Packet& P){}; // import from server
+    virtual void net_ImportInput(NET_Packet& P){};
     virtual BOOL net_Relevant() { return FALSE; }; // relevant for export to server
     virtual void net_MigrateInactive(NET_Packet& P) { Props.net_Local = FALSE; };
     virtual void net_MigrateActive(NET_Packet& P) { Props.net_Local = TRUE; };
-    virtual void net_Relcase(CObject* O) { }; // destroy all links to another objects
+    virtual void net_Relcase(CObject* O){}; // destroy all links to another objects
 
     // Position stack
     IC u32 ps_Size() const { return PositionStack.size(); }
     virtual SavedPosition ps_Element(u32 ID) const;
-    virtual void ForceTransform(const Fmatrix& m) {};
+    virtual void ForceTransform(const Fmatrix& m){};
 
     // HUD
-    virtual void OnHUDDraw(CCustomHUD* hud) {};
+    virtual void OnHUDDraw(CCustomHUD* hud){};
 
     // Active/non active
     virtual void OnH_B_Chield(); // before
@@ -200,8 +202,8 @@ public:
     virtual void OnH_A_Chield(); // after
     virtual void OnH_A_Independent();
 
-    virtual void On_SetEntity() {};
-    virtual void On_LostEntity() {};
+    virtual void On_SetEntity(){};
+    virtual void On_LostEntity(){};
 
 public:
     virtual bool register_schedule() const { return true; }

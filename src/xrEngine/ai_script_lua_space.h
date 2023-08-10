@@ -15,5 +15,4 @@ enum ELuaMessageType
 };
 
 int __cdecl LuaOut(ELuaMessageType tLuaMessageType, LPCSTR caFormat, ...);
-}
-
+} // namespace Lua

@@ -8,4 +8,3 @@ namespace boost
 // Debug.fatal(DEBUG_INFO,"Boost exception raised");
 // }
 };
-

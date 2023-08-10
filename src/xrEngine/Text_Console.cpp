@@ -21,10 +21,7 @@ CTextConsole::CTextConsole()
     m_last_time = Device.dwTimeGlobal;
 }
 
-CTextConsole::~CTextConsole()
-{
-    m_pMainWnd = NULL;
-}
+CTextConsole::~CTextConsole() { m_pMainWnd = NULL; }
 
 //-------------------------------------------------------------------------------------------
 LRESULT CALLBACK TextConsole_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -42,16 +39,12 @@ void CTextConsole::CreateConsoleWnd()
     const char* wndclass = "TEXT_CONSOLE";
 
     // Register the windows class
-    WNDCLASS wndClass = {0, TextConsole_WndProc, 0, 0, hInstance,
-                         NULL,
-                         LoadCursor(hInstance, IDC_ARROW),
-                         GetStockBrush(GRAY_BRUSH),
-                         NULL, wndclass
-                        };
+    WNDCLASS wndClass = {0, TextConsole_WndProc, 0, 0, hInstance, NULL, LoadCursor(hInstance, IDC_ARROW),
+        GetStockBrush(GRAY_BRUSH), NULL, wndclass};
     RegisterClass(&wndClass);
 
     // Set the window's initial style
-    u32 dwWindowStyle = WS_OVERLAPPED | WS_CHILD | WS_VISIBLE;// | WS_CLIPSIBLINGS;// | WS_CLIPCHILDREN;
+    u32 dwWindowStyle = WS_OVERLAPPED | WS_CHILD | WS_VISIBLE; // | WS_CLIPSIBLINGS;// | WS_CLIPCHILDREN;
 
     // Set the window's initial width
     RECT rc;
@@ -59,10 +52,8 @@ void CTextConsole::CreateConsoleWnd()
     // AdjustWindowRect( &rc, dwWindowStyle, FALSE );
 
     // Create the render window
-    m_hConsoleWnd = CreateWindow(wndclass, "XRAY Text Console", dwWindowStyle,
-                                 lX, lY,
-                                 lWidth, lHeight, *m_pMainWnd,
-                                 0, hInstance, 0L);
+    m_hConsoleWnd = CreateWindow(
+        wndclass, "XRAY Text Console", dwWindowStyle, lX, lY, lWidth, lHeight, *m_pMainWnd, 0, hInstance, 0L);
     //---------------------------------------------------------------------------
     R_ASSERT2(m_hConsoleWnd, "Unable to Create TextConsole Window!");
 };
@@ -82,16 +73,12 @@ void CTextConsole::CreateLogWnd()
     const char* wndclass = "TEXT_CONSOLE_LOG_WND";
 
     // Register the windows class
-    WNDCLASS wndClass = {0, TextConsole_LogWndProc, 0, 0, hInstance,
-                         NULL,
-                         LoadCursor(NULL, IDC_ARROW),
-                         GetStockBrush(BLACK_BRUSH),
-                         NULL, wndclass
-                        };
+    WNDCLASS wndClass = {0, TextConsole_LogWndProc, 0, 0, hInstance, NULL, LoadCursor(NULL, IDC_ARROW),
+        GetStockBrush(BLACK_BRUSH), NULL, wndclass};
     RegisterClass(&wndClass);
 
     // Set the window's initial style
-    u32 dwWindowStyle = WS_OVERLAPPED | WS_CHILD | WS_VISIBLE;// | WS_CLIPSIBLINGS;
+    u32 dwWindowStyle = WS_OVERLAPPED | WS_CHILD | WS_VISIBLE; // | WS_CLIPSIBLINGS;
     // u32 dwWindowStyleEx = WS_EX_CLIENTEDGE;
 
     // Set the window's initial width
@@ -100,10 +87,8 @@ void CTextConsole::CreateLogWnd()
     // AdjustWindowRect( &rc, dwWindowStyle, FALSE );
 
     // Create the render window
-    m_hLogWnd = CreateWindow(wndclass, "XRAY Text Console Log", dwWindowStyle,
-                             lX, lY,
-                             lWidth, lHeight, m_hConsoleWnd,
-                             0, hInstance, 0L);
+    m_hLogWnd = CreateWindow(
+        wndclass, "XRAY Text Console Log", dwWindowStyle, lX, lY, lWidth, lHeight, m_hConsoleWnd, 0, hInstance, 0L);
     //---------------------------------------------------------------------------
     R_ASSERT2(m_hLogWnd, "Unable to Create TextConsole Window!");
     //---------------------------------------------------------------------------
@@ -176,11 +161,16 @@ void CTextConsole::Destroy()
     SelectObject(m_hDC_LogWnd_BackBuffer, m_hPrevFont);
     SelectObject(m_hDC_LogWnd_BackBuffer, m_hOld_BM);
 
-    if (m_hBB_BM) DeleteObject(m_hBB_BM);
-    if (m_hOld_BM) DeleteObject(m_hOld_BM);
-    if (m_hLogWndFont) DeleteObject(m_hLogWndFont);
-    if (m_hPrevFont) DeleteObject(m_hPrevFont);
-    if (m_hBackGroundBrush) DeleteObject(m_hBackGroundBrush);
+    if (m_hBB_BM)
+        DeleteObject(m_hBB_BM);
+    if (m_hOld_BM)
+        DeleteObject(m_hOld_BM);
+    if (m_hLogWndFont)
+        DeleteObject(m_hLogWndFont);
+    if (m_hPrevFont)
+        DeleteObject(m_hPrevFont);
+    if (m_hBackGroundBrush)
+        DeleteObject(m_hBackGroundBrush);
 
     ReleaseDC(m_hLogWnd, m_hDC_LogWnd_BackBuffer);
     ReleaseDC(m_hLogWnd, m_hDC_LogWnd);
@@ -189,7 +179,7 @@ void CTextConsole::Destroy()
     DestroyWindow(m_hConsoleWnd);
 }
 
-void CTextConsole::OnRender() {} //disable ÑConsole::OnRender()
+void CTextConsole::OnRender() {} // disable ÑConsole::OnRender()
 
 void CTextConsole::OnPaint()
 {
@@ -197,7 +187,7 @@ void CTextConsole::OnPaint()
     PAINTSTRUCT ps;
     BeginPaint(m_hLogWnd, &ps);
 
-    if ( /*m_bNeedUpdate*/ Device.dwFrame % 2)
+    if (/*m_bNeedUpdate*/ Device.dwFrame % 2)
     {
         // m_dwLastUpdateTime = Device.dwTimeGlobal;
         // m_bNeedUpdate = false;
@@ -210,13 +200,9 @@ void CTextConsole::OnPaint()
         wRC = ps.rcPaint;
     }
 
-
-    BitBlt(m_hDC_LogWnd,
-           wRC.left, wRC.top,
-           wRC.right - wRC.left, wRC.bottom - wRC.top,
-           m_hDC_LogWnd_BackBuffer,
-           wRC.left, wRC.top,
-           SRCCOPY); //(FullUpdate) ? SRCCOPY : NOTSRCCOPY);
+    BitBlt(m_hDC_LogWnd, wRC.left, wRC.top, wRC.right - wRC.left, wRC.bottom - wRC.top, m_hDC_LogWnd_BackBuffer,
+        wRC.left, wRC.top,
+        SRCCOPY); //(FullUpdate) ? SRCCOPY : NOTSRCCOPY);
     /*
      Msg ("URect - %d:%d - %d:%d", ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right, ps.rcPaint.bottom);
      */
@@ -257,7 +243,6 @@ void CTextConsole::DrawLog(HDC hDC, RECT* pRect)
 
     SetTextColor(hDC, RGB(0, 0, 0));
     TextOut(hDC, xb, Height - tm.tmHeight - 1, buf, cur0_len);
-
 
     SetTextColor(hDC, RGB(255, 255, 255));
     TextOut(hDC, 0, Height - tm.tmHeight - 3, ioc_prompt, xr_strlen(ioc_prompt)); // ">>> "
@@ -338,7 +323,8 @@ void CTextConsole::OnFrame()
      {
      return;
      }
-     */ InvalidateRect(m_hConsoleWnd, NULL, FALSE);
+     */
+    InvalidateRect(m_hConsoleWnd, NULL, FALSE);
     SetCursor(LoadCursor(NULL, IDC_ARROW));
     // m_bNeedUpdate = true;
 }

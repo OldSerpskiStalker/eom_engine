@@ -15,7 +15,7 @@
 
 #include "../Include/xrRender/UIRender.h"
 
-//#include "securom_api.h"
+// #include "securom_api.h"
 
 static float const UI_BASE_WIDTH = 1024.0f;
 static float const UI_BASE_HEIGHT = 768.0f;
@@ -36,7 +36,6 @@ static u32 const tips_word_color = color_rgba(5, 100, 56, 200);
 static u32 const tips_scroll_back_color = color_rgba(15, 15, 15, 230);
 static u32 const tips_scroll_pos_color = color_rgba(70, 70, 70, 240);
 
-
 ENGINE_API CConsole* Console = NULL;
 
 extern char const* const ioc_prompt;
@@ -45,58 +44,28 @@ char const* const ioc_prompt = ">>> ";
 extern char const* const ch_cursor;
 char const* const ch_cursor = "_";
 
-text_editor::line_edit_control& CConsole::ec()
-{
-    return m_editor->control();
-}
+text_editor::line_edit_control& CConsole::ec() { return m_editor->control(); }
 
 u32 CConsole::get_mark_color(Console_mark type)
 {
     u32 color = default_font_color;
     switch (type)
     {
-    case mark0:
-        color = color_rgba(255, 255, 0, 255);
-        break;
-    case mark1:
-        color = color_rgba(255, 0, 0, 255);
-        break;
-    case mark2:
-        color = color_rgba(100, 100, 255, 255);
-        break;
-    case mark3:
-        color = color_rgba(0, 222, 205, 155);
-        break;
-    case mark4:
-        color = color_rgba(255, 0, 255, 255);
-        break;
-    case mark5:
-        color = color_rgba(155, 55, 170, 155);
-        break;
-    case mark6:
-        color = color_rgba(25, 200, 50, 255);
-        break;
-    case mark7:
-        color = color_rgba(255, 255, 0, 255);
-        break;
-    case mark8:
-        color = color_rgba(128, 128, 128, 255);
-        break;
-    case mark9:
-        color = color_rgba(0, 255, 0, 255);
-        break;
-    case mark10:
-        color = color_rgba(55, 155, 140, 255);
-        break;
-    case mark11:
-        color = color_rgba(205, 205, 105, 255);
-        break;
-    case mark12:
-        color = color_rgba(128, 128, 250, 255);
-        break;
+    case mark0: color = color_rgba(255, 255, 0, 255); break;
+    case mark1: color = color_rgba(255, 0, 0, 255); break;
+    case mark2: color = color_rgba(100, 100, 255, 255); break;
+    case mark3: color = color_rgba(0, 222, 205, 155); break;
+    case mark4: color = color_rgba(255, 0, 255, 255); break;
+    case mark5: color = color_rgba(155, 55, 170, 155); break;
+    case mark6: color = color_rgba(25, 200, 50, 255); break;
+    case mark7: color = color_rgba(255, 255, 0, 255); break;
+    case mark8: color = color_rgba(128, 128, 128, 255); break;
+    case mark9: color = color_rgba(0, 255, 0, 255); break;
+    case mark10: color = color_rgba(55, 155, 140, 255); break;
+    case mark11: color = color_rgba(205, 205, 105, 255); break;
+    case mark12: color = color_rgba(128, 128, 250, 255); break;
     case no_mark:
-    default:
-        break;
+    default: break;
     }
     return color;
 }
@@ -117,17 +86,14 @@ bool CConsole::is_mark(Console_mark type)
     case mark9:
     case mark10:
     case mark11:
-    case mark12:
-        return true;
-        break;
+    case mark12: return true; break;
     }
     return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-CConsole::CConsole()
-    :m_hShader_back(NULL)
+CConsole::CConsole() : m_hShader_back(NULL)
 {
     m_editor = xr_new<text_editor::line_editor>((u32)CONSOLE_BUF_SIZE);
     m_cmd_history_max = cmd_history_max;
@@ -181,10 +147,7 @@ void CConsole::Destroy()
     Commands.clear();
 }
 
-void CConsole::AddCommand(IConsole_Command* cc)
-{
-    Commands[cc->Name()] = cc;
-}
+void CConsole::AddCommand(IConsole_Command* cc) { Commands[cc->Name()] = cc; }
 
 void CConsole::RemoveCommand(IConsole_Command* cc)
 {
@@ -209,14 +172,14 @@ void CConsole::OutFont(LPCSTR text, float& pos_y)
 {
     float str_length = pFont->SizeOf_(text);
     float scr_width = 1.98f * Device.fWidth_2;
-    if (str_length > scr_width) //1024.0f
+    if (str_length > scr_width) // 1024.0f
     {
         float f = 0.0f;
         int sz = 0;
         int ln = 0;
         PSTR one_line = (PSTR)_alloca((CONSOLE_BUF_SIZE + 1) * sizeof(char));
 
-        while (text[sz] && (ln + sz < CONSOLE_BUF_SIZE - 5))// перенос строк
+        while (text[sz] && (ln + sz < CONSOLE_BUF_SIZE - 5)) // перенос строк
         {
             one_line[ln + sz] = text[sz];
             one_line[ln + sz + 1] = 0;
@@ -259,7 +222,7 @@ void CConsole::OnRender()
 
     if (!m_hShader_back)
     {
-        m_hShader_back = xr_new< FactoryPtr<IUIShader> >();
+        m_hShader_back = xr_new<FactoryPtr<IUIShader>>();
         (*m_hShader_back)->create("hud\\default", "ui\\ui_console"); // "ui\\ui_empty"
     }
 
@@ -276,7 +239,7 @@ void CConsole::OnRender()
 
     bool bGame = false;
     if ((g_pGameLevel && g_pGameLevel->bReady) ||
-            (g_pGamePersistent && g_pGamePersistent->m_pMainMenu && g_pGamePersistent->m_pMainMenu->IsActive()))
+        (g_pGamePersistent && g_pGamePersistent->m_pMainMenu && g_pGamePersistent->m_pMainMenu->IsActive()))
     {
         bGame = true;
     }
@@ -333,28 +296,20 @@ void CConsole::OnRender()
         float shift_x = 0.0f;
         switch (m_tips_mode)
         {
-        case 0:
-            shift_x = scr_x * 1.0f;
-            break;
-        case 1:
-            shift_x = scr_x * out_pos;
-            break;
-        case 2:
-            shift_x = scr_x * (ioc_d + pFont->SizeOf_(m_cur_cmd.c_str()) + d1);
-            break;
-        case 3:
-            shift_x = scr_x * str_length;
-            break;
+        case 0: shift_x = scr_x * 1.0f; break;
+        case 1: shift_x = scr_x * out_pos; break;
+        case 2: shift_x = scr_x * (ioc_d + pFont->SizeOf_(m_cur_cmd.c_str()) + d1); break;
+        case 3: shift_x = scr_x * str_length; break;
         }
 
         vecTipsEx::iterator itb = m_tips.begin() + m_start_tip;
         vecTipsEx::iterator ite = m_tips.end();
         for (u32 i = 0; itb != ite; ++itb, ++i) // tips
         {
-            pFont->OutI(-1.0f + shift_x, fMaxY + i*LDIST, "%s", (*itb).text.c_str());
+            pFont->OutI(-1.0f + shift_x, fMaxY + i * LDIST, "%s", (*itb).text.c_str());
             if (i >= VIEW_TIPS_COUNT - 1)
             {
-                break; //for
+                break; // for
             }
         }
     }
@@ -369,7 +324,7 @@ void CConsole::OnRender()
     out_pos += pFont2->SizeOf_(s_mark);
     pFont->OutI(-1.0f + out_pos * scr_x, ypos, "%s", s_mark_a);
 
-    //pFont2->OutI( -1.0f + ioc_d * scr_x, ypos, "%s", editor=all );
+    // pFont2->OutI( -1.0f + ioc_d * scr_x, ypos, "%s", editor=all );
 
     if (ec().cursor_view())
     {
@@ -395,8 +350,8 @@ void CConsole::OnRender()
         }
         Console_mark cm = (Console_mark)ls[0];
         pFont->SetColor(get_mark_color(cm));
-        //u8 b = (is_mark( cm ))? 2 : 0;
-        //OutFont( ls + b, ypos );
+        // u8 b = (is_mark( cm ))? 2 : 0;
+        // OutFont( ls + b, ypos );
         OutFont(ls, ypos);
     }
 
@@ -468,7 +423,7 @@ void CConsole::DrawBackgrounds(bool bGame)
         int sel_pos = m_select_tip - m_start_tip;
 
         select_y = sel_pos * font_h;
-        select_h = font_h; //1 string
+        select_h = font_h; // 1 string
     }
 
     sr.x1 = pr.x1;
@@ -516,7 +471,7 @@ void CConsole::DrawBackgrounds(bool bGame)
             {
                 break; // for itb
             }
-        }// for itb
+        } // for itb
     } // if
 
     // --------------------------- scroll bar --------------------
@@ -540,10 +495,10 @@ void CConsole::DrawBackgrounds(bool bGame)
             u_height = 0.5f * font_h;
         }
 
-        //float u_pos = (back_height - u_height) * float(m_start_tip) / float(tips_sz);
+        // float u_pos = (back_height - u_height) * float(m_start_tip) / float(tips_sz);
         float u_pos = back_height * float(m_start_tip) / float(tips_sz);
 
-        //clamp( u_pos, 0.0f, back_height - u_height );
+        // clamp( u_pos, 0.0f, back_height - u_height );
 
         rs = rb;
         rs.y1 = pr.y1 + u_pos;
@@ -650,7 +605,7 @@ void CConsole::ExecuteCommand(LPCSTR cmd_str, bool record_cmd)
 
 void CConsole::Show()
 {
-    //SECUROM_MARKER_HIGH_SECURITY_ON(11)
+    // SECUROM_MARKER_HIGH_SECURITY_ON(11)
 
     if (bVisible)
     {
@@ -670,7 +625,7 @@ void CConsole::Show()
     Device.seqRender.Add(this, 1);
     Device.seqFrame.Add(this);
 
-    //SECUROM_MARKER_HIGH_SECURITY_OFF(11)
+    // SECUROM_MARKER_HIGH_SECURITY_OFF(11)
 }
 
 extern CInput* pInput;
@@ -715,10 +670,7 @@ void CConsole::SelectCommand()
     reset_selected_tip();
 }
 
-void CConsole::Execute(LPCSTR cmd)
-{
-    ExecuteCommand(cmd, false);
-}
+void CConsole::Execute(LPCSTR cmd) { ExecuteCommand(cmd, false); }
 
 void CConsole::ExecuteScript(LPCSTR str)
 {
@@ -776,7 +728,7 @@ bool CConsole::add_next_cmds(LPCSTR in_str, vecTipsEx& out_v)
     }
 
     bool res = false;
-    for (u32 i = cur_count; i < MAX_TIPS_COUNT * 2; ++i) //fake=protect
+    for (u32 i = cur_count; i < MAX_TIPS_COUNT * 2; ++i) // fake=protect
     {
         temp._set(cc->Name());
         bool dup = (std::find(out_v.begin(), out_v.end(), temp) != out_v.end());
@@ -944,7 +896,7 @@ void CConsole::update_tips()
     // cmd name
     {
         add_internal_cmds(cur, m_tips);
-        //add_next_cmds( cur, m_tips );
+        // add_next_cmds( cur, m_tips );
         m_tips_mode = 1;
     }
 
@@ -957,7 +909,6 @@ void CConsole::update_tips()
     {
         reset_selected_tip();
     }
-
 }
 
 void CConsole::select_for_filter(LPCSTR filter_str, vecTips& in_v, vecTipsEx& out_v)
@@ -990,5 +941,5 @@ void CConsole::select_for_filter(LPCSTR filter_str, vecTips& in_v, vecTipsEx& ou
                 out_v.push_back(ts);
             }
         }
-    }//for
+    } // for
 }

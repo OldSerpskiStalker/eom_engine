@@ -15,10 +15,9 @@ const int default_key = mouse_device_key | keyboard_device_key;
 
 class ENGINE_API CInput
 #ifndef M_BORLAND
-    :
-    public pureFrame,
-    public pureAppActivate,
-    public pureAppDeactivate
+    : public pureFrame,
+      public pureAppActivate,
+      public pureAppDeactivate
 #endif
 {
 public:
@@ -41,6 +40,7 @@ public:
         DIDEVICEINSTANCE deviceInfo;
         DIDEVICEOBJECTINSTANCE objectInfo;
     };
+
 private:
     BENCH_SEC_SCRAMBLEMEMBER1
     LPDIRECTINPUT8 pDI; // The DInput object
@@ -55,9 +55,8 @@ private:
     //----------------------
     BOOL KBState[COUNT_KB_BUTTONS];
 
-    HRESULT CreateInputDevice(LPDIRECTINPUTDEVICE8* device, GUID guidDevice,
-                              const DIDATAFORMAT* pdidDataFormat, u32 dwFlags,
-                              u32 buf_size);
+    HRESULT CreateInputDevice(
+        LPDIRECTINPUTDEVICE8* device, GUID guidDevice, const DIDATAFORMAT* pdidDataFormat, u32 dwFlags, u32 buf_size);
 
     // xr_stack<IInputReceiver*> cbStack;
     xr_vector<IInputReceiver*> cbStack;

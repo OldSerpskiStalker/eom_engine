@@ -16,12 +16,13 @@
 #include "editor_environment_weathers_time.hpp"
 #include "editor_environment_manager.hpp"
 
-using editor::environment::weathers::weather;
 using editor::environment::weathers::manager;
 using editor::environment::weathers::time;
+using editor::environment::weathers::weather;
 
 template <>
-void property_collection<weather::container_type, weather>::display_name(u32 const& item_index, LPSTR const& buffer, u32 const& buffer_size)
+void property_collection<weather::container_type, weather>::display_name(
+    u32 const& item_index, LPSTR const& buffer, u32 const& buffer_size)
 {
     xr_strcpy(buffer, buffer_size, m_container[item_index]->id().c_str());
 }
@@ -35,14 +36,8 @@ editor::property_holder* property_collection<weather::container_type, weather>::
     return (object->object());
 }
 
-weather::weather(
-    editor::environment::manager* manager,
-    shared_str const& id
-) :
-    m_manager(*manager),
-    m_id(id),
-    m_property_holder(0),
-    m_collection(0)
+weather::weather(editor::environment::manager* manager, shared_str const& id)
+    : m_manager(*manager), m_id(id), m_property_holder(0), m_collection(0)
 {
     m_collection = xr_new<collection_type>(&m_times, this);
 }
@@ -99,10 +94,7 @@ void weather::save()
     CInifile::Destroy(config);
 }
 
-LPCSTR weather::id_getter() const
-{
-    return (m_id.c_str());
-}
+LPCSTR weather::id_getter() const { return (m_id.c_str()); }
 
 void weather::id_setter(LPCSTR value_)
 {
@@ -126,20 +118,9 @@ void weather::fill(editor::property_holder_collection* collection)
     string_setter_type string_setter;
     string_setter.bind(this, &weather::id_setter);
 
-    m_property_holder->add_property(
-        "id",
-        "properties",
-        "this option is resposible for weather identifier",
-        m_id.c_str(),
-        string_getter,
-        string_setter
-    );
-    m_property_holder->add_property(
-        "times",
-        "properties",
-        "this option is resposible for times",
-        m_collection
-    );
+    m_property_holder->add_property("id", "properties", "this option is resposible for weather identifier",
+        m_id.c_str(), string_getter, string_setter);
+    m_property_holder->add_property("times", "properties", "this option is resposible for times", m_collection);
 }
 
 static inline bool is_digit(char const& test)
@@ -351,13 +332,7 @@ bool weather::add_time_frame(char const* buffer, u32 const& buffer_size)
         }
     }; // struct id
 
-    container_type::iterator found =
-        std::lower_bound(
-            m_times.begin(),
-            m_times.end(),
-            section,
-            &id::predicate
-        );
+    container_type::iterator found = std::lower_bound(m_times.begin(), m_times.end(), section, &id::predicate);
 
     u32 index = u32(found - m_times.begin());
     m_times.insert(found, object);

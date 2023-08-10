@@ -26,9 +26,7 @@ namespace thunderbolts
 
 class manager;
 
-class thunderbolt_id :
-    public editor::property_holder_holder,
-    private boost::noncopyable
+class thunderbolt_id : public editor::property_holder_holder, private boost::noncopyable
 {
 public:
     thunderbolt_id(manager const& manager, shared_str const& thunderbolt);

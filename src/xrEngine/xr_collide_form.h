@@ -69,10 +69,7 @@ struct clQueryCollision
         box.xform_set(R);
         boxes.push_back(box);
     }
-    IC void AddBox(const Fobb& B)
-    {
-        boxes.push_back(B);
-    }
+    IC void AddBox(const Fobb& B) { boxes.push_back(B); }
 };
 
 enum /*ENGINE_API*/ ECollisionFormType
@@ -84,20 +81,23 @@ enum /*ENGINE_API*/ ECollisionFormType
 class ENGINE_API ICollisionForm
 {
     friend class CObjectSpace;
+
 protected:
     CObject* owner; // владелец
     u32 dwQueryID;
+
 protected:
     Fbox bv_box; // (Local) BBox объекта
     Fsphere bv_sphere; // (Local) Sphere
 private:
     ECollisionFormType m_type;
+
 public:
     ICollisionForm(CObject* _owner, ECollisionFormType tp);
     virtual ~ICollisionForm();
 
     virtual BOOL _RayQuery(const collide::ray_defs& Q, collide::rq_results& R) = 0;
-    //virtual void _BoxQuery ( const Fbox& B, const Fmatrix& M, u32 flags) = 0;
+    // virtual void _BoxQuery ( const Fbox& B, const Fmatrix& M, u32 flags) = 0;
 
     IC CObject* Owner() const { return owner; }
     const Fbox& getBBox() const { return bv_box; }
@@ -129,13 +129,15 @@ public:
         };
         u16 type;
         u16 elem_id;
+
     public:
-        SElement() :elem_id(u16(-1)), type(0) {}
-        SElement(u16 id, u16 t) :elem_id(id), type(t) {}
+        SElement() : elem_id(u16(-1)), type(0) {}
+        SElement(u16 id, u16 t) : elem_id(id), type(t) {}
         BOOL valid() const { return (elem_id != (u16(-1))) && (type != 0); }
         void center(Fvector& center) const;
     };
     DEFINE_VECTOR(SElement, ElementVec, ElementVecIt);
+
 private:
     u64 vis_mask;
     ElementVec elements;
@@ -145,6 +147,7 @@ private:
 
     void BuildState();
     void BuildTopLevel();
+
 public:
     CCF_Skeleton(CObject* _owner);
 
@@ -152,7 +155,11 @@ public:
     bool _ElementCenter(u16 elem_id, Fvector& e_center);
     const ElementVec& _GetElements() { return elements; }
 #ifdef DEBUG
-    void _dbg_refresh() { BuildTopLevel(); BuildState(); }
+    void _dbg_refresh()
+    {
+        BuildTopLevel();
+        BuildState();
+    }
 #endif
 };
 
@@ -160,11 +167,12 @@ class ENGINE_API CCF_EventBox : public ICollisionForm
 {
 private:
     Fplane Planes[6];
+
 public:
     CCF_EventBox(CObject* _owner);
 
     virtual BOOL _RayQuery(const collide::ray_defs& Q, collide::rq_results& R);
-    //virtual void _BoxQuery ( const Fbox& B, const Fmatrix& M, u32 flags);
+    // virtual void _BoxQuery ( const Fbox& B, const Fmatrix& M, u32 flags);
 
     BOOL Contact(CObject* O);
 };
@@ -187,11 +195,12 @@ public:
         shape_data data;
     };
     xr_vector<shape_def> shapes;
+
 public:
     CCF_Shape(CObject* _owner);
 
     virtual BOOL _RayQuery(const collide::ray_defs& Q, collide::rq_results& R);
-    //virtual void _BoxQuery ( const Fbox& B, const Fmatrix& M, u32 flags);
+    // virtual void _BoxQuery ( const Fbox& B, const Fmatrix& M, u32 flags);
 
     void add_sphere(Fsphere& S);
     void add_box(Fmatrix& B);

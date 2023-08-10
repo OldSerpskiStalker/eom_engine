@@ -21,9 +21,7 @@ namespace environment
 namespace suns
 {
 
-class flare :
-    public editor::property_holder_holder,
-    private boost::noncopyable
+class flare : public editor::property_holder_holder, private boost::noncopyable
 {
 public:
     flare();

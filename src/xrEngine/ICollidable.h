@@ -9,6 +9,7 @@ public:
     {
         ICollisionForm* model;
     } collidable;
+
 public:
     ICollidable();
     virtual ~ICollidable();

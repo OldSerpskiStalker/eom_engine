@@ -60,9 +60,9 @@
 #include "debug_text_tree.h"
 #endif
 ENGINE_API bool g_dedicated_server;
-//AVO: used by SPAWN_ANTIFREEZE (by alpet)
+// AVO: used by SPAWN_ANTIFREEZE (by alpet)
 #ifdef SPAWN_ANTIFREEZE
-ENGINE_API BOOL	g_bootComplete;
+ENGINE_API BOOL g_bootComplete;
 #endif
 //-AVO
 extern CUISequencer* g_tutorial;
@@ -71,15 +71,15 @@ extern CUISequencer* g_tutorial2;
 float g_cl_lvInterp = 0.1;
 u32 lvInterpSteps = 0;
 
-//AVO: get object ID from spawn data (used by SPAWN_ANTIFREEZE by alpet)
+// AVO: get object ID from spawn data (used by SPAWN_ANTIFREEZE by alpet)
 #ifdef SPAWN_ANTIFREEZE
-u16	GetSpawnInfo(NET_Packet &P, u16 &parent_id)
+u16 GetSpawnInfo(NET_Packet& P, u16& parent_id)
 {
     u16 dummy16, id;
     P.r_begin(dummy16);
-    shared_str	s_name;
+    shared_str s_name;
     P.r_stringZ(s_name);
-    CSE_Abstract*	E = F_entity_Create(*s_name);
+    CSE_Abstract* E = F_entity_Create(*s_name);
     E->Spawn_Read(P);
     if (E->s_flags.is(M_SPAWN_UPDATE))
         E->UPDATE_Read(P);
@@ -92,16 +92,16 @@ u16	GetSpawnInfo(NET_Packet &P, u16 &parent_id)
 #endif
 //-AVO
 
-
-CLevel::CLevel() :
-IPureClient(Device.GetTimerGlobal())
+CLevel::CLevel()
+    : IPureClient(Device.GetTimerGlobal())
 #ifdef PROFILE_CRITICAL_SECTIONS
-, DemoCS(MUTEX_PROFILE_ID(DemoCS))
+      ,
+      DemoCS(MUTEX_PROFILE_ID(DemoCS))
 #endif
 {
     g_bDebugEvents = strstr(Core.Params, "-debug_ge") != nullptr;
     game_events = xr_new<NET_Queue_Event>();
-    //AVO: queue to hold spawn events for SPAWN_ANTIFREEZE
+    // AVO: queue to hold spawn events for SPAWN_ANTIFREEZE
 #ifdef SPAWN_ANTIFREEZE
     spawn_events = xr_new<NET_Queue_Event>();
 #endif
@@ -139,7 +139,7 @@ IPureClient(Device.GetTimerGlobal())
     Msg("%s", Core.Params);
 }
 
-extern CAI_Space *g_ai_space;
+extern CAI_Space* g_ai_space;
 
 CLevel::~CLevel()
 {
@@ -224,10 +224,7 @@ CLevel::~CLevel()
     deinit_compression();
 }
 
-shared_str CLevel::name() const
-{
-    return map_data.m_name;
-}
+shared_str CLevel::name() const { return map_data.m_name; }
 
 void CLevel::GetLevelInfo(CServerInfo* si)
 {
@@ -254,7 +251,7 @@ void CLevel::PrefetchSound(LPCSTR name)
 }
 
 // Game interface ////////////////////////////////////////////////////
-int	CLevel::get_RPID(LPCSTR /**name/**/)
+int CLevel::get_RPID(LPCSTR /**name/**/)
 {
     /*
     // Gain access to string
@@ -318,7 +315,7 @@ void CLevel::cl_Process_Event(u16 dest, u16 type, NET_Packet& P)
 #endif
             ok = false;
         }
-        CGameObject *GD = smart_cast<CGameObject*>(D);
+        CGameObject* GD = smart_cast<CGameObject*>(D);
         if (!GD)
         {
 #ifndef MASTER_GOLD
@@ -334,7 +331,7 @@ void CLevel::cl_Process_Event(u16 dest, u16 type, NET_Packet& P)
         }
     }
 }
-//AVO: used by SPAWN_ANTIFREEZE (by alpet)
+// AVO: used by SPAWN_ANTIFREEZE (by alpet)
 #ifdef SPAWN_ANTIFREEZE
 bool CLevel::PostponedSpawn(u16 id)
 {
@@ -342,7 +339,8 @@ bool CLevel::PostponedSpawn(u16 id)
     {
         const NET_Event& E = *it;
         NET_Packet P;
-        if (M_SPAWN != E.ID) continue;
+        if (M_SPAWN != E.ID)
+            continue;
         E.implication(P);
         u16 parent_id;
         if (id == GetSpawnInfo(P, parent_id))
@@ -361,7 +359,7 @@ void CLevel::ProcessGameEvents()
         NET_Packet P;
         u32 svT = timeServer() - NET_Latency;
 
-        //AVO: spawn antifreeze implementation by alpet
+        // AVO: spawn antifreeze implementation by alpet
 #ifdef SPAWN_ANTIFREEZE
         while (spawn_events->available(svT))
         {
@@ -371,7 +369,8 @@ void CLevel::ProcessGameEvents()
         }
         u32 avail_time = 5;
         u32 elps = Device.frame_elapsed();
-        if (elps < 30) avail_time = 33 - elps;
+        if (elps < 30)
+            avail_time = 33 - elps;
         u32 work_limit = elps + avail_time;
 #endif
         //-AVO
@@ -380,7 +379,7 @@ void CLevel::ProcessGameEvents()
         {
             u16 ID, dest, type;
             game_events->get(ID, dest, type, P);
-            //AVO: spawn antifreeze implementation by alpet
+            // AVO: spawn antifreeze implementation by alpet
 #ifdef SPAWN_ANTIFREEZE
             // не отправлять события не заспавненным объектам
             if (g_bootComplete && M_EVENT == ID && PostponedSpawn(dest))
@@ -388,11 +387,13 @@ void CLevel::ProcessGameEvents()
                 spawn_events->insert(P);
                 continue;
             }
-            if (g_bootComplete && M_SPAWN == ID && Device.frame_elapsed() > work_limit) // alpet: позволит плавнее выводить объекты в онлайн, без заметных фризов
+            if (g_bootComplete && M_SPAWN == ID &&
+                Device.frame_elapsed() >
+                    work_limit) // alpet: позволит плавнее выводить объекты в онлайн, без заметных фризов
             {
                 u16 parent_id;
                 GetSpawnInfo(P, parent_id);
-                //-------------------------------------------------				
+                //-------------------------------------------------
                 if (parent_id < 0xffff) // откладывать спавн только объектов в контейнеры
                 {
                     if (!spawn_events->available(svT))
@@ -406,20 +407,17 @@ void CLevel::ProcessGameEvents()
             //-AVO
             switch (ID)
             {
-            case M_SPAWN:
-            {
+            case M_SPAWN: {
                 u16 dummy16;
                 P.r_begin(dummy16);
                 cl_Process_Spawn(P);
                 break;
             }
-            case M_EVENT:
-            {
+            case M_EVENT: {
                 cl_Process_Event(dest, type, P);
                 break;
             }
-            case M_MOVE_PLAYERS:
-            {
+            case M_MOVE_PLAYERS: {
                 u8 Count = P.r_u8();
                 for (u8 i = 0; i < Count; i++)
                 {
@@ -427,7 +425,7 @@ void CLevel::ProcessGameEvents()
                     Fvector NewPos, NewDir;
                     P.r_vec3(NewPos);
                     P.r_vec3(NewDir);
-                    CActor*	OActor = smart_cast<CActor*>(Objects.net_Find(ID));
+                    CActor* OActor = smart_cast<CActor*>(Objects.net_Find(ID));
                     if (0 == OActor)
                         break;
                     OActor->MoveActor(NewPos, NewDir);
@@ -437,25 +435,21 @@ void CLevel::ProcessGameEvents()
                 Send(PRespond, net_flags(TRUE, TRUE));
                 break;
             }
-            case M_STATISTIC_UPDATE:
-            {
+            case M_STATISTIC_UPDATE: {
                 if (GameID() != eGameIDSingle)
                     Game().m_WeaponUsageStatistic->OnUpdateRequest(&P);
                 break;
             }
-            case M_FILE_TRANSFER:
-            {
+            case M_FILE_TRANSFER: {
                 if (m_file_transfer) // in case of net_Stop
                     m_file_transfer->on_message(&P);
                 break;
             }
-            case M_GAMEMESSAGE:
-            {
+            case M_GAMEMESSAGE: {
                 Game().OnGameMessage(P);
                 break;
             }
-            default:
-            {
+            default: {
                 VERIFY(0);
                 break;
             }
@@ -515,7 +509,7 @@ void CLevel::OnFrame()
 #ifdef DEBUG
     DBG_RenderUpdate();
 #endif
-    Fvector	temp_vector;
+    Fvector temp_vector;
     m_feel_deny.feel_touch_update(temp_vector, 0.f);
     if (GameID() != eGameIDSingle)
         psDeviceFlags.set(rsDisableObjectsAsCrows, true);
@@ -556,12 +550,12 @@ void CLevel::OnFrame()
         if (IsGameTypeSingle() && Device.dwPrecacheFrame == 0)
         {
             // XXX nitrocaster: was enabled in x-ray 1.5; to be restored or removed
-            //if (g_mt_config.test(mtMap))
+            // if (g_mt_config.test(mtMap))
             //{
             //    Device.seqParallel.push_back(fastdelegate::FastDelegate0<>(
             //    m_game_task_manager,&CGameTaskManager::UpdateTasks));
             //}
-            //else
+            // else
             GameTaskManager().UpdateTasks();
         }
     }
@@ -580,9 +574,9 @@ void CLevel::OnFrame()
                 F->OutSetI(0.0f, 0.5f);
                 F->SetColor(D3DCOLOR_XRGB(0, 255, 0));
                 F->OutNext("IN:  %4d/%4d (%2.1f%%)", S->bytes_in_real, S->bytes_in,
-                    100.f*float(S->bytes_in_real) / float(S->bytes_in));
+                    100.f * float(S->bytes_in_real) / float(S->bytes_in));
                 F->OutNext("OUT: %4d/%4d (%2.1f%%)", S->bytes_out_real, S->bytes_out,
-                    100.f*float(S->bytes_out_real) / float(S->bytes_out));
+                    100.f * float(S->bytes_out_real) / float(S->bytes_out));
                 F->OutNext("client_2_sever ping: %d", net_Statistic.getPing());
                 F->OutNext("SPS/Sended : %4d/%4d", S->dwBytesPerSec, S->dwBytesSended);
                 F->OutNext("sv_urate/cl_urate : %4d/%4d", psNET_ServerUpdate, psNET_ClientUpdate);
@@ -595,13 +589,10 @@ void CLevel::OnFrame()
                     {
                         m_server->UpdateClientStatistic(C);
                         F->OutNext("0x%08x: P(%d), BPS(%2.1fK), MRR(%2d), MSR(%2d), Retried(%2d), Blocked(%2d)",
-                            //Server->game->get_option_s(*C->Name,"name",*C->Name),
-                            C->ID.value(),
-                            C->stats.getPing(),
-                            float(C->stats.getBPS()),// /1024,
-                            C->stats.getMPS_Receive(),
-                            C->stats.getMPS_Send(),
-                            C->stats.getRetriedCount(),
+                            // Server->game->get_option_s(*C->Name,"name",*C->Name),
+                            C->ID.value(), C->stats.getPing(),
+                            float(C->stats.getBPS()), // /1024,
+                            C->stats.getMPS_Receive(), C->stats.getMPS_Send(), C->stats.getRetriedCount(),
                             C->stats.dwTimesBlocked);
                     }
                 };
@@ -620,16 +611,14 @@ void CLevel::OnFrame()
                 F->OutNext("sv_urate/cl_urate : %4d/%4d", psNET_ServerUpdate, psNET_ClientUpdate);
                 F->SetColor(D3DCOLOR_XRGB(255, 255, 255));
                 F->OutNext("BReceivedPs(%2d), BSendedPs(%2d), Retried(%2d), Blocked(%2d)",
-                    net_Statistic.getReceivedPerSec(),
-                    net_Statistic.getSendedPerSec(),
-                    net_Statistic.getRetriedCount(),
+                    net_Statistic.getReceivedPerSec(), net_Statistic.getSendedPerSec(), net_Statistic.getRetriedCount(),
                     net_Statistic.dwTimesBlocked);
 #ifdef DEBUG
                 if (!pStatGraphR)
                 {
                     pStatGraphR = xr_new<CStatGraph>();
                     pStatGraphR->SetRect(50, 700, 300, 68, 0xff000000, 0xff000000);
-                    //m_stat_graph->SetGrid(0, 0.0f, 10, 1.0f, 0xff808080, 0xffffffff);
+                    // m_stat_graph->SetGrid(0, 0.0f, 10, 1.0f, 0xff808080, 0xffffffff);
                     pStatGraphR->SetMinMax(0.0f, 65536.0f, 1000);
                     pStatGraphR->SetStyle(CStatGraph::stBarLine);
                     pStatGraphR->AppendSubGraph(CStatGraph::stBarLine);
@@ -651,8 +640,7 @@ void CLevel::OnFrame()
 #ifdef DEBUG
     g_pGamePersistent->Environment().m_paused = m_bEnvPaused;
 #endif
-    g_pGamePersistent->Environment().SetGameTime(GetEnvironmentGameDayTimeSec(),
-        game->GetEnvironmentGameTimeFactor());
+    g_pGamePersistent->Environment().SetGameTime(GetEnvironmentGameDayTimeSec(), game->GetEnvironmentGameTimeFactor());
     if (!g_dedicated_server)
         ai().script_engine().script_process(ScriptEngine::eScriptProcessorLevel)->update();
     m_ph_commander->update();
@@ -665,8 +653,8 @@ void CLevel::OnFrame()
     {
         if (g_mt_config.test(mtLevelSounds))
         {
-            Device.seqParallel.push_back(fastdelegate::FastDelegate0<>(
-                m_level_sound_manager, &CLevelSoundManager::Update));
+            Device.seqParallel.push_back(
+                fastdelegate::FastDelegate0<>(m_level_sound_manager, &CLevelSoundManager::Update));
         }
         else
             m_level_sound_manager->Update();
@@ -683,16 +671,13 @@ void CLevel::OnFrame()
     {
         static float fRPC_Mult = 10.0f;
         static float fRPS_Mult = 1.0f;
-        pStatGraphR->AppendItem(float(m_dwRPC)*fRPC_Mult, 0xffff0000, 1);
-        pStatGraphR->AppendItem(float(m_dwRPS)*fRPS_Mult, 0xff00ff00, 0);
+        pStatGraphR->AppendItem(float(m_dwRPC) * fRPC_Mult, 0xffff0000, 1);
+        pStatGraphR->AppendItem(float(m_dwRPS) * fRPS_Mult, 0xff00ff00, 0);
     }
 }
 
 int psLUA_GCSTEP = 10;
-void CLevel::script_gc()
-{
-    lua_gc(ai().script_engine().lua(), LUA_GCSTEP, psLUA_GCSTEP);
-}
+void CLevel::script_gc() { lua_gc(ai().script_engine().lua(), LUA_GCSTEP, psLUA_GCSTEP); }
 
 #ifdef DEBUG_PRECISE_PATH
 void test_precise_path();
@@ -710,9 +695,9 @@ void CLevel::OnRender()
     if (!game)
         return;
     Game().OnRender();
-    //Device.Statistic->TEST1.Begin();
+    // Device.Statistic->TEST1.Begin();
     BulletManager().Render();
-    //Device.Statistic->TEST1.End();
+    // Device.Statistic->TEST1.End();
     HUD().RenderUI();
 #ifdef DEBUG
     draw_wnds_rects();
@@ -756,9 +741,9 @@ void CLevel::OnRender()
                 if (pIItem)
                     pIItem->OnRender();
             }
-            if (dbg_net_Draw_Flags.test(dbg_draw_skeleton)) //draw skeleton
+            if (dbg_net_Draw_Flags.test(dbg_draw_skeleton)) // draw skeleton
             {
-                CGameObject* pGO = smart_cast<CGameObject*>	(_O);
+                CGameObject* pGO = smart_cast<CGameObject*>(_O);
                 if (pGO && pGO != Level().CurrentViewEntity() && !pGO->H_Parent())
                 {
                     if (pGO->Position().distance_to_sqr(Device.vCameraPosition) < 400.0f)
@@ -769,7 +754,8 @@ void CLevel::OnRender()
             }
         }
         //  [7/5/2005]
-        if (Server && Server->game) Server->game->OnRender();
+        if (Server && Server->game)
+            Server->game->OnRender();
         //  [7/5/2005]
         ObjectSpace.dbgRender();
         UI().Font().pFontStat->OutSet(170, 630);
@@ -826,7 +812,8 @@ void CLevel::OnEvent(EVENT E, u64 P1, u64 /**P2/**/)
 {
     if (E == eEntitySpawn)
     {
-        char	Name[128];	Name[0] = 0;
+        char Name[128];
+        Name[0] = 0;
         sscanf(LPCSTR(P1), "%s", Name);
         Level().g_cl_Spawn(Name, 0xff, M_SPAWN_OBJECT_LOCAL, Fvector().set(0, 0, 0));
     }
@@ -835,7 +822,7 @@ void CLevel::OnEvent(EVENT E, u64 P1, u64 /**P2/**/)
     }
     else if (E == eDemoPlay && P1)
     {
-        char* name = (char*) P1;
+        char* name = (char*)P1;
         string_path RealName;
         xr_strcpy(RealName, name);
         xr_strcat(RealName, ".xrdemo");
@@ -869,7 +856,8 @@ void CLevel::AddActor_To_Actors4CrPr(CGameObject* pActor)
 {
     if (!pActor)
         return;
-    if (!smart_cast<CActor*>(pActor)) return;
+    if (!smart_cast<CActor*>(pActor))
+        return;
     for (CGameObject* act : pActors4CrPr)
     {
         if (act == pActor)
@@ -900,21 +888,21 @@ void CLevel::make_NetCorrectionPrediction()
     m_bIn_CrPr = true;
     u64 NumPhSteps = physics_world()->StepsNum();
     physics_world()->StepsNum() -= m_dwNumSteps;
-    if (ph_console::g_bDebugDumpPhysicsStep&&m_dwNumSteps > 10)
+    if (ph_console::g_bDebugDumpPhysicsStep && m_dwNumSteps > 10)
     {
         Msg("!!!TOO MANY PHYSICS STEPS FOR CORRECTION PREDICTION = %d !!!", m_dwNumSteps);
         m_dwNumSteps = 10;
     }
     physics_world()->Freeze();
-    //setting UpdateData and determining number of PH steps from last received update
+    // setting UpdateData and determining number of PH steps from last received update
     for (CGameObject* obj : pObjects4CrPr)
     {
         if (!obj)
             continue;
         obj->PH_B_CrPr();
     }
-    //first prediction from "delivered" to "real current" position
-    //making enought PH steps to calculate current objects position based on their updated state
+    // first prediction from "delivered" to "real current" position
+    // making enought PH steps to calculate current objects position based on their updated state
     for (u32 i = 0; i < m_dwNumSteps; i++)
     {
         physics_world()->Step();
@@ -934,7 +922,7 @@ void CLevel::make_NetCorrectionPrediction()
     }
     if (!InterpolationDisabled())
     {
-        for (u32 i = 0; i < lvInterpSteps; i++)	//second prediction "real current" to "future" position
+        for (u32 i = 0; i < lvInterpSteps; i++) // second prediction "real current" to "future" position
         {
             physics_world()->Step();
         }
@@ -953,10 +941,7 @@ void CLevel::make_NetCorrectionPrediction()
     pActors4CrPr.clear();
 }
 
-u32 CLevel::GetInterpolationSteps()
-{
-    return lvInterpSteps;
-}
+u32 CLevel::GetInterpolationSteps() { return lvInterpSteps; }
 
 void CLevel::UpdateDeltaUpd(u32 LastTime)
 {
@@ -967,11 +952,10 @@ void CLevel::UpdateDeltaUpd(u32 LastTime)
     m_dwDeltaUpdate = CurrentDelta;
     if (0 == g_cl_lvInterp)
         ReculcInterpolationSteps();
-    else
-        if (g_cl_lvInterp > 0)
-        {
-            lvInterpSteps = iCeil(g_cl_lvInterp / fixed_step);
-        }
+    else if (g_cl_lvInterp > 0)
+    {
+        lvInterpSteps = iCeil(g_cl_lvInterp / fixed_step);
+    }
 }
 
 void CLevel::ReculcInterpolationSteps()
@@ -983,10 +967,7 @@ void CLevel::ReculcInterpolationSteps()
         lvInterpSteps = 3;
 }
 
-bool CLevel::InterpolationDisabled()
-{
-    return g_cl_lvInterp < 0;
-}
+bool CLevel::InterpolationDisabled() { return g_cl_lvInterp < 0; }
 
 void CLevel::PhisStepsCallback(u32 Time0, u32 Time1)
 {
@@ -994,8 +975,8 @@ void CLevel::PhisStepsCallback(u32 Time0, u32 Time1)
         return;
     if (GameID() == eGameIDSingle)
         return;
-    //#pragma todo("Oles to all: highly inefficient and slow!!!")
-    //fixed (Andy)
+    // #pragma todo("Oles to all: highly inefficient and slow!!!")
+    // fixed (Andy)
     /*
     for (xr_vector<CObject*>::iterator O=Level().Objects.objects.begin(); O!=Level().Objects.objects.end(); ++O)
     {
@@ -1020,20 +1001,11 @@ void CLevel::SetNumCrSteps(u32 NumSteps)
     }
 }
 
-ALife::_TIME_ID CLevel::GetStartGameTime()
-{
-    return (game->GetStartGameTime());
-}
+ALife::_TIME_ID CLevel::GetStartGameTime() { return (game->GetStartGameTime()); }
 
-ALife::_TIME_ID CLevel::GetGameTime()
-{
-    return (game->GetGameTime());
-}
+ALife::_TIME_ID CLevel::GetGameTime() { return (game->GetGameTime()); }
 
-ALife::_TIME_ID CLevel::GetEnvironmentGameTime()
-{
-    return (game->GetEnvironmentGameTime());
-}
+ALife::_TIME_ID CLevel::GetEnvironmentGameTime() { return (game->GetEnvironmentGameTime()); }
 
 u8 CLevel::GetDayTime()
 {
@@ -1043,15 +1015,9 @@ u8 CLevel::GetDayTime()
     return u8(hours);
 }
 
-float CLevel::GetGameDayTimeSec()
-{
-    return (float(s64(GetGameTime() % (24 * 60 * 60 * 1000))) / 1000.f);
-}
+float CLevel::GetGameDayTimeSec() { return (float(s64(GetGameTime() % (24 * 60 * 60 * 1000))) / 1000.f); }
 
-u32 CLevel::GetGameDayTimeMS()
-{
-    return (u32(s64(GetGameTime() % (24 * 60 * 60 * 1000))));
-}
+u32 CLevel::GetGameDayTimeMS() { return (u32(s64(GetGameTime() % (24 * 60 * 60 * 1000)))); }
 
 float CLevel::GetEnvironmentGameDayTimeSec()
 {
@@ -1063,15 +1029,9 @@ void CLevel::GetGameDateTime(u32& year, u32& month, u32& day, u32& hours, u32& m
     split_time(GetGameTime(), year, month, day, hours, mins, secs, milisecs);
 }
 
-float CLevel::GetGameTimeFactor()
-{
-    return (game->GetGameTimeFactor());
-}
+float CLevel::GetGameTimeFactor() { return (game->GetGameTimeFactor()); }
 
-void CLevel::SetGameTimeFactor(const float fTimeFactor)
-{
-    game->SetGameTimeFactor(fTimeFactor);
-}
+void CLevel::SetGameTimeFactor(const float fTimeFactor) { game->SetGameTimeFactor(fTimeFactor); }
 
 void CLevel::SetGameTimeFactor(ALife::_TIME_ID GameTime, const float fTimeFactor)
 {
@@ -1113,15 +1073,9 @@ void CLevel::OnAlifeSimulatorLoaded()
     GameTaskManager().ResetStorage();
 }
 
-void CLevel::OnSessionTerminate(LPCSTR reason)
-{
-    MainMenu()->OnSessionTerminate(reason);
-}
+void CLevel::OnSessionTerminate(LPCSTR reason) { MainMenu()->OnSessionTerminate(reason); }
 
-u32	GameID()
-{
-    return Game().Type();
-}
+u32 GameID() { return Game().Type(); }
 
 CZoneList* CLevel::create_hud_zones_list()
 {
@@ -1134,7 +1088,7 @@ bool CZoneList::feel_touch_contact(CObject* O)
 {
     TypesMapIt it = m_TypesMap.find(O->cNameSect());
     bool res = (it != m_TypesMap.end());
-    CCustomZone *pZone = smart_cast<CCustomZone*>(O);
+    CCustomZone* pZone = smart_cast<CCustomZone*>(O);
     if (pZone && !pZone->IsEnabled())
     {
         res = false;
@@ -1142,8 +1096,7 @@ bool CZoneList::feel_touch_contact(CObject* O)
     return res;
 }
 
-CZoneList::CZoneList()
-{}
+CZoneList::CZoneList() {}
 
 CZoneList::~CZoneList()
 {

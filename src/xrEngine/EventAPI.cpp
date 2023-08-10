@@ -9,27 +9,20 @@ extern void msCreate(LPCSTR name);
 class ENGINE_API CEvent
 {
     friend class CEventAPI;
+
 private:
     char* Name;
     xr_vector<IEventReceiver*> Handlers;
     u32 dwRefCount;
+
 public:
     CEvent(const char* S);
     ~CEvent();
 
-    LPCSTR GetFull()
-    {
-        return Name;
-    }
-    u32 RefCount()
-    {
-        return dwRefCount;
-    }
+    LPCSTR GetFull() { return Name; }
+    u32 RefCount() { return dwRefCount; }
 
-    BOOL Equal(CEvent& E)
-    {
-        return stricmp(Name, E.Name) == 0;
-    }
+    BOOL Equal(CEvent& E) { return stricmp(Name, E.Name) == 0; }
 
     void Attach(IEventReceiver* H)
     {
@@ -55,16 +48,10 @@ CEvent::CEvent(const char* S)
     _strupr(Name);
     dwRefCount = 1;
 }
-CEvent::~CEvent()
-{
-    xr_free(Name);
-}
+CEvent::~CEvent() { xr_free(Name); }
 
 //-----------------------------------------
-IC bool ev_sort(CEvent* E1, CEvent* E2)
-{
-    return E1->GetFull() < E2->GetFull();
-}
+IC bool ev_sort(CEvent* E1, CEvent* E2) { return E1->GetFull() < E2->GetFull(); }
 
 void CEventAPI::Dump()
 {
@@ -118,7 +105,8 @@ EVENT CEventAPI::Handler_Attach(const char* N, IEventReceiver* H)
 
 void CEventAPI::Handler_Detach(EVENT& E, IEventReceiver* H)
 {
-    if (0 == E) return;
+    if (0 == E)
+        return;
     CS.Enter();
     E->Detach(H);
     Destroy(E);
@@ -178,7 +166,11 @@ void CEventAPI::OnFrame()
     msRead();
 #endif
     CS.Enter();
-    if (Events_Deferred.empty()) { CS.Leave(); return; }
+    if (Events_Deferred.empty())
+    {
+        CS.Leave();
+        return;
+    }
     for (u32 I = 0; I < Events_Deferred.size(); I++)
     {
         Deferred& DEF = Events_Deferred[I];
@@ -192,7 +184,11 @@ void CEventAPI::OnFrame()
 BOOL CEventAPI::Peek(LPCSTR EName)
 {
     CS.Enter();
-    if (Events_Deferred.empty()) { CS.Leave(); return FALSE; }
+    if (Events_Deferred.empty())
+    {
+        CS.Leave();
+        return FALSE;
+    }
     for (u32 I = 0; I < Events_Deferred.size(); I++)
     {
         Deferred& DEF = Events_Deferred[I];
@@ -201,7 +197,6 @@ BOOL CEventAPI::Peek(LPCSTR EName)
             CS.Leave();
             return TRUE;
         }
-
     }
     CS.Leave();
     return FALSE;
@@ -210,6 +205,8 @@ BOOL CEventAPI::Peek(LPCSTR EName)
 void CEventAPI::_destroy()
 {
     Dump();
-    if (Events.empty()) Events.clear();
-    if (Events_Deferred.empty()) Events_Deferred.clear();
+    if (Events.empty())
+        Events.clear();
+    if (Events_Deferred.empty())
+        Events_Deferred.clear();
 }

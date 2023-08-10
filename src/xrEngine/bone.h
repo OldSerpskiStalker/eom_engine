@@ -19,10 +19,10 @@ class ENGINE_API CBoneInstance;
 // callback
 typedef void _BCL BoneCallbackFunction(CBoneInstance* P);
 typedef BoneCallbackFunction* BoneCallback;
-//typedef void (* BoneCallback) (CBoneInstance* P);
+// typedef void (* BoneCallback) (CBoneInstance* P);
 
 //*** Bone Instance *******************************************************************************
-#pragma pack(push,8)
+#pragma pack(push, 8)
 class ENGINE_API CBoneInstance
 {
 public:
@@ -34,6 +34,7 @@ private:
     void* Callback_Param;
     BOOL Callback_overwrite; // performance hint - don't calc anims
     u32 Callback_type;
+
 public:
     float param[MAX_BONE_PARAMS]; //
     //
@@ -43,6 +44,7 @@ public:
     IC void* _BCL callback_param() { return Callback_Param; }
     IC BOOL _BCL callback_overwrite() { return Callback_overwrite; } // performance hint - don't calc anims
     IC u32 _BCL callback_type() { return Callback_type; }
+
 public:
     IC void _BCL construct();
 
@@ -70,7 +72,7 @@ public:
 };
 #pragma pack(pop)
 
-#pragma pack( push,2 )
+#pragma pack(push, 2)
 struct ENGINE_API vertBoned1W // (3+3+3+3+2+1)*4 = 15*4 = 60 bytes
 {
     Fvector P;
@@ -82,7 +84,11 @@ struct ENGINE_API vertBoned1W // (3+3+3+3+2+1)*4 = 15*4 = 60 bytes
     void get_pos(Fvector& p) const { p.set(P); }
 #ifdef DEBUG
     static const u8 bones_count = 1;
-    u16 get_bone_id(u8 bone)const { VERIFY(bone < bones_count); return u16(matrix); }
+    u16 get_bone_id(u8 bone) const
+    {
+        VERIFY(bone < bones_count);
+        return u16(matrix);
+    }
 #endif
 };
 struct ENGINE_API vertBoned2W // (1+3+3 + 1+3+3 + 2)*4 = 16*4 = 64 bytes
@@ -98,7 +104,11 @@ struct ENGINE_API vertBoned2W // (1+3+3 + 1+3+3 + 2)*4 = 16*4 = 64 bytes
     void get_pos(Fvector& p) { p.set(P); }
 #ifdef DEBUG
     static const u8 bones_count = 2;
-    u16 get_bone_id(u8 bone)const { VERIFY(bone < bones_count); return bone == 0 ? matrix0 : matrix1; }
+    u16 get_bone_id(u8 bone) const
+    {
+        VERIFY(bone < bones_count);
+        return bone == 0 ? matrix0 : matrix1;
+    }
 #endif
 };
 struct ENGINE_API vertBoned3W // 70 bytes
@@ -113,10 +123,14 @@ struct ENGINE_API vertBoned3W // 70 bytes
     void get_pos(Fvector& p) { p.set(P); }
 #ifdef DEBUG
     static const u8 bones_count = 3;
-    u16 get_bone_id(u8 bone)const { VERIFY(bone < bones_count); return m[bone]; }
+    u16 get_bone_id(u8 bone) const
+    {
+        VERIFY(bone < bones_count);
+        return m[bone];
+    }
 #endif
 };
-struct ENGINE_API vertBoned4W //76 bytes
+struct ENGINE_API vertBoned4W // 76 bytes
 {
     u16 m[4];
     Fvector P;
@@ -128,12 +142,16 @@ struct ENGINE_API vertBoned4W //76 bytes
     void get_pos(Fvector& p) { p.set(P); }
 #ifdef DEBUG
     static const u8 bones_count = 4;
-    u16 get_bone_id(u8 bone)const { VERIFY(bone < bones_count); return m[bone]; }
+    u16 get_bone_id(u8 bone) const
+    {
+        VERIFY(bone < bones_count);
+        return m[bone];
+    }
 #endif
 };
 #pragma pack(pop)
 
-#pragma pack( push,1 )
+#pragma pack(push, 1)
 enum EJointType
 {
     jtRigid,
@@ -197,12 +215,11 @@ struct ECORE_API SBoneShape
     {
         switch (type)
         {
-        case stBox:
-            return !fis_zero(box.m_halfsize.x) && !fis_zero(box.m_halfsize.y) && !fis_zero(box.m_halfsize.z);
-        case stSphere:
-            return !fis_zero(sphere.R);
+        case stBox: return !fis_zero(box.m_halfsize.x) && !fis_zero(box.m_halfsize.y) && !fis_zero(box.m_halfsize.z);
+        case stSphere: return !fis_zero(sphere.R);
         case stCylinder:
-            return !fis_zero(cylinder.m_height) && !fis_zero(cylinder.m_radius) && !fis_zero(cylinder.m_direction.square_magnitude());
+            return !fis_zero(cylinder.m_height) && !fis_zero(cylinder.m_radius) &&
+                !fis_zero(cylinder.m_direction.square_magnitude());
         };
         return true;
     }
@@ -212,7 +229,7 @@ struct ECORE_API SJointIKData
 {
     // IK
     EJointType type;
-    SJointLimit limits[3];// by [axis XYZ on joint] and[Z-wheel,X-steer on wheel]
+    SJointLimit limits[3]; // by [axis XYZ on joint] and[Z-wheel,X-steer on wheel]
     float spring_factor;
     float damping_factor;
     enum
@@ -247,15 +264,14 @@ struct ECORE_API SJointIKData
             // Kostya Slipchenko say:
             // направление вращения в ОДЕ отличается от направления вращение в X-Ray
             // поэтому меняем знак у лимитов
-            //F.w_float (_min(-limits[k].limit.x,-limits[k].limit.y)); // min (swap special for ODE)
-            //F.w_float (_max(-limits[k].limit.x,-limits[k].limit.y)); // max (swap special for ODE)
+            // F.w_float (_min(-limits[k].limit.x,-limits[k].limit.y)); // min (swap special for ODE)
+            // F.w_float (_max(-limits[k].limit.x,-limits[k].limit.y)); // max (swap special for ODE)
 
             VERIFY(_min(-limits[k].limit.x, -limits[k].limit.y) == -limits[k].limit.y);
             VERIFY(_max(-limits[k].limit.x, -limits[k].limit.y) == -limits[k].limit.x);
 
             F.w_float(-limits[k].limit.y); // min (swap special for ODE)
             F.w_float(-limits[k].limit.x); // max (swap special for ODE)
-
 
             F.w_float(limits[k].spring_factor);
             F.w_float(limits[k].damping_factor);
@@ -285,40 +301,34 @@ struct ECORE_API SJointIKData
         return true;
     }
 };
-#pragma pack( pop )
-
-
+#pragma pack(pop)
 
 class IBoneData
 {
 public:
-
     virtual IBoneData& _BCL GetChild(u16 id) = 0;
     virtual const IBoneData& _BCL GetChild(u16 id) const = 0;
     virtual u16 _BCL GetSelfID() const = 0;
     virtual u16 _BCL GetNumChildren() const = 0;
 
-    virtual const SJointIKData& _BCL get_IK_data()const = 0;
-    virtual const Fmatrix& _BCL get_bind_transform()const = 0;
-    virtual const SBoneShape& _BCL get_shape()const = 0;
-    virtual const Fobb& _BCL get_obb()const = 0;
-    virtual const Fvector& _BCL get_center_of_mass()const = 0;
-    virtual float _BCL get_mass()const = 0;
-    virtual u16 _BCL get_game_mtl_idx()const = 0;
+    virtual const SJointIKData& _BCL get_IK_data() const = 0;
+    virtual const Fmatrix& _BCL get_bind_transform() const = 0;
+    virtual const SBoneShape& _BCL get_shape() const = 0;
+    virtual const Fobb& _BCL get_obb() const = 0;
+    virtual const Fvector& _BCL get_center_of_mass() const = 0;
+    virtual float _BCL get_mass() const = 0;
+    virtual u16 _BCL get_game_mtl_idx() const = 0;
     virtual u16 _BCL GetParentID() const = 0;
     virtual float _BCL lo_limit(u8 k) const = 0;
     virtual float _BCL hi_limit(u8 k) const = 0;
-
 };
 
-//static const Fobb dummy ;//= Fobb().identity();
-// refs
+// static const Fobb dummy ;//= Fobb().identity();
+//  refs
 class CBone;
 DEFINE_VECTOR(CBone*, BoneVec, BoneIt);
 
-class ECORE_API CBone :
-    public CBoneInstance,
-    public IBoneData
+class ECORE_API CBone : public CBoneInstance, public IBoneData
 {
     shared_str name;
     shared_str parent_name;
@@ -337,13 +347,14 @@ class ECORE_API CBone :
     Fmatrix rest_transform;
     Fmatrix rest_i_transform;
 
-    //Fmatrix last_transform;
+    // Fmatrix last_transform;
 
-    //Fmatrix render_transform;
+    // Fmatrix render_transform;
 public:
     int SelfID;
     CBone* parent;
     BoneVec children;
+
 public:
     // editor part
     Flags8 flags;
@@ -357,14 +368,28 @@ public:
 
     float mass;
     Fvector center_of_mass;
+
 public:
     CBone();
     virtual ~CBone();
 
-    void SetName(const char* p) { name = p; xr_strlwr(name); }
-    void SetParentName(const char* p) { parent_name = p; xr_strlwr(parent_name); }
+    void SetName(const char* p)
+    {
+        name = p;
+        xr_strlwr(name);
+    }
+    void SetParentName(const char* p)
+    {
+        parent_name = p;
+        xr_strlwr(parent_name);
+    }
     void SetWMap(const char* p) { wmap = p; }
-    void SetRestParams(float length, const Fvector& offset, const Fvector& rotate) { rest_offset.set(offset); rest_rotate.set(rotate); rest_length = length; };
+    void SetRestParams(float length, const Fvector& offset, const Fvector& rotate)
+    {
+        rest_offset.set(offset);
+        rest_rotate.set(rotate);
+        rest_length = length;
+    };
 
     shared_str Name() { return name; }
     shared_str ParentName() { return parent_name; }
@@ -389,8 +414,18 @@ public:
     IC Fvector& _RestOffset() { return rest_offset; }
     IC Fvector& _RestRotate() { return rest_rotate; }
 
-    void _Update(const Fvector& T, const Fvector& R) { mot_offset.set(T); mot_rotate.set(R); mot_length = rest_length; }
-    void Reset() { mot_offset.set(rest_offset); mot_rotate.set(rest_rotate); mot_length = rest_length; }
+    void _Update(const Fvector& T, const Fvector& R)
+    {
+        mot_offset.set(T);
+        mot_rotate.set(R);
+        mot_length = rest_length;
+    }
+    void Reset()
+    {
+        mot_offset.set(rest_offset);
+        mot_rotate.set(rest_rotate);
+        mot_length = rest_length;
+    }
 
     // IO
     void Save(IWriter& F);
@@ -404,9 +439,6 @@ public:
 
     IC float _BCL editor_lo_limit(u8 k) const { return IK_data.limits[k].limit.x; }
     IC float _BCL editor_hi_limit(u8 k) const { return IK_data.limits[k].limit.y; }
-
-
-
 
     void SaveData(IWriter& F);
     void LoadData(IReader& F);
@@ -437,19 +469,20 @@ private:
     u16 _BCL GetSelfID() const { return (u16)SelfID; }
     u16 _BCL GetNumChildren() const { return u16(children.size()); }
     const SJointIKData& _BCL get_IK_data() const { return IK_data; }
-    const Fmatrix& _BCL get_bind_transform() const
-    {
-
-        return local_rest_transform;
-
-    }
+    const Fmatrix& _BCL get_bind_transform() const { return local_rest_transform; }
     const SBoneShape& _BCL get_shape() const { return shape; }
 
     const Fobb& _BCL get_obb() const;
     const Fvector& _BCL get_center_of_mass() const { return center_of_mass; }
     float _BCL get_mass() const { return mass; }
     u16 _BCL get_game_mtl_idx() const;
-    u16 _BCL GetParentID() const { if (parent) return u16(parent->SelfID); else return u16(-1); };
+    u16 _BCL GetParentID() const
+    {
+        if (parent)
+            return u16(parent->SelfID);
+        else
+            return u16(-1);
+    };
     float _BCL lo_limit(u8 k) const { return engine_lo_limit(k); }
     float _BCL hi_limit(u8 k) const { return engine_hi_limit(k); }
 };
@@ -460,16 +493,14 @@ class CBoneData;
 typedef xr_vector<CBoneData*> vecBones;
 typedef vecBones::iterator vecBonesIt;
 
-
-class ENGINE_API CBoneData :
-    public IBoneData
+class ENGINE_API CBoneData : public IBoneData
 {
 protected:
     u16 SelfID;
     u16 ParentID;
+
 public:
     shared_str name;
-
 
     Fobb obb;
 
@@ -482,14 +513,13 @@ public:
     float mass;
     Fvector center_of_mass;
 
-
     vecBones children; // bones which are slaves to this
 
     DEFINE_VECTOR(u16, FacesVec, FacesVecIt);
     DEFINE_VECTOR(FacesVec, ChildFacesVec, ChildFacesVecIt);
     ChildFacesVec child_faces; // shared
 public:
-    CBoneData(u16 ID) :SelfID(ID) { VERIFY(SelfID != BI_NONE); }
+    CBoneData(u16 ID) : SelfID(ID) { VERIFY(SelfID != BI_NONE); }
     virtual ~CBoneData() {}
 #ifdef DEBUG
     typedef svector<int, 128> BoneDebug;
@@ -501,12 +531,10 @@ public:
     IC u16 _BCL GetParentID() const { return ParentID; }
 
     // assign face
-    void AppendFace(u16 child_idx, u16 idx)
-    {
-        child_faces[child_idx].push_back(idx);
-    }
+    void AppendFace(u16 child_idx, u16 idx) { child_faces[child_idx].push_back(idx); }
     // Calculation
     void CalculateM2B(const Fmatrix& Parent);
+
 private:
     IBoneData& _BCL GetChild(u16 id) { return *children[id]; }
     const IBoneData& _BCL GetChild(u16 id) const { return *children[id]; }
@@ -520,18 +548,16 @@ private:
     u16 _BCL get_game_mtl_idx() const { return game_mtl_idx; }
     float _BCL lo_limit(u8 k) const { return IK_data.limits[k].limit.x; }
     float _BCL hi_limit(u8 k) const { return IK_data.limits[k].limit.y; }
+
 public:
     virtual u32 mem_usage()
     {
-        u32 sz = sizeof(*this) + sizeof(vecBones::value_type)*children.size();
+        u32 sz = sizeof(*this) + sizeof(vecBones::value_type) * children.size();
         for (ChildFacesVecIt c_it = child_faces.begin(); c_it != child_faces.end(); ++c_it)
-            sz += c_it->size()*sizeof(FacesVec::value_type) + sizeof(*c_it);
+            sz += c_it->size() * sizeof(FacesVec::value_type) + sizeof(*c_it);
         return sz;
     }
 };
-
-
-
 
 enum EBoneCallbackType
 {
@@ -541,7 +567,6 @@ enum EBoneCallbackType
     bctForceU32 = u32(-1),
 };
 
-
 IC void CBoneInstance::construct()
 {
     ZeroMemory(this, sizeof(*this));
@@ -550,6 +575,5 @@ IC void CBoneInstance::construct()
     mRenderTransform.identity();
     Callback_overwrite = FALSE;
 }
-
 
 #endif

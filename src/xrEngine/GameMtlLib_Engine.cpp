@@ -54,7 +54,6 @@ void CreateMarks(IWallMarkArray* pMarks, LPCSTR buf)
         pMarks->AppendMark(_GetItem(buf, k, tmp));
 }
 
-
 void CreatePSs(PSVec& lst, LPCSTR buf)
 {
     string256 tmp;
@@ -72,8 +71,8 @@ SGameMtlPair::~SGameMtlPair()
     DestroySounds(CollideSounds);
     DestroyPSs(CollideParticles);
     // DestroyMarks (CollideMarks);
-    //RenderFactory->DestroyGameMtlPair(m_pCollideMarks);
-    //m_pCollideMarks->
+    // RenderFactory->DestroyGameMtlPair(m_pCollideMarks);
+    // m_pCollideMarks->
 }
 
 void SGameMtlPair::Load(IReader& fs)
@@ -101,6 +100,6 @@ void SGameMtlPair::Load(IReader& fs)
     fs.r_stringZ(buf);
     CreatePSs(CollideParticles, *buf);
     fs.r_stringZ(buf);
-    //CreateMarks (CollideMarks,*buf);
+    // CreateMarks (CollideMarks,*buf);
     CreateMarks(&*m_pCollideMarks, *buf);
 }

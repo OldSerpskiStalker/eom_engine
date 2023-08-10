@@ -10,7 +10,7 @@
 #include "thunderbolt.h"
 
 #ifndef _EDITOR
-# include "igame_level.h"
+#include "igame_level.h"
 #endif
 /*
 //////////////////////////////////////////////////////////////////////////
@@ -88,11 +88,12 @@ const u32 v_clouds_fvf = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_SPECULAR;
 // Environment render
 //-----------------------------------------------------------------------------
 extern ENGINE_API float psHUD_FOV;
-//BOOL bNeed_re_create_env = FALSE;
+// BOOL bNeed_re_create_env = FALSE;
 void CEnvironment::RenderSky()
 {
 #ifndef _EDITOR
-    if (0 == g_pGameLevel) return;
+    if (0 == g_pGameLevel)
+        return;
 #endif
 
     m_pRender->RenderSky(*this);
@@ -120,7 +121,8 @@ void CEnvironment::RenderSky()
     mSky.translate_over (Device.vCameraPosition);
 
     u32 i_offset,v_offset;
-    u32 C = color_rgba(iFloor(CurrentEnv->sky_color.x*255.f), iFloor(CurrentEnv->sky_color.y*255.f), iFloor(CurrentEnv->sky_color.z*255.f), iFloor(CurrentEnv->weight*255.f));
+    u32 C = color_rgba(iFloor(CurrentEnv->sky_color.x*255.f), iFloor(CurrentEnv->sky_color.y*255.f),
+    iFloor(CurrentEnv->sky_color.z*255.f), iFloor(CurrentEnv->weight*255.f));
 
     // Fill index buffer
     u16* pib = RCache.Index.Lock (20*3,i_offset);
@@ -148,10 +150,12 @@ void CEnvironment::RenderSky()
 void CEnvironment::RenderClouds()
 {
 #ifndef _EDITOR
-    if (0 == g_pGameLevel) return;
+    if (0 == g_pGameLevel)
+        return;
 #endif
     // draw clouds
-    if (fis_zero(CurrentEnv->clouds_color.w, EPS_L)) return;
+    if (fis_zero(CurrentEnv->clouds_color.w, EPS_L))
+        return;
 
     m_pRender->RenderClouds(*this);
     /*
@@ -171,7 +175,8 @@ void CEnvironment::RenderClouds()
     wind_dir.set (wd0.x,wd0.z,wd1.x,wd1.z).mul(0.5f).add(0.5f).mul(255.f);
     u32 i_offset,v_offset;
     u32 C0 = color_rgba(iFloor(wind_dir.x),iFloor(wind_dir.y),iFloor(wind_dir.w),iFloor(wind_dir.z));
-    u32 C1 = color_rgba(iFloor(CurrentEnv->clouds_color.x*255.f),iFloor(CurrentEnv->clouds_color.y*255.f),iFloor(CurrentEnv->clouds_color.z*255.f),iFloor(CurrentEnv->clouds_color.w*255.f));
+    u32 C1 =
+    color_rgba(iFloor(CurrentEnv->clouds_color.x*255.f),iFloor(CurrentEnv->clouds_color.y*255.f),iFloor(CurrentEnv->clouds_color.z*255.f),iFloor(CurrentEnv->clouds_color.w*255.f));
 
     // Fill index buffer
     u16* pib = RCache.Index.Lock (CloudsIndices.size(),i_offset);
@@ -198,7 +203,8 @@ void CEnvironment::RenderClouds()
 void CEnvironment::RenderFlares()
 {
 #ifndef _EDITOR
-    if (0 == g_pGameLevel) return;
+    if (0 == g_pGameLevel)
+        return;
 #endif
     // 1
     eff_LensFlare->Render(FALSE, TRUE, TRUE);
@@ -207,7 +213,8 @@ void CEnvironment::RenderFlares()
 void CEnvironment::RenderLast()
 {
 #ifndef _EDITOR
-    if (0 == g_pGameLevel) return;
+    if (0 == g_pGameLevel)
+        return;
 #endif
     // 2
     eff_Rain->Render();
@@ -244,7 +251,6 @@ void CEnvironment::OnDeviceCreate()
                 (*it)->on_device_create();
     }
 
-
     Invalidate();
     OnFrame();
 }
@@ -280,7 +286,6 @@ void CEnvironment::OnDeviceDestroy()
                 (*it)->on_device_destroy();
     }
     CurrentEnv->destroy();
-
 }
 
 #ifdef _EDITOR
@@ -290,4 +295,3 @@ void CEnvironment::ED_Reload()
     OnDeviceCreate();
 }
 #endif
-

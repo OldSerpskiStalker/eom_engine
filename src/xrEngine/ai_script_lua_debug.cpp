@@ -57,33 +57,27 @@ void Script::vfPrintError(CLuaVirtualMachine* tpLuaVirtualMachine, int iErrorCod
 {
     switch (iErrorCode)
     {
-    case LUA_ERRRUN:
-    {
+    case LUA_ERRRUN: {
         Msg("! SCRIPT RUNTIME ERROR");
         break;
     }
-    case LUA_ERRMEM:
-    {
+    case LUA_ERRMEM: {
         Msg("! SCRIPT ERROR (memory allocation)");
         break;
     }
-    case LUA_ERRERR:
-    {
+    case LUA_ERRERR: {
         Msg("! SCRIPT ERROR (while running the error handler function)");
         break;
     }
-    case LUA_ERRFILE:
-    {
+    case LUA_ERRFILE: {
         Msg("! SCRIPT ERROR (while running file)");
         break;
     }
-    case LUA_ERRSYNTAX:
-    {
+    case LUA_ERRSYNTAX: {
         Msg("! SCRIPT SYNTAX ERROR");
         break;
     }
-    default:
-        NODEFAULT;
+    default: NODEFAULT;
     }
 
     for (int i = 0;; ++i)
@@ -98,21 +92,15 @@ LPCSTR Script::cafEventToString(int iEventCode)
 {
     switch (iEventCode)
     {
-    case LUA_HOOKCALL:
-        return("hook call");
-    case LUA_HOOKRET:
-        return("hook return");
-    case LUA_HOOKLINE:
-        return("hook line");
-    case LUA_HOOKCOUNT:
-        return("hook count");
-    case LUA_HOOKTAILRET:
-        return("hook tail return");
-    default:
-        NODEFAULT;
+    case LUA_HOOKCALL: return ("hook call");
+    case LUA_HOOKRET: return ("hook return");
+    case LUA_HOOKLINE: return ("hook line");
+    case LUA_HOOKCOUNT: return ("hook count");
+    case LUA_HOOKTAILRET: return ("hook tail return");
+    default: NODEFAULT;
     }
 #ifdef DEBUG
-    return(0);
+    return (0);
 #endif
 }
 

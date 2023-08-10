@@ -63,10 +63,7 @@ public:
 
 private:
     typedef editor::property_holder property_holder_type;
-    typedef property_collection <
-    ambient_container_type,
-    manager
-    > collection_type;
+    typedef property_collection<ambient_container_type, manager> collection_type;
 
 private:
     ambient_container_type m_ambients;

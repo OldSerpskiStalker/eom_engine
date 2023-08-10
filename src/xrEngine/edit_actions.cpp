@@ -14,19 +14,11 @@
 namespace text_editor
 {
 
-base::base() : m_previous_action(NULL)
-{
-}
+base::base() : m_previous_action(NULL) {}
 
-base::~base()
-{
-    xr_delete(m_previous_action);
-}
+base::~base() { xr_delete(m_previous_action); }
 
-void base::on_assign(base* const prev_action)
-{
-    m_previous_action = prev_action;
-}
+void base::on_assign(base* const prev_action) { m_previous_action = prev_action; }
 
 void base::on_key_press(line_edit_control* const control)
 {
@@ -44,9 +36,7 @@ callback_base::callback_base(Callback const& callback, key_state state)
     m_run_state = state;
 }
 
-callback_base::~callback_base()
-{
-}
+callback_base::~callback_base() {}
 
 void callback_base::on_key_press(line_edit_control* const control)
 {
@@ -60,14 +50,9 @@ void callback_base::on_key_press(line_edit_control* const control)
 
 // -------------------------------------------------------------------------------------------------
 
-type_pair::type_pair(u32 dik, char c, char c_shift, bool b_translate)
-{
-    init(dik, c, c_shift, b_translate);
-}
+type_pair::type_pair(u32 dik, char c, char c_shift, bool b_translate) { init(dik, c, c_shift, b_translate); }
 
-type_pair::~type_pair()
-{
-}
+type_pair::~type_pair() {}
 
 void type_pair::init(u32 dik, char c, char c_shift, bool b_translate)
 {
@@ -76,7 +61,6 @@ void type_pair::init(u32 dik, char c, char c_shift, bool b_translate)
     m_char = c;
     m_char_shift = c_shift;
 }
-
 
 void type_pair::on_key_press(line_edit_control* const control)
 {
@@ -110,7 +94,7 @@ void type_pair::on_key_press(line_edit_control* const control)
             }
         }
 
-        //setlocale( LC_ALL, "C" ); // restore to ANSI
+        // setlocale( LC_ALL, "C" ); // restore to ANSI
 
         if (control->get_key_state(ks_Shift) != control->get_key_state(ks_CapsLock))
         {
@@ -130,15 +114,9 @@ void type_pair::on_key_press(line_edit_control* const control)
 
 // -------------------------------------------------------------------------------------------------
 
-key_state_base::key_state_base(key_state state, base* type_pair)
-    :m_type_pair(type_pair), m_state(state)
-{
-}
+key_state_base::key_state_base(key_state state, base* type_pair) : m_type_pair(type_pair), m_state(state) {}
 
-key_state_base::~key_state_base()
-{
-    xr_delete(m_type_pair);
-}
+key_state_base::~key_state_base() { xr_delete(m_type_pair); }
 
 void key_state_base::on_key_press(line_edit_control* const control)
 {

@@ -32,18 +32,9 @@ static inline editor::color create_color(float const& r, float const& g, float c
     return (result);
 }
 
-time::time(
-    editor::environment::manager* manager,
-    weather const* weather,
-    shared_str const& id
-) :
-    CEnvDescriptorMixer(id),
-    m_manager(*manager),
-    m_weather(weather),
-    m_property_holder(0),
-    m_ambient(""),
-    m_sun(""),
-    m_thunderbolt_collection("")
+time::time(editor::environment::manager* manager, weather const* weather, shared_str const& id)
+    : CEnvDescriptorMixer(id), m_manager(*manager), m_weather(weather), m_property_holder(0), m_ambient(""), m_sun(""),
+      m_thunderbolt_collection("")
 {
 }
 
@@ -66,9 +57,8 @@ void time::load(CInifile& config)
 {
     // Ivector3 tm ={0,0,0};
     // sscanf (m_identifier.c_str(),"%d:%d:%d",&tm.x,&tm.y,&tm.z);
-    // R_ASSERT3 ((tm.x>=0)&&(tm.x<24)&&(tm.y>=0)&&(tm.y<60)&&(tm.z>=0)&&(tm.z<60),"Incorrect weather time",m_identifier.c_str());
-    // exec_time = tm.x*3600.f+tm.y*60.f+tm.z;
-    // exec_time_loaded = exec_time;
+    // R_ASSERT3 ((tm.x>=0)&&(tm.x<24)&&(tm.y>=0)&&(tm.y<60)&&(tm.z>=0)&&(tm.z<60),"Incorrect weather
+    // time",m_identifier.c_str()); exec_time = tm.x*3600.f+tm.y*60.f+tm.z; exec_time_loaded = exec_time;
 
     m_ambient = config.r_string(m_identifier, "ambient");
     // ambient = config.r_fvector3(m_identifier, "ambient_color");
@@ -142,10 +132,7 @@ void time::save(CInifile& config)
     config.w_fvector4(m_identifier.c_str(), "clouds_color", clouds_color);
 }
 
-LPCSTR time::id_getter() const
-{
-    return (m_identifier.c_str());
-}
+LPCSTR time::id_getter() const { return (m_identifier.c_str()); }
 
 void time::id_setter(LPCSTR value_)
 {
@@ -159,35 +146,17 @@ void time::id_setter(LPCSTR value_)
         m_identifier = value;
 }
 
-LPCSTR const* time::ambients_collection()
-{
-    return (&*m_manager.ambients().ambients_ids().begin());
-}
+LPCSTR const* time::ambients_collection() { return (&*m_manager.ambients().ambients_ids().begin()); }
 
-u32 time::ambients_collection_size()
-{
-    return (m_manager.ambients().ambients_ids().size());
-}
+u32 time::ambients_collection_size() { return (m_manager.ambients().ambients_ids().size()); }
 
-LPCSTR const* time::suns_collection()
-{
-    return (&*m_manager.suns().suns_ids().begin());
-}
+LPCSTR const* time::suns_collection() { return (&*m_manager.suns().suns_ids().begin()); }
 
-u32 time::suns_collection_size()
-{
-    return (m_manager.suns().suns_ids().size());
-}
+u32 time::suns_collection_size() { return (m_manager.suns().suns_ids().size()); }
 
-LPCSTR const* time::thunderbolts_collection()
-{
-    return (&*m_manager.thunderbolts().collections_ids().begin());
-}
+LPCSTR const* time::thunderbolts_collection() { return (&*m_manager.thunderbolts().collections_ids().begin()); }
 
-u32 time::thunderbolts_collection_size()
-{
-    return (m_manager.thunderbolts().collections_ids().size());
-}
+u32 time::thunderbolts_collection_size() { return (m_manager.thunderbolts().collections_ids().size()); }
 
 float time::sun_altitude_getter() const
 {
@@ -217,10 +186,7 @@ void time::sun_longitude_setter(float value)
     sun_dir.setHP(y, deg2rad(value));
 }
 
-LPCSTR time::ambient_getter() const
-{
-    return (m_ambient.c_str());
-}
+LPCSTR time::ambient_getter() const { return (m_ambient.c_str()); }
 
 void time::ambient_setter(LPCSTR value)
 {
@@ -231,10 +197,7 @@ void time::ambient_setter(LPCSTR value)
     env_ambient = m_manager.AppendEnvAmb(value);
 }
 
-LPCSTR time::sun_getter() const
-{
-    return (m_sun.c_str());
-}
+LPCSTR time::sun_getter() const { return (m_sun.c_str()); }
 
 void time::sun_setter(LPCSTR value)
 {
@@ -245,10 +208,7 @@ void time::sun_setter(LPCSTR value)
     lens_flare_id = m_manager.eff_LensFlare->AppendDef(m_manager, m_manager.m_suns_config, value);
 }
 
-LPCSTR time::thunderbolt_getter() const
-{
-    return (m_thunderbolt_collection.c_str());
-}
+LPCSTR time::thunderbolt_getter() const { return (m_thunderbolt_collection.c_str()); }
 
 void time::thunderbolt_setter(LPCSTR value)
 {
@@ -256,13 +216,11 @@ void time::thunderbolt_setter(LPCSTR value)
         return;
 
     m_thunderbolt_collection = value;
-    tb_id = m_manager.eff_Thunderbolt->AppendDef(m_manager, m_manager.m_thunderbolt_collections_config, m_manager.m_thunderbolts_config, value);
+    tb_id = m_manager.eff_Thunderbolt->AppendDef(
+        m_manager, m_manager.m_thunderbolt_collections_config, m_manager.m_thunderbolts_config, value);
 }
 
-LPCSTR time::sky_texture_getter() const
-{
-    return (sky_texture_name.c_str());
-}
+LPCSTR time::sky_texture_getter() const { return (sky_texture_name.c_str()); }
 
 void time::sky_texture_setter(LPCSTR value)
 {
@@ -277,10 +235,7 @@ void time::sky_texture_setter(LPCSTR value)
     m_pDescriptor->OnDeviceCreate(*this);
 }
 
-LPCSTR time::clouds_texture_getter() const
-{
-    return (clouds_texture_name.c_str());
-}
+LPCSTR time::clouds_texture_getter() const { return (clouds_texture_name.c_str()); }
 
 void time::clouds_texture_setter(LPCSTR value)
 {
@@ -291,25 +246,13 @@ void time::clouds_texture_setter(LPCSTR value)
     m_pDescriptor->OnDeviceCreate(*this);
 }
 
-float time::sky_rotation_getter() const
-{
-    return (rad2deg(sky_rotation));
-}
+float time::sky_rotation_getter() const { return (rad2deg(sky_rotation)); }
 
-void time::sky_rotation_setter(float value)
-{
-    sky_rotation = deg2rad(value);
-}
+void time::sky_rotation_setter(float value) { sky_rotation = deg2rad(value); }
 
-float time::wind_direction_getter() const
-{
-    return (rad2deg(wind_direction));
-}
+float time::wind_direction_getter() const { return (rad2deg(wind_direction)); }
 
-void time::wind_direction_setter(float value)
-{
-    wind_direction = deg2rad(value);
-}
+void time::wind_direction_setter(float value) { wind_direction = deg2rad(value); }
 
 void time::fill(editor::property_holder_collection* collection)
 {
@@ -324,31 +267,13 @@ void time::fill(editor::property_holder_collection* collection)
     string_setter_type string_setter;
     string_setter.bind(this, &time::id_setter);
 
-    m_property_holder->add_property(
-        "id",
-        "properties",
-        "this option is resposible for time interval",
-        m_identifier.c_str(),
-        string_getter,
-        string_setter
-    );
+    m_property_holder->add_property("id", "properties", "this option is resposible for time interval",
+        m_identifier.c_str(), string_getter, string_setter);
 
-    m_property_holder->add_property(
-        "color",
-        "sun",
-        "this option is resposible for sun color",
-        (editor::color const&)sun_color,
-        (editor::color&)sun_color
-    );
-    m_property_holder->add_property(
-        "shafts intensity",
-        "sun",
-        "this option is resposible for sun shafts intensity",
-        m_fSunShaftsIntensity,
-        m_fSunShaftsIntensity,
-        0.f,
-        1.f
-    );
+    m_property_holder->add_property("color", "sun", "this option is resposible for sun color",
+        (editor::color const&)sun_color, (editor::color&)sun_color);
+    m_property_holder->add_property("shafts intensity", "sun", "this option is resposible for sun shafts intensity",
+        m_fSunShaftsIntensity, m_fSunShaftsIntensity, 0.f, 1.f);
 
     typedef editor::property_holder::float_getter_type float_getter_type;
     float_getter_type sun_altitude_getter;
@@ -358,16 +283,8 @@ void time::fill(editor::property_holder_collection* collection)
     float_setter_type sun_altitude_setter;
     sun_altitude_setter.bind(this, &time::sun_altitude_setter);
 
-    m_property_holder->add_property(
-        "altitude",
-        "sun",
-        "this option is resposible for sun altitude (in degrees)",
-        sun_altitude_getter(),
-        sun_altitude_getter,
-        sun_altitude_setter,
-        -360.f,
-        360.f
-    );
+    m_property_holder->add_property("altitude", "sun", "this option is resposible for sun altitude (in degrees)",
+        sun_altitude_getter(), sun_altitude_getter, sun_altitude_setter, -360.f, 360.f);
 
     float_getter_type sun_longitude_getter;
     sun_longitude_getter.bind(this, &time::sun_longitude_getter);
@@ -375,16 +292,8 @@ void time::fill(editor::property_holder_collection* collection)
     float_setter_type sun_longitude_setter;
     sun_longitude_setter.bind(this, &time::sun_longitude_setter);
 
-    m_property_holder->add_property(
-        "longitude",
-        "sun",
-        "this option is resposible for sun longitude (in degrees)",
-        sun_longitude_getter(),
-        sun_longitude_getter,
-        sun_longitude_setter,
-        -360.f,
-        360.f
-    );
+    m_property_holder->add_property("longitude", "sun", "this option is resposible for sun longitude (in degrees)",
+        sun_longitude_getter(), sun_longitude_getter, sun_longitude_setter, -360.f, 360.f);
 
     typedef editor::property_holder::string_collection_getter_type collection_getter_type;
     collection_getter_type collection_getter;
@@ -394,17 +303,9 @@ void time::fill(editor::property_holder_collection* collection)
 
     collection_getter.bind(this, &time::suns_collection);
     collection_size_getter.bind(this, &time::suns_collection_size);
-    m_property_holder->add_property(
-        "sun",
-        "sun",
-        "this option is resposible for ambient",
-        m_sun.c_str(),
-        m_sun,
-        collection_getter,
-        collection_size_getter,
-        editor::property_holder::value_editor_combo_box,
-        editor::property_holder::cannot_enter_text
-    );
+    m_property_holder->add_property("sun", "sun", "this option is resposible for ambient", m_sun.c_str(), m_sun,
+        collection_getter, collection_size_getter, editor::property_holder::value_editor_combo_box,
+        editor::property_holder::cannot_enter_text);
 
     string_getter_type sky_texture_getter;
     sky_texture_getter.bind(this, &time::sky_texture_getter);
@@ -412,36 +313,16 @@ void time::fill(editor::property_holder_collection* collection)
     string_setter_type sky_texture_setter;
     sky_texture_setter.bind(this, &time::sky_texture_setter);
 
-    m_property_holder->add_property(
-        "texture",
-        "hemisphere",
-        "this option is resposible for sky texture",
-        sky_texture_name.c_str(),
-        sky_texture_getter,
-        sky_texture_setter,
-        ".dds",
-        "Texture files (*.dds)|*.dds",
-        detail::real_path("$game_textures$", "").c_str(),
-        "Select texture...",
-        editor::property_holder::cannot_enter_text,
-        editor::property_holder::remove_extension
-    );
+    m_property_holder->add_property("texture", "hemisphere", "this option is resposible for sky texture",
+        sky_texture_name.c_str(), sky_texture_getter, sky_texture_setter, ".dds", "Texture files (*.dds)|*.dds",
+        detail::real_path("$game_textures$", "").c_str(), "Select texture...",
+        editor::property_holder::cannot_enter_text, editor::property_holder::remove_extension);
 
-    m_property_holder->add_property(
-        "sky color",
-        "hemisphere",
-        "this option is resposible for sky color",
-        (editor::color const&)sky_color,
-        (editor::color&)sky_color
-    );
+    m_property_holder->add_property("sky color", "hemisphere", "this option is resposible for sky color",
+        (editor::color const&)sky_color, (editor::color&)sky_color);
 
-    m_property_holder->add_property(
-        "hemi color",
-        "hemisphere",
-        "this option is resposible for hemisphere color",
-        (editor::color const&)hemi_color,
-        (editor::color&)hemi_color
-    );
+    m_property_holder->add_property("hemi color", "hemisphere", "this option is resposible for hemisphere color",
+        (editor::color const&)hemi_color, (editor::color&)hemi_color);
 
     typedef ::editor::property_holder::float_getter_type float_getter_type;
     float_getter_type float_getter;
@@ -451,185 +332,67 @@ void time::fill(editor::property_holder_collection* collection)
 
     float_getter.bind(this, &time::sky_rotation_getter);
     float_setter.bind(this, &time::sky_rotation_setter);
-    m_property_holder->add_property(
-        "sky rotation",
-        "hemisphere",
-        "this option is resposible for sky rotation",
-        sky_rotation,
-        float_getter,
-        float_setter,
-        -360.0f,
-        360.f
-    );
+    m_property_holder->add_property("sky rotation", "hemisphere", "this option is resposible for sky rotation",
+        sky_rotation, float_getter, float_setter, -360.0f, 360.f);
 
     string_getter.bind(this, &time::clouds_texture_getter);
     string_setter.bind(this, &time::clouds_texture_setter);
-    m_property_holder->add_property(
-        "texture",
-        "clouds",
-        "this option is resposible for clouds texture",
-        clouds_texture_name.c_str(),
-        string_getter,
-        string_setter,
-        ".dds",
-        "Texture files (*.dds)|*.dds",
-        detail::real_path("$game_textures$", "").c_str(),
-        "Select texture...",
-        editor::property_holder::cannot_enter_text,
-        editor::property_holder::remove_extension
-    );
+    m_property_holder->add_property("texture", "clouds", "this option is resposible for clouds texture",
+        clouds_texture_name.c_str(), string_getter, string_setter, ".dds", "Texture files (*.dds)|*.dds",
+        detail::real_path("$game_textures$", "").c_str(), "Select texture...",
+        editor::property_holder::cannot_enter_text, editor::property_holder::remove_extension);
 
-    m_property_holder->add_property(
-        "color",
-        "clouds",
-        "this option is resposible for clouds color",
-        (editor::color const&)clouds_color,
-        (editor::color&)clouds_color
-    );
+    m_property_holder->add_property("color", "clouds", "this option is resposible for clouds color",
+        (editor::color const&)clouds_color, (editor::color&)clouds_color);
 
-    m_property_holder->add_property(
-        "transparency",
-        "clouds",
-        "this option is resposible for clouds transparency",
-        clouds_color.w,
-        clouds_color.w,
-        0.f,
-        1.f
-    );
+    m_property_holder->add_property("transparency", "clouds", "this option is resposible for clouds transparency",
+        clouds_color.w, clouds_color.w, 0.f, 1.f);
 
-    m_property_holder->add_property(
-        "color",
-        "ambient",
-        "this option is resposible for ambient color",
-        (editor::color const&)ambient,
-        (editor::color&)ambient
-    );
+    m_property_holder->add_property("color", "ambient", "this option is resposible for ambient color",
+        (editor::color const&)ambient, (editor::color&)ambient);
 
     collection_getter.bind(this, &time::ambients_collection);
     collection_size_getter.bind(this, &time::ambients_collection_size);
 
     string_getter.bind(this, &time::ambient_getter);
     string_setter.bind(this, &time::ambient_setter);
-    m_property_holder->add_property(
-        "ambient",
-        "ambient",
-        "this option is resposible for ambient",
-        m_ambient.c_str(),
-        string_getter,
-        string_setter,
-        collection_getter,
-        collection_size_getter,
-        editor::property_holder::value_editor_combo_box,
-        editor::property_holder::cannot_enter_text
-    );
+    m_property_holder->add_property("ambient", "ambient", "this option is resposible for ambient", m_ambient.c_str(),
+        string_getter, string_setter, collection_getter, collection_size_getter,
+        editor::property_holder::value_editor_combo_box, editor::property_holder::cannot_enter_text);
 
+    m_property_holder->add_property("color", "fog", "this option is resposible for fog density (0..1)",
+        (editor::color const&)fog_color, (editor::color&)fog_color);
     m_property_holder->add_property(
-        "color",
-        "fog",
-        "this option is resposible for fog density (0..1)",
-        (editor::color const&)fog_color,
-        (editor::color&)fog_color
-    );
+        "far plane", "fog", "this option is resposible for far plane", far_plane, far_plane);
+    m_property_holder->add_property("distance", "fog",
+        "this option is resposible for fog distance (shoudl be less than far plane)", fog_distance, fog_distance);
     m_property_holder->add_property(
-        "far plane",
-        "fog",
-        "this option is resposible for far plane",
-        far_plane,
-        far_plane
-    );
-    m_property_holder->add_property(
-        "distance",
-        "fog",
-        "this option is resposible for fog distance (shoudl be less than far plane)",
-        fog_distance,
-        fog_distance
-    );
-    m_property_holder->add_property(
-        "density",
-        "fog",
-        "this option is resposible for fog density (0..1)",
-        fog_density,
-        fog_density,
-        0.f,
-        1.f
-    );
-    m_property_holder->add_property(
-        "water intensity",
-        "fog",
-        "this option is resposible for water intensity (0..1)",
-        m_fWaterIntensity,
-        m_fWaterIntensity,
-        0.f,
-        1.f
-    );
+        "density", "fog", "this option is resposible for fog density (0..1)", fog_density, fog_density, 0.f, 1.f);
+    m_property_holder->add_property("water intensity", "fog", "this option is resposible for water intensity (0..1)",
+        m_fWaterIntensity, m_fWaterIntensity, 0.f, 1.f);
 
-    m_property_holder->add_property(
-        "rain color",
-        "rain",
-        "this option is resposible for rain color",
-        (editor::color const&)rain_color,
-        (editor::color&)rain_color
-    );
-    m_property_holder->add_property(
-        "rain density",
-        "rain",
-        "this option is resposible for rain density (0..1)",
-        rain_density,
-        rain_density,
-        0.f,
-        1.f
-    );
+    m_property_holder->add_property("rain color", "rain", "this option is resposible for rain color",
+        (editor::color const&)rain_color, (editor::color&)rain_color);
+    m_property_holder->add_property("rain density", "rain", "this option is resposible for rain density (0..1)",
+        rain_density, rain_density, 0.f, 1.f);
 
     collection_getter.bind(this, &time::thunderbolts_collection);
     collection_size_getter.bind(this, &time::thunderbolts_collection_size);
-    m_property_holder->add_property(
-        "collection",
-        "thunderbolts",
-        "this option is resposible for ambient",
-        m_thunderbolt_collection.c_str(),
-        m_thunderbolt_collection,
-        collection_getter,
-        collection_size_getter,
-        editor::property_holder::value_editor_combo_box,
-        editor::property_holder::cannot_enter_text
-    );
+    m_property_holder->add_property("collection", "thunderbolts", "this option is resposible for ambient",
+        m_thunderbolt_collection.c_str(), m_thunderbolt_collection, collection_getter, collection_size_getter,
+        editor::property_holder::value_editor_combo_box, editor::property_holder::cannot_enter_text);
 
     m_property_holder->add_property(
-        "duration",
-        "thunderbolts",
-        "this option is resposible for thunderbolt duration",
-        bolt_duration,
-        bolt_duration
-    );
+        "duration", "thunderbolts", "this option is resposible for thunderbolt duration", bolt_duration, bolt_duration);
     m_property_holder->add_property(
-        "period",
-        "thunderbolts",
-        "this option is resposible for thunderbolt period",
-        bolt_period,
-        bolt_period
-    );
+        "period", "thunderbolts", "this option is resposible for thunderbolt period", bolt_period, bolt_period);
 
     float_getter.bind(this, &time::wind_direction_getter);
     float_setter.bind(this, &time::wind_direction_setter);
-    m_property_holder->add_property(
-        "direction",
-        "wind",
-        "this option is resposible for wind direction (in degrees)",
-        wind_direction,
-        float_getter,
-        float_setter,
-        -360.f,
-        360.f
-    );
-    m_property_holder->add_property(
-        "velocity",
-        "wind",
-        "this option is resposible for wind velocity (meters per second)",
-        wind_velocity,
-        wind_velocity,
-        0.f,
-        1000.f
-    );
+    m_property_holder->add_property("direction", "wind", "this option is resposible for wind direction (in degrees)",
+        wind_direction, float_getter, float_setter, -360.f, 360.f);
+    m_property_holder->add_property("velocity", "wind",
+        "this option is resposible for wind velocity (meters per second)", wind_velocity, wind_velocity, 0.f, 1000.f);
 }
 
 void time::lerp(CEnvironment* parent, CEnvDescriptor& A, CEnvDescriptor& B, float f, CEnvModifier& M, float m_power)
@@ -640,14 +403,14 @@ void time::lerp(CEnvironment* parent, CEnvDescriptor& A, CEnvDescriptor& B, floa
     if (start_time >= stop_time)
     {
         if (current_time >= start_time)
-            clamp(current_time, start_time, 24.f*60.f*60.f);
+            clamp(current_time, start_time, 24.f * 60.f * 60.f);
         else
             clamp(current_time, 0.f, stop_time);
 
         if (current_time <= stop_time)
-            current_time += 24.f*60.f*60.f;
+            current_time += 24.f * 60.f * 60.f;
 
-        stop_time += 24.f*60.f*60.f;
+        stop_time += 24.f * 60.f * 60.f;
     }
     else
         clamp(current_time, start_time, stop_time);

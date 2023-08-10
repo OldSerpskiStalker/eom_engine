@@ -29,10 +29,7 @@ namespace thunderbolts
 class manager;
 class thunderbolt_id;
 
-class collection :
-    public SThunderboltCollection,
-    public editor::property_holder_holder,
-    private boost::noncopyable
+class collection : public SThunderboltCollection, public editor::property_holder_holder, private boost::noncopyable
 {
 public:
     collection(manager const& manager, shared_str const& id);
@@ -42,10 +39,10 @@ public:
     void fill(editor::property_holder_collection* collection);
     inline LPCSTR id() const { return section.c_str(); }
 
-
 private:
     LPCSTR xr_stdcall id_getter() const;
     void xr_stdcall id_setter(LPCSTR value);
+
 private:
     typedef editor::property_holder property_holder_type;
 

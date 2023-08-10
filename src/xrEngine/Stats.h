@@ -21,9 +21,7 @@ public:
     CStatTimer Physics; // movement+collision
 };
 
-class ENGINE_API CStats :
-    public pureRender,
-    public CStatsPhysics
+class ENGINE_API CStats : public pureRender, public CStatsPhysics
 {
 public:
     CGameFont* pFont;
@@ -69,13 +67,13 @@ public:
     CStatTimer RenderDUMP_Glows; // ...glows vis-testing,sorting,render
     CStatTimer RenderDUMP_Lights; // ...d-lights building/rendering
     CStatTimer RenderDUMP_WM; // ...wallmark sorting, rendering
-    u32 RenderDUMP_WMS_Count;// ...number of static wallmark
-    u32 RenderDUMP_WMD_Count;// ...number of dynamic wallmark
-    u32 RenderDUMP_WMT_Count;// ...number of wallmark tri
+    u32 RenderDUMP_WMS_Count; // ...number of static wallmark
+    u32 RenderDUMP_WMD_Count; // ...number of dynamic wallmark
+    u32 RenderDUMP_WMT_Count; // ...number of wallmark tri
     CStatTimer RenderDUMP_DT_VIS; // ...details visibility detection
-    CStatTimer RenderDUMP_DT_Render;// ...details rendering
-    CStatTimer RenderDUMP_DT_Cache;// ...details slot cache access
-    u32 RenderDUMP_DT_Count;// ...number of DT-elements
+    CStatTimer RenderDUMP_DT_Render; // ...details rendering
+    CStatTimer RenderDUMP_DT_Cache; // ...details slot cache access
+    u32 RenderDUMP_DT_Count; // ...number of DT-elements
     CStatTimer RenderDUMP_Pcalc; // ...projectors building
     CStatTimer RenderDUMP_Scalc; // ...shadows building
     CStatTimer RenderDUMP_Srender; // ...shadows render
@@ -92,8 +90,6 @@ public:
     CStatTimer netClientCompressor;
     CStatTimer netServerCompressor;
 
-
-
     CStatTimer TEST0; // debug counter
     CStatTimer TEST1; // debug counter
     CStatTimer TEST2; // debug counter
@@ -107,9 +103,11 @@ public:
     virtual void OnRender();
     void OnDeviceCreate(void);
     void OnDeviceDestroy(void);
+
 public:
-    xr_vector <shared_str> errors;
-    CRegistrator <pureStats> seqStats;
+    xr_vector<shared_str> errors;
+    CRegistrator<pureStats> seqStats;
+
 public:
     CStats();
     ~CStats();

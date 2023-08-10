@@ -19,7 +19,7 @@
 #include "xrEngine/x_ray.h"
 
 #include "ui\UICellItem.h" //Alundaio
-//#include "script_game_object.h" //Alundaio
+// #include "script_game_object.h" //Alundaio
 
 EGameIDs ParseStringToGameType(const char* str);
 
@@ -27,10 +27,7 @@ struct predicate_find_stat
 {
     const char* id;
     predicate_find_stat(const char* id) { this->id = id; }
-    bool operator()(StaticDrawableWrapper* s)
-    {
-        return s->m_name == id;
-    }
+    bool operator()(StaticDrawableWrapper* s) { return s->m_name == id; }
 };
 
 CUIGameCustom::CUIGameCustom()
@@ -58,8 +55,7 @@ void CUIGameCustom::OnFrame()
     CDialogHolder::OnFrame();
     for (auto item : CustomStatics)
         item->Update();
-    auto comparer = [](const StaticDrawableWrapper* s1, const StaticDrawableWrapper* s2)
-    {
+    auto comparer = [](const StaticDrawableWrapper* s1, const StaticDrawableWrapper* s2) {
         return s1->IsActual() > s2->IsActual();
     };
     std::sort(CustomStatics.begin(), CustomStatics.end(), comparer);
@@ -74,7 +70,7 @@ void CUIGameCustom::OnFrame()
         g_b_ClearGameCaptions = false;
     }
     Window->Update();
-    //update windows
+    // update windows
     if (GameIndicatorsShown() && psHUD_Flags.is(HUD_DRAW | HUD_DRAW_RT))
         UIMainIngameWnd->Update();
     m_pMessagesWnd->Update();
@@ -124,7 +120,7 @@ StaticDrawableWrapper* CUIGameCustom::AddCustomStatic(const char* id, bool singl
     xmlInit.InitStatic(*MsgConfig, id, 0, sss->m_static);
     float ttl = MsgConfig->ReadAttribFlt(id, 0, "ttl", -1.0f);
     if (ttl > 0.0f)
-        sss->m_endTime = Device.fTimeGlobal+ttl;
+        sss->m_endTime = Device.fTimeGlobal + ttl;
     return sss;
 }
 
@@ -181,32 +177,32 @@ void CUIGameCustom::HideActorMenu()
         ActorMenu->HideDialog();
 }
 
-//Alundaio:
+// Alundaio:
 void CUIGameCustom::UpdateActorMenu()
 {
-	if (ActorMenu->IsShown())
-	{
-		ActorMenu->UpdateActor();
-		ActorMenu->RefreshCurrentItemCell();
-	}
+    if (ActorMenu->IsShown())
+    {
+        ActorMenu->UpdateActor();
+        ActorMenu->RefreshCurrentItemCell();
+    }
 }
 
 CScriptGameObject* CUIGameCustom::CurrentItemAtCell()
 {
-	CUICellItem* itm = ActorMenu->CurrentItem();
-	if (!itm->m_pData)
-		return (0);
+    CUICellItem* itm = ActorMenu->CurrentItem();
+    if (!itm->m_pData)
+        return (0);
 
-	PIItem IItm = (PIItem)itm->m_pData;
-	if (!IItm)
-		return (0);
+    PIItem IItm = (PIItem)itm->m_pData;
+    if (!IItm)
+        return (0);
 
-	CGameObject* GO = smart_cast<CGameObject*>(IItm);
+    CGameObject* GO = smart_cast<CGameObject*>(IItm);
 
-	if (GO)
-		return GO->lua_game_object();
+    if (GO)
+        return GO->lua_game_object();
 
-	return (0);
+    return (0);
 }
 //-Alundaio
 
@@ -225,11 +221,11 @@ void CUIGameCustom::ShowMessagesWindow()
 bool CUIGameCustom::ShowPdaMenu()
 {
     HideActorMenu();
-	if (!PdaMenu->IsShown())
-	{
-		PdaMenu->ShowDialog(true);
-		return true;
-	}
+    if (!PdaMenu->IsShown())
+    {
+        PdaMenu->ShowDialog(true);
+        return true;
+    }
     return false;
 }
 
@@ -239,10 +235,7 @@ void CUIGameCustom::HidePdaMenu()
         PdaMenu->HideDialog();
 }
 
-void CUIGameCustom::SetClGame(game_cl_GameState* gameState)
-{
-    gameState->SetGameUI(this);
-}
+void CUIGameCustom::SetClGame(game_cl_GameState* gameState) { gameState->SetGameUI(this); }
 
 void CUIGameCustom::UnLoad()
 {
@@ -286,15 +279,9 @@ void CUIGameCustom::OnConnected()
     UIMainIngameWnd->OnConnected();
 }
 
-void CUIGameCustom::CommonMessageOut(LPCSTR text)
-{
-    m_pMessagesWnd->AddLogMessage(text);
-}
+void CUIGameCustom::CommonMessageOut(LPCSTR text) { m_pMessagesWnd->AddLogMessage(text); }
 
-void CUIGameCustom::UpdatePda()
-{
-    GetPdaMenu().UpdatePda();
-}
+void CUIGameCustom::UpdatePda() { GetPdaMenu().UpdatePda(); }
 
 void CUIGameCustom::update_fake_indicators(u8 type, float power)
 {
@@ -312,10 +299,7 @@ StaticDrawableWrapper::StaticDrawableWrapper()
     m_endTime = -1.0f;
 }
 
-void StaticDrawableWrapper::destroy()
-{
-    delete_data(m_static);
-}
+void StaticDrawableWrapper::destroy() { delete_data(m_static); }
 
 bool StaticDrawableWrapper::IsActual() const
 {
@@ -366,7 +350,7 @@ void CMapListHelper::LoadMapInfo(const char* cfgName, const xr_string& levelName
             if (!suitableLevels)
             {
                 Msg("--unknown game type-%s", gameType.c_str());
-                m_storage.resize(m_storage.size()+1);
+                m_storage.resize(m_storage.size() + 1);
                 SGameTypeMaps& lastItem = m_storage.back();
                 lastItem.m_game_type_name = gameType;
                 lastItem.m_game_type_id = ParseStringToGameType(gameType.c_str());
@@ -396,7 +380,7 @@ void CMapListHelper::Load()
     string_path cfgFileName;
     FS.update_path(cfgFileName, "$game_config$", "mp\\map_list.ltx");
     CInifile maplistCfg(cfgFileName);
-    //read weathers set
+    // read weathers set
     CInifile::Sect weatherCfg = maplistCfg.r_section("weather");
     m_weathers.reserve(weatherCfg.Data.size());
     for (CInifile::Item& weatherDesc : weatherCfg.Data)
@@ -414,7 +398,7 @@ void CMapListHelper::Load()
         FS.update_path(cfgFileName, "$game_levels$", cfg.name.c_str());
         LoadMapInfo(cfgFileName, cfg.name);
     }
-    //scan all not loaded archieves
+    // scan all not loaded archieves
     LPCSTR tempRoot = "temporary_gamedata\\";
     FS_Path* levelsPath = FS.get_path("$game_levels$");
     xr_string prevRoot = levelsPath->m_Root;
@@ -468,10 +452,10 @@ const SGameTypeMaps& CMapListHelper::GetMapListFor(const EGameIDs gameId)
         if (maps.m_game_type_id == gameId)
             return maps;
     }
-	return m_storage[0];
+    return m_storage[0];
 }
 
-const xr_vector<MPWeatherDesc>& CMapListHelper::GetGameWeathers() 
+const xr_vector<MPWeatherDesc>& CMapListHelper::GetGameWeathers()
 {
     if (m_weathers.size() == 0)
         Load();

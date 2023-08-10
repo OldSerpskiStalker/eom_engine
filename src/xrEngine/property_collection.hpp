@@ -14,9 +14,7 @@
 #include "../xrServerEntities/object_broker.h"
 
 template <typename container_type, typename holder_type>
-class property_collection :
-    public editor::property_holder_collection,
-    private boost::noncopyable
+class property_collection : public editor::property_holder_collection, private boost::noncopyable
 {
 public:
     typedef editor::property_holder property_holder;
@@ -52,7 +50,7 @@ private:
         property_holder* m_holder;
 
         inline predicate(property_holder* holder);
-        inline bool operator() (typename container_type::value_type const& value) const;
+        inline bool operator()(typename container_type::value_type const& value) const;
     };
 
 private:
@@ -61,7 +59,7 @@ private:
         LPCSTR m_id;
 
         inline unique_id_predicate(LPCSTR id);
-        inline bool operator() (typename container_type::value_type const& value) const;
+        inline bool operator()(typename container_type::value_type const& value) const;
     };
 
 private:

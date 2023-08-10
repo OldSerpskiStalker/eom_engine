@@ -3,30 +3,25 @@
 #include "Entity.h"
 #include "WeaponCustomAuto.h"
 
-CWeaponAutoPistol::CWeaponAutoPistol() : CWeaponMagazined(SOUND_TYPE_WEAPON_PISTOL)
-{}
+CWeaponAutoPistol::CWeaponAutoPistol() : CWeaponMagazined(SOUND_TYPE_WEAPON_PISTOL) {}
 
-CWeaponAutoPistol::~CWeaponAutoPistol()
-{}
+CWeaponAutoPistol::~CWeaponAutoPistol() {}
 
 void CWeaponAutoPistol::switch2_Fire()
 {
     m_bFireSingleShot = true;
-    //bWorking					= false;
+    // bWorking					= false;
     m_iShotNum = 0;
     m_bStopedAfterQueueFired = false;
 }
 
 void CWeaponAutoPistol::FireEnd()
 {
-    //if(fShotTimeCounter<=0)
+    // if(fShotTimeCounter<=0)
     //{
-    //SetPending			(FALSE);
+    // SetPending			(FALSE);
     inherited::FireEnd();
     //}
 }
 
-void CWeaponAutoPistol::PlayAnimReload()
-{
-    inherited::PlayAnimReload();
-}
+void CWeaponAutoPistol::PlayAnimReload() { inherited::PlayAnimReload(); }

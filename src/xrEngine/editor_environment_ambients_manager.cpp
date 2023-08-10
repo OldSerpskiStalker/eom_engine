@@ -16,12 +16,13 @@
 #include "editor_environment_detail.hpp"
 #include "editor_environment_manager.hpp"
 
-using editor::environment::ambients::manager;
 using editor::environment::ambients::ambient;
+using editor::environment::ambients::manager;
 using editor::environment::detail::logical_string_predicate;
 
 template <>
-void property_collection<manager::ambient_container_type, manager>::display_name(u32 const& item_index, LPSTR const& buffer, u32 const& buffer_size)
+void property_collection<manager::ambient_container_type, manager>::display_name(
+    u32 const& item_index, LPSTR const& buffer, u32 const& buffer_size)
 {
     xr_strcpy(buffer, buffer_size, m_container[item_index]->id().c_str());
 }
@@ -34,11 +35,8 @@ editor::property_holder* property_collection<manager::ambient_container_type, ma
     return (object->object());
 }
 
-manager::manager(::editor::environment::manager const& manager) :
-    m_manager(manager),
-    m_property_holder(0),
-    m_collection(0),
-    m_changed(true)
+manager::manager(::editor::environment::manager const& manager)
+    : m_manager(manager), m_property_holder(0), m_collection(0), m_changed(true)
 {
     m_collection = xr_new<collection_type>(&m_ambients, this, &m_changed);
 }
@@ -68,11 +66,7 @@ void manager::load()
     {
         ambient* object = xr_new<ambient>(*this, (*i)->Name);
         object->load(
-            *m_manager.m_ambients_config,
-            *m_manager.m_sound_channels_config,
-            *m_manager.m_effects_config,
-            (*i)->Name
-        );
+            *m_manager.m_ambients_config, *m_manager.m_sound_channels_config, *m_manager.m_effects_config, (*i)->Name);
         object->fill(m_collection);
         m_ambients.push_back(object);
     }
@@ -82,16 +76,7 @@ void manager::save()
 {
     string_path file_name;
     CInifile* config =
-        xr_new<CInifile>(
-            FS.update_path(
-                file_name,
-                "$game_config$",
-                "environment\\ambients.ltx"
-            ),
-            FALSE,
-            FALSE,
-            TRUE
-        );
+        xr_new<CInifile>(FS.update_path(file_name, "$game_config$", "environment\\ambients.ltx"), FALSE, FALSE, TRUE);
 
     ambient_container_type::iterator i = m_ambients.begin();
     ambient_container_type::iterator e = m_ambients.end();
@@ -104,18 +89,10 @@ void manager::save()
 void manager::fill(editor::property_holder* holder)
 {
     VERIFY(holder);
-    holder->add_property(
-        "ambients",
-        "ambients",
-        "this option is resposible for ambients",
-        m_collection
-    );
+    holder->add_property("ambients", "ambients", "this option is resposible for ambients", m_collection);
 }
 
-::editor::environment::effects::manager const& manager::effects_manager() const
-{
-    return (m_manager.effects());
-}
+::editor::environment::effects::manager const& manager::effects_manager() const { return (m_manager.effects()); }
 
 ::editor::environment::sound_channels::manager const& manager::sounds_manager() const
 {

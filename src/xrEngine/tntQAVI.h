@@ -3,12 +3,12 @@
 
 #include <math.h>
 
-//#include "tntTimer.h"
+// #include "tntTimer.h"
 #include "vfw.h"
 #include "mmsystem.h"
 
 // replaced with standard AVIIF_KEYFRAME
-//rr #define AVIINDEX_ISKEYFRAME 0x10 // ключевой кадр
+// rr #define AVIINDEX_ISKEYFRAME 0x10 // ключевой кадр
 
 // reverse enginered AVI index v.1 format
 /*struct AviIndex {
@@ -52,7 +52,6 @@ typedef struct
     DWORD dwSampleSize;
     struct
     {
-
         WORD left;
         WORD top;
         WORD right;
@@ -65,6 +64,7 @@ class ENGINE_API CAviPlayerCustom
 {
 protected:
     CAviPlayerCustom* alpha;
+
 protected:
     AVIINDEXENTRY* m_pMovieIndex;
     BYTE* m_pMovieData;
@@ -80,7 +80,6 @@ protected:
     DWORD m_dwFrameTotal;
     DWORD m_dwFrameCurrent;
     u32 m_dwFirstFrameOffset;
-
 
     DWORD CalcFrame();
 

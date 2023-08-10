@@ -4,7 +4,7 @@
 
 #include "xrTheora_Surface_mmx.h"
 
-#pragma warning(disable:4731)
+#pragma warning(disable : 4731)
 
 #pragma pack(push)
 #pragma pack(1)
@@ -276,6 +276,6 @@ lp_tv_uchar tv_yuv2argb(lp_tv_uchar argb_plane, tv_slong argb_width, tv_slong ar
     return argb_plane;
 } // tv_yuv2argb
 
-#pragma warning(default:4731)
+#pragma warning(default : 4731)
 
 #endif

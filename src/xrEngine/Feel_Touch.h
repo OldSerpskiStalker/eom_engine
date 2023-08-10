@@ -13,6 +13,7 @@ public:
         CObject* O;
         DWORD Expire;
     };
+
 protected:
     xr_vector<DenyTouch> feel_touch_disable;
 
@@ -30,7 +31,7 @@ public:
     virtual bool feel_touch_contact(CObject* O);
     virtual void feel_touch_update(Fvector& P, float R);
     virtual void feel_touch_deny(CObject* O, DWORD T);
-    virtual void feel_touch_new(CObject* O) { };
-    virtual void feel_touch_delete(CObject* O) { };
+    virtual void feel_touch_new(CObject* O){};
+    virtual void feel_touch_delete(CObject* O){};
 };
-};
+}; // namespace Feel

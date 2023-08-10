@@ -23,6 +23,7 @@ public:
         u32 bLIGHT_CastShadow : 1;
         u32 bLIGHT_Sharp : 1;
     };
+
 public:
     char Name[128];
     union
@@ -54,6 +55,7 @@ DEFINE_VECTOR(Shader_xrLC, Shader_xrLCVec, Shader_xrLCIt);
 class Shader_xrLC_LIB
 {
     Shader_xrLCVec library;
+
 public:
     void Load(LPCSTR name)
     {
@@ -70,7 +72,7 @@ public:
         };
 
         int count = fs->length() / sizeof(Shader_xrLC);
-        R_ASSERT(int(fs->length()) == int(count*sizeof(Shader_xrLC)));
+        R_ASSERT(int(fs->length()) == int(count * sizeof(Shader_xrLC)));
         library.resize(count);
         fs->r(&*library.begin(), fs->length());
         FS.r_close(fs);
@@ -80,7 +82,7 @@ public:
         IWriter* F = FS.w_open(name);
         if (F)
         {
-            F->w(&*library.begin(), (u32)library.size()*sizeof(Shader_xrLC));
+            F->w(&*library.begin(), (u32)library.size() * sizeof(Shader_xrLC));
             FS.w_close(F);
             return true;
         }
@@ -89,26 +91,22 @@ public:
             return false;
         }
     }
-    void Unload()
-    {
-        library.clear();
-    }
+    void Unload() { library.clear(); }
     u32 GetID(LPCSTR name)
     {
         for (Shader_xrLCIt it = library.begin(); it != library.end(); it++)
-            if (0 == stricmp(name, it->Name)) return u32(it - library.begin());
+            if (0 == stricmp(name, it->Name))
+                return u32(it - library.begin());
         return u32(-1);
     }
     Shader_xrLC* Get(LPCSTR name)
     {
         for (Shader_xrLCIt it = library.begin(); it != library.end(); it++)
-            if (0 == stricmp(name, it->Name)) return &(*it);
+            if (0 == stricmp(name, it->Name))
+                return &(*it);
         return NULL;
     }
-    Shader_xrLC* Get(int id)
-    {
-        return &library[id];
-    }
+    Shader_xrLC* Get(int id) { return &library[id]; }
     Shader_xrLC* Append(Shader_xrLC* parent = 0)
     {
         library.push_back(parent ? Shader_xrLC(*parent) : Shader_xrLC());
@@ -123,10 +121,7 @@ public:
                 break;
             }
     }
-    void Remove(int id)
-    {
-        library.erase(library.begin() + id);
-    }
+    void Remove(int id) { library.erase(library.begin() + id); }
     Shader_xrLCVec& Library() { return library; }
 };
 #endif

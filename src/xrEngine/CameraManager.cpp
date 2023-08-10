@@ -78,8 +78,7 @@ SPPInfo::SPPInfo()
     cm_influence = 0.0f;
     cm_interpolate = 0.0f;
 }
-void SPPInfo::normalize()
-{}
+void SPPInfo::normalize() {}
 
 void SPPInfo::validate(LPCSTR str)
 {
@@ -111,27 +110,21 @@ SPPInfo& SPPInfo::lerp(const SPPInfo& def, const SPPInfo& to, float factor)
     pp.duality.v += def.duality.v + (to.duality.v - def.duality.v) * factor;
     pp.gray += def.gray + (to.gray - def.gray) * factor;
     pp.blur += def.blur + (to.blur - def.blur) * factor;
-    pp.noise.intensity = to.noise.intensity;// + (to.noise.intensity - def.noise.intensity) * factor;
-    pp.noise.grain = to.noise.grain;// + (to.noise.grain - def.noise.grain) * factor;
+    pp.noise.intensity = to.noise.intensity; // + (to.noise.intensity - def.noise.intensity) * factor;
+    pp.noise.grain = to.noise.grain; // + (to.noise.grain - def.noise.grain) * factor;
     pp.noise.fps = to.noise.fps; // + (to.noise.fps - def.noise.fps) * factor;
 
-    pp.color_base.set(
-        def.color_base.r + (to.color_base.r - def.color_base.r) * factor,
+    pp.color_base.set(def.color_base.r + (to.color_base.r - def.color_base.r) * factor,
         def.color_base.g + (to.color_base.g - def.color_base.g) * factor,
-        def.color_base.b + (to.color_base.b - def.color_base.b) * factor
-    );
+        def.color_base.b + (to.color_base.b - def.color_base.b) * factor);
 
-    pp.color_gray.set(
-        def.color_gray.r + (to.color_gray.r - def.color_gray.r) * factor,
+    pp.color_gray.set(def.color_gray.r + (to.color_gray.r - def.color_gray.r) * factor,
         def.color_gray.g + (to.color_gray.g - def.color_gray.g) * factor,
-        def.color_gray.b + (to.color_gray.b - def.color_gray.b) * factor
-    );
+        def.color_gray.b + (to.color_gray.b - def.color_gray.b) * factor);
 
-    pp.color_add.set(
-        def.color_add.r + (to.color_add.r - def.color_add.r) * factor,
+    pp.color_add.set(def.color_add.r + (to.color_add.r - def.color_add.r) * factor,
         def.color_add.g + (to.color_add.g - def.color_add.g) * factor,
-        def.color_add.b + (to.color_add.b - def.color_add.b) * factor
-    );
+        def.color_add.b + (to.color_add.b - def.color_add.b) * factor);
 
     pp.cm_tex1 = to.cm_tex1;
     pp.cm_tex2 = to.cm_tex2;
@@ -226,14 +219,14 @@ void CCameraManager::RemoveCamEffector(ECamEffectorType type)
 CEffectorPP* CCameraManager::GetPPEffector(EEffectorPPType type)
 {
     for (EffectorPPIt it = m_EffectorsPP.begin(); it != m_EffectorsPP.end(); it++)
-        if ((*it)->Type() == type) return *it;
+        if ((*it)->Type() == type)
+            return *it;
     return 0;
 }
 
 ECamEffectorType CCameraManager::RequestCamEffectorId()
 {
-    for (ECamEffectorType index = (ECamEffectorType)effCustomEffectorStartID;
-         GetCamEffector(index);
+    for (ECamEffectorType index = (ECamEffectorType)effCustomEffectorStartID; GetCamEffector(index);
          index = (ECamEffectorType)(index + 1))
     {
         ;
@@ -243,8 +236,7 @@ ECamEffectorType CCameraManager::RequestCamEffectorId()
 
 EEffectorPPType CCameraManager::RequestPPEffectorId()
 {
-    for (EEffectorPPType index = (EEffectorPPType)effCustomEffectorStartID;
-         GetPPEffector(index);
+    for (EEffectorPPType index = (EEffectorPPType)effCustomEffectorStartID; GetPPEffector(index);
          index = (EEffectorPPType)(index + 1))
     {
         ;
@@ -284,24 +276,26 @@ void CCameraManager::OnEffectorReleased(SBaseEffector* e)
 
 void CCameraManager::UpdateFromCamera(const CCameraBase* C)
 {
-    Update(C->vPosition, C->vDirection, C->vNormal, C->f_fov, C->f_aspect, g_pGamePersistent->Environment().CurrentEnv->far_plane, C->m_Flags.flags);
+    Update(C->vPosition, C->vDirection, C->vNormal, C->f_fov, C->f_aspect,
+        g_pGamePersistent->Environment().CurrentEnv->far_plane, C->m_Flags.flags);
 }
 
-void CCameraManager::Update(const Fvector& P, const Fvector& D, const Fvector& N, float fFOV_Dest, float fASPECT_Dest, float fFAR_Dest, u32 flags)
+void CCameraManager::Update(const Fvector& P, const Fvector& D, const Fvector& N, float fFOV_Dest, float fASPECT_Dest,
+    float fFAR_Dest, u32 flags)
 {
 #ifdef DEBUG
     if (!Device.Paused())
     {
-        VERIFY(dbg_upd_frame != Device.dwFrame);// already updated !!!
+        VERIFY(dbg_upd_frame != Device.dwFrame); // already updated !!!
         dbg_upd_frame = Device.dwFrame;
     }
 #endif // DEBUG
     // camera
-    if (flags&CCameraBase::flPositionRigid)
+    if (flags & CCameraBase::flPositionRigid)
         m_cam_info.p.set(P);
     else
         m_cam_info.p.inertion(P, psCamInert);
-    if (flags&CCameraBase::flDirectionRigid)
+    if (flags & CCameraBase::flDirectionRigid)
     {
         m_cam_info.d.set(D);
         m_cam_info.n.set(N);
@@ -322,9 +316,9 @@ void CCameraManager::Update(const Fvector& P, const Fvector& D, const Fvector& N
     float src = 10 * Device.fTimeDelta;
     clamp(src, 0.f, 1.f);
     float dst = 1 - src;
-    m_cam_info.fFov = m_cam_info.fFov*dst + fFOV_Dest*src;
-    m_cam_info.fFar = m_cam_info.fFar*dst + fFAR_Dest*src;
-    m_cam_info.fAspect = m_cam_info.fAspect*dst + (fASPECT_Dest*aspect)*src;
+    m_cam_info.fFov = m_cam_info.fFov * dst + fFOV_Dest * src;
+    m_cam_info.fFar = m_cam_info.fFar * dst + fFAR_Dest * src;
+    m_cam_info.fAspect = m_cam_info.fAspect * dst + (fASPECT_Dest * aspect) * src;
     m_cam_info.dont_apply = false;
 
     UpdateCamEffectors();
@@ -353,7 +347,8 @@ bool CCameraManager::ProcessCameraEffector(CEffectorCam* eff)
 
 void CCameraManager::UpdateCamEffectors()
 {
-    if (m_EffectorsCam.empty()) return;
+    if (m_EffectorsCam.empty())
+        return;
     EffectorCamVec::reverse_iterator r_it = m_EffectorsCam.rbegin();
     while (r_it != m_EffectorsCam.rend())
     {
@@ -364,7 +359,7 @@ void CCameraManager::UpdateCamEffectors()
         else
         {
             // Dereferencing reverse iterator returns previous element of the list, r_it.base() returns current element
-            // So, we should use base()-1 iterator to delete just processed element. 'Previous' element would be 
+            // So, we should use base()-1 iterator to delete just processed element. 'Previous' element would be
             // automatically changed after deletion, so r_it would dereferencing to another value, no need to change it
             OnEffectorReleased(*r_it);
             auto r_to_del = r_it.base();
@@ -424,8 +419,6 @@ void CCameraManager::UpdatePPEffectors()
 
     pp_affected.validate("after applying pp");
 }
-
-
 
 void CCameraManager::ApplyDevice(float _viewport_near)
 {

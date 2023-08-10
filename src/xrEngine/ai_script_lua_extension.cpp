@@ -37,7 +37,7 @@ int __cdecl Lua::LuaOut(Lua::ELuaMessageType tLuaMessageType, LPCSTR caFormat, .
 {
 #ifndef ENGINE_BUILD
     if (!psAI_Flags.test(aiLua))
-        return(0);
+        return (0);
 #endif
 
     LPCSTR S = "", SS = "";
@@ -45,56 +45,47 @@ int __cdecl Lua::LuaOut(Lua::ELuaMessageType tLuaMessageType, LPCSTR caFormat, .
     string4096 S2;
     switch (tLuaMessageType)
     {
-    case Lua::eLuaMessageTypeInfo:
-    {
+    case Lua::eLuaMessageTypeInfo: {
         S = "* [LUA] ";
         SS = "[INFO] ";
         break;
     }
-    case Lua::eLuaMessageTypeError:
-    {
+    case Lua::eLuaMessageTypeError: {
         S = "! [LUA] ";
         SS = "[ERROR] ";
         break;
     }
-    case Lua::eLuaMessageTypeMessage:
-    {
+    case Lua::eLuaMessageTypeMessage: {
         S = "[LUA] ";
         SS = "[MESSAGE] ";
         break;
     }
-    case Lua::eLuaMessageTypeHookCall:
-    {
+    case Lua::eLuaMessageTypeHookCall: {
         S = "[LUA][HOOK_CALL] ";
         SS = "[CALL] ";
         break;
     }
-    case Lua::eLuaMessageTypeHookReturn:
-    {
+    case Lua::eLuaMessageTypeHookReturn: {
         S = "[LUA][HOOK_RETURN] ";
         SS = "[RETURN] ";
         break;
     }
-    case Lua::eLuaMessageTypeHookLine:
-    {
+    case Lua::eLuaMessageTypeHookLine: {
         S = "[LUA][HOOK_LINE] ";
         SS = "[LINE] ";
         break;
     }
-    case Lua::eLuaMessageTypeHookCount:
-    {
+    case Lua::eLuaMessageTypeHookCount: {
         S = "[LUA][HOOK_COUNT] ";
         SS = "[COUNT] ";
         break;
     }
-    case Lua::eLuaMessageTypeHookTailReturn:
-    {
+    case Lua::eLuaMessageTypeHookTailReturn: {
         S = "[LUA][HOOK_TAIL_RETURN] ";
         SS = "[TAIL_RETURN] ";
         break;
     }
-    default:
-        NODEFAULT;
+    default: NODEFAULT;
     }
 
     va_list l_tMarker;
@@ -142,10 +133,7 @@ void Script::vfLoadStandardScripts(CLuaVirtualMachine* tpLuaVM)
     xr_delete(l_tpIniFile);
 }
 
-void LuaError(lua_State* L)
-{
-    Debug.fatal(DEBUG_INFO, "LUA error: %s", lua_tostring(L, -1));
-}
+void LuaError(lua_State* L) { Debug.fatal(DEBUG_INFO, "LUA error: %s", lua_tostring(L, -1)); }
 
 void Script::vfExportToLua(CLuaVirtualMachine* tpLuaVM)
 {
@@ -221,7 +209,8 @@ bool bfCreateNamespaceTable(CLuaVirtualMachine* tpLuaVM, LPCSTR caNamespaceName)
         {
             xr_free(S2);
             lua_pop(tpLuaVM, 2);
-            LuaOut(Lua::eLuaMessageTypeError, "the namespace name %s is already being used by the non-table object!", caNamespaceName);
+            LuaOut(Lua::eLuaMessageTypeError, "the namespace name %s is already being used by the non-table object!",
+                caNamespaceName);
             return (false);
         }
         lua_remove(tpLuaVM, -2);
@@ -249,7 +238,8 @@ void vfCopyGlobals(CLuaVirtualMachine* tpLuaVM)
     }
 }
 
-bool Script::bfLoadBuffer(CLuaVirtualMachine* tpLuaVM, LPCSTR caBuffer, size_t tSize, LPCSTR caScriptName, LPCSTR caNameSpaceName)
+bool Script::bfLoadBuffer(
+    CLuaVirtualMachine* tpLuaVM, LPCSTR caBuffer, size_t tSize, LPCSTR caScriptName, LPCSTR caNameSpaceName)
 {
     int l_iErrorCode;
     if (caNameSpaceName)
@@ -284,7 +274,8 @@ bool bfDoFile(CLuaVirtualMachine* tpLuaVM, LPCSTR caScriptName, LPCSTR caNameSpa
     R_ASSERT(l_tpFileReader);
     strconcat(sizeof(l_caLuaFileName), l_caLuaFileName, "@", caScriptName);
 
-    if (!bfLoadBuffer(tpLuaVM, static_cast<LPCSTR>(l_tpFileReader->pointer()), (size_t)l_tpFileReader->length(), l_caLuaFileName, caNameSpaceName))
+    if (!bfLoadBuffer(tpLuaVM, static_cast<LPCSTR>(l_tpFileReader->pointer()), (size_t)l_tpFileReader->length(),
+            l_caLuaFileName, caNameSpaceName))
     {
         lua_pop(tpLuaVM, 4);
         FS.r_close(l_tpFileReader);
@@ -297,10 +288,10 @@ bool bfDoFile(CLuaVirtualMachine* tpLuaVM, LPCSTR caScriptName, LPCSTR caNameSpa
         lua_call(tpLuaVM, 0, 0);
         // int l_iErrorCode = lua_pcall(tpLuaVM,0,0,0);
         // if (l_iErrorCode) {
-        //#ifdef DEBUG
+        // #ifdef DEBUG
         // bfPrintOutput (tpLuaVM,caScriptName,l_iErrorCode);
         // vfPrintError (tpLuaVM,l_iErrorCode);
-        //#endif
+        // #endif
         // return (false);
         // }
     }
@@ -351,7 +342,8 @@ void vfSetNamespace(CLuaVirtualMachine* tpLuaVM)
     lua_pop(tpLuaVM, 3);
 }
 
-bool Script::bfLoadFileIntoNamespace(CLuaVirtualMachine* tpLuaVM, LPCSTR caScriptName, LPCSTR caNamespaceName, bool bCall)
+bool Script::bfLoadFileIntoNamespace(
+    CLuaVirtualMachine* tpLuaVM, LPCSTR caScriptName, LPCSTR caNamespaceName, bool bCall)
 {
     if (!bfCreateNamespaceTable(tpLuaVM, caNamespaceName))
         return (false);
@@ -371,9 +363,11 @@ bool Script::bfGetNamespaceTable(CLuaVirtualMachine* tpLuaVM, LPCSTR N)
     LPSTR S = S2;
     for (;;)
     {
-        if (!xr_strlen(S)) return (false);
+        if (!xr_strlen(S))
+            return (false);
         LPSTR S1 = strchr(S, '.');
-        if (S1) *S1 = 0;
+        if (S1)
+            *S1 = 0;
         lua_pushstring(tpLuaVM, S);
         lua_gettable(tpLuaVM, -2);
         if (lua_isnil(tpLuaVM, -1))
@@ -388,8 +382,10 @@ bool Script::bfGetNamespaceTable(CLuaVirtualMachine* tpLuaVM, LPCSTR N)
             return (false);
         }
         lua_remove(tpLuaVM, -2);
-        if (S1) S = ++S1;
-        else break;
+        if (S1)
+            S = ++S1;
+        else
+            break;
     }
     return (true);
 }

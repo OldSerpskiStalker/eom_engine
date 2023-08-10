@@ -29,10 +29,7 @@ namespace sound_channels
 class source;
 class manager;
 
-class channel :
-    public CEnvAmbient::SSndChannel,
-    public editor::property_holder_holder,
-    private boost::noncopyable
+class channel : public CEnvAmbient::SSndChannel, public editor::property_holder_holder, private boost::noncopyable
 {
 private:
     typedef CEnvAmbient::SSndChannel inherited;
@@ -49,15 +46,13 @@ public:
 private:
     LPCSTR xr_stdcall id_getter() const;
     void xr_stdcall id_setter(LPCSTR value);
+
 public:
     typedef xr_vector<source*> sound_container_type;
 
 private:
     typedef editor::property_holder property_holder_type;
-    typedef property_collection <
-    sound_container_type,
-    channel
-    > collection_type;
+    typedef property_collection<sound_container_type, channel> collection_type;
 
 public:
     virtual property_holder_type* object();

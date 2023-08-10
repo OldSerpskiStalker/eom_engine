@@ -5,7 +5,7 @@
 #include "../xrcdb/xr_area.h"
 #include "render.h"
 #include "xrLevel.h"
-//#include "fbasicvisual.h"
+// #include "fbasicvisual.h"
 #include "../Include/xrRender/RenderVisual.h"
 #include "../Include/xrRender/Kinematics.h"
 
@@ -16,7 +16,7 @@
 #include "xr_collide_form.h"
 
 #pragma warning(push)
-#pragma warning(disable:4995)
+#pragma warning(disable : 4995)
 #include <intrin.h>
 #pragma warning(pop)
 
@@ -41,13 +41,7 @@ void CObject::MakeMeCrow()
 
     u32 const device_frame_id = Device.dwFrame;
     u32 const object_frame_id = dwFrame_AsCrow;
-    if (
-        (u32)_InterlockedCompareExchange(
-            (long*)&dwFrame_AsCrow,
-            device_frame_id,
-            object_frame_id
-        ) == device_frame_id
-    )
+    if ((u32)_InterlockedCompareExchange((long*)&dwFrame_AsCrow, device_frame_id, object_frame_id) == device_frame_id)
         return;
 
     VERIFY(dwFrame_AsCrow == device_frame_id);
@@ -56,20 +50,15 @@ void CObject::MakeMeCrow()
     g_pGameLevel->Objects.o_crow(this);
 }
 
-void CObject::cName_set(shared_str N)
-{
-    NameObject = N;
-}
-void CObject::cNameSect_set(shared_str N)
-{
-    NameSection = N;
-}
-//#include "SkeletonCustom.h"
+void CObject::cName_set(shared_str N) { NameObject = N; }
+void CObject::cNameSect_set(shared_str N) { NameSection = N; }
+// #include "SkeletonCustom.h"
 void CObject::cNameVisual_set(shared_str N)
 {
     // check if equal
     if (*N && *NameVisual)
-        if (N == NameVisual) return;
+        if (N == NameVisual)
+            return;
 
     // replace model
     if (*N && N[0])
@@ -109,13 +98,15 @@ void CObject::processing_activate()
 {
     VERIFY3(255 != Props.bActiveCounter, "Invalid sequence of processing enable/disable calls: overflow", *cName());
     Props.bActiveCounter++;
-    if (0 == (Props.bActiveCounter - 1)) g_pGameLevel->Objects.o_activate(this);
+    if (0 == (Props.bActiveCounter - 1))
+        g_pGameLevel->Objects.o_activate(this);
 }
 void CObject::processing_deactivate()
 {
     VERIFY3(0 != Props.bActiveCounter, "Invalid sequence of processing enable/disable calls: underflow", *cName());
     Props.bActiveCounter--;
-    if (0 == Props.bActiveCounter) g_pGameLevel->Objects.o_sleep(this);
+    if (0 == Props.bActiveCounter)
+        g_pGameLevel->Objects.o_sleep(this);
 }
 
 void CObject::setEnabled(BOOL _enabled)
@@ -123,7 +114,8 @@ void CObject::setEnabled(BOOL _enabled)
     if (_enabled)
     {
         Props.bEnabled = 1;
-        if (collidable.model) spatial.type |= STYPE_COLLIDEABLE;
+        if (collidable.model)
+            spatial.type |= STYPE_COLLIDEABLE;
     }
     else
     {
@@ -137,7 +129,8 @@ void CObject::setVisible(BOOL _visible)
     {
         // Parent should control object visibility itself (??????)
         Props.bVisible = 1;
-        if (renderable.visual) spatial.type |= STYPE_RENDERABLE;
+        if (renderable.visual)
+            spatial.type |= STYPE_RENDERABLE;
     }
     else
     {
@@ -146,20 +139,31 @@ void CObject::setVisible(BOOL _visible)
     }
 }
 
-//void CObject::Center (Fvector& C) const { VERIFY2(renderable.visual,*cName()); renderable.xform.transform_tiny(C,renderable.visual->vis.sphere.P); }
-void CObject::Center(Fvector& C) const { VERIFY2(renderable.visual, *cName()); renderable.xform.transform_tiny(C, renderable.visual->getVisData().sphere.P); }
-//float CObject::Radius () const { VERIFY2(renderable.visual,*cName()); return renderable.visual->vis.sphere.R; }
-float CObject::Radius() const { VERIFY2(renderable.visual, *cName()); return renderable.visual->getVisData().sphere.R; }
-//const Fbox& CObject::BoundingBox () const { VERIFY2(renderable.visual,*cName()); return renderable.visual->vis.box; }
-const Fbox& CObject::BoundingBox() const { VERIFY2(renderable.visual, *cName()); return renderable.visual->getVisData().box; }
+// void CObject::Center (Fvector& C) const { VERIFY2(renderable.visual,*cName());
+// renderable.xform.transform_tiny(C,renderable.visual->vis.sphere.P); }
+void CObject::Center(Fvector& C) const
+{
+    VERIFY2(renderable.visual, *cName());
+    renderable.xform.transform_tiny(C, renderable.visual->getVisData().sphere.P);
+}
+// float CObject::Radius () const { VERIFY2(renderable.visual,*cName()); return renderable.visual->vis.sphere.R; }
+float CObject::Radius() const
+{
+    VERIFY2(renderable.visual, *cName());
+    return renderable.visual->getVisData().sphere.R;
+}
+// const Fbox& CObject::BoundingBox () const { VERIFY2(renderable.visual,*cName()); return renderable.visual->vis.box; }
+const Fbox& CObject::BoundingBox() const
+{
+    VERIFY2(renderable.visual, *cName());
+    return renderable.visual->getVisData().box;
+}
 
 //----------------------------------------------------------------------
 // Class : CXR_Object
 // Purpose :
 //----------------------------------------------------------------------
-CObject::CObject() :
-    ISpatial(g_SpatialSpace),
-    dwFrame_AsCrow(u32(-1))
+CObject::CObject() : ISpatial(g_SpatialSpace), dwFrame_AsCrow(u32(-1))
 {
     // Transform
     Props.storage = 0;
@@ -300,12 +304,14 @@ void CObject::spatial_update(float eps_P, float eps_R)
         if (spatial.node_ptr)
         {
             // Object registered!
-            if (!fsimilar(Radius(), spatial.sphere.R, eps_R)) spatial_move();
+            if (!fsimilar(Radius(), spatial.sphere.R, eps_R))
+                spatial_move();
             else
             {
                 Fvector C;
                 Center(C);
-                if (!C.similar(spatial.sphere.P, eps_P)) spatial_move();
+                if (!C.similar(spatial.sphere.P, eps_P))
+                    spatial_move();
             }
             // else nothing to do :_)
         }
@@ -319,12 +325,15 @@ void CObject::UpdateCL()
 #ifdef DEBUG
     VERIFY2(_valid(renderable.xform), *cName());
 
-    if (Device.dwFrame == dbg_update_cl) Debug.fatal(DEBUG_INFO, "'UpdateCL' called twice per frame for %s", *cName());
+    if (Device.dwFrame == dbg_update_cl)
+        Debug.fatal(DEBUG_INFO, "'UpdateCL' called twice per frame for %s", *cName());
     dbg_update_cl = Device.dwFrame;
 
-    if (Parent && spatial.node_ptr) Debug.fatal(DEBUG_INFO, "Object %s has parent but is still registered inside spatial DB", *cName());
+    if (Parent && spatial.node_ptr)
+        Debug.fatal(DEBUG_INFO, "Object %s has parent but is still registered inside spatial DB", *cName());
 
-    if ((0 == collidable.model) && (spatial.type&STYPE_COLLIDEABLE)) Debug.fatal(DEBUG_INFO, "Object %s registered as 'collidable' but has no collidable model", *cName());
+    if ((0 == collidable.model) && (spatial.type & STYPE_COLLIDEABLE))
+        Debug.fatal(DEBUG_INFO, "Object %s registered as 'collidable' but has no collidable model", *cName());
 #endif
 
     spatial_update(base_spu_epsP * 5, base_spu_epsR * 5);
@@ -337,9 +346,10 @@ void CObject::UpdateCL()
     else
     {
         float dist = Device.vCameraPosition.distance_to_sqr(Position());
-        if (dist < CROW_RADIUS*CROW_RADIUS)
+        if (dist < CROW_RADIUS * CROW_RADIUS)
             MakeMeCrow();
-        else if ((Visual() && Visual()->getVisData().hom_frame + 2 > Device.dwFrame) && (dist < CROW_RADIUS2*CROW_RADIUS2))
+        else if ((Visual() && Visual()->getVisData().hom_frame + 2 > Device.dwFrame) &&
+            (dist < CROW_RADIUS2 * CROW_RADIUS2))
             MakeMeCrow();
     }
 }
@@ -367,10 +377,7 @@ void CObject::spatial_register()
     ISpatial::spatial_register();
 }
 
-void CObject::spatial_unregister()
-{
-    ISpatial::spatial_unregister();
-}
+void CObject::spatial_unregister() { ISpatial::spatial_unregister(); }
 
 void CObject::spatial_move()
 {
@@ -385,47 +392,41 @@ CObject::SavedPosition CObject::ps_Element(u32 ID) const
     return PositionStack[ID];
 }
 
-void CObject::renderable_Render()
-{
-    MakeMeCrow();
-}
+void CObject::renderable_Render() { MakeMeCrow(); }
 
 CObject* CObject::H_SetParent(CObject* new_parent, bool just_before_destroy)
 {
-    if (new_parent == Parent) return new_parent;
+    if (new_parent == Parent)
+        return new_parent;
 
     CObject* old_parent = Parent;
 
     VERIFY2((new_parent == 0) || (old_parent == 0), "Before set parent - execute H_SetParent(0)");
 
     // if (Parent) Parent->H_ChildRemove (this);
-    if (0 == old_parent) OnH_B_Chield(); // before attach
-    else OnH_B_Independent(just_before_destroy); // before detach
-    if (new_parent) spatial_unregister();
-    else spatial_register();
+    if (0 == old_parent)
+        OnH_B_Chield(); // before attach
+    else
+        OnH_B_Independent(just_before_destroy); // before detach
+    if (new_parent)
+        spatial_unregister();
+    else
+        spatial_register();
     Parent = new_parent;
-    if (0 == old_parent) OnH_A_Chield(); // after attach
-    else OnH_A_Independent(); // after detach
+    if (0 == old_parent)
+        OnH_A_Chield(); // after attach
+    else
+        OnH_A_Independent(); // after detach
     // if (Parent) Parent->H_ChildAdd (this);
     MakeMeCrow();
     return old_parent;
 }
 
-void CObject::OnH_A_Chield()
-{
-}
-void CObject::OnH_B_Chield()
-{
-    setVisible(false);
-}
-void CObject::OnH_A_Independent()
-{
-    setVisible(true);
-}
+void CObject::OnH_A_Chield() {}
+void CObject::OnH_B_Chield() { setVisible(false); }
+void CObject::OnH_A_Independent() { setVisible(true); }
 
-void CObject::OnH_B_Independent(bool just_before_destroy)
-{
-}
+void CObject::OnH_B_Independent(bool just_before_destroy) {}
 
 void CObject::setDestroy(BOOL _destroy)
 {
@@ -443,7 +444,7 @@ void CObject::setDestroy(BOOL _destroy)
 #endif
 #ifdef MP_LOGGING
         Msg("cl setDestroy [%d][%d]", ID(), Device.dwFrame);
-#endif //#ifdef MP_LOGGING
+#endif // #ifdef MP_LOGGING
     }
     else
         VERIFY(!g_pGameLevel->Objects.registered_object_to_destroy(this));

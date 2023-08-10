@@ -5,10 +5,7 @@
 #include "isheduled.h"
 #include "irenderable.h"
 
-class ENGINE_API CPS_Instance :
-    public ISpatial,
-    public ISheduled,
-    public IRenderable
+class ENGINE_API CPS_Instance : public ISpatial, public ISheduled, public IRenderable
 {
     friend class IGame_Persistent;
 

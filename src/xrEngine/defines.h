@@ -7,8 +7,22 @@ ENGINE_API extern BOOL bDebug;
 #define bDebug 0
 #endif
 
-#define _RELEASE(x) { if(x) { (x)->Release(); (x)=NULL; } }
-#define _SHOW_REF(msg, x) { if(x) { x->AddRef(); Log(msg,u32(x->Release()));}}
+#define _RELEASE(x)                                                                                                    \
+    {                                                                                                                  \
+        if (x)                                                                                                         \
+        {                                                                                                              \
+            (x)->Release();                                                                                            \
+            (x) = NULL;                                                                                                \
+        }                                                                                                              \
+    }
+#define _SHOW_REF(msg, x)                                                                                              \
+    {                                                                                                                  \
+        if (x)                                                                                                         \
+        {                                                                                                              \
+            x->AddRef();                                                                                               \
+            Log(msg, u32(x->Release()));                                                                               \
+        }                                                                                                              \
+    }
 
 // textures
 ENGINE_API extern int psTextureLOD;
@@ -43,7 +57,6 @@ enum
     rsR4 = (1ul << 21ul),
     // 22-32 bit - reserved to Editor
 };
-
 
 //. ENGINE_API extern u32 psCurrentMode ;
 ENGINE_API extern u32 psCurrentVidMode[];

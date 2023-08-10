@@ -9,13 +9,9 @@ CWeaponPistol::CWeaponPistol()
     SetPending(FALSE);
 }
 
-CWeaponPistol::~CWeaponPistol(void)
-{}
+CWeaponPistol::~CWeaponPistol(void) {}
 
-void CWeaponPistol::net_Destroy()
-{
-    inherited::net_Destroy();
-}
+void CWeaponPistol::net_Destroy() { inherited::net_Destroy(); }
 
 void CWeaponPistol::Load(LPCSTR section)
 {
@@ -24,10 +20,7 @@ void CWeaponPistol::Load(LPCSTR section)
     m_sounds.LoadSound(section, "snd_close", "sndClose", false, m_eSoundClose);
 }
 
-void CWeaponPistol::OnH_B_Chield()
-{
-    inherited::OnH_B_Chield();
-}
+void CWeaponPistol::OnH_B_Chield() { inherited::OnH_B_Chield(); }
 
 void CWeaponPistol::PlayAnimShow()
 {
@@ -73,7 +66,8 @@ void CWeaponPistol::PlayAnimIdleMoving()
 
 void CWeaponPistol::PlayAnimIdle()
 {
-    if (TryPlayAnimIdle()) return;
+    if (TryPlayAnimIdle())
+        return;
 
     if (iAmmoElapsed == 0)
     {
@@ -104,7 +98,7 @@ void CWeaponPistol::PlayAnimReload()
     {
     PlayHUDMotion("anm_reload", TRUE, this, GetState());
     }*/
-    inherited::PlayAnimReload(); //AVO: refactored to use grand-parent (CWeaponMagazined) function
+    inherited::PlayAnimReload(); // AVO: refactored to use grand-parent (CWeaponMagazined) function
 }
 
 void CWeaponPistol::PlayAnimHide()
@@ -132,19 +126,14 @@ void CWeaponPistol::PlayAnimShoot()
     }
 }
 
-void CWeaponPistol::switch2_Reload()
-{
-    inherited::switch2_Reload();
-}
+void CWeaponPistol::switch2_Reload() { inherited::switch2_Reload(); }
 
-void CWeaponPistol::OnAnimationEnd(u32 state)
-{
-    inherited::OnAnimationEnd(state);
-}
+void CWeaponPistol::OnAnimationEnd(u32 state) { inherited::OnAnimationEnd(state); }
 
 void CWeaponPistol::OnShot()
 {
-	inherited::OnShot(); //Alundaio: not changed from inherited, so instead of copying changes from weaponmagazined, we just do this
+    inherited::OnShot(); // Alundaio: not changed from inherited, so instead of copying changes from weaponmagazined, we
+                         // just do this
 }
 
 void CWeaponPistol::UpdateSounds()

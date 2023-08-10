@@ -7,21 +7,21 @@
 #include "perlin.h"
 
 #define B SAMPLE_SIZE
-#define BM (SAMPLE_SIZE-1)
+#define BM (SAMPLE_SIZE - 1)
 
 #define N 0x1000
 #define NP 12 /* 2^N */
 #define NM 0xfff
 
-#define s_curve(t) ( t * t * (3.0f - 2.0f * t) )
-#define lerp(t, a, b) ( a + t * (b - a) )
+#define s_curve(t) (t * t * (3.0f - 2.0f * t))
+#define lerp(t, a, b) (a + t * (b - a))
 
-#define setup(i,b0,b1,r0,r1)\
- t = vec[i] + N;\
- b0 = ((int)t) & BM;\
- b1 = (b0+1) & BM;\
- r0 = t - (int)t;\
- r1 = r0 - 1.0f;
+#define setup(i, b0, b1, r0, r1)                                                                                       \
+    t = vec[i] + N;                                                                                                    \
+    b0 = ((int)t) & BM;                                                                                                \
+    b1 = (b0 + 1) & BM;                                                                                                \
+    r0 = t - (int)t;                                                                                                   \
+    r1 = r0 - 1.0f;
 
 //-------------------------------------------------------------------------------------------------
 // CPerlinNoise1D
@@ -81,7 +81,7 @@ float CPerlinNoise1D::Get(float v)
     v *= mFrequency;
     for (int i = 0; i < mOctaves; i++)
     {
-        result += noise(v)*amp;
+        result += noise(v) * amp;
         v *= 2.0f;
         amp *= 0.5f;
     }
@@ -103,7 +103,7 @@ float CPerlinNoise1D::GetContinious(float v)
     {
         float octave_time = mTimes[i];
         mTimes[i] = octave_time + v;
-        result += noise(octave_time + v)*amp;
+        result += noise(octave_time + v) * amp;
         v *= 2.0f;
         amp *= 0.5f;
     }
@@ -167,7 +167,7 @@ float CPerlinNoise2D::noise(const Fvector2& vec)
     sx = s_curve(rx0);
     sy = s_curve(ry0);
 
-#define at2(rx,ry) ( rx * q[0] + ry * q[1] )
+#define at2(rx, ry) (rx * q[0] + ry * q[1])
 
     q = g2[b00];
     u = at2(rx0, ry0);
@@ -203,7 +203,7 @@ float CPerlinNoise2D::Get(float x, float y)
     vec[1] *= mFrequency;
     for (int i = 0; i < mOctaves; i++)
     {
-        result += noise(vec)*amp;
+        result += noise(vec) * amp;
         vec[0] *= 2.0f;
         vec[1] *= 2.0f;
         amp *= 0.5f;
@@ -270,7 +270,7 @@ float CPerlinNoise3D::noise(const Fvector3& vec)
     sy = s_curve(ry0);
     sz = s_curve(rz0);
 
-#define at3(rx,ry,rz) ( rx * q[0] + ry * q[1] + rz * q[2] )
+#define at3(rx, ry, rz) (rx * q[0] + ry * q[1] + rz * q[2])
 
     q = g3[b00 + bz0];
     u = at3(rx0, ry0, rz0);
@@ -325,7 +325,7 @@ float CPerlinNoise3D::Get(float x, float y, float z)
     vec[2] *= mFrequency;
     for (int i = 0; i < mOctaves; i++)
     {
-        result += noise(vec)*amp;
+        result += noise(vec) * amp;
         vec[0] *= 2.0f;
         vec[1] *= 2.0f;
         vec[2] *= 2.0f;
@@ -333,4 +333,3 @@ float CPerlinNoise3D::Get(float x, float y, float z)
     }
     return result;
 }
-

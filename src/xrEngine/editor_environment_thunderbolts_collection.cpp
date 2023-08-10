@@ -15,13 +15,14 @@
 #include "editor_environment_thunderbolts_thunderbolt_id.hpp"
 #include "editor_environment_thunderbolts_manager.hpp"
 
-using editor::environment::thunderbolts::thunderbolt_id;
+using editor::property_holder;
 using editor::environment::thunderbolts::collection;
 using editor::environment::thunderbolts::manager;
-using editor::property_holder;
+using editor::environment::thunderbolts::thunderbolt_id;
 
 template <>
-void property_collection<collection::container_type, collection>::display_name(u32 const& item_index, LPSTR const& buffer, u32 const& buffer_size)
+void property_collection<collection::container_type, collection>::display_name(
+    u32 const& item_index, LPSTR const& buffer, u32 const& buffer_size)
 {
     xr_strcpy(buffer, buffer_size, m_container[item_index]->id());
 }
@@ -34,10 +35,8 @@ editor::property_holder* property_collection<collection::container_type, collect
     return (object->object());
 }
 
-collection::collection(manager const& manager, shared_str const& id) :
-    m_manager(manager),
-    m_collection(0),
-    m_property_holder(0)
+collection::collection(manager const& manager, shared_str const& id)
+    : m_manager(manager), m_collection(0), m_property_holder(0)
 {
     section = id;
     m_collection = xr_new<collection_type>(&m_ids, this);
@@ -81,10 +80,7 @@ void collection::save(CInifile& config)
         config.w_string(section.c_str(), (*i)->id(), "");
 }
 
-LPCSTR collection::id_getter() const
-{
-    return (section.c_str());
-}
+LPCSTR collection::id_getter() const { return (section.c_str()); }
 
 void collection::id_setter(LPCSTR value_)
 {
@@ -108,25 +104,12 @@ void collection::fill(editor::property_holder_collection* collection)
     string_setter_type string_setter;
     string_setter.bind(this, &collection::id_setter);
 
+    m_property_holder->add_property("id", "properties", "this option is resposible for collection id", section.c_str(),
+        string_getter, string_setter);
     m_property_holder->add_property(
-        "id",
-        "properties",
-        "this option is resposible for collection id",
-        section.c_str(),
-        string_getter,
-        string_setter
-    );
-    m_property_holder->add_property(
-        "thunderbolts",
-        "properties",
-        "this option is resposible for thunderbolts",
-        m_collection
-    );
+        "thunderbolts", "properties", "this option is resposible for thunderbolts", m_collection);
 }
 
-property_holder* collection::object()
-{
-    return (m_property_holder);
-}
+property_holder* collection::object() { return (m_property_holder); }
 
 #endif // #ifdef INGAME_EDITOR

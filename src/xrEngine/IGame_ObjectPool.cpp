@@ -4,14 +4,9 @@
 #include "igame_objectpool.h"
 #include "xr_object.h"
 
-IGame_ObjectPool::IGame_ObjectPool(void)
-{
-}
+IGame_ObjectPool::IGame_ObjectPool(void) {}
 
-IGame_ObjectPool::~IGame_ObjectPool(void)
-{
-    R_ASSERT(m_PrefetchObjects.empty());
-}
+IGame_ObjectPool::~IGame_ObjectPool(void) { R_ASSERT(m_PrefetchObjects.empty()); }
 
 void IGame_ObjectPool::prefetch()
 {
@@ -58,10 +53,7 @@ CObject* IGame_ObjectPool::create(LPCSTR name)
     return O;
 }
 
-void IGame_ObjectPool::destroy(CObject* O)
-{
-    xr_delete(O);
-}
+void IGame_ObjectPool::destroy(CObject* O) { xr_delete(O); }
 
 /*
 void IGame_ObjectPool::prefetch ()

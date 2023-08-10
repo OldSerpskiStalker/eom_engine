@@ -4,21 +4,12 @@
 #include "bone.h"
 #include "gamemtllib.h"
 
-
-u16 CBone::get_game_mtl_idx() const
-{
-    return GMLib.GetMaterialIdx(game_mtl.c_str());
-}
+u16 CBone::get_game_mtl_idx() const { return GMLib.GetMaterialIdx(game_mtl.c_str()); }
 
 static const Fobb dummy = Fobb().identity();
-const Fobb& CBone::get_obb() const
-{
-    return dummy;
-}
+const Fobb& CBone::get_obb() const { return dummy; }
 //////////////////////////////////////////////////////////////////////////
 // BoneInstance methods
-
-
 
 void ENGINE_API CBoneInstance::set_param(u32 idx, float data)
 {

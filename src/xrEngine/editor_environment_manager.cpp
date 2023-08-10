@@ -31,14 +31,8 @@ using editor::environment::manager;
 using editor::environment::detail::logical_string_predicate;
 using particles_systems::library_interface;
 
-manager::manager() :
-    m_suns(0),
-    m_levels(0),
-    m_effects(0),
-    m_sound_channels(0),
-    m_ambients(0),
-    m_thunderbolts(0),
-    m_weathers(0)
+manager::manager()
+    : m_suns(0), m_levels(0), m_effects(0), m_sound_channels(0), m_ambients(0), m_thunderbolts(0), m_weathers(0)
 {
     m_effects = xr_new<editor::environment::effects::manager>(this);
     m_sound_channels = xr_new<editor::environment::sound_channels::manager>();
@@ -74,9 +68,7 @@ manager::~manager()
     ::ide().destroy(m_property_holder);
 }
 
-void manager::load()
-{
-}
+void manager::load() {}
 
 void manager::load_internal()
 {
@@ -199,7 +191,8 @@ manager::light_animator_ids_type const& manager::light_animator_ids() const
 void manager::create_mixer()
 {
     VERIFY(!CurrentEnv);
-    editor::environment::weathers::time* object = xr_new<editor::environment::weathers::time>(this, (editor::environment::weathers::weather const*)0, "");
+    editor::environment::weathers::time* object =
+        xr_new<editor::environment::weathers::time>(this, (editor::environment::weathers::weather const*)0, "");
     CurrentEnv = object;
     object->fill(0);
 }
@@ -212,10 +205,7 @@ void manager::unload()
     Ambients.clear();
 }
 
-CEnvAmbient* manager::AppendEnvAmb(const shared_str& sect)
-{
-    return (m_ambients->get_ambient(sect));
-}
+CEnvAmbient* manager::AppendEnvAmb(const shared_str& sect) { return (m_ambients->get_ambient(sect)); }
 
 SThunderboltDesc* manager::thunderbolt_description(CInifile& config, shared_str const& section)
 {
@@ -227,7 +217,8 @@ SThunderboltCollection* manager::thunderbolt_collection(CInifile* pIni, CInifile
     return (m_thunderbolts->get_collection(section));
 }
 
-SThunderboltCollection* manager::thunderbolt_collection(xr_vector<SThunderboltCollection*>& collection, shared_str const& id)
+SThunderboltCollection* manager::thunderbolt_collection(
+    xr_vector<SThunderboltCollection*>& collection, shared_str const& id)
 {
     return (m_thunderbolts->get_collection(id));
 }

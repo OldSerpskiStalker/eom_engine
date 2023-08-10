@@ -51,10 +51,7 @@ public:
 
 private:
     typedef editor::property_holder property_holder_type;
-    typedef property_collection <
-    effect_container_type,
-    manager
-    > collection_type;
+    typedef property_collection<effect_container_type, manager> collection_type;
 
 private:
     effect_container_type m_effects;

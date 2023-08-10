@@ -2,7 +2,7 @@
 #define fmeshH
 #pragma once
 
-//BOOL ValidateIndices (u32 vCount, u32 iCount, u16* pIndices);
+// BOOL ValidateIndices (u32 vCount, u32 iCount, u16* pIndices);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // MESH as it is represented in file
@@ -76,7 +76,7 @@ struct ECORE_API ogf_desc
     time_t create_time;
     shared_str modif_name;
     time_t modif_time;
-    ogf_desc() :build_time(0), create_time(0), modif_time(0) {}
+    ogf_desc() : build_time(0), create_time(0), modif_time(0) {}
     void Load(IReader& F);
     void Save(IWriter& F);
 };
@@ -118,7 +118,7 @@ struct ENGINE_API FSlideWindowItem
     FSlideWindow* sw;
     u32 count;
     u32 reserved[4];
-    FSlideWindowItem() : sw(0), count(0) {};
+    FSlideWindowItem() : sw(0), count(0){};
 };
 
 // OGF_TEXTURE1

@@ -12,7 +12,6 @@
 #include "xr_input.h"
 #include "xr_ioc_cmd.h"
 
-
 void CConsole::Register_callbacks()
 {
     ec().assign_callback(DIK_PRIOR, text_editor::ks_free, Callback(this, &CConsole::Prev_log));
@@ -187,15 +186,9 @@ void CConsole::Execute_cmd() // DIK_RETURN, DIK_NUMPADENTER
     m_disable_tips = false;
 }
 
-void CConsole::Show_cmd()
-{
-    Show();
-}
+void CConsole::Show_cmd() { Show(); }
 
-void CConsole::Hide_cmd()
-{
-    Hide();
-}
+void CConsole::Hide_cmd() { Hide(); }
 
 void CConsole::Hide_cmd_esc()
 {
@@ -207,7 +200,4 @@ void CConsole::Hide_cmd_esc()
     Hide();
 }
 
-void CConsole::GamePause()
-{
-
-}
+void CConsole::GamePause() {}

@@ -6,7 +6,7 @@
 #include "EngineAPI.h"
 #include "../xrcdb/xrXRC.h"
 
-//#include "securom_api.h"
+// #include "securom_api.h"
 
 extern xr_token* vid_quality_token;
 
@@ -14,9 +14,7 @@ extern xr_token* vid_quality_token;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-void __cdecl dummy(void)
-{
-};
+void __cdecl dummy(void){};
 CEngineAPI::CEngineAPI()
 {
     hGame = 0;
@@ -38,14 +36,14 @@ CEngineAPI::~CEngineAPI()
     }
 }
 
-extern u32 renderer_value; //con cmd
+extern u32 renderer_value; // con cmd
 ENGINE_API int g_current_renderer = 0;
 
 ENGINE_API bool is_enough_address_space_available()
 {
     SYSTEM_INFO system_info;
-        GetSystemInfo(&system_info);
-        return (*(u32*)&system_info.lpMaximumApplicationAddress) > 0x90000000;
+    GetSystemInfo(&system_info);
+    return (*(u32*)&system_info.lpMaximumApplicationAddress) > 0x90000000;
 }
 
 #ifndef DEDICATED_SERVER
@@ -101,7 +99,6 @@ void CEngineAPI::InitializeNotDedicated()
 }
 #endif // DEDICATED_SERVER
 
-
 void CEngineAPI::Initialize(void)
 {
     //////////////////////////////////////////////////////////////////////////
@@ -118,11 +115,12 @@ void CEngineAPI::Initialize(void)
         psDeviceFlags.set(rsR4, FALSE);
         psDeviceFlags.set(rsR3, FALSE);
         psDeviceFlags.set(rsR2, FALSE);
-        renderer_value = 0; //con cmd
+        renderer_value = 0; // con cmd
 
         Log("Loading DLL:", r1_name);
         hRender = LoadLibrary(r1_name);
-        if (0 == hRender) R_CHK(GetLastError());
+        if (0 == hRender)
+            R_CHK(GetLastError());
         R_ASSERT(hRender);
         g_current_renderer = 1;
     }
@@ -134,7 +132,8 @@ void CEngineAPI::Initialize(void)
         LPCSTR g_name = "xrGame.dll";
         Log("Loading DLL:", g_name);
         hGame = LoadLibrary(g_name);
-        if (0 == hGame) R_CHK(GetLastError());
+        if (0 == hGame)
+            R_CHK(GetLastError());
         R_ASSERT2(hGame, "Game DLL raised exception during loading or there is no game DLL at all");
         pCreate = (Factory_Create*)GetProcAddress(hGame, "xrFactory_Create");
         R_ASSERT(pCreate);
@@ -150,7 +149,8 @@ void CEngineAPI::Initialize(void)
         LPCSTR g_name = "vTuneAPI.dll";
         Log("Loading DLL:", g_name);
         hTuner = LoadLibrary(g_name);
-        if (0 == hTuner) R_CHK(GetLastError());
+        if (0 == hTuner)
+            R_CHK(GetLastError());
         R_ASSERT2(hTuner, "Intel vTune is not installed");
         tune_enabled = TRUE;
         tune_pause = (VTPause*)GetProcAddress(hTuner, "VTPause");
@@ -162,8 +162,16 @@ void CEngineAPI::Initialize(void)
 
 void CEngineAPI::Destroy(void)
 {
-    if (hGame) { FreeLibrary(hGame); hGame = 0; }
-    if (hRender) { FreeLibrary(hRender); hRender = 0; }
+    if (hGame)
+    {
+        FreeLibrary(hGame);
+        hGame = 0;
+    }
+    if (hRender)
+    {
+        FreeLibrary(hRender);
+        hRender = 0;
+    }
     pCreate = 0;
     pDestroy = 0;
     Engine.Event._destroy();
@@ -171,9 +179,9 @@ void CEngineAPI::Destroy(void)
 }
 
 extern "C" {
-    typedef bool __cdecl SupportsAdvancedRendering(void);
-    typedef bool _declspec(dllexport) SupportsDX10Rendering();
-    typedef bool _declspec(dllexport) SupportsDX11Rendering();
+typedef bool __cdecl SupportsAdvancedRendering(void);
+typedef bool _declspec(dllexport) SupportsDX10Rendering();
+typedef bool _declspec(dllexport) SupportsDX11Rendering();
 };
 
 void CEngineAPI::CreateRendererList()
@@ -190,7 +198,8 @@ void CEngineAPI::CreateRendererList()
 
 #else
     // TODO: ask renderers if they are supported!
-    if (vid_quality_token != NULL) return;
+    if (vid_quality_token != NULL)
+        return;
     bool bSupports_r2 = false;
     bool bSupports_r2_5 = false;
     bool bSupports_r3 = false;
@@ -215,7 +224,8 @@ void CEngineAPI::CreateRendererList()
         if (hRender)
         {
             bSupports_r2 = true;
-            SupportsAdvancedRendering* test_rendering = (SupportsAdvancedRendering*)GetProcAddress(hRender, "SupportsAdvancedRendering");
+            SupportsAdvancedRendering* test_rendering =
+                (SupportsAdvancedRendering*)GetProcAddress(hRender, "SupportsAdvancedRendering");
             R_ASSERT(test_rendering);
             bSupports_r2_5 = test_rendering();
             FreeLibrary(hRender);
@@ -230,7 +240,8 @@ void CEngineAPI::CreateRendererList()
         SetErrorMode(0);
         if (hRender)
         {
-            SupportsDX10Rendering* test_dx10_rendering = (SupportsDX10Rendering*)GetProcAddress(hRender, "SupportsDX10Rendering");
+            SupportsDX10Rendering* test_dx10_rendering =
+                (SupportsDX10Rendering*)GetProcAddress(hRender, "SupportsDX10Rendering");
             R_ASSERT(test_dx10_rendering);
             bSupports_r3 = test_dx10_rendering();
             FreeLibrary(hRender);
@@ -245,7 +256,8 @@ void CEngineAPI::CreateRendererList()
         SetErrorMode(0);
         if (hRender)
         {
-            SupportsDX11Rendering* test_dx11_rendering = (SupportsDX11Rendering*)GetProcAddress(hRender, "SupportsDX11Rendering");
+            SupportsDX11Rendering* test_dx11_rendering =
+                (SupportsDX11Rendering*)GetProcAddress(hRender, "SupportsDX11Rendering");
             R_ASSERT(test_dx11_rendering);
             bSupports_r4 = test_dx11_rendering();
             FreeLibrary(hRender);
@@ -267,12 +279,12 @@ void CEngineAPI::CreateRendererList()
         _tmp.push_back("renderer_r3");
     if (proceed &= bSupports_r4, proceed)
         _tmp.push_back("renderer_r4");
-    
-	u32 _cnt = _tmp.size() + 1;
+
+    u32 _cnt = _tmp.size() + 1;
     vid_quality_token = xr_alloc<xr_token>(_cnt);
 
     vid_quality_token[_cnt - 1].id = -1;
-    vid_quality_token[_cnt - 1].name = NULL;	 
+    vid_quality_token[_cnt - 1].name = NULL;
 
 #ifdef DEBUG
     Msg("Available render modes[%d]:", _tmp.size());
@@ -285,5 +297,5 @@ void CEngineAPI::CreateRendererList()
         Msg("[%s]", _tmp[i]);
 #endif // DEBUG
     }
-#endif //#ifndef DEDICATED_SERVER
+#endif // #ifndef DEDICATED_SERVER
 }

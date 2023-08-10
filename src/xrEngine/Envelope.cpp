@@ -3,10 +3,7 @@
 
 #include "envelope.h"
 
-CEnvelope::~CEnvelope()
-{
-    Clear();
-}
+CEnvelope::~CEnvelope() { Clear(); }
 
 CEnvelope::CEnvelope(CEnvelope* source)
 {
@@ -52,8 +49,10 @@ KeyIt CEnvelope::FindKey(float t, float eps)
 {
     for (KeyIt k_it = keys.begin(); k_it != keys.end(); k_it++)
     {
-        if (fsimilar((*k_it)->time, t, eps)) return k_it;
-        if ((*k_it)->time > t) return keys.end();
+        if (fsimilar((*k_it)->time, t, eps))
+            return k_it;
+        if ((*k_it)->time > t)
+            return keys.end();
     }
     return keys.end();
 }
@@ -68,7 +67,8 @@ void CEnvelope::InsertKey(float t, float val)
             return;
         }
         // insert before
-        if ((*k_it)->time > t) break;
+        if ((*k_it)->time > t)
+            break;
     }
     // create _new key
     st_Key* K = xr_new<st_Key>();
@@ -109,12 +109,13 @@ BOOL CEnvelope::ScaleKeys(float from_time, float to_time, float scale_factor, fl
     }
     if (min_k != keys.end() && min_k != max_k)
     {
-        if (max_k != keys.end()) max_k++;
+        if (max_k != keys.end())
+            max_k++;
         float t0 = (*min_k)->time;
         float offset = 0;
         for (KeyIt it = min_k + 1; it != max_k; it++)
         {
-            float new_time = offset + t0 + ((*it)->time - t0)*scale_factor;
+            float new_time = offset + t0 + ((*it)->time - t0) * scale_factor;
             offset += ((new_time - (*(it - 1))->time) - ((*it)->time - t0));
             t0 = (*it)->time;
             (*it)->time = new_time;
@@ -134,12 +135,16 @@ float CEnvelope::GetLength(float* mn, float* mx)
 {
     if (!keys.empty())
     {
-        if (mn) *mn = keys.front()->time;
-        if (mx) *mx = keys.back()->time;
+        if (mn)
+            *mn = keys.front()->time;
+        if (mx)
+            *mx = keys.back()->time;
         return keys.back()->time - keys.front()->time;
     }
-    if (mn) *mn = 0.f;
-    if (mx) *mx = 0.f;
+    if (mn)
+        *mn = 0.f;
+    if (mx)
+        *mx = 0.f;
     return 0.f;
 }
 
@@ -149,12 +154,8 @@ void CEnvelope::RotateKeys(float angle)
         keys[i]->value += angle;
 }
 
-
 extern float evalEnvelope(CEnvelope* env, float time);
-float CEnvelope::Evaluate(float time)
-{
-    return evalEnvelope(this, time);
-}
+float CEnvelope::Evaluate(float time) { return evalEnvelope(this, time); }
 
 void CEnvelope::Save(IWriter& F)
 {
@@ -191,9 +192,7 @@ void CEnvelope::Load_2(IReader& F)
     }
 }
 
-void CEnvelope::SaveA(IWriter&)
-{
-}
+void CEnvelope::SaveA(IWriter&) {}
 
 void CEnvelope::LoadA(IReader& F)
 {
@@ -211,7 +210,8 @@ void CEnvelope::LoadA(IReader& F)
             keys[i] = xr_new<st_Key>();
             st_Key& K = *keys[i];
             F.r_string(buf, sizeof(buf));
-            int cnt = sscanf(buf, "Key %f %f %f %f %f %f %f %f %f", f + 0, f + 1, f + 2, f + 3, f + 4, f + 5, f + 6, f + 7, f + 8);
+            int cnt = sscanf(
+                buf, "Key %f %f %f %f %f %f %f %f %f", f + 0, f + 1, f + 2, f + 3, f + 4, f + 5, f + 6, f + 7, f + 8);
             R_ASSERT(cnt == 9);
             K.value = f[0];
             K.time = f[1];
@@ -270,5 +270,3 @@ void CEnvelope::Optimize()
         keys = new_keys;
     }
 }
-
-

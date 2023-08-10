@@ -57,10 +57,7 @@ public:
 
 private:
     typedef editor::property_holder property_holder_type;
-    typedef property_collection <
-    weather_container_type,
-    manager
-    > collection_type;
+    typedef property_collection<weather_container_type, manager> collection_type;
 
 private:
     LPCSTR const* xr_stdcall weathers_getter() const;

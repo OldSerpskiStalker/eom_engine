@@ -28,8 +28,8 @@ public:
     {
         int* m_ID;
         RELCASE_CALLBACK m_Callback;
-        SRelcasePair(int* id, RELCASE_CALLBACK cb) :m_ID(id), m_Callback(cb) {}
-        bool operator== (RELCASE_CALLBACK cb) { return m_Callback == cb; }
+        SRelcasePair(int* id, RELCASE_CALLBACK cb) : m_ID(id), m_Callback(cb) {}
+        bool operator==(RELCASE_CALLBACK cb) { return m_Callback == cb; }
     };
     typedef xr_vector<SRelcasePair> RELCASE_CALLBACK_VEC;
     RELCASE_CALLBACK_VEC m_relcase_callbacks;
@@ -76,8 +76,10 @@ public:
     IC u32 o_count() { return objects_active.size() + objects_sleeping.size(); };
     IC CObject* o_get_by_iterator(u32 _it)
     {
-        if (_it < objects_active.size()) return objects_active[_it];
-        else return objects_sleeping[_it - objects_active.size()];
+        if (_it < objects_active.size())
+            return objects_active[_it];
+        else
+            return objects_sleeping[_it - objects_active.size()];
     }
     bool dump_all_objects();
 

@@ -22,11 +22,7 @@ ENGINE_API extern CConsole* Console;
 
 using editor::property_holder;
 
-engine_impl::engine_impl() :
-    m_input_receiver(xr_new<IInputReceiver>()),
-    m_input_captured(false)
-{
-}
+engine_impl::engine_impl() : m_input_receiver(xr_new<IInputReceiver>()), m_input_captured(false) {}
 
 engine_impl::~engine_impl()
 {
@@ -34,21 +30,12 @@ engine_impl::~engine_impl()
     xr_delete(m_input_receiver);
 }
 
-bool engine_impl::on_message(
-    HWND hWnd,
-    UINT uMsg,
-    WPARAM wParam,
-    LPARAM lParam,
-    LRESULT& result
-)
+bool engine_impl::on_message(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& result)
 {
     return (Device.on_message(hWnd, uMsg, wParam, lParam, result));
 }
 
-void engine_impl::on_idle()
-{
-    Device.on_idle();
-}
+void engine_impl::on_idle() { Device.on_idle(); }
 
 void engine_impl::on_resize()
 {
@@ -77,20 +64,11 @@ void engine_impl::capture_input(bool const& value)
         m_input_receiver->IR_Release();
 }
 
-void engine_impl::disconnect()
-{
-    Console->Execute("quit");
-}
+void engine_impl::disconnect() { Console->Execute("quit"); }
 
-void engine_impl::value(LPCSTR value, shared_str& result)
-{
-    result = value;
-}
+void engine_impl::value(LPCSTR value, shared_str& result) { result = value; }
 
-LPCSTR engine_impl::value(shared_str const& value)
-{
-    return (value.c_str());
-}
+LPCSTR engine_impl::value(shared_str const& value) { return (value.c_str()); }
 
 void engine_impl::weather(LPCSTR value)
 {
@@ -155,7 +133,7 @@ void engine_impl::current_weather_frame(LPCSTR frame_id)
             if (set_time)
             {
                 environment.SetGameTime((*i)->exec_time, environment.fTimeFactor);
-                g_pGameLevel->SetEnvironmentGameTimeFactor(iFloor((*i)->exec_time*1000.f), environment.fTimeFactor);
+                g_pGameLevel->SetEnvironmentGameTimeFactor(iFloor((*i)->exec_time * 1000.f), environment.fTimeFactor);
             }
             break;
         }
@@ -191,16 +169,16 @@ void engine_impl::track_frame(float const& time)
     float stop_time = environment.Current[1]->exec_time;
     float current_time;
     if (start_time < stop_time)
-        current_time = start_time + time*(stop_time - start_time);
+        current_time = start_time + time * (stop_time - start_time);
     else
     {
-        stop_time += 24.f*60.f*60.f;
-        current_time = start_time + time*(stop_time - start_time);
-        if (current_time >= 24.f*60.f*60.f)
-            current_time -= 24.f*60.f*60.f;
+        stop_time += 24.f * 60.f * 60.f;
+        current_time = start_time + time * (stop_time - start_time);
+        if (current_time >= 24.f * 60.f * 60.f)
+            current_time -= 24.f * 60.f * 60.f;
     }
     environment.SetGameTime(current_time, environment.fTimeFactor);
-    g_pGameLevel->SetEnvironmentGameTimeFactor(iFloor(current_time*1000.f), environment.fTimeFactor);
+    g_pGameLevel->SetEnvironmentGameTimeFactor(iFloor(current_time * 1000.f), environment.fTimeFactor);
 }
 
 float engine_impl::track_frame()
@@ -218,14 +196,14 @@ float engine_impl::track_frame()
     if (start_time >= stop_time)
     {
         if (current_time >= start_time)
-            clamp(current_time, start_time, 24.f*60.f*60.f);
+            clamp(current_time, start_time, 24.f * 60.f * 60.f);
         else
             clamp(current_time, 0.f, stop_time);
 
         if (current_time <= stop_time)
-            current_time += 24.f*60.f*60.f;
+            current_time += 24.f * 60.f * 60.f;
 
-        stop_time += 24.f*60.f*60.f;
+        stop_time += 24.f * 60.f * 60.f;
     }
     else
         clamp(current_time, start_time, stop_time);
@@ -252,10 +230,7 @@ void engine_impl::track_weather(float const& time)
     g_pGamePersistent->Environment().lerp(weight);
 }
 
-float engine_impl::track_weather()
-{
-    return (g_pGamePersistent->Environment().GetGameTime() / (24 * 60 * 60));
-}
+float engine_impl::track_weather() { return (g_pGamePersistent->Environment().GetGameTime() / (24 * 60 * 60)); }
 
 property_holder* engine_impl::current_frame_property_holder()
 {
@@ -263,11 +238,7 @@ property_holder* engine_impl::current_frame_property_holder()
     if (!environment.Current[0])
         return (0);
 
-    return (
-               ((editor::environment::weathers::time&)(
-                    *environment.Current[0]
-                )).object()
-           );
+    return (((editor::environment::weathers::time&)(*environment.Current[0])).object());
 }
 
 property_holder* engine_impl::blend_frame_property_holder()
@@ -276,11 +247,7 @@ property_holder* engine_impl::blend_frame_property_holder()
     if (!environment.CurrentEnv)
         return (0);
 
-    return (
-               ((editor::environment::weathers::time&)(
-                    *environment.CurrentEnv
-                )).object()
-           );
+    return (((editor::environment::weathers::time&)(*environment.CurrentEnv)).object());
 }
 
 property_holder* engine_impl::target_frame_property_holder()
@@ -289,22 +256,12 @@ property_holder* engine_impl::target_frame_property_holder()
     if (!environment.Current[1])
         return (0);
 
-    return (
-               ((editor::environment::weathers::time&)(
-                    *environment.Current[1]
-                )).object()
-           );
+    return (((editor::environment::weathers::time&)(*environment.Current[1])).object());
 }
 
-void engine_impl::weather_paused(bool const& value)
-{
-    g_pGamePersistent->Environment().m_paused = value;
-}
+void engine_impl::weather_paused(bool const& value) { g_pGamePersistent->Environment().m_paused = value; }
 
-bool engine_impl::weather_paused()
-{
-    return (g_pGamePersistent->Environment().m_paused);
-}
+bool engine_impl::weather_paused() { return (g_pGamePersistent->Environment().m_paused); }
 
 void engine_impl::weather_time_factor(float const& value_raw)
 {
@@ -312,7 +269,8 @@ void engine_impl::weather_time_factor(float const& value_raw)
     clamp(value, .01f, 100000.f);
 
     if (g_pGameLevel && g_pGamePersistent)
-        g_pGameLevel->SetEnvironmentGameTimeFactor(iFloor(g_pGamePersistent->Environment().GetGameTime()*1000.f), value);
+        g_pGameLevel->SetEnvironmentGameTimeFactor(
+            iFloor(g_pGamePersistent->Environment().GetGameTime() * 1000.f), value);
 
     if (g_pGamePersistent)
         g_pGamePersistent->Environment().fTimeFactor = value;
@@ -337,48 +295,28 @@ bool engine_impl::save_time_frame(char* buffer, u32 const& buffer_size)
 {
     CEnvironment& environment = g_pGamePersistent->Environment();
     editor::environment::manager& manager = dynamic_cast<editor::environment::manager&>(environment);
-    return (
-               manager.weathers().save_current_blend(
-                   buffer,
-                   buffer_size
-               )
-           );
+    return (manager.weathers().save_current_blend(buffer, buffer_size));
 }
 
 bool engine_impl::paste_current_time_frame(char const* buffer, u32 const& buffer_size)
 {
     CEnvironment& environment = g_pGamePersistent->Environment();
     editor::environment::manager& manager = dynamic_cast<editor::environment::manager&>(environment);
-    return (
-               manager.weathers().paste_current_time_frame(
-                   buffer,
-                   buffer_size
-               )
-           );
+    return (manager.weathers().paste_current_time_frame(buffer, buffer_size));
 }
 
 bool engine_impl::paste_target_time_frame(char const* buffer, u32 const& buffer_size)
 {
     CEnvironment& environment = g_pGamePersistent->Environment();
     editor::environment::manager& manager = dynamic_cast<editor::environment::manager&>(environment);
-    return (
-               manager.weathers().paste_target_time_frame(
-                   buffer,
-                   buffer_size
-               )
-           );
+    return (manager.weathers().paste_target_time_frame(buffer, buffer_size));
 }
 
 bool engine_impl::add_time_frame(char const* buffer, u32 const& buffer_size)
 {
     CEnvironment& environment = g_pGamePersistent->Environment();
     editor::environment::manager& manager = dynamic_cast<editor::environment::manager&>(environment);
-    return (
-               manager.weathers().add_time_frame(
-                   buffer,
-                   buffer_size
-               )
-           );
+    return (manager.weathers().add_time_frame(buffer, buffer_size));
 }
 
 char const* engine_impl::weather_current_time() const
@@ -393,7 +331,8 @@ void engine_impl::weather_current_time(char const* time)
     bool paused = g_pGamePersistent->Environment().m_paused;
 
     g_pGamePersistent->Environment().m_paused = false;
-    g_pGamePersistent->Environment().SetGameTime(float(hours * 60 * 60 + minutes * 60 + seconds), g_pGamePersistent->Environment().fTimeFactor);
+    g_pGamePersistent->Environment().SetGameTime(
+        float(hours * 60 * 60 + minutes * 60 + seconds), g_pGamePersistent->Environment().fTimeFactor);
     g_pGamePersistent->Environment().m_paused = paused;
 
     float weight;

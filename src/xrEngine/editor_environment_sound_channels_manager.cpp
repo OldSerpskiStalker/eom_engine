@@ -14,12 +14,13 @@
 #include "editor_environment_sound_channels_channel.hpp"
 #include "editor_environment_detail.hpp"
 
-using editor::environment::sound_channels::manager;
-using editor::environment::sound_channels::channel;
 using editor::environment::detail::logical_string_predicate;
+using editor::environment::sound_channels::channel;
+using editor::environment::sound_channels::manager;
 
 template <>
-void property_collection<manager::channel_container_type, manager>::display_name(u32 const& item_index, LPSTR const& buffer, u32 const& buffer_size)
+void property_collection<manager::channel_container_type, manager>::display_name(
+    u32 const& item_index, LPSTR const& buffer, u32 const& buffer_size)
 {
     xr_strcpy(buffer, buffer_size, m_container[item_index]->id());
 }
@@ -32,9 +33,7 @@ editor::property_holder* property_collection<manager::channel_container_type, ma
     return (object->object());
 }
 
-manager::manager() :
-    m_collection(0),
-    m_changed(true)
+manager::manager() : m_collection(0), m_changed(true)
 {
     m_collection = xr_new<collection_type>(&m_channels, this, &m_changed);
 }
@@ -49,17 +48,8 @@ manager::~manager()
 void manager::load()
 {
     string_path file_name;
-    CInifile* config =
-        xr_new<CInifile>(
-            FS.update_path(
-                file_name,
-                "$game_config$",
-                "environment\\sound_channels.ltx"
-            ),
-            TRUE,
-            TRUE,
-            FALSE
-        );
+    CInifile* config = xr_new<CInifile>(
+        FS.update_path(file_name, "$game_config$", "environment\\sound_channels.ltx"), TRUE, TRUE, FALSE);
 
     VERIFY(m_channels.empty());
 
@@ -82,17 +72,8 @@ void manager::load()
 void manager::save()
 {
     string_path file_name;
-    CInifile* config =
-        xr_new<CInifile>(
-            FS.update_path(
-                file_name,
-                "$game_config$",
-                "environment\\sound_channels.ltx"
-            ),
-            FALSE,
-            FALSE,
-            TRUE
-        );
+    CInifile* config = xr_new<CInifile>(
+        FS.update_path(file_name, "$game_config$", "environment\\sound_channels.ltx"), FALSE, FALSE, TRUE);
 
     channel_container_type::iterator i = m_channels.begin();
     channel_container_type::iterator e = m_channels.end();
@@ -105,12 +86,7 @@ void manager::save()
 void manager::fill(editor::property_holder* holder)
 {
     VERIFY(holder);
-    holder->add_property(
-        "sound channels",
-        "ambients",
-        "this option is resposible for sound channels",
-        m_collection
-    );
+    holder->add_property("sound channels", "ambients", "this option is resposible for sound channels", m_collection);
 }
 
 manager::channels_ids_type const& manager::channels_ids() const

@@ -28,18 +28,13 @@ namespace weathers
 class manager;
 class time;
 
-class weather :
-    public editor::property_holder_holder,
-    private boost::noncopyable
+class weather : public editor::property_holder_holder, private boost::noncopyable
 {
 public:
     typedef editor::property_holder property_holder_type;
 
 public:
-    weather(
-        environment::manager* manager,
-        shared_str const& id
-    );
+    weather(environment::manager* manager, shared_str const& id);
     virtual ~weather();
     void load();
     void save();
@@ -72,10 +67,7 @@ public:
     inline container_type const& times() const { return m_times; }
 
 private:
-    typedef property_collection <
-    container_type,
-    weather
-    > collection_type;
+    typedef property_collection<container_type, weather> collection_type;
 
 private:
     shared_str m_id;

@@ -2,8 +2,8 @@
 #include "xrtheora_stream.h"
 
 #ifdef _EDITOR
-//# pragma comment(lib, "x:\\oggB.lib")
-//# pragma comment(lib, "x:\\theoraB.lib")
+// # pragma comment(lib, "x:\\oggB.lib")
+// # pragma comment(lib, "x:\\theoraB.lib")
 #endif
 
 CTheoraStream::CTheoraStream()
@@ -64,7 +64,8 @@ BOOL CTheoraStream::ParseHeaders()
     while (!stateflag)
     {
         int ret = ReadData();
-        if (ret == 0) break;
+        if (ret == 0)
+            break;
         while (ogg_sync_pageout(&o_sync_state, &o_page) > 0)
         {
             ogg_stream_state test;
@@ -99,7 +100,8 @@ BOOL CTheoraStream::ParseHeaders()
     }
 
     // fail if theora stream not found in source
-    if (0 == header_count) return FALSE;
+    if (0 == header_count)
+        return FALSE;
 
     // we're expecting more header packets.
     while ((header_count && header_count < 3))
@@ -120,7 +122,8 @@ BOOL CTheoraStream::ParseHeaders()
                 exit(1);
             }
             header_count++;
-            if (header_count == 3)break;
+            if (header_count == 3)
+                break;
         }
 
         // The header pages/packets will arrive before anything else we
@@ -132,11 +135,13 @@ BOOL CTheoraStream::ParseHeaders()
         else
         {
             int ret = ReadData(); // someone needs more data
-            if (ret == 0) FATAL("End of file while searching for codec headers.");
+            if (ret == 0)
+                FATAL("End of file while searching for codec headers.");
         }
     }
 
-    if (3 != header_count) return FALSE;
+    if (3 != header_count)
+        return FALSE;
 
     // init decode
     theora_decode_init(&t_state, &t_info);
@@ -160,9 +165,11 @@ BOOL CTheoraStream::ParseHeaders()
             frame_count++;
         }
         // check eof
-        if (source->eof()) break;
+        if (source->eof())
+            break;
         // no data yet for somebody. Grab another page
-        if (0 == ReadData()) break;
+        if (0 == ReadData())
+            break;
         while (ogg_sync_pageout(&o_sync_state, &o_page) > 0)
             ogg_stream_pagein(&o_stream_state, &o_page);
     }
@@ -178,8 +185,8 @@ BOOL CTheoraStream::Decode(u32 in_tm_play)
 {
     VERIFY(in_tm_play < tm_total);
     ogg_int64_t t_frame;
-    t_frame = iFloor(in_tm_play*fpms);
-    ogg_int64_t k_frame = t_frame - t_frame%key_rate;
+    t_frame = iFloor(in_tm_play * fpms);
+    ogg_int64_t k_frame = t_frame - t_frame % key_rate;
 
     if (d_frame < t_frame)
     {
@@ -197,24 +204,27 @@ BOOL CTheoraStream::Decode(u32 in_tm_play)
                     if (d_frame < k_frame)
                     {
                         //. dbg_log ((stderr,"%04d: preroll\n",d_frame));
-                        //AVO: commented out VERIFY to get COC start in Debug - something is wrong with video stream
-                        //VERIFY((0 != d_frame%key_rate) || (0 == d_frame%key_rate) && theora_packet_iskeyframe(&o_packet));
+                        // AVO: commented out VERIFY to get COC start in Debug - something is wrong with video stream
+                        // VERIFY((0 != d_frame%key_rate) || (0 == d_frame%key_rate) &&
+                        // theora_packet_iskeyframe(&o_packet));
                         continue;
                     }
                     BOOL is_key = theora_packet_iskeyframe(&o_packet);
-                    //AVO: commented out VERIFY to get COC start in Debug - something is wrong with video stream
-                    //VERIFY((d_frame != k_frame) || ((d_frame == k_frame) && is_key));
-                    // real decode
+                    // AVO: commented out VERIFY to get COC start in Debug - something is wrong with video stream
+                    // VERIFY((d_frame != k_frame) || ((d_frame == k_frame) && is_key));
+                    //  real decode
                     //. dbg_log ((stderr,"%04d: decode\n",d_frame));
                     int res = theora_decode_packetin(&t_state, &o_packet);
                     VERIFY(res != OC_BADPACKET);
                     //. dbg_log ((stderr,"%04d: granule frame\n",theora_granule_frame(&t_state,t_state.granulepos)));
-                    if (d_frame >= t_frame) result = TRUE;
+                    if (d_frame >= t_frame)
+                        result = TRUE;
                 }
-                else break;
+                else
+                    break;
             }
             // check eof
-            VERIFY(!(FALSE == result&&source->eof()));
+            VERIFY(!(FALSE == result && source->eof()));
             if (FALSE == result)
             {
                 // no data yet for somebody. Grab another page
@@ -252,4 +262,3 @@ BOOL CTheoraStream::Load(const char* fname)
     Reset();
     return res;
 }
-

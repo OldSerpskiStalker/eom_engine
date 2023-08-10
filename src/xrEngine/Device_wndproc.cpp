@@ -4,12 +4,10 @@ bool CRenderDevice::on_message(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 {
     switch (uMsg)
     {
-    case WM_SYSKEYDOWN:
-    {
+    case WM_SYSKEYDOWN: {
         return true;
     }
-    case WM_ACTIVATE:
-    {
+    case WM_ACTIVATE: {
 #ifdef INGAME_EDITOR
         if (editor())
         {
@@ -20,8 +18,7 @@ bool CRenderDevice::on_message(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
         OnWM_Activate(wParam, lParam);
         return (false);
     }
-    case WM_SETCURSOR:
-    {
+    case WM_SETCURSOR: {
 #ifdef INGAME_EDITOR
         if (editor())
             break;
@@ -30,8 +27,7 @@ bool CRenderDevice::on_message(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
         result = 1;
         return (true);
     }
-    case WM_SYSCOMMAND:
-    {
+    case WM_SYSCOMMAND: {
 #ifdef INGAME_EDITOR
         if (editor())
             break;
@@ -43,14 +39,11 @@ bool CRenderDevice::on_message(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
         case SC_MOVE:
         case SC_SIZE:
         case SC_MAXIMIZE:
-        case SC_MONITORPOWER:
-            result = 1;
-            return (true);
+        case SC_MONITORPOWER: result = 1; return (true);
         }
         return (false);
     }
-    case WM_CLOSE:
-    {
+    case WM_CLOSE: {
 #ifdef INGAME_EDITOR
         if (editor())
             break;
@@ -60,9 +53,7 @@ bool CRenderDevice::on_message(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
         return (true);
     }
     case WM_HOTKEY: // prevent 'ding' sounds caused by Alt+key combinations
-    case WM_SYSCHAR:
-        result = 0;
-        return true;
+    case WM_SYSCHAR: result = 0; return true;
     }
 
     return (false);

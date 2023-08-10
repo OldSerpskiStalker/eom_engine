@@ -9,6 +9,7 @@
 class ENGINE_API CGameFont
 {
     friend class dxFontRender;
+
 public:
     enum EAligment
     {
@@ -16,6 +17,7 @@ public:
         alRight,
         alCenter
     };
+
 private:
     struct String
     {
@@ -25,6 +27,7 @@ private:
         u32 c;
         EAligment align;
     };
+
 protected:
     Fvector2 vHalfPixel;
     Ivector2 vTS;
@@ -90,8 +93,8 @@ public:
     void OutSetI(float x, float y);
     void OutSet(float x, float y);
 
-    void MasterOut(BOOL bCheckDevice, BOOL bUseCoords, BOOL bScaleCoords, BOOL bUseSkip,
-        float _x, float _y, float _skip, LPCSTR fmt, va_list p);
+    void MasterOut(BOOL bCheckDevice, BOOL bUseCoords, BOOL bScaleCoords, BOOL bUseSkip, float _x, float _y,
+        float _skip, LPCSTR fmt, va_list p);
 
     u32 smart_strlen(const char* S);
     BOOL IsMultibyte() { return (uFlags & fsMultibyte); };

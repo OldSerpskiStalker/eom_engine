@@ -28,10 +28,7 @@ namespace thunderbolts
 
 class manager;
 
-class thunderbolt :
-    public SThunderboltDesc,
-    public editor::property_holder_holder,
-    private boost::noncopyable
+class thunderbolt : public SThunderboltDesc, public editor::property_holder_holder, private boost::noncopyable
 {
 private:
     typedef SThunderboltDesc inherited;
@@ -49,6 +46,7 @@ public:
 private:
     LPCSTR xr_stdcall id_getter() const;
     void xr_stdcall id_setter(LPCSTR value);
+
 private:
     typedef editor::property_holder property_holder_type;
 

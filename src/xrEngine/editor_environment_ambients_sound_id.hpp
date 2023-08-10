@@ -29,9 +29,7 @@ class manager;
 namespace ambients
 {
 
-class sound_id :
-    public editor::property_holder_holder,
-    private boost::noncopyable
+class sound_id : public editor::property_holder_holder, private boost::noncopyable
 {
 public:
     sound_id(sound_channels::manager const& manager, shared_str const& sound);

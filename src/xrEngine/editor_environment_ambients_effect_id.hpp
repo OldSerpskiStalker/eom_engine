@@ -29,9 +29,7 @@ class manager;
 namespace ambients
 {
 
-class effect_id :
-    public editor::property_holder_holder,
-    private boost::noncopyable
+class effect_id : public editor::property_holder_holder, private boost::noncopyable
 {
 public:
     effect_id(effects::manager const& manager, shared_str const& id);

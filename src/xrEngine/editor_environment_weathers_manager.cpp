@@ -19,12 +19,13 @@
 #include "property_collection.hpp"
 #include "editor_environment_manager.hpp"
 
+using editor::environment::detail::logical_string_predicate;
 using editor::environment::weathers::manager;
 using editor::environment::weathers::weather;
-using editor::environment::detail::logical_string_predicate;
 
 template <>
-void property_collection<manager::weather_container_type, manager>::display_name(u32 const& item_index, LPSTR const& buffer, u32 const& buffer_size)
+void property_collection<manager::weather_container_type, manager>::display_name(
+    u32 const& item_index, LPSTR const& buffer, u32 const& buffer_size)
 {
     xr_strcpy(buffer, buffer_size, m_container[item_index]->id().c_str());
 }
@@ -37,10 +38,7 @@ editor::property_holder* property_collection<manager::weather_container_type, ma
     return (object->object());
 }
 
-manager::manager(editor::environment::manager* manager) :
-    m_manager(*manager),
-    m_collection(0),
-    m_changed(true)
+manager::manager(editor::environment::manager* manager) : m_manager(*manager), m_collection(0), m_changed(true)
 {
     m_collection = xr_new<collection_type>(&m_weathers, this, &m_changed);
 }
@@ -99,29 +97,17 @@ void manager::save()
         (*i)->save();
 }
 
-LPCSTR const* manager::weathers_getter() const
-{
-    return (&*weather_ids().begin());
-}
+LPCSTR const* manager::weathers_getter() const { return (&*weather_ids().begin()); }
 
-u32 manager::weathers_size_getter() const
-{
-    return (weather_ids().size());
-}
+u32 manager::weathers_size_getter() const { return (weather_ids().size()); }
 
 struct predicate
 {
     shared_str value;
 
-    inline predicate(LPCSTR const& value_) :
-        value(value_)
-    {
-    }
+    inline predicate(LPCSTR const& value_) : value(value_) {}
 
-    inline bool operator() (weather const* weather) const
-    {
-        return (value._get() == weather->id()._get());
-    }
+    inline bool operator()(weather const* weather) const { return (value._get() == weather->id()._get()); }
 }; // struct predicate
 
 LPCSTR const* manager::frames_getter(LPCSTR weather_id) const
@@ -129,11 +115,7 @@ LPCSTR const* manager::frames_getter(LPCSTR weather_id) const
     delete_data(m_times_ids);
 
     weather_container_type::const_iterator found =
-        std::find_if(
-            m_weathers.begin(),
-            m_weathers.end(),
-            predicate(weather_id)
-        );
+        std::find_if(m_weathers.begin(), m_weathers.end(), predicate(weather_id));
 
     if (found == m_weathers.end())
         return (0);
@@ -154,28 +136,20 @@ LPCSTR const* manager::frames_getter(LPCSTR weather_id) const
 u32 manager::frames_size_getter(LPCSTR weather_id) const
 {
     weather_container_type::const_iterator found =
-        std::find_if(
-            m_weathers.begin(),
-            m_weathers.end(),
-            predicate(weather_id)
-        );
+        std::find_if(m_weathers.begin(), m_weathers.end(), predicate(weather_id));
 
     if (found == m_weathers.end())
         return (0);
 
-#pragma todo("Dima to Dima: dangerous scheme: it depends on the call sequence (frames_getter should be called berfore frames_size_getter to get correct results)")
+#pragma todo(                                                                                                          \
+    "Dima to Dima: dangerous scheme: it depends on the call sequence (frames_getter should be called berfore frames_size_getter to get correct results)")
     return (m_times_ids.size());
 }
 
 void manager::fill(property_holder_type* holder)
 {
     VERIFY(holder);
-    holder->add_property(
-        "weathers",
-        "weathers",
-        "this option is resposible for weathers",
-        m_collection
-    );
+    holder->add_property("weathers", "weathers", "this option is resposible for weathers", m_collection);
 
     typedef ::editor::ide::weathers_getter_type weathers_getter_type;
     weathers_getter_type weathers_getter;
@@ -193,12 +167,7 @@ void manager::fill(property_holder_type* holder)
     frames_size_getter_type frames_size_getter;
     frames_size_getter.bind(this, &manager::frames_size_getter);
 
-    ::ide().weather_editor_setup(
-        weathers_getter,
-        weathers_size_getter,
-        frames_getter,
-        frames_size_getter
-    );
+    ::ide().weather_editor_setup(weathers_getter, weathers_size_getter, frames_getter, frames_size_getter);
 }
 
 manager::weather_ids_type const& manager::weather_ids() const

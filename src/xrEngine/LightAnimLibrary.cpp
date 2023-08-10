@@ -21,10 +21,7 @@ CLAItem::CLAItem()
     iFrameCount = 1;
 }
 
-void CLAItem::InitDefault()
-{
-    Keys[0] = 0x00000000;
-}
+void CLAItem::InitDefault() { Keys[0] = 0x00000000; }
 
 void CLAItem::Load(IReader& F)
 {
@@ -70,9 +67,11 @@ void CLAItem::InsertKey(int frame, u32 color)
 void CLAItem::DeleteKey(int frame)
 {
     R_ASSERT(frame <= iFrameCount);
-    if (0 == frame) return;
+    if (0 == frame)
+        return;
     KeyPairIt it = Keys.find(frame);
-    if (it != Keys.end()) Keys.erase(it);
+    if (it != Keys.end())
+        Keys.erase(it);
 }
 
 void CLAItem::MoveKey(int from, int to)
@@ -101,7 +100,8 @@ void CLAItem::Resize(int new_len)
         else
         {
             KeyPairIt I = Keys.upper_bound(new_len - 1);
-            if (I != Keys.end()) Keys.erase(I, Keys.end());
+            if (I != Keys.end())
+                Keys.erase(I, Keys.end());
             iFrameCount = new_len;
         }
     }
@@ -113,14 +113,14 @@ u32 CLAItem::InterpolateRGB(int frame)
 
     KeyPairIt A = Keys.find(frame);
     KeyPairIt B;
-    if (A != Keys.end())  // ключ - возвращаем цвет ключа
+    if (A != Keys.end()) // ключ - возвращаем цвет ключа
     {
         return A->second;
     }
-    else   // не ключ
+    else // не ключ
     {
         B = Keys.upper_bound(frame); // ищем следующий ключ
-        if (B == Keys.end())  // если его нет вернем цвет последнего ключа
+        if (B == Keys.end()) // если его нет вернем цвет последнего ключа
         {
             B--;
             return B->second;
@@ -149,13 +149,13 @@ u32 CLAItem::InterpolateBGR(int frame)
 
 u32 CLAItem::CalculateRGB(float T, int& frame)
 {
-    frame = iFloor(fmodf(T, float(iFrameCount) / fFPS)*fFPS);
+    frame = iFloor(fmodf(T, float(iFrameCount) / fFPS) * fFPS);
     return InterpolateRGB(frame);
 }
 
 u32 CLAItem::CalculateBGR(float T, int& frame)
 {
-    frame = iFloor(fmodf(T, float(iFrameCount) / fFPS)*fFPS);
+    frame = iFloor(fmodf(T, float(iFrameCount) / fFPS) * fFPS);
     return InterpolateBGR(frame);
 }
 
@@ -166,7 +166,8 @@ int CLAItem::PrevKeyFrame(int frame)
     {
         KeyPairIt B = A;
         B--;
-        if (B != Keys.end()) return B->first;
+        if (B != Keys.end())
+            return B->first;
         return A->first;
     }
     else
@@ -191,23 +192,13 @@ int CLAItem::NextKeyFrame(int frame)
 //------------------------------------------------------------------------------
 // Library
 //------------------------------------------------------------------------------
-ELightAnimLibrary::ELightAnimLibrary()
-{
-}
+ELightAnimLibrary::ELightAnimLibrary() {}
 
-ELightAnimLibrary::~ELightAnimLibrary()
-{
-}
+ELightAnimLibrary::~ELightAnimLibrary() {}
 
-void ELightAnimLibrary::OnCreate()
-{
-    Load();
-}
+void ELightAnimLibrary::OnCreate() { Load(); }
 
-void ELightAnimLibrary::OnDestroy()
-{
-    Unload();
-}
+void ELightAnimLibrary::OnDestroy() { Unload(); }
 
 void ELightAnimLibrary::Unload()
 {
@@ -283,26 +274,29 @@ void ELightAnimLibrary::Reload()
 
 LAItemIt ELightAnimLibrary::FindItemI(LPCSTR name)
 {
-    if (name&&name[0])
-        for (LAItemIt it=Items.begin(); it!=Items.end(); it++)
-            if (0==xr_strcmp((*it)->cName,name)) return it;
+    if (name && name[0])
+        for (LAItemIt it = Items.begin(); it != Items.end(); it++)
+            if (0 == xr_strcmp((*it)->cName, name))
+                return it;
     return Items.end();
 }
 
 CLAItem* ELightAnimLibrary::FindItem(LPCSTR name)
 {
-    LAItemIt it=FindItemI(name);
-    return (it!=Items.end())?*it:0;
+    LAItemIt it = FindItemI(name);
+    return (it != Items.end()) ? *it : 0;
 }
 
 CLAItem* ELightAnimLibrary::AppendItem(LPCSTR name, CLAItem* src)
 {
-    VERIFY2 (FindItem(name)==0,"Duplicate name found.");
+    VERIFY2(FindItem(name) == 0, "Duplicate name found.");
     CLAItem* I = xr_new<CLAItem>();
-    if (src) *I = *src;
-    else I->InitDefault();
+    if (src)
+        *I = *src;
+    else
+        I->InitDefault();
     I->cName = name;
-    Items.push_back (I);
+    Items.push_back(I);
     return I;
 }
 
@@ -325,7 +319,8 @@ void ELightAnimLibrary::RemoveObject(LPCSTR _fname, EItemType type, bool& res)
             return;
         }
     }
-    else THROW;
+    else
+        THROW;
     res = false;
 }
 //---------------------------------------------------------------------------

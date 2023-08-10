@@ -19,8 +19,11 @@
 extern "C" {
 
 #define GAMESPY_TFN_DECL(r, f, p) typedef DLL_API r __cdecl t_fn_xrGS_##f p
-
 };
 
-#define GAMESPY_FN_VAR_DECL(r, f, p) GAMESPY_TFN_DECL(r, f, p); t_fn_xrGS_##f* xrGS_##f;
-#define GAMESPY_LOAD_FN(f)    f = (t_fn_##f*)GetProcAddress(hGameSpyDLL, #f); R_ASSERT2(f, "No such func in xrGameSpy.dll");
+#define GAMESPY_FN_VAR_DECL(r, f, p)                                                                                   \
+    GAMESPY_TFN_DECL(r, f, p);                                                                                         \
+    t_fn_xrGS_##f* xrGS_##f;
+#define GAMESPY_LOAD_FN(f)                                                                                             \
+    f = (t_fn_##f*)GetProcAddress(hGameSpyDLL, #f);                                                                    \
+    R_ASSERT2(f, "No such func in xrGameSpy.dll");

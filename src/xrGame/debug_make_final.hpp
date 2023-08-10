@@ -11,32 +11,32 @@
 
 #include <boost/noncopyable.hpp>
 
-namespace debug {
+namespace debug
+{
 
 #ifdef DEBUG
-	namespace detail {
+namespace detail
+{
 
-		template <typename T1, typename T2>
-		class make_final {
-				make_final () {}
-			friend T1;
-			friend T2;
-		}; // class make_final
+template <typename T1, typename T2>
+class make_final
+{
+    make_final() {}
+    friend T1;
+    friend T2;
+}; // class make_final
 
-	} // namespace detail
+} // namespace detail
 
-	template <typename T>
-	struct make_final : 
-		private virtual
-			detail::make_final<
-				T,
-				make_final<T>
-			>
-	{
-	}; // class make_final
+template <typename T>
+struct make_final : private virtual detail::make_final<T, make_final<T>>
+{
+}; // class make_final
 #else // DEBUG
-	template <typename T>
-	class make_final {};
+template <typename T>
+class make_final
+{
+};
 #endif // DEBUG
 
 } // namespace debug

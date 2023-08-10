@@ -18,10 +18,7 @@ CObjectAnimator::CObjectAnimator()
     m_Name = "";
 }
 
-CObjectAnimator::~CObjectAnimator()
-{
-    Clear();
-}
+CObjectAnimator::~CObjectAnimator() { Clear(); }
 
 void CObjectAnimator::Clear()
 {
@@ -34,7 +31,8 @@ void CObjectAnimator::Clear()
 void CObjectAnimator::SetActiveMotion(COMotion* mot)
 {
     m_Current = mot;
-    if (m_Current) m_MParam.Set(m_Current);
+    if (m_Current)
+        m_MParam.Set(m_Current);
     m_XFORM.identity();
 }
 
@@ -52,8 +50,10 @@ void CObjectAnimator::LoadMotions(LPCSTR fname)
         if (0 == xr_strcmp(ext, ".anm"))
         {
             COMotion* M = xr_new<COMotion>();
-            if (M->LoadMotion(full_path)) m_Motions.push_back(M);
-            else FATAL("ERROR: Can't load motion. Incorrect file version.");
+            if (M->LoadMotion(full_path))
+                m_Motions.push_back(M);
+            else
+                FATAL("ERROR: Can't load motion. Incorrect file version.");
         }
         else if (0 == xr_strcmp(ext, ".anms"))
         {
@@ -64,7 +64,8 @@ void CObjectAnimator::LoadMotions(LPCSTR fname)
             {
                 COMotion* M = xr_new<COMotion>();
                 bool bRes = M->Load(*F);
-                if (!bRes) FATAL("ERROR: Can't load motion. Incorrect file version.");
+                if (!bRes)
+                    FATAL("ERROR: Can't load motion. Incorrect file version.");
                 m_Motions.push_back(M);
             }
             FS.r_close(F);
@@ -94,7 +95,7 @@ void CObjectAnimator::Update(float dt)
 
 COMotion* CObjectAnimator::Play(bool loop, LPCSTR name)
 {
-    if (name&&name[0])
+    if (name && name[0])
     {
         MotionIt it = std::lower_bound(m_Motions.begin(), m_Motions.end(), name, motion_find_pred);
         if ((it != m_Motions.end()) && (0 == xr_strcmp((*it)->Name(), name)))
@@ -129,14 +130,15 @@ COMotion* CObjectAnimator::Play(bool loop, LPCSTR name)
 
 void CObjectAnimator::Stop()
 {
-    SetActiveMotion (0);
-    m_MParam.Stop ();
+    SetActiveMotion(0);
+    m_MParam.Stop();
 }
 
-float CObjectAnimator::GetLength ()
+float CObjectAnimator::GetLength()
 {
-    if(!m_Current) return 0.0f;
-    float res = m_Current->Length()/m_Current->FPS();
+    if (!m_Current)
+        return 0.0f;
+    float res = m_Current->Length() / m_Current->FPS();
     return res;
 }
 
@@ -153,32 +155,33 @@ void CObjectAnimator::DrawPath()
     if (m_Current)
     {
         float fps = m_Current->FPS();
-        float min_t = (float)m_Current->FrameStart()/fps;
-        float max_t = (float)m_Current->FrameEnd()/fps;
+        float min_t = (float)m_Current->FrameStart() / fps;
+        float max_t = (float)m_Current->FrameEnd() / fps;
 
-        Fvector T,r;
+        Fvector T, r;
         u32 clr = 0xffffffff;
-        path_points.clear ();
-        for (float t=min_t; (t<max_t)||fsimilar(t,max_t,EPS_L); t+=1/30.f)
+        path_points.clear();
+        for (float t = min_t; (t < max_t) || fsimilar(t, max_t, EPS_L); t += 1 / 30.f)
         {
             m_Current->_Evaluate(t, T, r);
             path_points.push_back(T);
-    }
+        }
 
         EDevice.SetShader(EDevice.m_WireShader);
         RCache.set_xform_world(Fidentity);
         if (!path_points.empty())
-            DU_impl.DrawPrimitiveL(D3DPT_LINESTRIP, path_points.size() - 1, path_points.begin(), path_points.size(), clr, true, false);
+            DU_impl.DrawPrimitiveL(
+                D3DPT_LINESTRIP, path_points.size() - 1, path_points.begin(), path_points.size(), clr, true, false);
         CEnvelope* E = m_Current->Envelope();
         for (KeyIt k_it = E->keys.begin(); k_it != E->keys.end(); k_it++)
         {
             m_Current->_Evaluate((*k_it)->time, T, r);
-            if (EDevice.m_Camera.GetPosition().distance_to_sqr(T) < 50.f*50.f)
+            if (EDevice.m_Camera.GetPosition().distance_to_sqr(T) < 50.f * 50.f)
             {
                 DU_impl.DrawCross(T, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, clr, false);
                 DU_impl.OutText(T, AnsiString().sprintf("K: %3.3f", (*k_it)->time).c_str(), 0xffffffff, 0x00000000);
             }
         }
-}
+    }
 }
 #endif

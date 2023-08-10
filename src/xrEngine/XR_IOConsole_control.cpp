@@ -8,7 +8,6 @@
 #include "stdafx.h"
 #include "XR_IOConsole.h"
 
-
 void CConsole::add_cmd_history(shared_str const& str)
 {
     if (str.size() == 0)
@@ -40,10 +39,7 @@ void CConsole::prev_cmd_history_idx()
     }
 }
 
-void CConsole::reset_cmd_history_idx()
-{
-    m_cmd_history_idx = -1;
-}
+void CConsole::reset_cmd_history_idx() { m_cmd_history_idx = -1; }
 
 void CConsole::next_selected_tip()
 {

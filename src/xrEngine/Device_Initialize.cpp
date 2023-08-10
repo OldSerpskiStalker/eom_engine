@@ -3,8 +3,8 @@
 #include "dedicated_server_only.h"
 
 #ifdef INGAME_EDITOR
-# include "../include/editor/ide.hpp"
-# include "engine_impl.hpp"
+#include "../include/editor/ide.hpp"
+#include "engine_impl.hpp"
 #endif // #ifdef INGAME_EDITOR
 
 extern LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -48,13 +48,13 @@ PROTECT_API void CRenderDevice::Initialize()
     // Unless a substitute hWnd has been specified, create a window to render into
     if (!m_hWnd)
     {
-        LPCSTR	wndclass = "Call_of_Chernobyl_x64";
+        LPCSTR wndclass = "Call_of_Chernobyl_x64";
 
         // Register the windows class
         HINSTANCE hInstance = (HINSTANCE)GetModuleHandle(0);
-        WNDCLASS wndClass = { CS_HREDRAW | CS_VREDRAW | CS_OWNDC, WndProc, 0, 0, hInstance,
-          LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1)),
-          LoadCursor(NULL, IDC_ARROW), (HBRUSH)GetStockObject(BLACK_BRUSH), NULL, wndclass };
+        WNDCLASS wndClass = {CS_HREDRAW | CS_VREDRAW | CS_OWNDC, WndProc, 0, 0, hInstance,
+            LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1)), LoadCursor(NULL, IDC_ARROW),
+            (HBRUSH)GetStockObject(BLACK_BRUSH), NULL, wndclass};
         RegisterClass(&wndClass);
 
         // Set the window's initial style
@@ -74,7 +74,8 @@ PROTECT_API void CRenderDevice::Initialize()
         ChangeDisplaySettings(&screen_settings, CDS_FULLSCREEN);
 
         // Create the render window
-        m_hWnd = CreateWindowEx(WS_EX_TOPMOST, wndclass, "Call of Chernobyl: Stason174 7.00", m_dwWindowStyle, 0, 0, screen_width, screen_height, 0L, 0, hInstance, 0L);
+        m_hWnd = CreateWindowEx(WS_EX_TOPMOST, wndclass, "Call of Chernobyl: Stason174 7.00", m_dwWindowStyle, 0, 0,
+            screen_width, screen_height, 0L, 0, hInstance, 0L);
     }
 
     // Save window properties
@@ -91,4 +92,3 @@ PROTECT_API void CRenderDevice::Initialize()
     else HW.Caps.bForceGPU_REF = FALSE;
     */
 }
-

@@ -7,15 +7,9 @@ struct xrGUID
 {
     u64 g[2];
 
-    ICF bool operator== (const xrGUID& o) const
-    {
-        return ((g[0] == o.g[0]) && (g[1] == o.g[1]));
-    }
+    ICF bool operator==(const xrGUID& o) const { return ((g[0] == o.g[0]) && (g[1] == o.g[1])); }
 
-    ICF bool operator!= (const xrGUID& o) const
-    {
-        return !(*this == o);
-    }
+    ICF bool operator!=(const xrGUID& o) const { return !(*this == o); }
     ICF void LoadLTX(CInifile& ini, LPCSTR section, LPCSTR name)
     {
         string128 buff;
@@ -68,7 +62,7 @@ enum EBuildQuality
     ebq_force_u16 = u16(-1)
 };
 
-#pragma pack(push,8)
+#pragma pack(push, 8)
 struct hdrLEVEL
 {
     u16 XRLC_version;
@@ -94,7 +88,7 @@ struct hdrNODES
 };
 #pragma pack(pop)
 
-#pragma pack(push,1)
+#pragma pack(push, 1)
 #pragma pack(1)
 #ifndef _EDITOR
 class NodePosition
@@ -103,23 +97,12 @@ class NodePosition
 
     ICF void xz(u32 value) { CopyMemory(data, &value, 3); }
     ICF void y(u16 value) { CopyMemory(data + 3, &value, 2); }
+
 public:
-    ICF u32 xz() const
-    {
-        return ((*((u32*)data)) & 0x00ffffff);
-    }
-    ICF u32 x(u32 row) const
-    {
-        return (xz() / row);
-    }
-    ICF u32 z(u32 row) const
-    {
-        return (xz() % row);
-    }
-    ICF u32 y() const
-    {
-        return (*((u16*)(data + 3)));
-    }
+    ICF u32 xz() const { return ((*((u32*)data)) & 0x00ffffff); }
+    ICF u32 x(u32 row) const { return (xz() / row); }
+    ICF u32 z(u32 row) const { return (xz() % row); }
+    ICF u32 y() const { return (*((u16*)(data + 3))); }
 
     friend class CLevelGraph;
     friend struct CNodePositionCompressor;
@@ -130,35 +113,31 @@ struct NodeCompressed
 {
 public:
     u8 data[12];
-private:
 
+private:
     ICF void link(u8 link_index, u32 value)
     {
         value &= 0x007fffff;
         switch (link_index)
         {
-        case 0:
-        {
+        case 0: {
             value |= (*(u32*)data) & 0xff800000;
             CopyMemory(data, &value, sizeof(u32));
             break;
         }
-        case 1:
-        {
+        case 1: {
             value <<= 7;
             value |= (*(u32*)(data + 2)) & 0xc000007f;
             CopyMemory(data + 2, &value, sizeof(u32));
             break;
         }
-        case 2:
-        {
+        case 2: {
             value <<= 6;
             value |= (*(u32*)(data + 5)) & 0xe000003f;
             CopyMemory(data + 5, &value, sizeof(u32));
             break;
         }
-        case 3:
-        {
+        case 3: {
             value <<= 5;
             value |= (*(u32*)(data + 8)) & 0xf000001f;
             CopyMemory(data + 8, &value, sizeof(u32));
@@ -167,10 +146,7 @@ private:
         }
     }
 
-    ICF void light(u8 value)
-    {
-        data[10] |= value << 4;
-    }
+    ICF void light(u8 value) { data[10] |= value << 4; }
 
 public:
     struct SCover
@@ -184,16 +160,11 @@ public:
         {
             switch (index)
             {
-            case 0:
-                return(cover0);
-            case 1:
-                return(cover1);
-            case 2:
-                return(cover2);
-            case 3:
-                return(cover3);
-            default:
-                NODEFAULT;
+            case 0: return (cover0);
+            case 1: return (cover1);
+            case 2: return (cover2);
+            case 3: return (cover3);
+            default: NODEFAULT;
             }
 #ifdef DEBUG
             return (u8(-1));
@@ -211,16 +182,11 @@ public:
     {
         switch (index)
         {
-        case 0:
-            return ((*(u32*)data) & 0x007fffff);
-        case 1:
-            return (((*(u32*)(data + 2)) >> 7) & 0x007fffff);
-        case 2:
-            return (((*(u32*)(data + 5)) >> 6) & 0x007fffff);
-        case 3:
-            return (((*(u32*)(data + 8)) >> 5) & 0x007fffff);
-        default:
-            NODEFAULT;
+        case 0: return ((*(u32*)data) & 0x007fffff);
+        case 1: return (((*(u32*)(data + 2)) >> 7) & 0x007fffff);
+        case 2: return (((*(u32*)(data + 5)) >> 6) & 0x007fffff);
+        case 3: return (((*(u32*)(data + 8)) >> 5) & 0x007fffff);
+        default: NODEFAULT;
         }
 #ifdef DEBUG
         return (0);
@@ -239,35 +205,31 @@ struct NodeCompressed6
 {
 public:
     u8 data[11];
-private:
 
+private:
     ICF void link(u8 link_index, u32 value)
     {
         value &= 0x001fffff;
         switch (link_index)
         {
-        case 0 :
-        {
+        case 0: {
             value |= (*(u32*)data) & 0xffe00000;
             CopyMemory(data, &value, sizeof(u32));
             break;
         }
-        case 1 :
-        {
+        case 1: {
             value <<= 5;
             value |= (*(u32*)(data + 2)) & 0xfc00001f;
             CopyMemory(data + 2, &value, sizeof(u32));
             break;
         }
-        case 2 :
-        {
+        case 2: {
             value <<= 2;
             value |= (*(u32*)(data + 5)) & 0xff800003;
             CopyMemory(data + 5, &value, sizeof(u32));
             break;
         }
-        case 3 :
-        {
+        case 3: {
             value <<= 7;
             value |= (*(u32*)(data + 7)) & 0xf000007f;
             CopyMemory(data + 7, &value, sizeof(u32));
@@ -276,10 +238,7 @@ private:
         }
     }
 
-    ICF void light(u8 value)
-    {
-        data[10] |= value << 4;
-    }
+    ICF void light(u8 value) { data[10] |= value << 4; }
 
 public:
     u16 cover0 : 4;
@@ -293,41 +252,28 @@ public:
     {
         switch (index)
         {
-        case 0 :
-            return ((*(u32*)data) & 0x001fffff);
-        case 1 :
-            return (((*(u32*)(data + 2)) >> 5) & 0x001fffff);
-        case 2 :
-            return (((*(u32*)(data + 5)) >> 2) & 0x001fffff);
-        case 3 :
-            return (((*(u32*)(data + 7)) >> 7) & 0x001fffff);
-        default :
-            NODEFAULT;
+        case 0: return ((*(u32*)data) & 0x001fffff);
+        case 1: return (((*(u32*)(data + 2)) >> 5) & 0x001fffff);
+        case 2: return (((*(u32*)(data + 5)) >> 2) & 0x001fffff);
+        case 3: return (((*(u32*)(data + 7)) >> 7) & 0x001fffff);
+        default: NODEFAULT;
         }
 #ifdef DEBUG
         return (0);
 #endif
     }
 
-    ICF u8 light() const
-    {
-        return (data[10] >> 4);
-    }
+    ICF u8 light() const { return (data[10] >> 4); }
 
     ICF u16 cover(u8 index) const
     {
         switch (index)
         {
-        case 0 :
-            return(cover0);
-        case 1 :
-            return(cover1);
-        case 2 :
-            return(cover2);
-        case 3 :
-            return(cover3);
-        default :
-            NODEFAULT;
+        case 0: return (cover0);
+        case 1: return (cover1);
+        case 2: return (cover2);
+        case 3: return (cover3);
+        default: NODEFAULT;
         }
 #ifdef DEBUG
         return (u8(-1));
@@ -346,13 +292,13 @@ struct SNodePositionOld
     u16 y;
     s16 z;
 };
-#pragma pack (pop)
+#pragma pack(pop)
 
 #ifdef _EDITOR
 typedef SNodePositionOld NodePosition;
 #endif
 
-const u32 XRCL_CURRENT_VERSION = 18; //17; // input
+const u32 XRCL_CURRENT_VERSION = 18; // 17; // input
 const u32 XRCL_PRODUCTION_VERSION = 14; // output
 const u32 CFORM_CURRENT_VERSION = 4;
 const u32 MAX_NODE_BIT_COUNT = 23;

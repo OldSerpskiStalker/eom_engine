@@ -8,7 +8,7 @@
 #ifndef LINE_EDIT_CONTROL_H_INCLUDED
 #define LINE_EDIT_CONTROL_H_INCLUDED
 
-//#include <boost/noncopyable.hpp>
+// #include <boost/noncopyable.hpp>
 
 namespace text_editor
 {
@@ -35,7 +35,7 @@ enum key_state // Flags32
 
     ks_force = u32(-1)
 
-};// enum key_state
+}; // enum key_state
 
 enum init_mode
 {
@@ -45,8 +45,7 @@ enum init_mode
     im_file_name_mode, // not "/\\:*?\"<>|^()[]%"
 
     im_count
-};// init_mode
-
+}; // init_mode
 
 class ENGINE_API line_edit_control
 {
@@ -87,7 +86,7 @@ public:
 
 private:
     line_edit_control(line_edit_control const&);
-    line_edit_control const& operator= (line_edit_control const&);
+    line_edit_control const& operator=(line_edit_control const&);
 
     void update_key_states();
     void update_bufs();
@@ -127,7 +126,10 @@ private:
     void clamp_cur_pos();
 
 private:
-    enum { DIK_COUNT = 256 };
+    enum
+    {
+        DIK_COUNT = 256
+    };
     Base* m_actions[DIK_COUNT];
 
     char* m_edit_str;
@@ -138,7 +140,11 @@ private:
     char* m_buf2;
     char* m_buf3;
 
-    enum { MIN_BUF_SIZE = 8, MAX_BUF_SIZE = 4096 };
+    enum
+    {
+        MIN_BUF_SIZE = 8,
+        MAX_BUF_SIZE = 4096
+    };
     int m_buffer_size;
 
     int m_cur_pos;

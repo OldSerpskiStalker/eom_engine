@@ -18,7 +18,7 @@ class CUIStatic;
 class CUIWindow;
 class CUIXml;
 class CUIActorMenu;
-class CUIPdaWnd;			
+class CUIPdaWnd;
 struct KillMessageStruct;
 class CUIMainIngameWnd;
 class CUIMessagesWindow;
@@ -30,11 +30,11 @@ struct StaticDrawableWrapper : public IPureDestroyableObject
     shared_str m_name;
 
     StaticDrawableWrapper();
-    virtual	void destroy();
+    virtual void destroy();
     void Draw();
     void Update();
     CUIStatic* wnd() { return m_static; }
-    bool IsActual()	const;
+    bool IsActual() const;
     void SetText(const char* text);
 };
 
@@ -42,7 +42,7 @@ struct MPLevelDesc
 {
     shared_str map_name;
     shared_str map_ver;
-    bool operator == (const MPLevelDesc& rhs) { return map_name == rhs.map_name && map_ver == rhs.map_ver; }
+    bool operator==(const MPLevelDesc& rhs) { return map_name == rhs.map_name && map_ver == rhs.map_ver; }
 };
 
 struct SGameTypeMaps
@@ -77,9 +77,7 @@ private:
 
 extern CMapListHelper gMapListHelper;
 
-class CUIGameCustom :
-    public DLL_Pure,
-    public CDialogHolder
+class CUIGameCustom : public DLL_Pure, public CDialogHolder
 {
 protected:
     CUIWindow* Window;
@@ -98,15 +96,15 @@ public:
     virtual ~CUIGameCustom();
     virtual void SetClGame(game_cl_GameState* gameState);
     virtual void OnInventoryAction(PIItem item, u16 actionType);
-    virtual	void Init(int stage) {}
+    virtual void Init(int stage) {}
     virtual void Render();
     virtual void _BCL OnFrame() override;
     IC CUIActorMenu& GetActorMenu() const { return *ActorMenu; }
     IC CUIPdaWnd& GetPdaMenu() const { return *PdaMenu; }
     bool ShowActorMenu();
     void HideActorMenu();
-	void UpdateActorMenu(); //Alundaio
-	CScriptGameObject* CurrentItemAtCell(); //Alundaio
+    void UpdateActorMenu(); // Alundaio
+    CScriptGameObject* CurrentItemAtCell(); // Alundaio
     bool ShowPdaMenu();
     void HidePdaMenu();
     void ShowMessagesWindow();
@@ -114,7 +112,7 @@ public:
     void ShowGameIndicators(bool show) { showGameIndicators = show; }
     bool GameIndicatorsShown() { return showGameIndicators; }
     void ShowCrosshair(bool show) { psHUD_Flags.set(HUD_CROSSHAIR_RT, show); }
-    bool CrosshairShown() { return !!psHUD_Flags.test(HUD_CROSSHAIR_RT); }    
+    bool CrosshairShown() { return !!psHUD_Flags.test(HUD_CROSSHAIR_RT); }
     virtual void HideShownDialogs() {}
     StaticDrawableWrapper* AddCustomStatic(const char* id, bool singleInstance);
     StaticDrawableWrapper* GetCustomStatic(const char* id);

@@ -52,12 +52,11 @@ namespace file_transfer
 class client_site;
 }
 
-class CLevel :
-    public IGame_Level,
-    public IPureClient
+class CLevel : public IGame_Level, public IPureClient
 {
 #include "Level_network_Demo.h"
     void ClearAllObjects();
+
 private:
 #ifdef DEBUG
     bool m_bSynchronization = false;
@@ -137,7 +136,7 @@ private:
     void BlockCheatLoad();
     bool Connect2Server(const char* options);
     void SendClientDigestToServer();
-    shared_str m_client_digest;	// for screenshots
+    shared_str m_client_digest; // for screenshots
 
 public:
     shared_str const get_cdkey_digest() const { return m_client_digest; }
@@ -158,7 +157,7 @@ public:
     bool m_bGameConfigStarted = false;
     bool game_configured = false;
     NET_Queue_Event* game_events = nullptr;
-    //AVO: queue to hold spawn events for SPAWN_ANTIFREEZE
+    // AVO: queue to hold spawn events for SPAWN_ANTIFREEZE
 #ifdef SPAWN_ANTIFREEZE
     NET_Queue_Event* spawn_events = nullptr;
 #endif
@@ -191,7 +190,7 @@ protected:
     bool xr_stdcall net_start3();
     bool xr_stdcall net_start4();
     bool xr_stdcall net_start5();
-    bool xr_stdcall net_start6();         
+    bool xr_stdcall net_start6();
     bool xr_stdcall net_start_client1();
     bool xr_stdcall net_start_client2();
     bool xr_stdcall net_start_client3();
@@ -200,6 +199,7 @@ protected:
     bool xr_stdcall net_start_client6();
     void net_OnChangeSelfName(NET_Packet* P);
     void CalculateLevelCrc32();
+
 public:
     bool IsChecksumsEqual(u32 check_sum) const;
     // sounds
@@ -221,11 +221,11 @@ public:
     virtual void OnEvent(EVENT E, u64 P1, u64 P2);
     virtual void _BCL OnFrame(void);
     virtual void OnRender();
-    virtual	shared_str OpenDemoFile(const char* demo_file_name);
+    virtual shared_str OpenDemoFile(const char* demo_file_name);
     virtual void net_StartPlayDemo();
     void cl_Process_Event(u16 dest, u16 type, NET_Packet& P);
     void cl_Process_Spawn(NET_Packet& P);
-    //AVO: used by SPAWN_ANTIFREEZE (by alpet)
+    // AVO: used by SPAWN_ANTIFREEZE (by alpet)
 #ifdef SPAWN_ANTIFREEZE
     bool PostponedSpawn(u16 id);
 #endif
@@ -234,7 +234,7 @@ public:
     void ProcessGameSpawns();
     void ProcessCompressedUpdate(NET_Packet& P, u8 const compression_type);
     // Input
-    virtual	void IR_OnKeyboardPress(int btn);
+    virtual void IR_OnKeyboardPress(int btn);
     virtual void IR_OnKeyboardRelease(int btn);
     virtual void IR_OnKeyboardHold(int btn);
     virtual void IR_OnMousePress(int btn);
@@ -252,7 +252,7 @@ public:
     void ClientSendProfileData();
     void ClientSave();
     u32 Objects_net_Save(NET_Packet* _Packet, u32 start, u32 count);
-    virtual	void Send(NET_Packet& P, u32 dwFlags = DPNSEND_GUARANTEED, u32 dwTimeout = 0);
+    virtual void Send(NET_Packet& P, u32 dwFlags = DPNSEND_GUARANTEED, u32 dwTimeout = 0);
     void g_cl_Spawn(LPCSTR name, u8 rp, u16 flags, Fvector pos); // only ask server
     void g_sv_Spawn(CSE_Abstract* E); // server reply/command spawning
     // Save/Load/State
@@ -296,7 +296,7 @@ public:
     float GetEnvironmentGameDayTimeSec();
 
 protected:
-    //CFogOfWarMngr* m_pFogOfWarMngr;
+    // CFogOfWarMngr* m_pFogOfWarMngr;
     CMapManager* m_map_manager = nullptr;
     CGameTaskManager* m_game_task_manager = nullptr;
 
@@ -313,8 +313,8 @@ public:
     IC CBulletManager& BulletManager() { return *m_pBulletManager; }
     bool IsServer();
     bool IsClient();
-    CSE_Abstract* spawn_item(LPCSTR section, const Fvector& position, u32 level_vertex_id, u16 parent_id,
-        bool return_item = false);
+    CSE_Abstract* spawn_item(
+        LPCSTR section, const Fvector& position, u32 level_vertex_id, u16 parent_id, bool return_item = false);
 
 protected:
     u32 m_dwCL_PingDeltaSend = 1000;
@@ -322,7 +322,7 @@ protected:
     u32 m_dwRealPing = 0;
 
 public:
-    virtual	u32 GetRealPing() { return m_dwRealPing; }
+    virtual u32 GetRealPing() { return m_dwRealPing; }
 
 public:
     void remove_objects();
@@ -342,8 +342,11 @@ add_to_type_list(CLevel)
 #undef script_type_list
 #define script_type_list save_type_list(CLevel)
 
-// XXX nitrocaster: should not cast to inherited
-IC CLevel& Level() { return *(CLevel*)g_pGameLevel; }
+    // XXX nitrocaster: should not cast to inherited
+    IC CLevel& Level()
+{
+    return *(CLevel*)g_pGameLevel;
+}
 IC game_cl_GameState& Game() { return *Level().game; }
 u32 GameID();
 
@@ -406,4 +409,3 @@ IC bool OnClient() { return Level().IsClient(); }
 IC bool IsGameTypeSingle() { return (g_pGamePersistent->GameType() == eGameIDSingle); }
 
 extern bool g_bDebugEvents;
-

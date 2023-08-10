@@ -27,7 +27,7 @@
 
 #include "xrSash.h"
 
-//#include "securom_api.h"
+// #include "securom_api.h"
 
 //---------------------------------------------------------------------
 ENGINE_API CInifile* pGameIni = NULL;
@@ -35,26 +35,19 @@ BOOL g_bIntroFinished = FALSE;
 extern void Intro(void* fn);
 extern void Intro_DSHOW(void* fn);
 extern int PASCAL IntroDSHOW_wnd(HINSTANCE hInstC, HINSTANCE hInstP, LPSTR lpCmdLine, int nCmdShow);
-//int max_load_stage = 0;
+// int max_load_stage = 0;
 
 // computing build id
 XRCORE_API LPCSTR build_date;
 XRCORE_API u32 build_id;
 
 #ifdef MASTER_GOLD
-# define NO_MULTI_INSTANCES
+#define NO_MULTI_INSTANCES
 #endif // #ifdef MASTER_GOLD
 
+static LPSTR month_id[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
-static LPSTR month_id[12] =
-{
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-};
-
-static int days_in_month[12] =
-{
-    31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
-};
+static int days_in_month[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 static int start_day = 31; // 31
 static int start_month = 1; // January
@@ -72,7 +65,7 @@ static char szEngineHash[33] = DEFAULT_MODULE_HASH;
 
 PROTECT_API char* ComputeModuleHash(char* pszHash)
 {
-    //SECUROM_MARKER_HIGH_SECURITY_ON(3)
+    // SECUROM_MARKER_HIGH_SECURITY_ON(3)
 
     char szModuleFileName[MAX_PATH];
     HANDLE hModuleHandle = NULL, hFileMapping = NULL;
@@ -121,7 +114,7 @@ PROTECT_API char* ComputeModuleHash(char* pszHash)
     CloseHandle(hFileMapping);
     CloseHandle(hModuleHandle);
 
-    //SECUROM_MARKER_HIGH_SECURITY_OFF(3)
+    // SECUROM_MARKER_HIGH_SECURITY_OFF(3)
 
     return pszHash;
 }
@@ -164,7 +157,7 @@ struct _SoundProcessor : public pureFrame
 {
     virtual void _BCL OnFrame()
     {
-        //Msg ("------------- sound: %d [%3.2f,%3.2f,%3.2f]",u32(Device.dwFrame),VPUSH(Device.vCameraPosition));
+        // Msg ("------------- sound: %d [%3.2f,%3.2f,%3.2f]",u32(Device.dwFrame),VPUSH(Device.vCameraPosition));
         Device.Statistic->Sound.Begin();
         ::Sound->update(Device.vCameraPosition, Device.vCameraDirection, Device.vCameraTop);
         Device.Statistic->Sound.End();
@@ -181,7 +174,6 @@ void doBenchmark(LPCSTR name);
 ENGINE_API bool g_bBenchmark = false;
 string512 g_sBenchmarkName;
 
-
 ENGINE_API string512 g_sLaunchOnExit_params;
 ENGINE_API string512 g_sLaunchOnExit_app;
 ENGINE_API string_path g_sLaunchWorkingFolder;
@@ -190,16 +182,14 @@ ENGINE_API string_path g_sLaunchWorkingFolder;
 void InitEngine()
 {
     Engine.Initialize();
-    while (!g_bIntroFinished) Sleep(100);
+    while (!g_bIntroFinished)
+        Sleep(100);
     Device.Initialize();
 }
 
 struct path_excluder_predicate
 {
-    explicit path_excluder_predicate(xr_auth_strings_t const* ignore) :
-        m_ignore(ignore)
-    {
-    }
+    explicit path_excluder_predicate(xr_auth_strings_t const* ignore) : m_ignore(ignore) {}
     bool xr_stdcall is_allow_include(LPCSTR path)
     {
         if (!m_ignore)
@@ -222,7 +212,8 @@ PROTECT_API void InitSettings()
     Msg("Updated path to system.ltx is %s", fname);
 #endif // #ifdef DEBUG
     pSettings = xr_new<CInifile>(fname, TRUE);
-    CHECK_OR_EXIT(0 != pSettings->section_count(), make_string("Cannot find file %s.\nReinstalling application may fix this problem.", fname));
+    CHECK_OR_EXIT(0 != pSettings->section_count(),
+        make_string("Cannot find file %s.\nReinstalling application may fix this problem.", fname));
 
     xr_auth_strings_t tmp_ignore_pathes;
     xr_auth_strings_t tmp_check_pathes;
@@ -231,18 +222,12 @@ PROTECT_API void InitSettings()
     path_excluder_predicate tmp_excluder(&tmp_ignore_pathes);
     CInifile::allow_include_func_t tmp_functor;
     tmp_functor.bind(&tmp_excluder, &path_excluder_predicate::is_allow_include);
-    pSettingsAuth = xr_new<CInifile>(
-                        fname,
-                        TRUE,
-                        TRUE,
-                        FALSE,
-                        0,
-                        tmp_functor
-                    );
+    pSettingsAuth = xr_new<CInifile>(fname, TRUE, TRUE, FALSE, 0, tmp_functor);
 
     FS.update_path(fname, "$game_config$", "game.ltx");
     pGameIni = xr_new<CInifile>(fname, TRUE);
-    CHECK_OR_EXIT(0 != pGameIni->section_count(), make_string("Cannot find file %s.\nReinstalling application may fix this problem.", fname));
+    CHECK_OR_EXIT(0 != pGameIni->section_count(),
+        make_string("Cannot find file %s.\nReinstalling application may fix this problem.", fname));
 }
 PROTECT_API void InitConsole()
 {
@@ -277,25 +262,13 @@ PROTECT_API void InitInput()
 
     pInput = xr_new<CInput>(bCaptureInput);
 }
-void destroyInput()
-{
-    xr_delete(pInput);
-}
+void destroyInput() { xr_delete(pInput); }
 
-PROTECT_API void InitSound1()
-{
-    CSound_manager_interface::_create(0);
-}
+PROTECT_API void InitSound1() { CSound_manager_interface::_create(0); }
 
-PROTECT_API void InitSound2()
-{
-    CSound_manager_interface::_create(1);
-}
+PROTECT_API void InitSound2() { CSound_manager_interface::_create(1); }
 
-void destroySound()
-{
-    CSound_manager_interface::_destroy();
-}
+void destroySound() { CSound_manager_interface::_destroy(); }
 
 void destroySettings()
 {
@@ -328,12 +301,18 @@ void slowdownthread(void*)
     // Sleep (30*1000);
     for (;;)
     {
-        if (Device.Statistic->fFPS < 30) Sleep(1);
-        if (Device.mt_bMustExit) return;
-        if (0 == pSettings) return;
-        if (0 == Console) return;
-        if (0 == pInput) return;
-        if (0 == pApp) return;
+        if (Device.Statistic->fFPS < 30)
+            Sleep(1);
+        if (Device.mt_bMustExit)
+            return;
+        if (0 == pSettings)
+            return;
+        if (0 == Console)
+            return;
+        if (0 == pInput)
+            return;
+        if (0 == pApp)
+            return;
     }
 }
 void CheckPrivilegySlowdown()
@@ -360,18 +339,20 @@ void Startup()
     // ...command line for auto start
     {
         LPCSTR pStartup = strstr(Core.Params, "-start ");
-        if (pStartup) Console->Execute(pStartup + 1);
+        if (pStartup)
+            Console->Execute(pStartup + 1);
     }
     {
         LPCSTR pStartup = strstr(Core.Params, "-load ");
-        if (pStartup) Console->Execute(pStartup + 1);
+        if (pStartup)
+            Console->Execute(pStartup + 1);
     }
 
     // Initialize APP
-    //#ifndef DEDICATED_SERVER
+    // #ifndef DEDICATED_SERVER
     ShowWindow(Device.m_hWnd, SW_SHOWNORMAL);
     Device.Create();
-    //#endif
+    // #endif
     LALib.OnCreate();
     pApp = xr_new<CApplication>();
     g_pGamePersistent = (IGame_Persistent*)NEW_INSTANCE(CLSID_GAME_PERSISTANT);
@@ -416,17 +397,13 @@ static INT_PTR CALLBACK logDlgProc(HWND hw, UINT msg, WPARAM wp, LPARAM lp)
 {
     switch (msg)
     {
-    case WM_DESTROY:
-        break;
-    case WM_CLOSE:
-        DestroyWindow(hw);
-        break;
+    case WM_DESTROY: break;
+    case WM_CLOSE: DestroyWindow(hw); break;
     case WM_COMMAND:
         if (LOWORD(wp) == IDCANCEL)
             DestroyWindow(hw);
         break;
-    default:
-        return FALSE;
+    default: return FALSE;
     }
     return TRUE;
 }
@@ -497,9 +474,9 @@ IntroDSHOW_wnd (g_hInstance,g_hPrevInstance,"GameData\\Stalker_Intro.avi",g_nCmd
 g_bIntroFinished = TRUE ;
 }
 */
-#define dwStickyKeysStructSize sizeof( STICKYKEYS )
-#define dwFilterKeysStructSize sizeof( FILTERKEYS )
-#define dwToggleKeysStructSize sizeof( TOGGLEKEYS )
+#define dwStickyKeysStructSize sizeof(STICKYKEYS)
+#define dwFilterKeysStructSize sizeof(FILTERKEYS)
+#define dwToggleKeysStructSize sizeof(TOGGLEKEYS)
 
 struct damn_keys_filter
 {
@@ -531,7 +508,6 @@ struct damn_keys_filter
         dwStickyKeysFlags = 0;
         dwFilterKeysFlags = 0;
         dwToggleKeysFlags = 0;
-
 
         ZeroMemory(&StickyKeysStruct, dwStickyKeysStructSize);
         ZeroMemory(&FilterKeysStruct, dwFilterKeysStructSize);
@@ -597,7 +573,6 @@ struct damn_keys_filter
             ToggleKeysStruct.dwFlags = dwToggleKeysFlags;
             SystemParametersInfo(SPI_SETTOGGLEKEYS, dwToggleKeysStructSize, (PVOID)&ToggleKeysStruct, 0);
         }
-
     }
 };
 
@@ -611,7 +586,7 @@ BOOL IsOutOfVirtualMemory()
 #define VIRT_ERROR_SIZE 256
 #define VIRT_MESSAGE_SIZE 512
 
-    //SECUROM_MARKER_HIGH_SECURITY_ON(1)
+    // SECUROM_MARKER_HIGH_SECURITY_ON(1)
 
     MEMORYSTATUSEX statex;
     DWORD dwPageFileInMB = 0;
@@ -643,20 +618,20 @@ BOOL IsOutOfVirtualMemory()
 
     MessageBox(NULL, pszMessage, pszError, MB_OK | MB_ICONHAND);
 
-    //SECUROM_MARKER_HIGH_SECURITY_OFF(1)
+    // SECUROM_MARKER_HIGH_SECURITY_OFF(1)
 
     return 1;
 }
 
 #include "xr_ioc_cmd.h"
 
-//typedef void DUMMY_STUFF (const void*,const u32&,void*);
-//XRCORE_API DUMMY_STUFF *g_temporary_stuff;
+// typedef void DUMMY_STUFF (const void*,const u32&,void*);
+// XRCORE_API DUMMY_STUFF *g_temporary_stuff;
 
-//#define TRIVIAL_ENCRYPTOR_DECODER
-//#include "trivial_encryptor.h"
+// #define TRIVIAL_ENCRYPTOR_DECODER
+// #include "trivial_encryptor.h"
 
-//#define RUSSIAN_BUILD
+// #define RUSSIAN_BUILD
 
 #if 0
 void foo()
@@ -698,10 +673,7 @@ ENGINE_API bool g_dedicated_server = false;
 
 #endif // DEDICATED_SERVER
 
-int APIENTRY WinMain_impl(HINSTANCE hInstance,
-                          HINSTANCE hPrevInstance,
-                          char* lpCmdLine,
-                          int nCmdShow)
+int APIENTRY WinMain_impl(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* lpCmdLine, int nCmdShow)
 {
 #ifdef DEDICATED_SERVER
     Debug._initialize(true);
@@ -711,11 +683,10 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
 
     if (!IsDebuggerPresent())
     {
-
         HMODULE const kernel32 = LoadLibrary("kernel32.dll");
         R_ASSERT(kernel32);
 
-        typedef BOOL(__stdcall*HeapSetInformation_type) (HANDLE, HEAP_INFORMATION_CLASS, PVOID, SIZE_T);
+        typedef BOOL(__stdcall * HeapSetInformation_type)(HANDLE, HEAP_INFORMATION_CLASS, PVOID, SIZE_T);
         HeapSetInformation_type const heap_set_information =
             (HeapSetInformation_type)GetProcAddress(kernel32, "HeapSetInformation");
         if (heap_set_information)
@@ -725,11 +696,7 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
             BOOL const result =
 #endif // #ifdef DEBUG
                 heap_set_information(
-                    GetProcessHeap(),
-                    HeapCompatibilityInformation,
-                    &HeapFragValue,
-                    sizeof(HeapFragValue)
-                );
+                    GetProcessHeap(), HeapCompatibilityInformation, &HeapFragValue, sizeof(HeapFragValue));
             VERIFY2(result, "can't set process heap low fragmentation");
         }
     }
@@ -741,7 +708,7 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
     if ((strstr(lpCmdLine, "--skipmemcheck") == NULL) && IsOutOfVirtualMemory())
         return 0;
 
-    // Check for another instance
+        // Check for another instance
 #ifdef NO_MULTI_INSTANCES
 #define STALKER_PRESENCE_MUTEX "Local\\STALKER-COP"
 
@@ -775,18 +742,14 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
     RECT logoRect;
     GetWindowRect(logoPicture, &logoRect);
 
-    SetWindowPos(
-        logoWindow,
+    SetWindowPos(logoWindow,
 #ifndef DEBUG
         HWND_TOPMOST,
 #else
         HWND_NOTOPMOST,
 #endif // NDEBUG
-        0,
-        0,
-        logoRect.right - logoRect.left,
-        logoRect.bottom - logoRect.top,
-        SWP_NOMOVE | SWP_SHOWWINDOW// | SWP_NOSIZE
+        0, 0, logoRect.right - logoRect.left, logoRect.bottom - logoRect.top,
+        SWP_NOMOVE | SWP_SHOWWINDOW // | SWP_NOSIZE
     );
     UpdateWindow(logoWindow);
 
@@ -798,12 +761,12 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
 
     LPCSTR fsgame_ltx_name = "-fsltx ";
     string_path fsgame = "";
-    //MessageBox(0, lpCmdLine, "my cmd string", MB_OK);
+    // MessageBox(0, lpCmdLine, "my cmd string", MB_OK);
     if (strstr(lpCmdLine, fsgame_ltx_name))
     {
         int sz = xr_strlen(fsgame_ltx_name);
         sscanf(strstr(lpCmdLine, fsgame_ltx_name) + sz, "%[^ ] ", fsgame);
-        //MessageBox(0, fsgame, "using fsltx", MB_OK);
+        // MessageBox(0, fsgame, "using fsltx", MB_OK);
     }
 
     // g_temporary_stuff = &trivial_encryptor::decode;
@@ -852,7 +815,7 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
             int sz = xr_strlen(sashName);
             string512 sash_arg;
             sscanf(strstr(Core.Params, sashName) + sz, "%[^ ] ", sash_arg);
-            //doBenchmark (sash_arg);
+            // doBenchmark (sash_arg);
             g_SASH.Init(sash_arg);
             g_SASH.MainLoop();
             return 0;
@@ -877,7 +840,7 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
             xr_delete(pTmp);
         }
 #else
-        Console->Execute("renderer renderer_r1");
+    Console->Execute("renderer renderer_r1");
 #endif
         //. InitInput ( );
         Engine.External.Initialize();
@@ -887,19 +850,17 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
         Core._destroy();
 
         // check for need to execute something external
-        if (/*xr_strlen(g_sLaunchOnExit_params) && */xr_strlen(g_sLaunchOnExit_app))
+        if (/*xr_strlen(g_sLaunchOnExit_params) && */ xr_strlen(g_sLaunchOnExit_app))
         {
-            //CreateProcess need to return results to next two structures
+            // CreateProcess need to return results to next two structures
             STARTUPINFO si;
             PROCESS_INFORMATION pi;
             ZeroMemory(&si, sizeof(si));
             si.cb = sizeof(si);
             ZeroMemory(&pi, sizeof(pi));
-            //We use CreateProcess to setup working folder
+            // We use CreateProcess to setup working folder
             char const* temp_wf = (xr_strlen(g_sLaunchWorkingFolder) > 0) ? g_sLaunchWorkingFolder : NULL;
-            CreateProcess(g_sLaunchOnExit_app, g_sLaunchOnExit_params, NULL, NULL, FALSE, 0, NULL,
-                          temp_wf, &si, &pi);
-
+            CreateProcess(g_sLaunchOnExit_app, g_sLaunchOnExit_params, NULL, NULL, FALSE, 0, NULL, temp_wf, &si, &pi);
         }
 #ifndef DEDICATED_SERVER
 #ifdef NO_MULTI_INSTANCES
@@ -929,26 +890,22 @@ int stack_overflow_exception_filter(int exception_code)
 
 #include <boost/crc.hpp>
 
-int APIENTRY WinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     char* lpCmdLine,
-                     int nCmdShow)
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* lpCmdLine, int nCmdShow)
 {
-    //FILE* file = 0;
-    //fopen_s ( &file, "z:\\development\\call_of_prypiat\\resources\\gamedata\\shaders\\r3\\objects\\r4\\accum_sun_near_msaa_minmax.ps\\2048__1___________4_11141_", "rb" );
-    //u32 const file_size = 29544;
-    //char* buffer = (char*)malloc(file_size);
-    //fread ( buffer, file_size, 1, file );
-    //fclose ( file );
+    // FILE* file = 0;
+    // fopen_s ( &file,
+    // "z:\\development\\call_of_prypiat\\resources\\gamedata\\shaders\\r3\\objects\\r4\\accum_sun_near_msaa_minmax.ps\\2048__1___________4_11141_",
+    // "rb" ); u32 const file_size = 29544; char* buffer = (char*)malloc(file_size); fread ( buffer, file_size, 1, file
+    // ); fclose ( file );
 
-    //u32 const& crc = *(u32*)buffer;
+    // u32 const& crc = *(u32*)buffer;
 
-    //boost::crc_32_type processor;
-    //processor.process_block ( buffer + 4, buffer + file_size );
-    //u32 const new_crc = processor.checksum( );
-    //VERIFY ( new_crc == crc );
+    // boost::crc_32_type processor;
+    // processor.process_block ( buffer + 4, buffer + file_size );
+    // u32 const new_crc = processor.checksum( );
+    // VERIFY ( new_crc == crc );
 
-    //free (buffer);
+    // free (buffer);
 
     __try
     {
@@ -966,7 +923,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 LPCSTR _GetFontTexName(LPCSTR section)
 {
     static char* tex_names[] = {"texture800", "texture", "texture1600"};
-    int def_idx = 1;//default 1024x768
+    int def_idx = 1; // default 1024x768
     int idx = def_idx;
 
 #if 0
@@ -978,9 +935,12 @@ LPCSTR _GetFontTexName(LPCSTR section)
 #else
     u32 h = Device.dwHeight;
 
-    if (h <= 600) idx = 0;
-    else if (h < 1024) idx = 1;
-    else idx = 2;
+    if (h <= 600)
+        idx = 0;
+    else if (h < 1024)
+        idx = 1;
+    else
+        idx = 2;
 #endif
 
     while (idx >= 0)
@@ -1008,12 +968,13 @@ void _InitializeFont(CGameFont*& F, LPCSTR section, u32 flags)
     if (pSettings->line_exist(section, "size"))
     {
         float sz = pSettings->r_float(section, "size");
-        if (flags&CGameFont::fsDeviceIndependent) F->SetHeightI(sz);
-        else F->SetHeight(sz);
+        if (flags & CGameFont::fsDeviceIndependent)
+            F->SetHeightI(sz);
+        else
+            F->SetHeight(sz);
     }
     if (pSettings->line_exist(section, "interval"))
         F->SetInterval(pSettings->r_fvector2(section, "interval"));
-
 }
 
 CApplication::CApplication()
@@ -1040,8 +1001,10 @@ CApplication::CApplication()
     // Register us
     Device.seqFrame.Add(this, REG_PRIORITY_HIGH + 1000);
 
-    if (psDeviceFlags.test(mtSound)) Device.seqFrameMT.Add(&SoundProcessor);
-    else Device.seqFrame.Add(&SoundProcessor);
+    if (psDeviceFlags.test(mtSound))
+        Device.seqFrameMT.Add(&SoundProcessor);
+    else
+        Device.seqFrame.Add(&SoundProcessor);
 
     Console->Show();
 
@@ -1063,7 +1026,6 @@ CApplication::~CApplication()
     Device.seqFrame.Remove(&SoundProcessor);
     Device.seqFrame.Remove(this);
 
-
     // events
     Engine.Event.Handler_Detach(eConsole, this);
     Engine.Event.Handler_Detach(eDisconnect, this);
@@ -1071,7 +1033,6 @@ CApplication::~CApplication()
     Engine.Event.Handler_Detach(eStart, this);
     Engine.Event.Handler_Detach(eQuit, this);
     Engine.Event.Handler_Detach(eStartMPDemo, this);
-
 }
 
 extern CRenderDevice Device;
@@ -1100,17 +1061,12 @@ void CApplication::OnEvent(EVENT E, u64 P1, u64 P2)
 
 #ifdef NO_SINGLE
         Console->Execute("main_menu on");
-        if ((op_server == NULL) ||
-                (!xr_strlen(op_server)) ||
-                (
-                    (strstr(op_server, "/dm") || strstr(op_server, "/deathmatch") ||
-                     strstr(op_server, "/tdm") || strstr(op_server, "/teamdeathmatch") ||
-                     strstr(op_server, "/ah") || strstr(op_server, "/artefacthunt") ||
-                     strstr(op_server, "/cta") || strstr(op_server, "/capturetheartefact")
-                    ) &&
-                    !strstr(op_server, "/alife")
-                )
-           )
+        if ((op_server == NULL) || (!xr_strlen(op_server)) ||
+            ((strstr(op_server, "/dm") || strstr(op_server, "/deathmatch") || strstr(op_server, "/tdm") ||
+                 strstr(op_server, "/teamdeathmatch") || strstr(op_server, "/ah") ||
+                 strstr(op_server, "/artefacthunt") || strstr(op_server, "/cta") ||
+                 strstr(op_server, "/capturetheartefact")) &&
+                !strstr(op_server, "/alife")))
 #endif // #ifdef NO_SINGLE
         {
             Console->Execute("main_menu off");
@@ -1177,7 +1133,7 @@ void CApplication::OnEvent(EVENT E, u64 P1, u64 P2)
         //-----------------------------------------------------------
 
         pApp->LoadBegin();
-        g_pGamePersistent->Start("");//server_options.c_str()); - no prefetch !
+        g_pGamePersistent->Start(""); // server_options.c_str()); - no prefetch !
         g_pGameLevel->net_StartPlayDemo();
         pApp->LoadEnd();
 
@@ -1187,7 +1143,7 @@ void CApplication::OnEvent(EVENT E, u64 P1, u64 P2)
 
 static CTimer phase_timer;
 extern ENGINE_API BOOL g_appLoaded = FALSE;
-//AVO: used by SPAWN_ANTIFREEZE (by alpet)
+// AVO: used by SPAWN_ANTIFREEZE (by alpet)
 extern ENGINE_API BOOL g_bootComplete = FALSE;
 //-AVO
 
@@ -1196,10 +1152,9 @@ void CApplication::LoadBegin()
     ll_dwReference++;
     if (1 == ll_dwReference)
     {
-
         g_appLoaded = FALSE;
-        
-        //AVO:
+
+        // AVO:
         g_bootComplete = FALSE;
         //-AVO
 
@@ -1210,7 +1165,6 @@ void CApplication::LoadBegin()
 #endif
         phase_timer.Start();
         load_stage = 0;
-
     }
 }
 
@@ -1231,24 +1185,25 @@ void CApplication::destroy_loading_shaders()
 {
     m_pRender->destroy_loading_shaders();
 
-    //AVO:
+    // AVO:
     g_bootComplete = TRUE;
     //-AVO
 
-    //hLevelLogo.destroy ();
-    //sh_progress.destroy ();
+    // hLevelLogo.destroy ();
+    // sh_progress.destroy ();
     //. ::Sound->mute (false);
 }
 
-//u32 calc_progress_color(u32, u32, int, int);
+// u32 calc_progress_color(u32, u32, int, int);
 
 PROTECT_API void CApplication::LoadDraw()
 {
-    if (g_appLoaded) return;
+    if (g_appLoaded)
+        return;
     Device.dwFrame += 1;
 
-
-    if (!Device.Begin()) return;
+    if (!Device.Begin())
+        return;
 
     if (g_dedicated_server)
         Console->OnRender();
@@ -1280,9 +1235,7 @@ void CApplication::LoadStage()
     LoadDraw();
 }
 
-void CApplication::LoadSwitch()
-{
-}
+void CApplication::LoadSwitch() {}
 
 // Sequential
 void CApplication::OnFrame()
@@ -1301,12 +1254,8 @@ void CApplication::Level_Append(LPCSTR folder)
     strconcat(sizeof(N2), N2, folder, "level.ltx");
     strconcat(sizeof(N3), N3, folder, "level.geom");
     strconcat(sizeof(N4), N4, folder, "level.cform");
-    if (
-        FS.exist("$game_levels$", N1) &&
-        FS.exist("$game_levels$", N2) &&
-        FS.exist("$game_levels$", N3) &&
-        FS.exist("$game_levels$", N4)
-    )
+    if (FS.exist("$game_levels$", N1) && FS.exist("$game_levels$", N2) && FS.exist("$game_levels$", N3) &&
+        FS.exist("$game_levels$", N4))
     {
         sLevelInfo LI;
         LI.folder = xr_strdup(folder);
@@ -1317,7 +1266,7 @@ void CApplication::Level_Append(LPCSTR folder)
 
 void CApplication::Level_Scan()
 {
-    //SECUROM_MARKER_PERFORMANCE_ON(8)
+    // SECUROM_MARKER_PERFORMANCE_ON(8)
 
     for (u32 i = 0; i < Levels.size(); i++)
     {
@@ -1325,7 +1274,6 @@ void CApplication::Level_Scan()
         xr_free(Levels[i].name);
     }
     Levels.clear();
-
 
     xr_vector<char*>* folder = FS.file_list_open("$game_levels$", FS_ListFolders | FS_RootOnly);
     //. R_ASSERT (folder&&folder->size());
@@ -1335,7 +1283,7 @@ void CApplication::Level_Scan()
 
     FS.file_list_close(folder);
 
-    //SECUROM_MARKER_PERFORMANCE_OFF(8)
+    // SECUROM_MARKER_PERFORMANCE_OFF(8)
 }
 
 void gen_logo_name(string_path& dest, LPCSTR level_name, int num)
@@ -1353,9 +1301,10 @@ void gen_logo_name(string_path& dest, LPCSTR level_name, int num)
 
 void CApplication::Level_Set(u32 L)
 {
-    //SECUROM_MARKER_PERFORMANCE_ON(9)
+    // SECUROM_MARKER_PERFORMANCE_ON(9)
 
-    if (L >= Levels.size()) return;
+    if (L >= Levels.size())
+        return;
     FS.get_path("$level$")->_set(Levels[L].folder);
 
     static string_path path;
@@ -1387,7 +1336,7 @@ void CApplication::Level_Set(u32 L)
     if (path[0])
         m_pRender->setLevelLogo(path);
 
-    //SECUROM_MARKER_PERFORMANCE_OFF(9)
+    // SECUROM_MARKER_PERFORMANCE_OFF(9)
 }
 
 int CApplication::Level_ID(LPCSTR name, LPCSTR ver, bool bSet)
@@ -1468,9 +1417,9 @@ void CApplication::LoadAllArchives()
     }
 }
 
-//launcher stuff----------------------------
+// launcher stuff----------------------------
 extern "C" {
-    typedef int __cdecl LauncherFunc(int);
+typedef int __cdecl LauncherFunc(int);
 }
 HMODULE hLauncher = NULL;
 LauncherFunc* pLauncher = NULL;
@@ -1480,7 +1429,8 @@ void InitLauncher()
     if (hLauncher)
         return;
     hLauncher = LoadLibrary("xrLauncher.dll");
-    if (0 == hLauncher) R_CHK(GetLastError());
+    if (0 == hLauncher)
+        R_CHK(GetLastError());
     R_ASSERT2(hLauncher, "xrLauncher DLL raised exception during loading or there is no xrLauncher.dll at all");
 
     pLauncher = (LauncherFunc*)GetProcAddress(hLauncher, "RunXRLauncher");
@@ -1549,12 +1499,11 @@ void doBenchmark(LPCSTR name)
         InitInput();
         if (i)
         {
-            //ZeroMemory(&HW,sizeof(CHW));
-            // TODO: KILL HW here!
-            // pApp->m_pRender->KillHW();
+            // ZeroMemory(&HW,sizeof(CHW));
+            //  TODO: KILL HW here!
+            //  pApp->m_pRender->KillHW();
             InitEngine();
         }
-
 
         Engine.External.Initialize();
 
@@ -1607,13 +1556,13 @@ void CApplication::load_draw_internal()
 
     back_coords.lt.mul (k);back_coords.rb.mul(k);
 
-    back_text_coords.lt.x/=tsz.x; back_text_coords.lt.y/=tsz.y; back_text_coords.rb.x/=tsz.x; back_text_coords.rb.y/=tsz.y;
-    pv = (FVF::TL*) RCache.Vertex.Lock(4,ll_hGeom.stride(),Offset);
-    pv->set (back_coords.lt.x, back_coords.rb.y, C,back_text_coords.lt.x, back_text_coords.rb.y); pv++;
-    pv->set (back_coords.lt.x, back_coords.lt.y, C,back_text_coords.lt.x, back_text_coords.lt.y); pv++;
-    pv->set (back_coords.rb.x, back_coords.rb.y, C,back_text_coords.rb.x, back_text_coords.rb.y); pv++;
-    pv->set (back_coords.rb.x, back_coords.lt.y, C,back_text_coords.rb.x, back_text_coords.lt.y); pv++;
-    RCache.Vertex.Unlock (4,ll_hGeom.stride());
+    back_text_coords.lt.x/=tsz.x; back_text_coords.lt.y/=tsz.y; back_text_coords.rb.x/=tsz.x;
+    back_text_coords.rb.y/=tsz.y; pv = (FVF::TL*) RCache.Vertex.Lock(4,ll_hGeom.stride(),Offset); pv->set
+    (back_coords.lt.x, back_coords.rb.y, C,back_text_coords.lt.x, back_text_coords.rb.y); pv++; pv->set
+    (back_coords.lt.x, back_coords.lt.y, C,back_text_coords.lt.x, back_text_coords.lt.y); pv++; pv->set
+    (back_coords.rb.x, back_coords.rb.y, C,back_text_coords.rb.x, back_text_coords.rb.y); pv++; pv->set
+    (back_coords.rb.x, back_coords.lt.y, C,back_text_coords.rb.x, back_text_coords.lt.y); pv++; RCache.Vertex.Unlock
+    (4,ll_hGeom.stride());
 
     RCache.set_Geometry (ll_hGeom);
     RCache.Render (D3DPT_TRIANGLELIST,Offset,0,4,0,2);
@@ -1625,7 +1574,8 @@ void CApplication::load_draw_internal()
 
     back_coords.lt.mul (k);back_coords.rb.mul(k);
 
-    back_text_coords.lt.x/=tsz.x; back_text_coords.lt.y/=tsz.y; back_text_coords.rb.x/=tsz.x; back_text_coords.rb.y/=tsz.y;
+    back_text_coords.lt.x/=tsz.x; back_text_coords.lt.y/=tsz.y; back_text_coords.rb.x/=tsz.x;
+    back_text_coords.rb.y/=tsz.y;
 
 
 
@@ -1638,8 +1588,9 @@ void CApplication::load_draw_internal()
 
     for(u32 idx=0; idx<v_cnt+1; ++idx){
     clr = calc_progress_color(idx,v_cnt,load_stage,max_load_stage);
-    pv->set (back_coords.lt.x+pos_delta*idx+offs, back_coords.rb.y+offs, 0+EPS_S, 1, clr, back_text_coords.lt.x+tc_delta*idx, back_text_coords.rb.y); pv++;
-    pv->set (back_coords.lt.x+pos_delta*idx+offs, back_coords.lt.y+offs, 0+EPS_S, 1, clr, back_text_coords.lt.x+tc_delta*idx, back_text_coords.lt.y); pv++;
+    pv->set (back_coords.lt.x+pos_delta*idx+offs, back_coords.rb.y+offs, 0+EPS_S, 1, clr,
+    back_text_coords.lt.x+tc_delta*idx, back_text_coords.rb.y); pv++; pv->set (back_coords.lt.x+pos_delta*idx+offs,
+    back_coords.lt.y+offs, 0+EPS_S, 1, clr, back_text_coords.lt.x+tc_delta*idx, back_text_coords.lt.y); pv++;
     }
     VERIFY (u32(pv-_pv)==2*(v_cnt+1));
     RCache.Vertex.Unlock (2*(v_cnt+1),ll_hGeom2.stride());

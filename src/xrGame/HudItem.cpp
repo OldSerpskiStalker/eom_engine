@@ -27,7 +27,7 @@ CHudItem::CHudItem()
     m_started_rnd_anim_idx = u8(-1);
 }
 
-DLL_Pure *CHudItem::_construct()
+DLL_Pure* CHudItem::_construct()
 {
     m_object = smart_cast<CPhysicItem*>(this);
     VERIFY(m_object);
@@ -35,11 +35,10 @@ DLL_Pure *CHudItem::_construct()
     m_item = smart_cast<CInventoryItem*>(this);
     VERIFY(m_item);
 
-    return				(m_object);
+    return (m_object);
 }
 
-CHudItem::~CHudItem()
-{}
+CHudItem::~CHudItem() {}
 
 void CHudItem::Load(LPCSTR section)
 {
@@ -54,10 +53,10 @@ void CHudItem::PlaySound(LPCSTR alias, const Fvector& position)
     m_sounds.PlaySound(alias, position, object().H_Root(), !!GetHUDmode());
 }
 
-//Alundaio: Play at index
+// Alundaio: Play at index
 void CHudItem::PlaySound(LPCSTR alias, const Fvector& position, u8 index)
 {
-	m_sounds.PlaySound(alias, position, object().H_Root(), !!GetHUDmode(), false, index);
+    m_sounds.PlaySound(alias, position, object().H_Root(), !!GetHUDmode(), false, index);
 }
 //-Alundaio
 
@@ -66,7 +65,7 @@ void CHudItem::renderable_Render()
     UpdateXForm();
     BOOL _hud_render = ::Render->get_HUD() && GetHUDmode();
 
-    if (_hud_render  && !IsHidden())
+    if (_hud_render && !IsHidden())
     {
     }
     else
@@ -76,15 +75,14 @@ void CHudItem::renderable_Render()
             on_renderable_Render();
             debug_draw_firedeps();
         }
-        else
-            if (object().H_Parent())
-            {
-                CInventoryOwner	*owner = smart_cast<CInventoryOwner*>(object().H_Parent());
-                VERIFY(owner);
-                CInventoryItem	*self = smart_cast<CInventoryItem*>(this);
-                if (owner->attached(self))
-                    on_renderable_Render();
-            }
+        else if (object().H_Parent())
+        {
+            CInventoryOwner* owner = smart_cast<CInventoryOwner*>(object().H_Parent());
+            VERIFY(owner);
+            CInventoryItem* self = smart_cast<CInventoryItem*>(this);
+            if (owner->attached(self))
+                on_renderable_Render();
+        }
     }
 }
 
@@ -98,7 +96,7 @@ void CHudItem::SwitchState(u32 S)
     if (object().Local() && !object().getDestroy())
     {
         // !!! Just single entry for given state !!!
-        NET_Packet				P;
+        NET_Packet P;
         object().u_EventGen(P, GE_WPN_STATE_CHANGE, object().ID());
         P.w_u8(u8(S));
         object().u_EventSend(P);
@@ -109,9 +107,8 @@ void CHudItem::OnEvent(NET_Packet& P, u16 type)
 {
     switch (type)
     {
-    case GE_WPN_STATE_CHANGE:
-    {
-        u8				S;
+    case GE_WPN_STATE_CHANGE: {
+        u8 S;
         P.r_u8(S);
         OnStateSwitch(u32(S));
     }
@@ -144,57 +141,44 @@ void CHudItem::OnStateSwitch(u32 S)
 
 void CHudItem::OnAnimationEnd(u32 state)
 {
-
-	CActor* A = smart_cast<CActor*>(object().H_Parent());
-	if (A)
-		A->callback(GameObject::eActorHudAnimationEnd)(smart_cast<CGameObject*>(this)->lua_game_object(),this->hud_sect.c_str(), this->m_current_motion.c_str(), state, this->animation_slot());
+    CActor* A = smart_cast<CActor*>(object().H_Parent());
+    if (A)
+        A->callback(GameObject::eActorHudAnimationEnd)(smart_cast<CGameObject*>(this)->lua_game_object(),
+            this->hud_sect.c_str(), this->m_current_motion.c_str(), state, this->animation_slot());
 
     switch (state)
     {
-    case eBore:
-    {
+    case eBore: {
         SwitchState(eIdle);
-    } break;
+    }
+    break;
     }
 }
 
-void CHudItem::PlayAnimBore()
-{
-    PlayHUDMotion("anm_bore", TRUE, this, GetState());
-}
+void CHudItem::PlayAnimBore() { PlayHUDMotion("anm_bore", TRUE, this, GetState()); }
 
 bool CHudItem::ActivateItem()
 {
     OnActiveItem();
-    return			true;
+    return true;
 }
 
-void CHudItem::DeactivateItem()
-{
-    OnHiddenItem();
-}
-void CHudItem::OnMoveToRuck(const SInvItemPlace& prev)
-{
-    SwitchState(eHidden);
-}
+void CHudItem::DeactivateItem() { OnHiddenItem(); }
+void CHudItem::OnMoveToRuck(const SInvItemPlace& prev) { SwitchState(eHidden); }
 
-void CHudItem::SendDeactivateItem()
-{
-    SendHiddenItem();
-}
+void CHudItem::SendDeactivateItem() { SendHiddenItem(); }
 void CHudItem::SendHiddenItem()
 {
     if (!object().getDestroy())
     {
-        NET_Packet				P;
+        NET_Packet P;
         object().u_EventGen(P, GE_WPN_STATE_CHANGE, object().ID());
         P.w_u8(u8(eHiding));
         object().u_EventSend(P, net_flags(TRUE, TRUE, FALSE, TRUE));
     }
 }
 
-void CHudItem::UpdateHudAdditonal(Fmatrix& hud_trans)
-{}
+void CHudItem::UpdateHudAdditonal(Fmatrix& hud_trans) {}
 
 void CHudItem::UpdateCL()
 {
@@ -202,17 +186,17 @@ void CHudItem::UpdateCL()
     {
         if (m_bStopAtEndAnimIsRunning)
         {
-            const xr_vector<motion_marks>&	marks = m_current_motion_def->marks;
+            const xr_vector<motion_marks>& marks = m_current_motion_def->marks;
             if (!marks.empty())
             {
-                float motion_prev_time = ((float) m_dwMotionCurrTm - (float) m_dwMotionStartTm) / 1000.0f;
-                float motion_curr_time = ((float) Device.dwTimeGlobal - (float) m_dwMotionStartTm) / 1000.0f;
+                float motion_prev_time = ((float)m_dwMotionCurrTm - (float)m_dwMotionStartTm) / 1000.0f;
+                float motion_curr_time = ((float)Device.dwTimeGlobal - (float)m_dwMotionStartTm) / 1000.0f;
 
                 xr_vector<motion_marks>::const_iterator it = marks.begin();
                 xr_vector<motion_marks>::const_iterator it_e = marks.end();
                 for (; it != it_e; ++it)
                 {
-                    const motion_marks&	M = (*it);
+                    const motion_marks& M = (*it);
                     if (M.is_empty())
                         continue;
 
@@ -239,13 +223,9 @@ void CHudItem::UpdateCL()
     }
 }
 
-void CHudItem::OnH_A_Chield()
-{}
+void CHudItem::OnH_A_Chield() {}
 
-void CHudItem::OnH_B_Chield()
-{
-    StopCurrentAnimWithoutCallback();
-}
+void CHudItem::OnH_B_Chield() { StopCurrentAnimWithoutCallback(); }
 
 void CHudItem::OnH_B_Independent(bool just_before_destroy)
 {
@@ -264,7 +244,7 @@ void CHudItem::OnH_B_Independent(bool just_before_destroy)
     g_player_hud->detach_item(this);
     Msg("---Detaching hud item [%s][%d]", this->HudSection().c_str(), this->object().ID());
     }*/
-    //SetHudItemData			(NULL);
+    // SetHudItemData			(NULL);
 }
 
 void CHudItem::OnH_A_Independent()
@@ -274,10 +254,7 @@ void CHudItem::OnH_A_Independent()
     StopCurrentAnimWithoutCallback();
 }
 
-void CHudItem::on_b_hud_detach()
-{
-    m_sounds.StopAllSounds();
-}
+void CHudItem::on_b_hud_detach() { m_sounds.StopAllSounds(); }
 
 void CHudItem::on_a_hud_attach()
 {
@@ -296,7 +273,7 @@ void CHudItem::on_a_hud_attach()
     }
 }
 
-u32 CHudItem::PlayHUDMotion(const shared_str& M, BOOL bMixIn, CHudItem*  W, u32 state)
+u32 CHudItem::PlayHUDMotion(const shared_str& M, BOOL bMixIn, CHudItem* W, u32 state)
 {
     u32 anim_time = PlayHUDMotion_noCB(M, bMixIn);
     if (anim_time > 0)
@@ -319,12 +296,8 @@ u32 CHudItem::PlayHUDMotion_noCB(const shared_str& motion_name, BOOL bMixIn)
 
     if (bDebug && item().m_pInventory)
     {
-        Msg("-[%s] as[%d] [%d]anim_play [%s][%d]",
-            HudItemData() ? "HUD" : "Simulating",
-            item().m_pInventory->GetActiveSlot(),
-            item().object_id(),
-            motion_name.c_str(),
-            Device.dwFrame);
+        Msg("-[%s] as[%d] [%d]anim_play [%s][%d]", HudItemData() ? "HUD" : "Simulating",
+            item().m_pInventory->GetActiveSlot(), item().object_id(), motion_name.c_str(), Device.dwFrame);
     }
     if (HudItemData())
     {
@@ -359,7 +332,8 @@ BOOL CHudItem::GetHUDmode()
 
 void CHudItem::PlayAnimIdle()
 {
-    if (TryPlayAnimIdle()) return;
+    if (TryPlayAnimIdle())
+        return;
 
     PlayHUDMotion("anm_idle", TRUE, NULL, GetState());
 }
@@ -378,26 +352,25 @@ bool CHudItem::TryPlayAnimIdle()
                 PlayAnimIdleSprint();
                 return true;
             }
-            else
-                if (!st.bCrouch && pActor->AnyMove())
-                {
-                    PlayAnimIdleMoving();
-                    return true;
-                }
-            
-#ifdef NEW_ANIMS //AVO: new crouch idle animation
-                else if (st.bCrouch && pActor->AnyMove()) 
-                {
-                    PlayAnimCrouchIdleMoving();
-                    return true;
-                }
+            else if (!st.bCrouch && pActor->AnyMove())
+            {
+                PlayAnimIdleMoving();
+                return true;
+            }
+
+#ifdef NEW_ANIMS // AVO: new crouch idle animation
+            else if (st.bCrouch && pActor->AnyMove())
+            {
+                PlayAnimCrouchIdleMoving();
+                return true;
+            }
 #endif //-NEW_ANIMS
         }
     }
     return false;
 }
 
-//AVO: check if animation exists
+// AVO: check if animation exists
 bool CHudItem::HudAnimationExist(LPCSTR anim_name)
 {
     if (HudItemData()) // First person
@@ -414,7 +387,6 @@ bool CHudItem::HudAnimationExist(LPCSTR anim_name)
     {
         if (g_player_hud->motion_length(anim_name, HudSection(), m_current_motion_def) > 100)
             return true;
-
     }
 #ifdef DEBUG
     Msg("~ [WARNING] ------ Animation [%s] does not exist in [%s]", anim_name, HudSection().c_str());
@@ -423,7 +395,7 @@ bool CHudItem::HudAnimationExist(LPCSTR anim_name)
 }
 //-AVO
 
-//AVO: new crouch idle animation
+// AVO: new crouch idle animation
 void CHudItem::PlayAnimCrouchIdleMoving()
 {
     if (HudAnimationExist("anm_idle_moving_crouch"))
@@ -431,15 +403,9 @@ void CHudItem::PlayAnimCrouchIdleMoving()
 }
 //-AVO
 
-void CHudItem::PlayAnimIdleMoving()
-{
-    PlayHUDMotion("anm_idle_moving", TRUE, NULL, GetState());
-}
+void CHudItem::PlayAnimIdleMoving() { PlayHUDMotion("anm_idle_moving", TRUE, NULL, GetState()); }
 
-void CHudItem::PlayAnimIdleSprint()
-{
-    PlayHUDMotion("anm_idle_sprint", TRUE, NULL, GetState());
-}
+void CHudItem::PlayAnimIdleSprint() { PlayHUDMotion("anm_idle_sprint", TRUE, NULL, GetState()); }
 
 void CHudItem::OnMovementChanged(ACTOR_DEFS::EMoveCommand cmd)
 {
@@ -457,7 +423,7 @@ attachable_hud_item* CHudItem::HudItemData()
 {
     attachable_hud_item* hi = NULL;
     if (!g_player_hud)
-        return				hi;
+        return hi;
 
     hi = g_player_hud->attached_item(0);
     if (hi && hi->m_parent_hud_item == this)

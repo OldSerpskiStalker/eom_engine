@@ -28,6 +28,7 @@ private:
     void o_new(CObject* E);
     void o_delete(CObject* E);
     void o_trace(Fvector& P, float dt, float vis_threshold);
+
 public:
     Vision(CObject const* owner);
     virtual ~Vision();
@@ -44,6 +45,7 @@ public:
         u16 bone_id;
     };
     xr_vector<feel_visible_Item> feel_visible;
+
 public:
     void feel_vision_clear();
     void feel_vision_query(Fmatrix& mFull, Fvector& P);
@@ -53,20 +55,23 @@ public:
     {
         R.clear();
         xr_vector<feel_visible_Item>::iterator I = feel_visible.begin(), E = feel_visible.end();
-        for (; I != E; ++I) if (positive(I->fuzzy)) R.push_back(I->O);
+        for (; I != E; ++I)
+            if (positive(I->fuzzy))
+                R.push_back(I->O);
     }
     Fvector feel_vision_get_vispoint(CObject* _O)
     {
         xr_vector<feel_visible_Item>::iterator I = feel_visible.begin(), E = feel_visible.end();
-        for (; I != E; ++I) if (_O == I->O)
-        {
-            VERIFY(positive(I->fuzzy));
-            return I->cp_LAST;
-        }
+        for (; I != E; ++I)
+            if (_O == I->O)
+            {
+                VERIFY(positive(I->fuzzy));
+                return I->cp_LAST;
+            }
         VERIFY2(0, "There is no such object in the potentially visible list");
         return Fvector().set(flt_max, flt_max, flt_max);
     }
     virtual bool feel_vision_isRelevant(CObject* O) = 0;
     virtual float feel_vision_mtl_transp(CObject* O, u32 element) = 0;
 };
-};
+}; // namespace Feel

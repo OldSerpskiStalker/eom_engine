@@ -14,19 +14,17 @@
 
 class CAI_Rat;
 
-namespace steering_behaviour {
+namespace steering_behaviour
+{
 
-class separation :
-	public base,
-	private debug::make_final<separation>,
-	private boost::noncopyable 
+class separation : public base, private debug::make_final<separation>, private boost::noncopyable
 {
 public:
-						separation	(CAI_Rat const *object);
-	virtual	Fvector		direction	();
+    separation(CAI_Rat const* object);
+    virtual Fvector direction();
 
 private:
-	typedef base		inherited;
+    typedef base inherited;
 };
 
 } // namespace steering_behaviour
