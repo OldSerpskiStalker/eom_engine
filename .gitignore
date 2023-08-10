@@ -37,3 +37,6 @@ src/.vs/engine/v17/.suo
 *.opendb
 *.db-wal
 *.ipch
+*.user
+*.log
+*.txt
