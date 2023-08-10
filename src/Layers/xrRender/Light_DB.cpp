@@ -3,7 +3,6 @@
 #include "../../xrEngine/xrLevel.h"
 #include "../../xrEngine/igame_persistent.h"
 #include "../../xrEngine/environment.h"
-#include "../../utils/xrLC_Light/R_light.h"
 #include "light_db.h"
 
 CLight_DB::CLight_DB()
