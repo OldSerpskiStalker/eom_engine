@@ -3,24 +3,24 @@
 
 #include "fs_internal.h"
 
-#pragma warning(disable:4995)
+#pragma warning(disable : 4995)
 #include <io.h>
 #include <direct.h>
 #include <fcntl.h>
 #include <sys\stat.h>
-#pragma warning(default:4995)
+#pragma warning(default : 4995)
 
-//typedef void DUMMY_STUFF (const void*,const u32&,void*);
-//XRCORE_API DUMMY_STUFF *g_dummy_stuff = 0;
+// typedef void DUMMY_STUFF (const void*,const u32&,void*);
+// XRCORE_API DUMMY_STUFF *g_dummy_stuff = 0;
 
 #ifdef M_BORLAND
-# define O_SEQUENTIAL 0
+#define O_SEQUENTIAL 0
 #endif // M_BORLAND
 
 #ifdef FS_DEBUG
 XRCORE_API u32 g_file_mapped_memory = 0;
 u32 g_file_mapped_count = 0;
-typedef xr_map<u32, std::pair<u32, shared_str> > FILE_MAPPINGS;
+typedef xr_map<u32, std::pair<u32, shared_str>> FILE_MAPPINGS;
 FILE_MAPPINGS g_file_mappings;
 
 void register_file_mapping(void* address, const u32& size, LPCSTR file_name)
@@ -45,11 +45,13 @@ void unregister_file_mapping(void* address, const u32& size)
 {
     FILE_MAPPINGS::iterator I = g_file_mappings.find(*(u32*)&address);
     VERIFY(I != g_file_mappings.end());
-    // VERIFY2 ((*I).second.first == size,make_string("file mapping sizes are different: %d -> %d",(*I).second.first,size));
+    // VERIFY2 ((*I).second.first == size,make_string("file mapping sizes are different: %d ->
+    // %d",(*I).second.first,size));
     g_file_mapped_memory -= (*I).second.first;
     --g_file_mapped_count;
 
-    // Msg ("--unregister_file_mapping(%2d): [0x%08x]%s", g_file_mapped_count + 1, *((u32*)&address), (*I).second.second.c_str());
+    // Msg ("--unregister_file_mapping(%2d): [0x%08x]%s", g_file_mapped_count + 1, *((u32*)&address),
+    // (*I).second.second.c_str());
 
     g_file_mappings.erase(I);
 
@@ -65,12 +67,7 @@ XRCORE_API void dump_file_mappings()
     FILE_MAPPINGS::const_iterator I = g_file_mappings.begin();
     FILE_MAPPINGS::const_iterator E = g_file_mappings.end();
     for (; I != E; ++I)
-        Msg(
-        "* [0x%08x][%d][%s]",
-        (*I).first,
-        (*I).second.first,
-        (*I).second.second.c_str()
-        );
+        Msg("* [0x%08x][%d][%s]", (*I).first, (*I).second.first, (*I).second.second.c_str());
 }
 #endif // DEBUG
 //////////////////////////////////////////////////////////////////////
@@ -108,15 +105,7 @@ bool file_handle_internal(LPCSTR file_name, u32& size, int& hFile)
 #else // EDITOR
 static errno_t open_internal(LPCSTR fn, int& handle)
 {
-    return (
-        _sopen_s(
-        &handle,
-        fn,
-        _O_RDONLY | _O_BINARY,
-        _SH_DENYNO,
-        _S_IREAD
-        )
-        );
+    return (_sopen_s(&handle, fn, _O_RDONLY | _O_BINARY, _SH_DENYNO, _S_IREAD));
 }
 
 bool file_handle_internal(LPCSTR file_name, u32& size, int& file_handle)
@@ -135,29 +124,22 @@ bool file_handle_internal(LPCSTR file_name, u32& size, int& file_handle)
 
 void* FileDownload(LPCSTR file_name, const int& file_handle, u32& file_size)
 {
-    void* buffer = Memory.mem_alloc(
-        file_size
+    void* buffer = Memory.mem_alloc(file_size
 #ifdef DEBUG_MEMORY_NAME
-        , "FILE in memory"
+        ,
+        "FILE in memory"
 #endif // DEBUG_MEMORY_NAME
-        );
+    );
 
     int r_bytes = _read(file_handle, buffer, file_size);
     R_ASSERT3(
         // !file_size ||
         // (r_bytes && (file_size >= (u32)r_bytes)),
-        file_size == (u32)r_bytes,
-        "can't read from file : ",
-        file_name
-        );
+        file_size == (u32)r_bytes, "can't read from file : ", file_name);
 
     // file_size = r_bytes;
 
-    R_ASSERT3(
-        !_close(file_handle),
-        "can't close file : ",
-        file_name
-        );
+    R_ASSERT3(!_close(file_handle), "can't close file : ", file_name);
 
     return (buffer);
 }
@@ -165,20 +147,13 @@ void* FileDownload(LPCSTR file_name, const int& file_handle, u32& file_size)
 void* FileDownload(LPCSTR file_name, u32* buffer_size)
 {
     int file_handle;
-    R_ASSERT3(
-        file_handle_internal(file_name, *buffer_size, file_handle),
-        "can't open file : ",
-        file_name
-        );
+    R_ASSERT3(file_handle_internal(file_name, *buffer_size, file_handle), "can't open file : ", file_name);
 
     return (FileDownload(file_name, file_handle, *buffer_size));
 }
 
 typedef char MARK[9];
-IC void mk_mark(MARK& M, const char* S)
-{
-    strncpy_s(M, sizeof(M), S, 8);
-}
+IC void mk_mark(MARK& M, const char* S) { strncpy_s(M, sizeof(M), S, 8); }
 
 void FileCompress(const char* fn, const char* sign, void* data, u32 size)
 {
@@ -211,7 +186,8 @@ void* FileDecompress(const char* fn, const char* sign, u32* size)
     u32 SZ;
     SZ = _readLZ(H, ptr, filelength(H) - 8);
     _close(H);
-    if (size) *size = SZ;
+    if (size)
+        *size = SZ;
     return ptr;
 }
 
@@ -220,35 +196,39 @@ void* FileDecompress(const char* fn, const char* sign, u32* size)
 //////////////////////////////////////////////////////////////////////
 //---------------------------------------------------
 // memory
-CMemoryWriter::~CMemoryWriter()
-{
-    xr_free(data);
-}
+CMemoryWriter::~CMemoryWriter() { xr_free(data); }
 
 void CMemoryWriter::w(const void* ptr, u32 count)
 {
     if (position + count > mem_size)
     {
         // reallocate
-        if (mem_size == 0) mem_size = 128;
-        while (mem_size <= (position + count)) mem_size *= 2;
-        if (0 == data) data = (BYTE*)Memory.mem_alloc(mem_size
+        if (mem_size == 0)
+            mem_size = 128;
+        while (mem_size <= (position + count))
+            mem_size *= 2;
+        if (0 == data)
+            data = (BYTE*)Memory.mem_alloc(mem_size
 #ifdef DEBUG_MEMORY_NAME
-            , "CMemoryWriter - storage"
+                ,
+                "CMemoryWriter - storage"
 #endif // DEBUG_MEMORY_NAME
             );
-        else data = (BYTE*)Memory.mem_realloc(data, mem_size
+        else
+            data = (BYTE*)Memory.mem_realloc(data, mem_size
 #ifdef DEBUG_MEMORY_NAME
-            , "CMemoryWriter - storage"
+                ,
+                "CMemoryWriter - storage"
 #endif // DEBUG_MEMORY_NAME
             );
     }
     CopyMemory(data + position, ptr, count);
     position += count;
-    if (position > file_size) file_size = position;
+    if (position > file_size)
+        file_size = position;
 }
 
-//static const u32 mb_sz = 0x1000000;
+// static const u32 mb_sz = 0x1000000;
 bool CMemoryWriter::save_to(LPCSTR fn)
 {
     IWriter* F = FS.w_open(fn);
@@ -260,7 +240,6 @@ bool CMemoryWriter::save_to(LPCSTR fn)
     }
     return false;
 }
-
 
 void IWriter::open_chunk(u32 type)
 {
@@ -280,7 +259,8 @@ void IWriter::close_chunk()
 }
 u32 IWriter::chunk_size() // returns size of currently opened chunk, 0 otherwise
 {
-    if (chunk_pos.empty()) return 0;
+    if (chunk_pos.empty())
+        return 0;
     return tell() - chunk_pos.top() - 4;
 }
 
@@ -301,8 +281,10 @@ void IWriter::w_compressed(void* ptr, u32 count)
 void IWriter::w_chunk(u32 type, void* data, u32 size)
 {
     open_chunk(type);
-    if (type & CFS_CompressMark) w_compressed(data, size);
-    else w(data, size);
+    if (type & CFS_CompressMark)
+        w_compressed(data, size);
+    else
+        w(data, size);
     close_chunk();
 }
 void IWriter::w_sdir(const Fvector& D)
@@ -358,32 +340,27 @@ IReader* IReader::open_chunk(u32 ID)
             return xr_new<IReader>(pointer(), dwSize, tell() + dwSize);
         }
     }
-    else return 0;
+    else
+        return 0;
 };
 void IReader::close()
 {
-    //xr_delete((IReader*)this);
-	IReader *self = this;
-	xr_delete(self);
+    // xr_delete((IReader*)this);
+    IReader* self = this;
+    xr_delete(self);
 }
 
 #include "FS_impl.h"
 
 #ifdef TESTING_IREADER
-IReaderTestPolicy::~IReaderTestPolicy()
-{
-    xr_delete(m_test);
-};
+IReaderTestPolicy::~IReaderTestPolicy() { xr_delete(m_test); };
 #endif // TESTING_IREADER
 
 #ifdef FIND_CHUNK_BENCHMARK_ENABLE
 find_chunk_counter g_find_chunk_counter;
 #endif // FIND_CHUNK_BENCHMARK_ENABLE
 
-u32 IReader::find_chunk(u32 ID, BOOL* bCompressed)
-{
-    return inherited::find_chunk(ID, bCompressed);
-}
+u32 IReader::find_chunk(u32 ID, BOOL* bCompressed) { return inherited::find_chunk(ID, bCompressed); }
 
 IReader* IReader::open_chunk_iterator(u32& ID, IReader* _prev)
 {
@@ -400,7 +377,8 @@ IReader* IReader::open_chunk_iterator(u32& ID, IReader* _prev)
     }
 
     // open
-    if (elapsed() < 8) return NULL;
+    if (elapsed() < 8)
+        return NULL;
     ID = r_u32();
     u32 _size = r_u32();
     if (ID & CFS_CompressMark)
@@ -425,8 +403,10 @@ void IReader::r(void* p, int cnt)
     advance(cnt);
 #ifdef DEBUG
     BOOL bShow = FALSE;
-    if (dynamic_cast<CFileReader*>(this)) bShow = TRUE;
-    if (dynamic_cast<CVirtualFileReader*>(this)) bShow = TRUE;
+    if (dynamic_cast<CFileReader*>(this))
+        bShow = TRUE;
+    if (dynamic_cast<CVirtualFileReader*>(this))
+        bShow = TRUE;
     if (bShow)
     {
         FS.dwOpenCounter++;
@@ -477,7 +457,8 @@ void IReader::r_stringZ(char* dest, u32 tgt_sz)
     char* src = (char*)data;
     u32 sz = xr_strlen(src);
     R_ASSERT2(sz < tgt_sz, "Dest string less than needed.");
-    while ((src[Pos] != 0) && (!eof())) *dest++ = src[Pos++];
+    while ((src[Pos] != 0) && (!eof()))
+        *dest++ = src[Pos++];
     *dest = 0;
     Pos++;
 }
@@ -495,16 +476,14 @@ void IReader::r_stringZ(xr_string& dest)
 void IReader::skip_stringZ()
 {
     char* src = (char*)data;
-    while ((src[Pos] != 0) && (!eof())) Pos++;
+    while ((src[Pos] != 0) && (!eof()))
+        Pos++;
     Pos++;
 };
 
 //---------------------------------------------------
 // temp stream
-CTempReader::~CTempReader()
-{
-    xr_free(data);
-};
+CTempReader::~CTempReader() { xr_free(data); };
 //---------------------------------------------------
 // pack stream
 CPackReader::~CPackReader()
@@ -522,10 +501,7 @@ CFileReader::CFileReader(const char* name)
     data = (char*)FileDownload(name, (u32*)&Size);
     Pos = 0;
 };
-CFileReader::~CFileReader()
-{
-    xr_free(data);
-};
+CFileReader::~CFileReader() { xr_free(data); };
 //---------------------------------------------------
 // compressed stream
 CCompressedReader::CCompressedReader(const char* name, const char* sign)
@@ -533,11 +509,7 @@ CCompressedReader::CCompressedReader(const char* name, const char* sign)
     data = (char*)FileDecompress(name, sign, (u32*)&Size);
     Pos = 0;
 }
-CCompressedReader::~CCompressedReader()
-{
-    xr_free(data);
-};
-
+CCompressedReader::~CCompressedReader() { xr_free(data); };
 
 CVirtualFileRW::CVirtualFileRW(const char* cFileName)
 {

@@ -24,7 +24,7 @@ CONDITIONAL COMPILATION :
                            File Scope Defines
 //////////////////////////////////////////////////////////////////////*/
 // The maximum symbol size handled in the module
-#define MAX_SYM_SIZE  256
+#define MAX_SYM_SIZE 256
 #define BUFF_SIZE 1024
 #define SYM_BUFF_SIZE 512
 
@@ -90,7 +90,7 @@ void CleanupSymEng ( void ) ;
 //////////////////////////////////////////////////////////////////////*/
 // See the note in MEMDUMPVALIDATOR.CPP about automatic classes.
 // Turn off warning : initializers put in library initialization area
-#pragma warning (disable : 4073)
+#pragma warning(disable : 4073)
 #pragma init_seg(lib)
 class CleanUpCrashHandler
 {
@@ -435,16 +435,16 @@ LPCTSTR __stdcall GetFaultReason ( EXCEPTION_POINTERS * pExPtrs )
                                             BUFF_SIZE - iCurr      ) ;
         }
 
-    #ifdef _WIN64
+#ifdef _WIN64
         iCurr += wsprintf ( g_szBuff + iCurr    ,
                             _T ( " at %016X" )   ,
                             pExPtrs->ExceptionRecord->ExceptionAddress);
-    #else
+#else
         iCurr += wsprintf ( g_szBuff + iCurr                ,
                             _T ( " at %04X:%08X" )          ,
                             pExPtrs->ContextRecord->SegCs   ,
                             pExPtrs->ExceptionRecord->ExceptionAddress);
-    #endif
+#endif
 
         ASSERT ( iCurr < ( BUFF_SIZE - 200 ) ) ;
 
@@ -607,14 +607,14 @@ LPCTSTR  __stdcall
     // Initialize the STACKFRAME structure.
     ZeroMemory ( &g_stFrame , sizeof ( STACKFRAME ) ) ;
 
-    #ifdef _X86_
+#ifdef _X86_
     g_stFrame.AddrPC.Offset       = pExPtrs->ContextRecord->Eip ;
     g_stFrame.AddrPC.Mode         = AddrModeFlat                ;
     g_stFrame.AddrStack.Offset    = pExPtrs->ContextRecord->Esp ;
     g_stFrame.AddrStack.Mode      = AddrModeFlat                ;
     g_stFrame.AddrFrame.Offset    = pExPtrs->ContextRecord->Ebp ;
     g_stFrame.AddrFrame.Mode      = AddrModeFlat                ;
-    #else
+#else
     g_stFrame.AddrPC.Offset       = (DWORD)pExPtrs->ContextRecord->Fir ;
     g_stFrame.AddrPC.Mode         = AddrModeFlat ;
     g_stFrame.AddrReturn.Offset   =
@@ -626,7 +626,7 @@ LPCTSTR  __stdcall
     g_stFrame.AddrFrame.Offset    =
                                    (DWORD)pExPtrs->ContextRecord->IntFp;
     g_stFrame.AddrFrame.Mode      = AddrModeFlat ;
-    #endif
+#endif
 
     return ( InternalGetStackTraceString ( dwOpts , pExPtrs ) ) ;
 }
@@ -1150,7 +1150,7 @@ BOOL InternalSymGetLineFromAddr ( IN  HANDLE          hProcess        ,
     }
     return ( TRUE ) ;
 
-#else  // WORK_AROUND_SRCLINE_BUG
+#else // WORK_AROUND_SRCLINE_BUG
     return ( SymGetLineFromAddr ( hProcess         ,
                                   dwAddr           ,
                                   pdwDisplacement  ,

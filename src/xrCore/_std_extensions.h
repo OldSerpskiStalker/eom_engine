@@ -40,25 +40,16 @@ IC char* xr_strcpy(char* strDestination, size_t sizeInBytes, const char* strSour
     return strcpy(strDestination, strSource);
 }
 
-IC char* xr_strcpy(char* strDestination, const char* strSource)
-{
-    return strcpy(strDestination, strSource);
-}
+IC char* xr_strcpy(char* strDestination, const char* strSource) { return strcpy(strDestination, strSource); }
 
-IC char* _strlwr_s(char* strDestination, size_t sizeInBytes)
-{
-    return strlwr(strDestination);
-}
+IC char* _strlwr_s(char* strDestination, size_t sizeInBytes) { return strlwr(strDestination); }
 
 IC char* xr_strcat(char* strDestination, size_t sizeInBytes, const char* strSource)
 {
     return strncat(strDestination, strSource, sizeInBytes);
 }
 
-IC char* xr_strcat(char* strDestination, const char* strSource)
-{
-    return strcat(strDestination, strSource);
-}
+IC char* xr_strcat(char* strDestination, const char* strSource) { return strcat(strDestination, strSource); }
 
 IC int xr_sprintf(char* dest, size_t sizeOfBuffer, const char* format, ...)
 {
@@ -81,7 +72,8 @@ struct XRCORE_API xr_token
 IC LPCSTR get_token_name(xr_token* tokens, int key)
 {
     for (int k = 0; tokens[k].name; k++)
-        if (key == tokens[k].id) return tokens[k].name;
+        if (key == tokens[k].id)
+            return tokens[k].name;
     return "";
 }
 
@@ -101,9 +93,21 @@ struct XRCORE_API xr_token2
 };
 
 // generic
-template <class T> IC T _min(T a, T b) { return a < b ? a : b; }
-template <class T> IC T _max(T a, T b) { return a > b ? a : b; }
-template <class T> IC T _sqr(T a) { return a*a; }
+template <class T>
+IC T _min(T a, T b)
+{
+    return a < b ? a : b;
+}
+template <class T>
+IC T _max(T a, T b)
+{
+    return a > b ? a : b;
+}
+template <class T>
+IC T _sqr(T a)
+{
+    return a * a;
+}
 
 // float
 IC float _abs(float x) { return fabsf(x); }
@@ -112,9 +116,10 @@ IC float _sin(float x) { return sinf(x); }
 IC float _cos(float x) { return cosf(x); }
 IC BOOL _valid(const float x)
 {
-    // check for: Signaling NaN, Quiet NaN, Negative infinity ( –INF), Positive infinity (+INF), Negative denormalized, Positive denormalized
+    // check for: Signaling NaN, Quiet NaN, Negative infinity ( –INF), Positive infinity (+INF), Negative denormalized,
+    // Positive denormalized
     int cls = _fpclass(double(x));
-    if (cls&(_FPCLASS_SNAN + _FPCLASS_QNAN + _FPCLASS_NINF + _FPCLASS_PINF + _FPCLASS_ND + _FPCLASS_PD))
+    if (cls & (_FPCLASS_SNAN + _FPCLASS_QNAN + _FPCLASS_NINF + _FPCLASS_PINF + _FPCLASS_ND + _FPCLASS_PD))
         return false;
 
     /* *****other cases are*****
@@ -126,7 +131,6 @@ IC BOOL _valid(const float x)
     return true;
 }
 
-
 // double
 IC double _abs(double x) { return fabs(x); }
 IC double _sqrt(double x) { return sqrt(x); }
@@ -134,9 +138,10 @@ IC double _sin(double x) { return sin(x); }
 IC double _cos(double x) { return cos(x); }
 IC BOOL _valid(const double x)
 {
-    // check for: Signaling NaN, Quiet NaN, Negative infinity ( –INF), Positive infinity (+INF), Negative denormalized, Positive denormalized
+    // check for: Signaling NaN, Quiet NaN, Negative infinity ( –INF), Positive infinity (+INF), Negative denormalized,
+    // Positive denormalized
     int cls = _fpclass(x);
-    if (cls&(_FPCLASS_SNAN + _FPCLASS_QNAN + _FPCLASS_NINF + _FPCLASS_PINF + _FPCLASS_ND + _FPCLASS_PD))
+    if (cls & (_FPCLASS_SNAN + _FPCLASS_QNAN + _FPCLASS_NINF + _FPCLASS_PINF + _FPCLASS_ND + _FPCLASS_PD))
         return false;
 
     /* *****other cases are*****
@@ -179,28 +184,16 @@ IC u32 xr_strlen(const char* S);
 // string management
 
 // return pointer to ".ext"
-IC char* strext(const char* S)
-{
-    return (char*)strrchr(S, '.');
-}
+IC char* strext(const char* S) { return (char*)strrchr(S, '.'); }
 
-IC u32 xr_strlen(const char* S)
-{
-    return (u32)strlen(S);
-}
+IC u32 xr_strlen(const char* S) { return (u32)strlen(S); }
 
-IC char* xr_strlwr(char* S)
-{
-    return strlwr(S);
-}
+IC char* xr_strlwr(char* S) { return strlwr(S); }
 
 #ifdef BREAK_AT_STRCMP
 XRCORE_API int xr_strcmp(const char* S1, const char* S2);
 #else
-IC int xr_strcmp(const char* S1, const char* S2)
-{
-    return (int)strcmp(S1, S2);
-}
+IC int xr_strcmp(const char* S1, const char* S2) { return (int)strcmp(S1, S2); }
 #endif
 
 #ifndef _EDITOR
@@ -224,7 +217,7 @@ inline int __cdecl xr_sprintf(LPSTR destination, size_t const buffer_size, LPCST
 }
 
 template <int count>
-inline int __cdecl xr_sprintf(char(&destination)[count], LPCSTR format_string, ...)
+inline int __cdecl xr_sprintf(char (&destination)[count], LPCSTR format_string, ...)
 {
     va_list args;
     va_start(args, format_string);
@@ -260,7 +253,7 @@ inline int __cdecl xr_sprintf(LPSTR destination, size_t const buffer_size, LPCST
 }
 
 template <int count>
-inline int __cdecl xr_sprintf(char(&destination)[count], LPCSTR format_string, ...)
+inline int __cdecl xr_sprintf(char (&destination)[count], LPCSTR format_string, ...)
 {
     va_list args;
     va_start(args, format_string);
@@ -268,16 +261,16 @@ inline int __cdecl xr_sprintf(char(&destination)[count], LPCSTR format_string, .
 }
 #endif // #ifndef MASTER_GOLD
 
-# pragma deprecated( strcpy, strcpy_s, sprintf, sprintf_s, strcat, strcat_s )
+#pragma deprecated(strcpy, strcpy_s, sprintf, sprintf_s, strcat, strcat_s)
 
 template <int count>
-inline errno_t xr_strcpy(char(&destination)[count], LPCSTR source)
+inline errno_t xr_strcpy(char (&destination)[count], LPCSTR source)
 {
     return xr_strcpy(destination, count, source);
 }
 
 template <int count>
-inline errno_t xr_strcat(char(&destination)[count], LPCSTR source)
+inline errno_t xr_strcat(char (&destination)[count], LPCSTR source)
 {
     return xr_strcat(destination, count, source);
 }

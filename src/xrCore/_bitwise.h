@@ -22,8 +22,8 @@ IC bool positive(const float f) { return f >= 0; }
 IC void set_negative(float& f) { f = -fabsf(f); }
 IC void set_positive(float& f) { f = fabsf(f); }
 #else
-IC BOOL negative(const float& f) { return (*((unsigned*)(&f))&fdSGN); }
-IC BOOL positive(const float& f) { return (*((unsigned*)(&f))&fdSGN) == 0; }
+IC BOOL negative(const float& f) { return (*((unsigned*)(&f)) & fdSGN); }
+IC BOOL positive(const float& f) { return (*((unsigned*)(&f)) & fdSGN) == 0; }
 IC void set_negative(float& f) { (*(unsigned*)(&f)) |= fdSGN; }
 IC void set_positive(float& f) { (*(unsigned*)(&f)) &= ~fdSGN; }
 #endif
@@ -43,13 +43,15 @@ IC bool btwIsPow2(u32 v) { return (btwLowestBitMask(v) == v); }
 IC int btwPow2_Ceil(int v)
 {
     int i = btwLowestBitMask(v);
-    while (i < v) i <<= 1;
+    while (i < v)
+        i <<= 1;
     return i;
 }
 IC u32 btwPow2_Ceil(u32 v)
 {
     u32 i = btwLowestBitMask(v);
-    while (i < v) i <<= 1;
+    while (i < v)
+        i <<= 1;
     return i;
 }
 
@@ -62,7 +64,7 @@ IC u8 btwCount1(u8 v)
     return (v & 0x0f) + ((v >> 4) & 0x0f);
 }
 
-//same for 32bit
+// same for 32bit
 IC u32 btwCount1(u32 v)
 {
     const u32 g31 = 0x49249249ul; // = 0100_1001_0010_0100_1001_0010_0100_1001
@@ -72,11 +74,7 @@ IC u32 btwCount1(u32 v)
     return (v + (v >> 9) + (v >> 18) + (v >> 27)) & 0x3f;
 }
 
-IC u64 btwCount1(u64 v)
-{
-    return btwCount1(u32(v&u32(-1))) + btwCount1(u32(v >> u64(32)));
-}
-
+IC u64 btwCount1(u64 v) { return btwCount1(u32(v & u32(-1))) + btwCount1(u32(v >> u64(32))); }
 
 ICF int iFloor(float x)
 {
@@ -85,11 +83,11 @@ ICF int iFloor(float x)
     int r = (((u32)(a) << 8) | (1U << 31)) >> exponent;
     exponent += 31 - 127;
     {
-        int imask = (!(((((1 << (exponent))) - 1) >> 8)&a));
+        int imask = (!(((((1 << (exponent))) - 1) >> 8) & a));
         exponent -= (31 - 127) + 32;
         exponent >>= 31;
         a >>= 31;
-        r -= (imask&a);
+        r -= (imask & a);
         r &= exponent;
         r ^= a;
     }
@@ -106,11 +104,11 @@ ICF int iCeil(float x)
     int r = (((u32)(a) << 8) | (1U << 31)) >> exponent;
     exponent += 31 - 127;
     {
-        int imask = (!(((((1 << (exponent))) - 1) >> 8)&a));
+        int imask = (!(((((1 << (exponent))) - 1) >> 8) & a));
         exponent -= (31 - 127) + 32;
         exponent >>= 31;
         a = ~((a - 1) >> 31); /* change sign */
-        r -= (imask&a);
+        r -= (imask & a);
         r &= exponent;
         r ^= a;
         r = -r; /* change sign */
@@ -124,10 +122,7 @@ IC bool fis_gremlin(const float& f)
     u8 value = u8(((*(int*)&f & 0x7f800000) >> 23) - 0x20);
     return value > 0xc0;
 }
-IC bool fis_denormal(const float& f)
-{
-    return !(*(int*)&f & 0x7f800000);
-}
+IC bool fis_denormal(const float& f) { return !(*(int*)&f & 0x7f800000); }
 
 // Approximated calculations
 IC float apx_InvSqrt(const float& n)
@@ -150,9 +145,6 @@ IC float apx_asin(const float x)
     return d;
 }
 // Only for [0..1] (positive) range
-IC float apx_acos(const float x)
-{
-    return PI_DIV_2 - apx_asin(x);
-}
+IC float apx_acos(const float x) { return PI_DIV_2 - apx_asin(x); }
 
 #endif

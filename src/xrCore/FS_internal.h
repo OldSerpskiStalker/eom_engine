@@ -16,6 +16,7 @@ class CFileWriter : public IWriter
 {
 private:
     FILE* hf;
+
 public:
     CFileWriter(const char* name, bool exclusive)
     {
@@ -24,9 +25,9 @@ public:
         VerifyPath(*fName);
         if (exclusive)
         {
-            int handle = _sopen(*fName,_O_WRONLY|_O_TRUNC|_O_CREAT|_O_BINARY,SH_DENYWR);
+            int handle = _sopen(*fName, _O_WRONLY | _O_TRUNC | _O_CREAT | _O_BINARY, SH_DENYWR);
 #ifdef _EDITOR
-            if (handle==-1)
+            if (handle == -1)
                 Msg("!Can't create file: '%s'. Error: '%s'.", *fName, _sys_errlist[errno]);
 #endif
             hf = _fdopen(handle, "wb");
@@ -46,7 +47,7 @@ public:
             fclose(hf);
             // release RO attrib
             DWORD dwAttr = GetFileAttributes(*fName);
-            if ((dwAttr != u32(-1)) && (dwAttr&FILE_ATTRIBUTE_READONLY))
+            if ((dwAttr != u32(-1)) && (dwAttr & FILE_ATTRIBUTE_READONLY))
             {
                 dwAttr &= ~FILE_ATTRIBUTE_READONLY;
                 SetFileAttributes(*fName, dwAttr);
@@ -73,10 +74,18 @@ public:
             }
         }
     };
-    virtual void seek(u32 pos) { if (0 != hf) fseek(hf, pos, SEEK_SET); };
+    virtual void seek(u32 pos)
+    {
+        if (0 != hf)
+            fseek(hf, pos, SEEK_SET);
+    };
     virtual u32 tell() { return (0 != hf) ? ftell(hf) : 0; };
     virtual bool valid() { return (0 != hf); }
-    virtual void flush() { if (hf) fflush(hf); };
+    virtual void flush()
+    {
+        if (hf)
+            fflush(hf);
+    };
 };
 
 // It automatically frees memory after destruction
@@ -89,6 +98,7 @@ public:
 class CPackReader : public IReader
 {
     void* base_address;
+
 public:
     CPackReader(void* _base, void* _data, int _size) : IReader(_data, _size) { base_address = _base; }
     virtual ~CPackReader();
@@ -108,7 +118,8 @@ public:
 class CVirtualFileReader : public IReader
 {
 private:
-    void* hSrcFile, *hSrcMap;
+    void *hSrcFile, *hSrcMap;
+
 public:
     CVirtualFileReader(const char* cFileName);
     virtual ~CVirtualFileReader();

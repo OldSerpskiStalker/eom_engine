@@ -2,7 +2,7 @@
 #define _FIXEDSET_H
 #pragma once
 
-template<class K, class allocator = xr_allocator>
+template <class K, class allocator = xr_allocator>
 class FixedSET
 {
     enum
@@ -10,32 +10,32 @@ class FixedSET
         SG_REALLOC_ADVANCE = 64,
         SG_REALLOC_ALIGN = 64
     };
+
 public:
     struct TNode
     {
         K key;
-        TNode* left, *right;
+        TNode *left, *right;
     };
     typedef void __fastcall callback(TNode*);
+
 private:
     TNode* nodes;
     u32 pool;
     u32 limit;
 
-    IC u32 Size(u32 Count)
-    {
-        return Count*sizeof(TNode);
-    }
+    IC u32 Size(u32 Count) { return Count * sizeof(TNode); }
 
     void Realloc()
     {
         u32 newLimit = limit + SG_REALLOC_ADVANCE;
-        VERIFY(newLimit%SG_REALLOC_ADVANCE == 0);
-        TNode* newNodes = (TNode*)allocator::alloc(sizeof(TNode)*newLimit);
+        VERIFY(newLimit % SG_REALLOC_ADVANCE == 0);
+        TNode* newNodes = (TNode*)allocator::alloc(sizeof(TNode) * newLimit);
         VERIFY(newNodes);
 
         ZeroMemory(newNodes, Size(newLimit));
-        if (limit) CopyMemory(newNodes, nodes, Size(limit));
+        if (limit)
+            CopyMemory(newNodes, nodes, Size(limit));
 
         for (u32 I = 0; I < pool; I++)
         {
@@ -54,15 +54,17 @@ private:
                 Nnew->right = newNodes + Rid;
             }
         }
-        if (nodes) allocator:
-        dealloc(nodes);
+        if (nodes)
+        allocator:
+            dealloc(nodes);
 
         nodes = newNodes;
         limit = newLimit;
     }
     IC TNode* Alloc(const K& key)
     {
-        if (pool == limit) Realloc();
+        if (pool == limit)
+            Realloc();
         TNode* node = nodes + pool;
         node->key = key;
         node->right = node->left = 0;
@@ -79,16 +81,21 @@ private:
 
     IC void recurseLR(TNode* N, callback CB)
     {
-        if (N->left) recurseLR(N->left, CB);
+        if (N->left)
+            recurseLR(N->left, CB);
         CB(N);
-        if (N->right) recurseLR(N->right, CB);
+        if (N->right)
+            recurseLR(N->right, CB);
     }
     IC void recurseRL(TNode* N, callback CB)
     {
-        if (N->right) recurseRL(N->right, CB);
+        if (N->right)
+            recurseRL(N->right, CB);
         CB(N);
-        if (N->left) recurseRL(N->left, CB);
+        if (N->left)
+            recurseRL(N->left, CB);
     }
+
 public:
     FixedSET()
     {
@@ -136,8 +143,8 @@ public:
                     return N;
                 }
             }
-            else return node;
-
+            else
+                return node;
         }
         else
         {
@@ -190,15 +197,17 @@ public:
     IC TNode* end() { return nodes + pool; }
     IC TNode* last() { return nodes + limit; } // for setup only
     IC u32 size() { return pool; }
-    IC TNode& operator[] (int v) { return nodes[v]; }
+    IC TNode& operator[](int v) { return nodes[v]; }
 
     IC void traverseLR(callback CB)
     {
-        if (pool) recurseLR(nodes, CB);
+        if (pool)
+            recurseLR(nodes, CB);
     }
     IC void traverseRL(callback CB)
     {
-        if (pool) recurseRL(nodes, CB);
+        if (pool)
+            recurseRL(nodes, CB);
     }
     IC void traverseANY(callback CB)
     {

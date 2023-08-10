@@ -3,20 +3,31 @@
 #pragma once
 
 // 1. class or not class
-template<typename T>
+template <typename T>
 struct is_class
 {
-    struct _yes { char _a[1]; };
-    struct _no { char _a[2]; };
+    struct _yes
+    {
+        char _a[1];
+    };
+    struct _no
+    {
+        char _a[2];
+    };
 
-    template <class U> static _yes is_class_tester(void(U::*)(void));
-    template <class U> static _no is_class_tester(...);
+    template <class U>
+    static _yes is_class_tester(void (U::*)(void));
+    template <class U>
+    static _no is_class_tester(...);
 
-    enum { result = (sizeof(_yes) == sizeof(is_class_tester<T>(0))) };
+    enum
+    {
+        result = (sizeof(_yes) == sizeof(is_class_tester<T>(0)))
+    };
 };
 
 // 2. is polymorphic (class)
-template<typename T>
+template <typename T>
 struct is_pm_class
 {
     struct c1 : public T
@@ -34,28 +45,43 @@ struct is_pm_class
         c2& operator=(const c2&);
         virtual ~c2();
     };
-    enum { result = (sizeof(c1) == sizeof(c2)) };
+    enum
+    {
+        result = (sizeof(c1) == sizeof(c2))
+    };
 };
 
 // 3. select result based on class/not class
-template<bool _is_class>
+template <bool _is_class>
 struct is_pm_classify
 {
-    template<typename _T>
-    struct _detail { enum { result = is_pm_class<_T>::result }; };
+    template <typename _T>
+    struct _detail
+    {
+        enum
+        {
+            result = is_pm_class<_T>::result
+        };
+    };
 };
-template<>
-struct is_pm_classify < false >
+template <>
+struct is_pm_classify<false>
 {
-    template<typename _T>
-    struct _detail { enum { result = false }; };
+    template <typename _T>
+    struct _detail
+    {
+        enum
+        {
+            result = false
+        };
+    };
 };
-template<typename T>
+template <typename T>
 struct is_polymorphic
 {
     enum
     {
-        result = is_pm_classify<is_class<T>::result> ::_detail<T> ::result
+        result = is_pm_classify<is_class<T>::result>::_detail<T>::result
     };
 };
 

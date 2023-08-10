@@ -5,7 +5,7 @@
 #define VC_EXTRALEAN // Exclude rarely-used stuff from Windows headers
 #define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
 #ifndef STRICT
-# define STRICT // Enable strict syntax
+#define STRICT // Enable strict syntax
 #endif // STRICT
 #define IDIRECTPLAY2_OR_GREATER // ?
 #define DIRECTINPUT_VERSION 0x0800 //
@@ -13,7 +13,7 @@
 
 // windows.h
 #ifndef _WIN32_WINNT
-# define _WIN32_WINNT 0x0501
+#define _WIN32_WINNT 0x0501
 #endif
 
 #ifdef __BORLANDC__
@@ -23,7 +23,7 @@
 #endif
 
 #define NOGDICAPMASKS
-//#define NOSYSMETRICS
+// #define NOSYSMETRICS
 #define NOMENUS
 #define NOICONS
 #define NOKEYSTATES
@@ -40,7 +40,7 @@
 #define _WIN32_DCOM
 
 #pragma warning(push)
-#pragma warning(disable:4005)
+#pragma warning(disable : 4005)
 #include <windows.h>
 #ifndef __BORLANDC__
 #include <windowsx.h>

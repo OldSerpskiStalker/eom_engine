@@ -2,10 +2,13 @@
 #pragma hdrstop
 #include "NET_utils.h"
 
-
 // ---NET_Packet
 // reading
-void NET_Packet::read_start() { r_pos = 0; INI_W(move_begin()); }
+void NET_Packet::read_start()
+{
+    r_pos = 0;
+    INI_W(move_begin());
+}
 
 u32 NET_Packet::r_begin(u16& type) // returns time of receiving
 {
@@ -28,9 +31,10 @@ void NET_Packet::w_seek(u32 pos, const void* p, u32 count)
 void NET_Packet::r_seek(u32 pos)
 {
     INI_ASSERT(r_seek)
-    //AVO: changed changed condition to <= as all net packet script utils are using r_seek(0) to read the entire packet.
+    // AVO: changed changed condition to <= as all net packet script utils are using r_seek(0) to read the entire
+    // packet.
     VERIFY(pos <= B.count);
-    //VERIFY(pos < B.count);
+    // VERIFY(pos < B.count);
     r_pos = pos;
 }
 
@@ -244,7 +248,7 @@ void NET_Packet::r_float_q16(float& A, float min, float max)
 {
     u16 val;
     r_u16(val);
-    A = (float(val)*(max - min)) / 65535.f + min; // floating-point-error possible
+    A = (float(val) * (max - min)) / 65535.f + min; // floating-point-error possible
     VERIFY((A >= min - EPS_S) && (A <= max + EPS_S));
 }
 
@@ -252,19 +256,13 @@ void NET_Packet::r_float_q8(float& A, float min, float max)
 {
     u8 val;
     r_u8(val);
-    A = (float(val) / 255.0001f) *(max - min) + min; // floating-point-error possible
+    A = (float(val) / 255.0001f) * (max - min) + min; // floating-point-error possible
     VERIFY((A >= min) && (A <= max));
 }
 
-void NET_Packet::r_angle16(float& A)
-{
-    r_float_q16(A, 0, PI_MUL_2);
-}
+void NET_Packet::r_angle16(float& A) { r_float_q16(A, 0, PI_MUL_2); }
 
-void NET_Packet::r_angle8(float& A)
-{
-    r_float_q8(A, 0, PI_MUL_2);
-}
+void NET_Packet::r_angle8(float& A) { r_float_q8(A, 0, PI_MUL_2); }
 
 void NET_Packet::r_dir(Fvector& A)
 {
@@ -293,7 +291,7 @@ void NET_Packet::r_stringZ(LPSTR S)
     }
     else
     {
-        inistream->r_string(S, 4096);//???
+        inistream->r_string(S, 4096); //???
     }
 }
 

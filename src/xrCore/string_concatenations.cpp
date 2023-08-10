@@ -16,7 +16,7 @@ namespace strconcat_error
 void process(u32 const index, u32 const count, LPCSTR* strings)
 {
     u32 const max_string_size = 1024;
-    LPSTR temp = (LPSTR)_alloca((count*(max_string_size + 4) + 1)*sizeof(**strings));
+    LPSTR temp = (LPSTR)_alloca((count * (max_string_size + 4) + 1) * sizeof(**strings));
     LPSTR k = temp;
     *k++ = '[';
     for (u32 i = 0; i < count; ++i)
@@ -35,18 +35,11 @@ void process(u32 const index, u32 const count, LPCSTR* strings)
     }
     *k = 0;
 
-    Debug.fatal(
-        DEBUG_INFO,
-        make_string(
-            "buffer overflow: cannot concatenate strings(%d):\r\n%s",
-            index,
-            temp
-        ).c_str()
-    );
+    Debug.fatal(DEBUG_INFO, make_string("buffer overflow: cannot concatenate strings(%d):\r\n%s", index, temp).c_str());
 }
 
 template <u32 count>
-static inline void process(LPSTR& i, LPCSTR e, u32 const index, LPCSTR(&strings)[count])
+static inline void process(LPSTR& i, LPCSTR e, u32 const index, LPCSTR (&strings)[count])
 {
     VERIFY(i <= e);
     VERIFY(index < count);
@@ -267,7 +260,8 @@ LPSTR strconcat(int dest_sz, char* dest, const char* S1, const char* S2, const c
 }
 
 // dest = S1+S2+S3+S4+S5+S6
-LPSTR strconcat(int dest_sz, char* dest, const char* S1, const char* S2, const char* S3, const char* S4, const char* S5, const char* S6)
+LPSTR strconcat(int dest_sz, char* dest, const char* S1, const char* S2, const char* S3, const char* S4, const char* S5,
+    const char* S6)
 {
     VERIFY(dest);
     VERIFY(S1);
@@ -316,4 +310,3 @@ LPSTR strconcat(int dest_sz, char* dest, const char* S1, const char* S2, const c
 
     return (dest);
 }
-

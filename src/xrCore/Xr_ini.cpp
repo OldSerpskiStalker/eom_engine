@@ -6,29 +6,22 @@
 XRCORE_API CInifile const* pSettings = NULL;
 XRCORE_API CInifile const* pSettingsAuth = NULL;
 
-CInifile* CInifile::Create(const char* szFileName, BOOL ReadOnly)
-{
-    return xr_new<CInifile>(szFileName, ReadOnly);
-}
+CInifile* CInifile::Create(const char* szFileName, BOOL ReadOnly) { return xr_new<CInifile>(szFileName, ReadOnly); }
 
-void CInifile::Destroy(CInifile* ini)
-{
-    xr_delete(ini);
-}
+void CInifile::Destroy(CInifile* ini) { xr_delete(ini); }
 
-bool sect_pred(const CInifile::Sect* x, LPCSTR val)
-{
-    return xr_strcmp(*x->Name, val) < 0;
-};
+bool sect_pred(const CInifile::Sect* x, LPCSTR val) { return xr_strcmp(*x->Name, val) < 0; };
 
 bool item_pred(const CInifile::Item& x, LPCSTR val)
 {
-    if ((!x.first) || (!val)) return x.first < val;
-    else return xr_strcmp(*x.first, val) < 0;
+    if ((!x.first) || (!val))
+        return x.first < val;
+    else
+        return xr_strcmp(*x.first, val) < 0;
 }
 
 //------------------------------------------------------------------------------
-//Тело функций Inifile
+// Тело функций Inifile
 //------------------------------------------------------------------------------
 XRCORE_API BOOL _parse(LPSTR dest, LPCSTR src)
 {
@@ -70,8 +63,15 @@ XRCORE_API void _decorate(LPSTR dest, LPCSTR src)
         {
             if (*src == ',')
             {
-                if (bInsideSTR) { *dest++ = *src++; }
-                else { *dest++ = *src++; *dest++ = ' '; }
+                if (bInsideSTR)
+                {
+                    *dest++ = *src++;
+                }
+                else
+                {
+                    *dest++ = *src++;
+                    *dest++ = ' ';
+                }
                 continue;
             }
             else if (*src == '"')
@@ -90,7 +90,8 @@ BOOL CInifile::Sect::line_exist(LPCSTR L, LPCSTR* val)
     SectCIt A = std::lower_bound(Data.begin(), Data.end(), L, item_pred);
     if (A != Data.end() && xr_strcmp(*A->first, L) == 0)
     {
-        if (val) *val = *A->second;
+        if (val)
+            *val = *A->second;
         return TRUE;
     }
     return FALSE;
@@ -99,9 +100,10 @@ BOOL CInifile::Sect::line_exist(LPCSTR L, LPCSTR* val)
 
 CInifile::CInifile(IReader* F, LPCSTR path
 #ifndef _EDITOR
-                   , allow_include_func_t allow_include_func
+    ,
+    allow_include_func_t allow_include_func
 #endif
-                  )
+)
 {
     m_file_name[0] = 0;
     m_flags.zero();
@@ -110,20 +112,18 @@ CInifile::CInifile(IReader* F, LPCSTR path
     m_flags.set(eOverrideNames, FALSE);
     Load(F, path
 #ifndef _EDITOR
-         , allow_include_func
+        ,
+        allow_include_func
 #endif
-        );
+    );
 }
 
-CInifile::CInifile(LPCSTR szFileName,
-                   BOOL ReadOnly,
-                   BOOL bLoad,
-                   BOOL SaveAtEnd,
-                   u32 sect_count
+CInifile::CInifile(LPCSTR szFileName, BOOL ReadOnly, BOOL bLoad, BOOL SaveAtEnd, u32 sect_count
 #ifndef _EDITOR
-                   , allow_include_func_t allow_include_func
+    ,
+    allow_include_func_t allow_include_func
 #endif
-                  )
+)
 
 {
     if (szFileName && strstr(szFileName, "system"))
@@ -149,9 +149,10 @@ CInifile::CInifile(LPCSTR szFileName,
                 DATA.reserve(sect_count);
             Load(R, path
 #ifndef _EDITOR
-                 , allow_include_func
+                ,
+                allow_include_func
 #endif
-                );
+            );
             FS.r_close(R);
         }
     }
@@ -177,9 +178,9 @@ static void insert_item(CInifile::Sect* tgt, const CInifile::Item& I)
     if (sect_it != tgt->Data.end() && sect_it->first.equal(I.first))
     {
         sect_it->second = I.second;
-        //#ifdef DEBUG
-        // sect_it->comment= I.comment;
-        //#endif
+        // #ifdef DEBUG
+        //  sect_it->comment= I.comment;
+        // #endif
     }
     else
     {
@@ -199,9 +200,10 @@ IC BOOL is_empty_line_now(IReader* F)
 
 void CInifile::Load(IReader* F, LPCSTR path
 #ifndef _EDITOR
-                    , allow_include_func_t allow_include_func
+    ,
+    allow_include_func_t allow_include_func
 #endif
-                   )
+)
 {
     R_ASSERT(F);
     Sect* Current = 0;
@@ -248,11 +250,10 @@ void CInifile::Load(IReader* F, LPCSTR path
             }
         }
 
-
-        if (str[0] && (str[0] == '#') && strstr(str, "#include")) //handle includes
+        if (str[0] && (str[0] == '#') && strstr(str, "#include")) // handle includes
         {
             string_path inc_name;
-            R_ASSERT(path&&path[0]);
+            R_ASSERT(path && path[0]);
             if (_GetItem(str, 1, inc_name, '"'))
             {
                 string_path fn, inc_path, folder;
@@ -267,19 +268,20 @@ void CInifile::Load(IReader* F, LPCSTR path
                     R_ASSERT3(I, "Can't find include file:", inc_name);
                     Load(I, inc_path
 #ifndef _EDITOR
-                         , allow_include_func
+                        ,
+                        allow_include_func
 #endif
-                        );
+                    );
                     FS.r_close(I);
                 }
             }
         }
-        else if (str[0] && (str[0] == '[')) //new section ?
+        else if (str[0] && (str[0] == '[')) // new section ?
         {
             // insert previous filled section
             if (Current)
             {
-                //store previous section
+                // store previous section
                 RootIt I = std::lower_bound(DATA.begin(), DATA.end(), *Current->Name, sect_pred);
                 if ((I != DATA.end()) && ((*I)->Name == Current->Name))
                     Debug.fatal(DEBUG_INFO, "Duplicate section '%s' found.", *Current->Name);
@@ -333,21 +335,17 @@ void CInifile::Load(IReader* F, LPCSTR path
                     ++t;
                     xr_strcpy(value_raw, sizeof(value_raw), t);
                     bInsideSTR = _parse(str2, value_raw);
-                    if (bInsideSTR)//multiline str value
+                    if (bInsideSTR) // multiline str value
                     {
                         while (bInsideSTR)
                         {
                             xr_strcat(value_raw, sizeof(value_raw), "\r\n");
                             string4096 str_add_raw;
                             F->r_string(str_add_raw, sizeof(str_add_raw));
-                            R_ASSERT2(
-                                xr_strlen(value_raw) + xr_strlen(str_add_raw) < sizeof(value_raw),
-                                make_string(
-                                    "Incorrect inifile format: section[%s], variable[%s]. Odd number of quotes (\") found, but should be even.",
-                                    Current->Name.c_str(),
-                                    name
-                                )
-                            );
+                            R_ASSERT2(xr_strlen(value_raw) + xr_strlen(str_add_raw) < sizeof(value_raw),
+                                make_string("Incorrect inifile format: section[%s], variable[%s]. Odd number of quotes "
+                                            "(\") found, but should be even.",
+                                    Current->Name.c_str(), name));
                             xr_strcat(value_raw, sizeof(value_raw), str_add_raw);
                             bInsideSTR = _parse(str2, value_raw);
                             if (bInsideSTR)
@@ -367,22 +365,21 @@ void CInifile::Load(IReader* F, LPCSTR path
                 Item I;
                 I.first = (name[0] ? name : NULL);
                 I.second = (str2[0] ? str2 : NULL);
-                //#ifdef DEBUG
-                // I.comment = m_flags.test(eReadOnly)?0:comment;
-                //#endif
+                // #ifdef DEBUG
+                //  I.comment = m_flags.test(eReadOnly)?0:comment;
+                // #endif
 
                 if (m_flags.test(eReadOnly))
                 {
-                    if (*I.first) insert_item(Current, I);
+                    if (*I.first)
+                        insert_item(Current, I);
                 }
                 else
                 {
-                    if (
-                        *I.first
-                        || *I.second
-                        //#ifdef DEBUG
-                        // || *I.comment
-                        //#endif
+                    if (*I.first || *I.second
+                        // #ifdef DEBUG
+                        //  || *I.comment
+                        // #endif
                     )
                         insert_item(Current, I);
                 }
@@ -407,9 +404,8 @@ void CInifile::save_as(IWriter& writer, bool bcheck) const
         writer.w_string(temp);
         if (bcheck)
         {
-            xr_sprintf(temp, sizeof(temp), "; %d %d %d", (*r_it)->Name._get()->dwCRC,
-                       (*r_it)->Name._get()->dwReference,
-                       (*r_it)->Name._get()->dwLength);
+            xr_sprintf(temp, sizeof(temp), "; %d %d %d", (*r_it)->Name._get()->dwCRC, (*r_it)->Name._get()->dwReference,
+                (*r_it)->Name._get()->dwLength);
             writer.w_string(temp);
         }
 
@@ -436,7 +432,8 @@ void CInifile::save_as(IWriter& writer, bool bcheck) const
                 temp[0] = 0;
             }
             _TrimRight(temp);
-            if (temp[0]) writer.w_string(temp);
+            if (temp[0])
+                writer.w_string(temp);
         }
         writer.w_string(" ");
     }
@@ -448,7 +445,7 @@ bool CInifile::save_as(LPCSTR new_fname)
     if (new_fname && new_fname[0])
         xr_strcpy(m_file_name, sizeof(m_file_name), new_fname);
 
-    R_ASSERT(m_file_name&&m_file_name[0]);
+    R_ASSERT(m_file_name && m_file_name[0]);
     IWriter* F = FS.w_open_ex(m_file_name);
     if (!F)
         return (false);
@@ -458,45 +455,44 @@ bool CInifile::save_as(LPCSTR new_fname)
     return (true);
 }
 
-BOOL CInifile::section_exist(LPCSTR S)const
+BOOL CInifile::section_exist(LPCSTR S) const
 {
     RootCIt I = std::lower_bound(DATA.begin(), DATA.end(), S, sect_pred);
     return (I != DATA.end() && xr_strcmp(*(*I)->Name, S) == 0);
 }
 
-BOOL CInifile::line_exist(LPCSTR S, LPCSTR L)const
+BOOL CInifile::line_exist(LPCSTR S, LPCSTR L) const
 {
-    if (!section_exist(S)) return FALSE;
+    if (!section_exist(S))
+        return FALSE;
     Sect& I = r_section(S);
     SectCIt A = std::lower_bound(I.Data.begin(), I.Data.end(), L, item_pred);
     return (A != I.Data.end() && xr_strcmp(*A->first, L) == 0);
 }
 
-u32 CInifile::line_count(LPCSTR Sname)const
+u32 CInifile::line_count(LPCSTR Sname) const
 {
     Sect& S = r_section(Sname);
     SectCIt I = S.Data.begin();
     u32 C = 0;
-    for (; I != S.Data.end(); I++) if (*I->first) C++;
+    for (; I != S.Data.end(); I++)
+        if (*I->first)
+            C++;
     return C;
 }
 
-u32 CInifile::section_count()const
-{
-    return DATA.size();
-}
-
+u32 CInifile::section_count() const { return DATA.size(); }
 
 //--------------------------------------------------------------------------------------
-CInifile::Sect& CInifile::r_section(const shared_str& S)const { return r_section(*S); }
-BOOL CInifile::line_exist(const shared_str& S, const shared_str& L)const { return line_exist(*S, *L); }
-u32 CInifile::line_count(const shared_str& S)const { return line_count(*S); }
-BOOL CInifile::section_exist(const shared_str& S)const { return section_exist(*S); }
+CInifile::Sect& CInifile::r_section(const shared_str& S) const { return r_section(*S); }
+BOOL CInifile::line_exist(const shared_str& S, const shared_str& L) const { return line_exist(*S, *L); }
+u32 CInifile::line_count(const shared_str& S) const { return line_count(*S); }
+BOOL CInifile::section_exist(const shared_str& S) const { return section_exist(*S); }
 
 //--------------------------------------------------------------------------------------
 // Read functions
 //--------------------------------------------------------------------------------------
-CInifile::Sect& CInifile::r_section(LPCSTR S)const
+CInifile::Sect& CInifile::r_section(LPCSTR S) const
 {
     char section[256];
     xr_strcpy(section, sizeof(section), S);
@@ -504,68 +500,72 @@ CInifile::Sect& CInifile::r_section(LPCSTR S)const
     RootCIt I = std::lower_bound(DATA.begin(), DATA.end(), section, sect_pred);
     if (!(I != DATA.end() && xr_strcmp(*(*I)->Name, section) == 0))
     {
+        // g_pStringContainer->verify();
 
-        //g_pStringContainer->verify();
-
-        //string_path ini_dump_fn, path;
-        //strconcat (sizeof(ini_dump_fn), ini_dump_fn, Core.ApplicationName, "_", Core.UserName, ".ini_log");
+        // string_path ini_dump_fn, path;
+        // strconcat (sizeof(ini_dump_fn), ini_dump_fn, Core.ApplicationName, "_", Core.UserName, ".ini_log");
         //
-        //FS.update_path (path, "$logs$", ini_dump_fn);
-        //IWriter* F = FS.w_open_ex(path);
-        //save_as (*F);
-        //F->w_string ("shared strings:");
-        //g_pStringContainer->dump(F);
-        //FS.w_close (F);
+        // FS.update_path (path, "$logs$", ini_dump_fn);
+        // IWriter* F = FS.w_open_ex(path);
+        // save_as (*F);
+        // F->w_string ("shared strings:");
+        // g_pStringContainer->dump(F);
+        // FS.w_close (F);
 
         Debug.fatal(DEBUG_INFO, "Can't open section '%s'. Please attach [*.ini_log] file to your bug report", S);
     }
     return **I;
 }
 
-LPCSTR CInifile::r_string(LPCSTR S, LPCSTR L)const
+LPCSTR CInifile::r_string(LPCSTR S, LPCSTR L) const
 {
     Sect const& I = r_section(S);
     SectCIt A = std::lower_bound(I.Data.begin(), I.Data.end(), L, item_pred);
-    if (A != I.Data.end() && xr_strcmp(*A->first, L) == 0) return *A->second;
+    if (A != I.Data.end() && xr_strcmp(*A->first, L) == 0)
+        return *A->second;
     else
         Debug.fatal(DEBUG_INFO, "Can't find variable %s in [%s]", L, S);
     return 0;
 }
 
-shared_str CInifile::r_string_wb(LPCSTR S, LPCSTR L)const
+shared_str CInifile::r_string_wb(LPCSTR S, LPCSTR L) const
 {
     LPCSTR _base = r_string(S, L);
 
-    if (0 == _base) return shared_str(0);
+    if (0 == _base)
+        return shared_str(0);
 
     string4096 _original;
     xr_strcpy(_original, sizeof(_original), _base);
     u32 _len = xr_strlen(_original);
-    if (0 == _len) return shared_str("");
-    if ('"' == _original[_len - 1]) _original[_len - 1] = 0; // skip end
-    if ('"' == _original[0]) return shared_str(&_original[0] + 1); // skip begin
+    if (0 == _len)
+        return shared_str("");
+    if ('"' == _original[_len - 1])
+        _original[_len - 1] = 0; // skip end
+    if ('"' == _original[0])
+        return shared_str(&_original[0] + 1); // skip begin
     return shared_str(_original);
 }
 
-u8 CInifile::r_u8(LPCSTR S, LPCSTR L)const
+u8 CInifile::r_u8(LPCSTR S, LPCSTR L) const
 {
     LPCSTR C = r_string(S, L);
     return u8(atoi(C));
 }
 
-u16 CInifile::r_u16(LPCSTR S, LPCSTR L)const
+u16 CInifile::r_u16(LPCSTR S, LPCSTR L) const
 {
     LPCSTR C = r_string(S, L);
     return u16(atoi(C));
 }
 
-u32 CInifile::r_u32(LPCSTR S, LPCSTR L)const
+u32 CInifile::r_u32(LPCSTR S, LPCSTR L) const
 {
     LPCSTR C = r_string(S, L);
     return u32(atoi(C));
 }
 
-u64 CInifile::r_u64(LPCSTR S, LPCSTR L)const
+u64 CInifile::r_u64(LPCSTR S, LPCSTR L) const
 {
     LPCSTR C = r_string(S, L);
 #ifndef _EDITOR
@@ -575,37 +575,37 @@ u64 CInifile::r_u64(LPCSTR S, LPCSTR L)const
 #endif
 }
 
-s64 CInifile::r_s64(LPCSTR S, LPCSTR L)const
+s64 CInifile::r_s64(LPCSTR S, LPCSTR L) const
 {
     LPCSTR C = r_string(S, L);
     return _atoi64(C);
 }
 
-s8 CInifile::r_s8(LPCSTR S, LPCSTR L)const
+s8 CInifile::r_s8(LPCSTR S, LPCSTR L) const
 {
     LPCSTR C = r_string(S, L);
     return s8(atoi(C));
 }
 
-s16 CInifile::r_s16(LPCSTR S, LPCSTR L)const
+s16 CInifile::r_s16(LPCSTR S, LPCSTR L) const
 {
     LPCSTR C = r_string(S, L);
     return s16(atoi(C));
 }
 
-s32 CInifile::r_s32(LPCSTR S, LPCSTR L)const
+s32 CInifile::r_s32(LPCSTR S, LPCSTR L) const
 {
     LPCSTR C = r_string(S, L);
     return s32(atoi(C));
 }
 
-float CInifile::r_float(LPCSTR S, LPCSTR L)const
+float CInifile::r_float(LPCSTR S, LPCSTR L) const
 {
     LPCSTR C = r_string(S, L);
     return float(atof(C));
 }
 
-Fcolor CInifile::r_fcolor(LPCSTR S, LPCSTR L)const
+Fcolor CInifile::r_fcolor(LPCSTR S, LPCSTR L) const
 {
     LPCSTR C = r_string(S, L);
     Fcolor V = {0, 0, 0, 0};
@@ -613,7 +613,7 @@ Fcolor CInifile::r_fcolor(LPCSTR S, LPCSTR L)const
     return V;
 }
 
-u32 CInifile::r_color(LPCSTR S, LPCSTR L)const
+u32 CInifile::r_color(LPCSTR S, LPCSTR L) const
 {
     LPCSTR C = r_string(S, L);
     u32 r = 0, g = 0, b = 0, a = 255;
@@ -621,7 +621,7 @@ u32 CInifile::r_color(LPCSTR S, LPCSTR L)const
     return color_rgba(r, g, b, a);
 }
 
-Ivector2 CInifile::r_ivector2(LPCSTR S, LPCSTR L)const
+Ivector2 CInifile::r_ivector2(LPCSTR S, LPCSTR L) const
 {
     LPCSTR C = r_string(S, L);
     Ivector2 V = {0, 0};
@@ -629,7 +629,7 @@ Ivector2 CInifile::r_ivector2(LPCSTR S, LPCSTR L)const
     return V;
 }
 
-Ivector3 CInifile::r_ivector3(LPCSTR S, LPCSTR L)const
+Ivector3 CInifile::r_ivector3(LPCSTR S, LPCSTR L) const
 {
     LPCSTR C = r_string(S, L);
     Ivector V = {0, 0, 0};
@@ -637,7 +637,7 @@ Ivector3 CInifile::r_ivector3(LPCSTR S, LPCSTR L)const
     return V;
 }
 
-Ivector4 CInifile::r_ivector4(LPCSTR S, LPCSTR L)const
+Ivector4 CInifile::r_ivector4(LPCSTR S, LPCSTR L) const
 {
     LPCSTR C = r_string(S, L);
     Ivector4 V = {0, 0, 0, 0};
@@ -645,7 +645,7 @@ Ivector4 CInifile::r_ivector4(LPCSTR S, LPCSTR L)const
     return V;
 }
 
-Fvector2 CInifile::r_fvector2(LPCSTR S, LPCSTR L)const
+Fvector2 CInifile::r_fvector2(LPCSTR S, LPCSTR L) const
 {
     LPCSTR C = r_string(S, L);
     Fvector2 V = {0.f, 0.f};
@@ -653,7 +653,7 @@ Fvector2 CInifile::r_fvector2(LPCSTR S, LPCSTR L)const
     return V;
 }
 
-Fvector3 CInifile::r_fvector3(LPCSTR S, LPCSTR L)const
+Fvector3 CInifile::r_fvector3(LPCSTR S, LPCSTR L) const
 {
     LPCSTR C = r_string(S, L);
     Fvector3 V = {0.f, 0.f, 0.f};
@@ -661,7 +661,7 @@ Fvector3 CInifile::r_fvector3(LPCSTR S, LPCSTR L)const
     return V;
 }
 
-Fvector4 CInifile::r_fvector4(LPCSTR S, LPCSTR L)const
+Fvector4 CInifile::r_fvector4(LPCSTR S, LPCSTR L) const
 {
     LPCSTR C = r_string(S, L);
     Fvector4 V = {0.f, 0.f, 0.f, 0.f};
@@ -669,18 +669,10 @@ Fvector4 CInifile::r_fvector4(LPCSTR S, LPCSTR L)const
     return V;
 }
 
-BOOL CInifile::r_bool(LPCSTR S, LPCSTR L)const
+BOOL CInifile::r_bool(LPCSTR S, LPCSTR L) const
 {
     LPCSTR C = r_string(S, L);
-    VERIFY2(
-        xr_strlen(C) <= 5,
-        make_string(
-            "\"%s\" is not a valid bool value, section[%s], line[%s]",
-            C,
-            S,
-            L
-        )
-    );
+    VERIFY2(xr_strlen(C) <= 5, make_string("\"%s\" is not a valid bool value, section[%s], line[%s]", C, S, L));
     char B[8];
     strncpy_s(B, sizeof(B), C, 7);
     B[7] = 0;
@@ -688,13 +680,13 @@ BOOL CInifile::r_bool(LPCSTR S, LPCSTR L)const
     return IsBOOL(B);
 }
 
-CLASS_ID CInifile::r_clsid(LPCSTR S, LPCSTR L)const
+CLASS_ID CInifile::r_clsid(LPCSTR S, LPCSTR L) const
 {
     LPCSTR C = r_string(S, L);
     return TEXT2CLSID(C);
 }
 
-int CInifile::r_token(LPCSTR S, LPCSTR L, const xr_token* token_list)const
+int CInifile::r_token(LPCSTR S, LPCSTR L, const xr_token* token_list) const
 {
     LPCSTR C = r_string(S, L);
     for (int i = 0; token_list[i].name; i++)
@@ -703,10 +695,11 @@ int CInifile::r_token(LPCSTR S, LPCSTR L, const xr_token* token_list)const
     return 0;
 }
 
-BOOL CInifile::r_line(LPCSTR S, int L, const char** N, const char** V)const
+BOOL CInifile::r_line(LPCSTR S, int L, const char** N, const char** V) const
 {
     Sect& SS = r_section(S);
-    if (L >= (int)SS.Data.size() || L < 0) return FALSE;
+    if (L >= (int)SS.Data.size() || L < 0)
+        return FALSE;
     for (SectCIt I = SS.Data.begin(); I != SS.Data.end(); I++)
         if (!(L--))
         {
@@ -717,10 +710,7 @@ BOOL CInifile::r_line(LPCSTR S, int L, const char** N, const char** V)const
     return FALSE;
 }
 
-BOOL CInifile::r_line(const shared_str& S, int L, const char** N, const char** V)const
-{
-    return r_line(*S, L, N, V);
-}
+BOOL CInifile::r_line(const shared_str& S, int L, const char** N, const char** V) const { return r_line(*S, L, N, V); }
 
 //--------------------------------------------------------------------------------------------------------
 // Write functions
@@ -755,9 +745,9 @@ void CInifile::w_string(LPCSTR S, LPCSTR L, LPCSTR V, LPCSTR comment)
     I.first = (line[0] ? line : 0);
     I.second = (value[0] ? value : 0);
 
-    //#ifdef DEBUG
-    // I.comment = (comment?comment:0);
-    //#endif
+    // #ifdef DEBUG
+    //  I.comment = (comment?comment:0);
+    // #endif
     SectIt_ it = std::lower_bound(data.Data.begin(), data.Data.end(), *I.first, item_pred);
 
     if (it != data.Data.end())
@@ -899,10 +889,7 @@ void CInifile::w_fvector4(LPCSTR S, LPCSTR L, const Fvector4& V, LPCSTR comment)
     w_string(S, L, temp, comment);
 }
 
-void CInifile::w_bool(LPCSTR S, LPCSTR L, BOOL V, LPCSTR comment)
-{
-    w_string(S, L, V ? "on" : "off", comment);
-}
+void CInifile::w_bool(LPCSTR S, LPCSTR L, BOOL V, LPCSTR comment) { w_string(S, L, V ? "on" : "off", comment); }
 
 void CInifile::remove_line(LPCSTR S, LPCSTR L)
 {
@@ -916,4 +903,3 @@ void CInifile::remove_line(LPCSTR S, LPCSTR L)
         data.Data.erase(A);
     }
 }
-

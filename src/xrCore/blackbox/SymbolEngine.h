@@ -33,8 +33,8 @@ USE_BUGSLAYERUTIL - If defined, the class will have another
 
 // Include these in case the user forgets to link against them.
 #ifndef _EDITOR
-#	pragma comment (lib,"dbghelp.lib")
-#	pragma comment (lib,"version.lib")
+#pragma comment(lib, "dbghelp.lib")
+#pragma comment(lib, "version.lib")
 #endif // _EDITOR
 
 // The great Bugslayer idea of creating wrapper classes on structures
@@ -212,7 +212,7 @@ public      :
                                       UserSearchPath ,
                                       fInvadeProcess  ) ) ;
     }
-#endif  // USE_BUGSLAYERUTIL
+#endif // USE_BUGSLAYERUTIL
     BOOL SymCleanup ( void )
     {
         return ( ::SymCleanup ( m_hProcess ) ) ;
@@ -441,4 +441,4 @@ protected   :
 
 } ;
 
-#endif      // _SYMBOLENGINE_H
+#endif // _SYMBOLENGINE_H

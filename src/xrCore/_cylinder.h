@@ -6,17 +6,31 @@ class _cylinder
 {
 public:
     typedef T TYPE;
-    typedef _cylinder<T>Self;
+    typedef _cylinder<T> Self;
     typedef Self& SelfRef;
     typedef const Self& SelfCRef;
+
 public:
     _vector3<T> m_center;
     _vector3<T> m_direction;
     T m_height;
     T m_radius;
+
 public:
-    IC SelfRef invalidate() { m_center.set(0, 0, 0); m_direction.set(0, 0, 0); m_height = 0; m_radius = 0; return *this; }
-    enum ecode { cyl_cap, cyl_wall, cyl_none };
+    IC SelfRef invalidate()
+    {
+        m_center.set(0, 0, 0);
+        m_direction.set(0, 0, 0);
+        m_height = 0;
+        m_radius = 0;
+        return *this;
+    }
+    enum ecode
+    {
+        cyl_cap,
+        cyl_wall,
+        cyl_none
+    };
     IC int intersect(const _vector3<T>& start, const _vector3<T>& dir, T afT[2], ecode code[2]) const
     {
         T fEpsilon = 1e-12f;
@@ -42,19 +56,19 @@ public:
         kDiff.sub(start, m_center);
         _vector3<T> kP;
         kP.set(kU.dotproduct(kDiff), kV.dotproduct(kDiff), kW.dotproduct(kDiff));
-        T fHalfHeight = 0.5f*m_height;
-        T fRadiusSqr = m_radius*m_radius;
+        T fHalfHeight = 0.5f * m_height;
+        T fRadiusSqr = m_radius * m_radius;
 
         T fInv, fA, fB, fC, fDiscr, fRoot, fT, fT0, fT1, fTmp0, fTmp1;
 
         if (_abs(kD.z) >= 1.0f - fEpsilon)
         {
             // line is parallel to cylinder axis
-            if (kP.x*kP.x + kP.y*kP.y <= fRadiusSqr)
+            if (kP.x * kP.x + kP.y * kP.y <= fRadiusSqr)
             {
                 fTmp0 = fInvDLength / kD.z;
-                afT[0] = (+fHalfHeight - kP.z)*fTmp0;
-                afT[1] = (-fHalfHeight - kP.z)*fTmp0;
+                afT[0] = (+fHalfHeight - kP.z) * fTmp0;
+                afT[1] = (-fHalfHeight - kP.z) * fTmp0;
                 code[0] = cyl_cap;
                 code[1] = cyl_cap;
                 return 2;
@@ -74,10 +88,10 @@ public:
                 return 0;
             }
 
-            fA = kD.x*kD.x + kD.y*kD.y;
-            fB = kP.x*kD.x + kP.y*kD.y;
-            fC = kP.x*kP.x + kP.y*kP.y - fRadiusSqr;
-            fDiscr = fB*fB - fA*fC;
+            fA = kD.x * kD.x + kD.y * kD.y;
+            fB = kP.x * kD.x + kP.y * kD.y;
+            fC = kP.x * kP.x + kP.y * kP.y - fRadiusSqr;
+            fDiscr = fB * fB - fA * fC;
             if (fDiscr < 0.0f)
             {
                 // line does not intersect cylinder wall
@@ -87,46 +101,45 @@ public:
             {
                 fRoot = _sqrt(fDiscr);
                 fTmp0 = fInvDLength / fA;
-                afT[0] = (-fB - fRoot)*fTmp0;
-                afT[1] = (-fB + fRoot)*fTmp0;
+                afT[0] = (-fB - fRoot) * fTmp0;
+                afT[1] = (-fB + fRoot) * fTmp0;
                 code[0] = cyl_wall;
                 code[1] = cyl_wall;
-                return 2; //wall
+                return 2; // wall
             }
             else
             {
-                afT[0] = -fB*fInvDLength / fA;
+                afT[0] = -fB * fInvDLength / fA;
                 code[0] = cyl_wall;
-                return 1; //wall
+                return 1; // wall
             }
         }
 
         // test plane intersections first
         int iQuantity = 0;
         fInv = 1.0f / kD.z;
-        fT0 = (+fHalfHeight - kP.z)*fInv;
-        fTmp0 = kP.x + fT0*kD.x;
-        fTmp1 = kP.y + fT0*kD.y;
-        if (fTmp0*fTmp0 + fTmp1*fTmp1 <= fRadiusSqr)
+        fT0 = (+fHalfHeight - kP.z) * fInv;
+        fTmp0 = kP.x + fT0 * kD.x;
+        fTmp1 = kP.y + fT0 * kD.y;
+        if (fTmp0 * fTmp0 + fTmp1 * fTmp1 <= fRadiusSqr)
         {
             code[iQuantity] = cyl_cap;
-            afT[iQuantity++] = fT0*fInvDLength;
-
+            afT[iQuantity++] = fT0 * fInvDLength;
         }
 
-        fT1 = (-fHalfHeight - kP.z)*fInv;
-        fTmp0 = kP.x + fT1*kD.x;
-        fTmp1 = kP.y + fT1*kD.y;
-        if (fTmp0*fTmp0 + fTmp1*fTmp1 <= fRadiusSqr)
+        fT1 = (-fHalfHeight - kP.z) * fInv;
+        fTmp0 = kP.x + fT1 * kD.x;
+        fTmp1 = kP.y + fT1 * kD.y;
+        if (fTmp0 * fTmp0 + fTmp1 * fTmp1 <= fRadiusSqr)
         {
             code[iQuantity] = cyl_cap;
-            afT[iQuantity++] = fT1*fInvDLength;
+            afT[iQuantity++] = fT1 * fInvDLength;
         }
 
         if (iQuantity == 2)
         {
             // line intersects both top and bottom
-            return 2;//both caps
+            return 2; // both caps
         }
 
         // If iQuantity == 1, then line must intersect cylinder wall
@@ -134,28 +147,27 @@ public:
         // in the following code that tests for intersection between line and
         // cylinder wall.
 
-        fA = kD.x*kD.x + kD.y*kD.y;
-        fB = kP.x*kD.x + kP.y*kD.y;
-        fC = kP.x*kP.x + kP.y*kP.y - fRadiusSqr;
-        fDiscr = fB*fB - fA*fC;
+        fA = kD.x * kD.x + kD.y * kD.y;
+        fB = kP.x * kD.x + kP.y * kD.y;
+        fC = kP.x * kP.x + kP.y * kP.y - fRadiusSqr;
+        fDiscr = fB * fB - fA * fC;
         if (fDiscr < 0.0f)
         {
             // line does not intersect cylinder wall
-            //VERIFY( iQuantity == 0 );
+            // VERIFY( iQuantity == 0 );
             return 0;
         }
         else if (fDiscr > 0.0f)
         {
             fRoot = _sqrt(fDiscr);
             fInv = 1.0f / fA;
-            fT = (-fB - fRoot)*fInv;
+            fT = (-fB - fRoot) * fInv;
             if (fT0 <= fT1)
             {
                 if (fT0 <= fT && fT <= fT1)
                 {
                     code[iQuantity] = cyl_wall;
-                    afT[iQuantity++] = fT*fInvDLength;
-
+                    afT[iQuantity++] = fT * fInvDLength;
                 }
             }
             else
@@ -163,8 +175,7 @@ public:
                 if (fT1 <= fT && fT <= fT0)
                 {
                     code[iQuantity] = cyl_wall;
-                    afT[iQuantity++] = fT*fInvDLength;
-
+                    afT[iQuantity++] = fT * fInvDLength;
                 }
             }
 
@@ -175,13 +186,13 @@ public:
                 return 2;
             }
 
-            fT = (-fB + fRoot)*fInv;
+            fT = (-fB + fRoot) * fInv;
             if (fT0 <= fT1)
             {
                 if (fT0 <= fT && fT <= fT1)
                 {
                     code[iQuantity] = cyl_wall;
-                    afT[iQuantity++] = fT*fInvDLength;
+                    afT[iQuantity++] = fT * fInvDLength;
                 }
             }
             else
@@ -189,7 +200,7 @@ public:
                 if (fT1 <= fT && fT <= fT0)
                 {
                     code[iQuantity] = cyl_wall;
-                    afT[iQuantity++] = fT*fInvDLength;
+                    afT[iQuantity++] = fT * fInvDLength;
                 }
             }
         }
@@ -201,7 +212,7 @@ public:
                 if (fT0 <= fT && fT <= fT1)
                 {
                     code[iQuantity] = cyl_wall;
-                    afT[iQuantity++] = fT*fInvDLength;
+                    afT[iQuantity++] = fT * fInvDLength;
                 }
             }
             else
@@ -209,7 +220,7 @@ public:
                 if (fT1 <= fT && fT <= fT0)
                 {
                     code[iQuantity] = cyl_wall;
-                    afT[iQuantity++] = fT*fInvDLength;
+                    afT[iQuantity++] = fT * fInvDLength;
                 }
             }
         }
@@ -234,8 +245,17 @@ public:
             bool b_result = false;
             for (int k = 0; k < cnt; k++)
             {
-                if (afT[k] < 0.f) { if (cnt == 2)o_inside = true; continue; }
-                if (afT[k] < dist) { dist = afT[k]; b_result = true; }
+                if (afT[k] < 0.f)
+                {
+                    if (cnt == 2)
+                        o_inside = true;
+                    continue;
+                }
+                if (afT[k] < dist)
+                {
+                    dist = afT[k];
+                    b_result = true;
+                }
             }
             return b_result ? (o_inside ? rpOriginInside : rpOriginOutside) : rpNone;
         }
@@ -251,6 +271,9 @@ typedef _cylinder<float> Fcylinder;
 typedef _cylinder<double> Dcylinder;
 
 template <class T>
-BOOL _valid(const _cylinder<T>& c) { return _valid(c.m_center) && _valid(c.m_direction) && _valid(c.m_height) && _valid(c.m_radius); }
+BOOL _valid(const _cylinder<T>& c)
+{
+    return _valid(c.m_center) && _valid(c.m_direction) && _valid(c.m_height) && _valid(c.m_radius);
+}
 
 #endif // _DEBUG

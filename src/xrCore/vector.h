@@ -30,7 +30,7 @@ const float EPS = 0.0000100f;
 const float EPS_L = 0.0010000f;
 
 #undef M_SQRT1_2
-const float M_SQRT1_2 = 0.7071067811865475244008443621048f;//490;
+const float M_SQRT1_2 = 0.7071067811865475244008443621048f; // 490;
 
 const float M_PI = 3.1415926535897932384626433832795f;
 const float PI = 3.1415926535897932384626433832795f;
@@ -44,8 +44,6 @@ const float PI_DIV_3 = 1.0471975511965977461542144610932f;
 const float PI_DIV_4 = 0.7853981633974483096156608458199f;
 const float PI_DIV_6 = 0.5235987755982988730771072305466f;
 const float PI_DIV_8 = 0.3926990816987241548078304229099f;
-
-
 
 #endif
 #ifdef M_BORLAND
@@ -68,7 +66,6 @@ const float PI_DIV_8 = 0.3926990816987241548078304229099f;
 #define PI_DIV_8 0.3926990816987241548078304229099f
 #endif
 
-
 // Define types and namespaces (CPU & FPU)
 #include "_types.h"
 #include "_math.h"
@@ -85,9 +82,17 @@ IC BOOL dis_zero(double val, double cmp = EPS_S) { return _abs(val) < cmp; }
 // degree 2 radians and vice-versa
 namespace implement
 {
-template <class T> ICF T deg2rad(T val) { return (val*T(M_PI) / T(180)); };
-template <class T> ICF T rad2deg(T val) { return (val*T(180) / T(M_PI)); };
+template <class T>
+ICF T deg2rad(T val)
+{
+    return (val * T(M_PI) / T(180));
 };
+template <class T>
+ICF T rad2deg(T val)
+{
+    return (val * T(180) / T(M_PI));
+};
+}; // namespace implement
 ICF float deg2rad(float val) { return implement::deg2rad(val); }
 ICF double deg2rad(double val) { return implement::deg2rad(val); }
 ICF float rad2deg(float val) { return implement::rad2deg(val); }
@@ -97,24 +102,31 @@ ICF double rad2deg(double val) { return implement::rad2deg(val); }
 template <class T>
 IC void clamp(T& val, const T& _low, const T& _high)
 {
-    if (val<_low) val = _low;
-    else if (val>_high) val = _high;
+    if (val < _low)
+        val = _low;
+    else if (val > _high)
+        val = _high;
 };
 template <class T>
 IC T clampr(const T& val, const T& _low, const T& _high)
 {
-    if (val < _low) return _low;
-    else if (val > _high) return _high;
-    else return val;
+    if (val < _low)
+        return _low;
+    else if (val > _high)
+        return _high;
+    else
+        return val;
 };
 IC float snapto(float value, float snap)
 {
-    if (snap <= 0.f) return value;
-    return float(iFloor((value + (snap*0.5f)) / snap)) * snap;
+    if (snap <= 0.f)
+        return value;
+    return float(iFloor((value + (snap * 0.5f)) / snap)) * snap;
 };
 
 // pre-definitions
-template <class T> struct _quaternion;
+template <class T>
+struct _quaternion;
 
 #pragma pack(push)
 #pragma pack(1)
@@ -144,30 +156,34 @@ template <class T> struct _quaternion;
 #endif
 #pragma pack(pop)
 
-
 // normalize angle (0..2PI)
 ICF float angle_normalize_always(float a)
 {
     float div = a / PI_MUL_2;
     int rnd = (div > 0) ? iFloor(div) : iCeil(div);
     float frac = div - rnd;
-    if (frac < 0) frac += 1.f;
+    if (frac < 0)
+        frac += 1.f;
     return frac * PI_MUL_2;
 }
 
 // normalize angle (0..2PI)
 ICF float angle_normalize(float a)
 {
-    if (a >= 0 && a <= PI_MUL_2) return a;
-    else return angle_normalize_always(a);
+    if (a >= 0 && a <= PI_MUL_2)
+        return a;
+    else
+        return angle_normalize_always(a);
 }
 
 // -PI .. +PI
 ICF float angle_normalize_signed(float a)
 {
-    if (a >= (-PI) && a <= PI) return a;
+    if (a >= (-PI) && a <= PI)
+        return a;
     float angle = angle_normalize_always(a);
-    if (angle > PI) angle -= PI_MUL_2;
+    if (angle > PI)
+        angle -= PI_MUL_2;
     return angle;
 }
 
@@ -189,10 +205,7 @@ ICF float angle_difference_signed(float a, float b)
 }
 
 // 0..PI
-ICF float angle_difference(float a, float b)
-{
-    return _abs(angle_difference_signed(a, b));
-}
+ICF float angle_difference(float a, float b) { return _abs(angle_difference_signed(a, b)); }
 
 IC bool are_ordered(float const value0, float const value1, float const value2)
 {
@@ -205,10 +218,7 @@ IC bool are_ordered(float const value0, float const value1, float const value2)
     return false;
 }
 
-IC bool is_between(float const value, float const left, float const right)
-{
-    return are_ordered(left, value, right);
-}
+IC bool is_between(float const value, float const left, float const right) { return are_ordered(left, value, right); }
 
 // c=current, t=target, s=speed, dt=dt
 IC bool angle_lerp(float& c, float t, float s, float dt)
@@ -230,9 +240,10 @@ IC bool angle_lerp(float& c, float t, float s, float dt)
     if (diff_a < EPS_S)
         return true;
 
-    float mot = s*dt;
-    if (mot > diff_a) mot = diff_a;
-    c += (diff / diff_a)*mot;
+    float mot = s * dt;
+    if (mot > diff_a)
+        mot = diff_a;
+    c += (diff / diff_a) * mot;
 
     if (is_between(c, before, t))
         return false;
@@ -249,10 +260,12 @@ IC bool angle_lerp(float& c, float t, float s, float dt)
 ICF float angle_lerp(float A, float B, float f)
 {
     float diff = B - A;
-    if (diff > PI) diff -= PI_MUL_2;
-    else if (diff < -PI) diff += PI_MUL_2;
+    if (diff > PI)
+        diff -= PI_MUL_2;
+    else if (diff < -PI)
+        diff += PI_MUL_2;
 
-    return A + diff*f;
+    return A + diff * f;
 }
 
 IC float angle_inertion(float src, float tgt, float speed, float clmp, float dt)
@@ -270,7 +283,7 @@ IC float angle_inertion_var(float src, float tgt, float min_speed, float max_spe
 {
     tgt = angle_normalize_signed(tgt);
     src = angle_normalize_signed(src);
-    float speed = _abs((max_speed - min_speed)*angle_difference(tgt, src) / clmp) + min_speed;
+    float speed = _abs((max_speed - min_speed) * angle_difference(tgt, src) / clmp) + min_speed;
     angle_lerp(src, tgt, speed, dt);
     src = angle_normalize_signed(src);
     float dH = angle_difference_signed(src, tgt);
@@ -282,15 +295,15 @@ IC float angle_inertion_var(float src, float tgt, float min_speed, float max_spe
 template <class T>
 IC _matrix<T>& _matrix<T>::rotation(const _quaternion<T>& Q)
 {
-    T xx = Q.x*Q.x;
-    T yy = Q.y*Q.y;
-    T zz = Q.z*Q.z;
-    T xy = Q.x*Q.y;
-    T xz = Q.x*Q.z;
-    T yz = Q.y*Q.z;
-    T wx = Q.w*Q.x;
-    T wy = Q.w*Q.y;
-    T wz = Q.w*Q.z;
+    T xx = Q.x * Q.x;
+    T yy = Q.y * Q.y;
+    T zz = Q.z * Q.z;
+    T xy = Q.x * Q.y;
+    T xz = Q.x * Q.z;
+    T yz = Q.y * Q.z;
+    T wx = Q.w * Q.x;
+    T wy = Q.w * Q.y;
+    T wz = Q.w * Q.z;
 
     _11 = 1 - 2 * (yy + zz);
     _12 = 2 * (xy - wz);
@@ -314,15 +327,15 @@ IC _matrix<T>& _matrix<T>::rotation(const _quaternion<T>& Q)
 template <class T>
 IC _matrix<T>& _matrix<T>::mk_xform(const _quaternion<T>& Q, const Tvector& V)
 {
-    T xx = Q.x*Q.x;
-    T yy = Q.y*Q.y;
-    T zz = Q.z*Q.z;
-    T xy = Q.x*Q.y;
-    T xz = Q.x*Q.z;
-    T yz = Q.y*Q.z;
-    T wx = Q.w*Q.x;
-    T wy = Q.w*Q.y;
-    T wz = Q.w*Q.z;
+    T xx = Q.x * Q.x;
+    T yy = Q.y * Q.y;
+    T zz = Q.z * Q.z;
+    T xy = Q.x * Q.y;
+    T xz = Q.x * Q.z;
+    T yz = Q.y * Q.z;
+    T wx = Q.w * Q.x;
+    T wy = Q.w * Q.y;
+    T wz = Q.w * Q.z;
 
     _11 = 1 - 2 * (yy + zz);
     _12 = 2 * (xy - wz);
@@ -363,7 +376,12 @@ IC _quaternion<T>& _quaternion<T>::set(const _matrix<T>& M)
     else
     {
         int biggest;
-        enum { A, E, I };
+        enum
+        {
+            A,
+            E,
+            I
+        };
         if (M._11 > M._22)
         {
             if (M._33 > M._11)
@@ -492,8 +510,10 @@ IC _quaternion<T>& _quaternion<T>::set(const _matrix<T>& M)
 //----------------------------------------------------------------------------------------------
 // Deprecate some features
 #ifndef XRCORE_EXPORTS
-//. #pragma deprecated("MIN","MAX","ABS",fabs,fabsf,sqrt,sqrtf,malloc,free,calloc,realloc,memcpy,memmove,memset,strdup,strlen,strcmp,sin,cos,sinf,cosf)
-#pragma deprecated("MIN","MAX","ABS",fabs,fabsf,sqrt,sqrtf,malloc,free,calloc,realloc,memmove,memset,strdup,strlen,strcmp,sin,cos,sinf,cosf)
+//. #pragma
+//deprecated("MIN","MAX","ABS",fabs,fabsf,sqrt,sqrtf,malloc,free,calloc,realloc,memcpy,memmove,memset,strdup,strlen,strcmp,sin,cos,sinf,cosf)
+#pragma deprecated("MIN", "MAX", "ABS", fabs, fabsf, sqrt, sqrtf, malloc, free, calloc, realloc, memmove, memset,      \
+    strdup, strlen, strcmp, sin, cos, sinf, cosf)
 #endif
 
 #endif

@@ -5,9 +5,11 @@
 class CThread
 {
     static void startup(void* P);
+
 protected:
     volatile u32 thID;
     volatile BOOL Terminated;
+
 public:
     CThread(u32 _ID)
     {
@@ -15,10 +17,7 @@ public:
         Terminated = FALSE;
     }
     virtual ~CThread() {}
-    void Start()
-    {
-        thread_spawn(startup, "FS-notify", 0, this);
-    }
+    void Start() { thread_spawn(startup, "FS-notify", 0, this); }
     virtual void Execute() = 0;
     void Terminate() { Terminated = TRUE; }
 };
@@ -36,11 +35,14 @@ private:
     DEFINE_VECTOR(HANDLE, HANDLEVec, HANDLEIt);
     DEFINE_VECTOR(Path, PathVec, PathIt);
     PathVec events;
+
 public:
     void* FMutex;
     unsigned FNotifyOptionFlags;
+
 protected:
     virtual void Execute();
+
 public:
     CFS_PathNotificator();
     virtual ~CFS_PathNotificator();

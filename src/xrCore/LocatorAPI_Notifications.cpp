@@ -16,7 +16,7 @@ void CThread::startup(void* P)
 static CRITICAL_SECTION CS;
 //---------------------------------------------------------------------------
 // TShellChangeThread -------------------------------------------------------
-CFS_PathNotificator::CFS_PathNotificator() :CThread(0)
+CFS_PathNotificator::CFS_PathNotificator() : CThread(0)
 {
     FMutex = CreateMutex(NULL, true /* initial owner - must be Release'd by this thread*/, NULL);
     if (FMutex)
@@ -46,7 +46,8 @@ void CFS_PathNotificator::RegisterPath(FS_Path& path)
     // R_ASSERT2(Suspended,"Can't register path. Thread already started.");
     shared_str dir = path.m_Path;
     for (PathIt it = events.begin(); it != events.end(); it++)
-        if ((it->FDirectory == dir) && (it->bRecurse == path.m_Flags.is(FS_Path::flRecurse))) return;
+        if ((it->FDirectory == dir) && (it->bRecurse == path.m_Flags.is(FS_Path::flRecurse)))
+            return;
 
     events.push_back(Path());
     Path& P = events.back();
@@ -66,9 +67,11 @@ void CFS_PathNotificator::Execute(void)
         P.FWaitHandle = FindFirstChangeNotification(P.FDirectory.c_str(), P.bRecurse, FNotifyOptionFlags);
         if (P.FWaitHandle == INVALID_HANDLE_VALUE)
 #ifndef __BORLANDC__
-            Debug.fatal(DEBUG_INFO, "Can't create notify handle for path: '%s'\nwith error: '%s'", P.FDirectory.c_str(), Debug.error2string(GetLastError()));
+            Debug.fatal(DEBUG_INFO, "Can't create notify handle for path: '%s'\nwith error: '%s'", P.FDirectory.c_str(),
+                Debug.error2string(GetLastError()));
 #else // __BORLANDC__
-            Debug.fatal("Can't create notify handle for path: '%s'\nwith error: '%s'", P.FDirectory.c_str(), Debug.error2string(GetLastError()));
+            Debug.fatal("Can't create notify handle for path: '%s'\nwith error: '%s'", P.FDirectory.c_str(),
+                Debug.error2string(GetLastError()));
 #endif // __BORLANDC__
     }
     LeaveCriticalSection(&CS);
@@ -93,8 +96,10 @@ void CFS_PathNotificator::Execute(void)
             if (idx < events.size())
             {
                 Path& P = events[idx];
-                if (!P.FChangeEvent.empty())P.FChangeEvent();
-                if (P.FWaitHandle) FindNextChangeNotification(P.FWaitHandle);
+                if (!P.FChangeEvent.empty())
+                    P.FChangeEvent();
+                if (P.FWaitHandle)
+                    FindNextChangeNotification(P.FWaitHandle);
             }
         }
         else
@@ -107,9 +112,11 @@ void CLocatorAPI::SetEventNotification()
 {
     InitializeCriticalSection(&CS);
     FThread = xr_new<CFS_PathNotificator>();
-    FThread->FNotifyOptionFlags = FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_LAST_WRITE;
+    FThread->FNotifyOptionFlags =
+        FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_LAST_WRITE;
     for (PathPairIt p_it = pathes.begin(); p_it != pathes.end(); p_it++)
-        if (p_it->second->m_Flags.is(FS_Path::flNotif)) FThread->RegisterPath(*p_it->second);
+        if (p_it->second->m_Flags.is(FS_Path::flNotif))
+            FThread->RegisterPath(*p_it->second);
     FThread->Start();
 }
 
@@ -123,4 +130,3 @@ void CLocatorAPI::ClearEventNotification()
     }
     DeleteCriticalSection(&CS);
 }
-

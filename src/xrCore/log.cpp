@@ -58,8 +58,9 @@ void AddOne(const char* split)
         LogFile->push_back(temp);
     }
 
-    //exec CallBack
-    if (LogExecCB&&LogCB)LogCB(split);
+    // exec CallBack
+    if (LogExecCB && LogCB)
+        LogCB(split);
 
     logCS.Leave();
 }
@@ -79,7 +80,11 @@ void Log(const char* s)
         if (s[i] == '\n')
         {
             split[j] = 0; // end of line
-            if (split[0] == 0) { split[0] = ' '; split[1] = 0; }
+            if (split[0] == 0)
+            {
+                split[0] = ' ';
+                split[1] = 0;
+            }
             AddOne(split);
             j = 0;
         }
@@ -100,7 +105,8 @@ void __cdecl Msg(const char* format, ...)
     int sz = _vsnprintf(buf, sizeof(buf) - 1, format, mark);
     buf[sizeof(buf) - 1] = 0;
     va_end(mark);
-    if (sz) Log(buf);
+    if (sz)
+        Log(buf);
 }
 
 void Log(const char* msg, const char* dop)
@@ -160,20 +166,13 @@ void Log(const char* msg, const Fmatrix& dop)
     u32 buffer_size = (xr_strlen(msg) + 2 + 4 * (4 * (64 + 1) + 1) + 1) * sizeof(char);
     PSTR buf = (PSTR)_alloca(buffer_size);
 
-    xr_sprintf(buf, buffer_size, "%s:\n%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f\n",
-        msg,
-        dop.i.x, dop.i.y, dop.i.z, dop._14_,
-        dop.j.x, dop.j.y, dop.j.z, dop._24_,
-        dop.k.x, dop.k.y, dop.k.z, dop._34_,
-        dop.c.x, dop.c.y, dop.c.z, dop._44_
-        );
+    xr_sprintf(buf, buffer_size, "%s:\n%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f\n", msg, dop.i.x, dop.i.y,
+        dop.i.z, dop._14_, dop.j.x, dop.j.y, dop.j.z, dop._24_, dop.k.x, dop.k.y, dop.k.z, dop._34_, dop.c.x, dop.c.y,
+        dop.c.z, dop._44_);
     Log(buf);
 }
 
-void LogWinErr(const char* msg, long err_code)
-{
-    Msg("%s: %s", msg, Debug.error2string(err_code));
-}
+void LogWinErr(const char* msg, long err_code) { Msg("%s: %s", msg, Debug.error2string(err_code)); }
 
 LogCallback SetLogCB(LogCallback cb)
 {
@@ -182,15 +181,12 @@ LogCallback SetLogCB(LogCallback cb)
     return (result);
 }
 
-LPCSTR log_name()
-{
-    return (log_file_name);
-}
+LPCSTR log_name() { return (log_file_name); }
 
 void InitLog()
 {
     R_ASSERT(LogFile == NULL);
-    LogFile = xr_new< xr_vector<shared_str> >();
+    LogFile = xr_new<xr_vector<shared_str>>();
     LogFile->reserve(1000);
 }
 

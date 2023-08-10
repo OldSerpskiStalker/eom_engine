@@ -9,7 +9,10 @@ class Basis;
 class Basis
 {
 private:
-    enum { d = 3 } eDimensions;
+    enum
+    {
+        d = 3
+    } eDimensions;
 
     // data members
     int m, s; // size and number of support vectors
@@ -25,6 +28,7 @@ private:
 
     Fvector* current_c; // vectors to some c[j]
     float current_sqr_r;
+
 public:
     Basis();
 
@@ -63,7 +67,8 @@ private:
     void move_to_front(It j);
     float max_excess(It t, It i, It& pivot) const;
     float abs(float r) const { return (r > 0) ? r : (-r); }
-    float sqr(float r) const { return r*r; }
+    float sqr(float r) const { return r * r; }
+
 public:
     // construction
     Miniball() {}
@@ -84,10 +89,7 @@ public:
 // Miniball
 // --------
 
-void Miniball::check_in(const Fvector& p)
-{
-    L.push_back(p);
-}
+void Miniball::check_in(const Fvector& p) { L.push_back(p); }
 
 void Miniball::build()
 {
@@ -130,7 +132,6 @@ void Miniball::move_to_front(It j)
     L.splice(L.begin(), L, j);
 }
 
-
 void Miniball::pivot_mb(It i)
 {
     It t = ++L.begin();
@@ -143,7 +144,8 @@ void Miniball::pivot_mb(It i)
         if (max_e > 0)
         {
             t = support_end;
-            if (t == pivot) ++t;
+            if (t == pivot)
+                ++t;
             old_sqr_r = B.squared_radius();
             B.push(*pivot);
             mtf_mb(support_end);
@@ -177,69 +179,32 @@ float Miniball::max_excess(It t, It i, It& pivot) const
     return max_e;
 }
 
-Fvector Miniball::center() const
-{
-    return *((Fvector*)B.center());
-}
+Fvector Miniball::center() const { return *((Fvector*)B.center()); }
 
-float Miniball::squared_radius() const
-{
-    return B.squared_radius();
-}
+float Miniball::squared_radius() const { return B.squared_radius(); }
 
-int Miniball::num_points() const
-{
-    return L.size();
-}
+int Miniball::num_points() const { return L.size(); }
 
-Miniball::Cit Miniball::points_begin() const
-{
-    return L.begin();
-}
+Miniball::Cit Miniball::points_begin() const { return L.begin(); }
 
-Miniball::Cit Miniball::points_end() const
-{
-    return L.end();
-}
+Miniball::Cit Miniball::points_end() const { return L.end(); }
 
-int Miniball::nr_support_gVectors() const
-{
-    return B.support_size();
-}
+int Miniball::nr_support_gVectors() const { return B.support_size(); }
 
-Miniball::Cit Miniball::support_points_begin() const
-{
-    return L.begin();
-}
+Miniball::Cit Miniball::support_points_begin() const { return L.begin(); }
 
-Miniball::Cit Miniball::support_points_end() const
-{
-    return support_end;
-}
-
+Miniball::Cit Miniball::support_points_end() const { return support_end; }
 
 //----------------------------------------------------------------------
 // Basis
 //---------------------------------------------------------------------
-const Fvector* Basis::center() const
-{
-    return current_c;
-}
+const Fvector* Basis::center() const { return current_c; }
 
-float Basis::squared_radius() const
-{
-    return current_sqr_r;
-}
+float Basis::squared_radius() const { return current_sqr_r; }
 
-int Basis::size() const
-{
-    return m;
-}
+int Basis::size() const { return m; }
 
-int Basis::support_size() const
-{
-    return s;
-}
+int Basis::support_size() const { return s; }
 
 float Basis::excess(const Fvector& p) const
 {
@@ -257,17 +222,9 @@ void Basis::reset()
     current_sqr_r = -1;
 }
 
+Basis::Basis() { reset(); }
 
-Basis::Basis()
-{
-    reset();
-}
-
-
-void Basis::pop()
-{
-    --m;
-}
+void Basis::pop() { --m; }
 
 bool Basis::push(const Fvector& p)
 {
@@ -304,7 +261,7 @@ bool Basis::push(const Fvector& p)
         z[m] *= 2;
 
         // reject push if z_m too small
-        if (z[m] < eps*current_sqr_r)
+        if (z[m] < eps * current_sqr_r)
         {
             return false;
         }
@@ -317,7 +274,7 @@ bool Basis::push(const Fvector& p)
 
         c[m].mad(c[m - 1], v[m], f[m]);
 
-        sqr_r[m] = sqr_r[m - 1] + e*f[m] / 2;
+        sqr_r[m] = sqr_r[m - 1] + e * f[m] / 2;
     }
 
     current_c = c + m;

@@ -13,18 +13,18 @@
 #include "d3d9.h"
 #include "d3dx9.h"
 #include "D3DX_Wrapper.h"
-#pragma comment (lib,"EToolsB.lib")
+#pragma comment(lib, "EToolsB.lib")
 static BOOL bException = TRUE;
 #else
 static BOOL bException = FALSE;
 #endif
 
 #ifdef _M_AMD64
-#define DEBUG_INVOKE DebugBreak ()
+#define DEBUG_INVOKE DebugBreak()
 #else
 #define DEBUG_INVOKE __asm { int 3 }
 #ifndef __BORLANDC__
-#pragma comment (lib,"dxerr.lib")
+#pragma comment(lib, "dxerr.lib")
 #endif
 #endif
 
@@ -39,8 +39,7 @@ static INT_PTR CALLBACK DialogProc(HWND hw, UINT msg, WPARAM wp, LPARAM lp)
 {
     switch (msg)
     {
-    case WM_INITDIALOG:
-    {
+    case WM_INITDIALOG: {
         if (dlgFile)
         {
             SetWindowText(GetDlgItem(hw, IDC_DESC), dlgExpr);
@@ -55,11 +54,8 @@ static INT_PTR CALLBACK DialogProc(HWND hw, UINT msg, WPARAM wp, LPARAM lp)
         }
     }
     break;
-    case WM_DESTROY:
-        break;
-    case WM_CLOSE:
-        EndDialog(hw, IDC_STOP);
-        break;
+    case WM_DESTROY: break;
+    case WM_CLOSE: EndDialog(hw, IDC_STOP); break;
     case WM_COMMAND:
         if (LOWORD(wp) == IDC_STOP)
         {
@@ -70,13 +66,13 @@ static INT_PTR CALLBACK DialogProc(HWND hw, UINT msg, WPARAM wp, LPARAM lp)
             EndDialog(hw, IDC_DEBUG);
         }
         break;
-    default:
-        return FALSE;
+    default: return FALSE;
     }
     return TRUE;
 }
 
-void xrDebug::backend(const char* reason, const char* expression, const char* argument0, const char* argument1, const char* file, int line, const char* function, bool& ignore_always)
+void xrDebug::backend(const char* reason, const char* expression, const char* argument0, const char* argument1,
+    const char* file, int line, const char* function, bool& ignore_always)
 {
     static xrCriticalSection CS;
 
@@ -87,35 +83,29 @@ void xrDebug::backend(const char* reason, const char* expression, const char* ar
     xr_sprintf(tmp, "***STOP*** file '%s', line %d.\n***Reason***: %s\n %s", file, line, reason, expression);
     Msg(tmp);
     FlushLog();
-    if (handler) handler();
+    if (handler)
+        handler();
 
     // Call the dialog
     dlgExpr = reason;
-    xr_sprintf()
-    dlgFile = file;
+    xr_sprintf() dlgFile = file;
     xr_sprintf(dlgLine, "%d", line);
     INT_PTR res = -1;
 #ifdef XRCORE_STATIC
     MessageBox(NULL, tmp, "X-Ray error", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
 #else
-    res = DialogBox
-          (
-              GetModuleHandle(MODULE_NAME),
-              MAKEINTRESOURCE(IDD_STOP),
-              NULL,
-              DialogProc
-          );
+    res = DialogBox(GetModuleHandle(MODULE_NAME), MAKEINTRESOURCE(IDD_STOP), NULL, DialogProc);
 #endif
     switch (res)
     {
     case -1:
     case IDC_STOP:
-        if (bException) TerminateProcess(GetCurrentProcess(), 3);
-        else RaiseException(0, 0, 0, NULL);
+        if (bException)
+            TerminateProcess(GetCurrentProcess(), 3);
+        else
+            RaiseException(0, 0, 0, NULL);
         break;
-    case IDC_DEBUG:
-        DEBUG_INVOKE;
-        break;
+    case IDC_DEBUG: DEBUG_INVOKE; break;
     }
 
     CS.Leave();
@@ -143,7 +133,8 @@ void xrDebug::error(long hr, const char* expr, const char* file, int line, const
     backend(error2string(hr), expr, 0, 0, file, line, function, ignore_always);
 }
 
-void xrDebug::error(long hr, const char* expr, const char* e2, const char* file, int line, const char* function, bool& ignore_always)
+void xrDebug::error(
+    long hr, const char* expr, const char* e2, const char* file, int line, const char* function, bool& ignore_always)
 {
     backend(error2string(hr), expr, e2, 0, file, line, function, ignore_always);
 }
@@ -153,17 +144,20 @@ void xrDebug::fail(const char* e1, const char* file, int line, const char* funct
     backend("assertion failed", e1, 0, 0, file, line, function, ignore_always);
 }
 
-void xrDebug::fail(const char* e1, const char* e2, const char* file, int line, const char* function, bool& ignore_always)
+void xrDebug::fail(
+    const char* e1, const char* e2, const char* file, int line, const char* function, bool& ignore_always)
 {
     backend(e1, e2, 0, 0, file, line, function, ignore_always);
 }
 
-void xrDebug::fail(const char* e1, const char* e2, const char* e3, const char* file, int line, const char* function, bool& ignore_always)
+void xrDebug::fail(const char* e1, const char* e2, const char* e3, const char* file, int line, const char* function,
+    bool& ignore_always)
 {
     backend(e1, e2, e3, 0, file, line, function, ignore_always);
 }
 
-void xrDebug::fail(const char* e1, const char* e2, const char* e3, const char* e4, const char* file, int line, const char* function, bool& ignore_always)
+void xrDebug::fail(const char* e1, const char* e2, const char* e3, const char* e4, const char* file, int line,
+    const char* function, bool& ignore_always)
 {
     backend(e1, e2, e3, e4, file, line, function, ignore_always);
 }
@@ -193,18 +187,12 @@ int __cdecl _out_of_memory(size_t size)
     Debug.fatal(DEBUG_INFO, "Out of memory. Memory request: %d K", size / 1024);
     return 1;
 }
-void __cdecl _terminate()
-{
-    FATAL("Unexpected application termination");
-}
+void __cdecl _terminate() { FATAL("Unexpected application termination"); }
 
 // based on dbghelp.h
 typedef BOOL(WINAPI* MINIDUMPWRITEDUMP)(HANDLE hProcess, DWORD dwPid, HANDLE hFile, MINIDUMP_TYPE DumpType,
-                                        CONST PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam,
-                                        CONST PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
-                                        CONST PMINIDUMP_CALLBACK_INFORMATION CallbackParam
-                                       );
-
+    CONST PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam, CONST PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
+    CONST PMINIDUMP_CALLBACK_INFORMATION CallbackParam);
 
 LONG WINAPI UnhandledFilter(struct _EXCEPTION_POINTERS* pExceptionInfo)
 {
@@ -255,12 +243,14 @@ LONG WINAPI UnhandledFilter(struct _EXCEPTION_POINTERS* pExceptionInfo)
             xr_strcat(szDumpPath, ".mdmp");
 
             // create the file
-            HANDLE hFile = ::CreateFile(szDumpPath, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+            HANDLE hFile = ::CreateFile(
+                szDumpPath, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
             if (INVALID_HANDLE_VALUE == hFile)
             {
                 // try to place into current directory
                 MoveMemory(szDumpPath, szDumpPath + 5, strlen(szDumpPath));
-                hFile = ::CreateFile(szDumpPath, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+                hFile = ::CreateFile(
+                    szDumpPath, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
             }
             if (hFile != INVALID_HANDLE_VALUE)
             {
@@ -324,10 +314,7 @@ extern new_handler _RTLENTRY _EXPFUNC set_new_handler(new_handler new_p);
 // _PNH __cdecl set_new_handler( _PNH );
 // typedef void (new * new_handler)();
 // new_handler set_new_handler(new_handler my_handler);
-static void __cdecl def_new_handler()
-{
-    FATAL("Out of memory.");
-}
+static void __cdecl def_new_handler() { FATAL("Out of memory."); }
 
 void xrDebug::_initialize(const bool& dedicated)
 {

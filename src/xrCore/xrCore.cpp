@@ -7,10 +7,10 @@
 #include <objbase.h>
 #include "xrCore.h"
 
-#pragma comment(lib,"winmm.lib")
+#pragma comment(lib, "winmm.lib")
 
 #ifdef DEBUG
-# include <malloc.h>
+#include <malloc.h>
 #endif // DEBUG
 
 XRCORE_API xrCore Core;
@@ -24,7 +24,7 @@ extern void Detect();
 
 static u32 init_counter = 0;
 
-//extern char g_application_path[256];
+// extern char g_application_path[256];
 
 //. extern xr_vector<shared_str>* LogFile;
 
@@ -98,11 +98,15 @@ void xrCore::_initialize(LPCSTR _ApplicationName, LogCallback cb, BOOL init_fs, 
     if (init_fs)
     {
         u32 flags = 0;
-        if (0 != strstr(Params, "-build")) flags |= CLocatorAPI::flBuildCopy;
-        if (0 != strstr(Params, "-ebuild")) flags |= CLocatorAPI::flBuildCopy | CLocatorAPI::flEBuildCopy;
+        if (0 != strstr(Params, "-build"))
+            flags |= CLocatorAPI::flBuildCopy;
+        if (0 != strstr(Params, "-ebuild"))
+            flags |= CLocatorAPI::flBuildCopy | CLocatorAPI::flEBuildCopy;
 #ifdef DEBUG
-        if (strstr(Params, "-cache")) flags |= CLocatorAPI::flCacheFiles;
-        else flags &= ~CLocatorAPI::flCacheFiles;
+        if (strstr(Params, "-cache"))
+            flags |= CLocatorAPI::flCacheFiles;
+        else
+            flags &= ~CLocatorAPI::flCacheFiles;
 #endif // DEBUG
 #ifdef _EDITOR // for EDITORS - no cache
         flags &= ~CLocatorAPI::flCacheFiles;
@@ -111,7 +115,8 @@ void xrCore::_initialize(LPCSTR _ApplicationName, LogCallback cb, BOOL init_fs, 
 
 #ifndef _EDITOR
 #ifndef ELocatorAPIH
-        if (0 != strstr(Params, "-file_activity")) flags |= CLocatorAPI::flDumpFileActivity;
+        if (0 != strstr(Params, "-file_activity"))
+            flags |= CLocatorAPI::flDumpFileActivity;
 #endif
 #endif
         FS._initialize(flags, 0, fs_fname);
@@ -165,23 +170,21 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD ul_reason_for_call, LPVOID lpvRese
 {
     switch (ul_reason_for_call)
     {
-    case DLL_PROCESS_ATTACH:
-    {
+    case DLL_PROCESS_ATTACH: {
         _clear87();
         _control87(_PC_53, MCW_PC);
         _control87(_RC_CHOP, MCW_RC);
         _control87(_RC_NEAR, MCW_RC);
         _control87(_MCW_EM, MCW_EM);
     }
-        //. LogFile.reserve (256);
+    //. LogFile.reserve (256);
     break;
     case DLL_THREAD_ATTACH:
         if (!strstr(GetCommandLine(), "-editor"))
             CoInitializeEx(NULL, COINIT_MULTITHREADED);
         timeBeginPeriod(1);
         break;
-    case DLL_THREAD_DETACH:
-        break;
+    case DLL_THREAD_DETACH: break;
     case DLL_PROCESS_DETACH:
 #ifdef USE_MEMORY_MONITOR
         memory_monitor::flush_each_time(true);

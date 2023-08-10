@@ -7,7 +7,7 @@
 #pragma once
 
 #pragma warning(push)
-#pragma warning(disable:4995)
+#pragma warning(disable : 4995)
 #include <io.h>
 #pragma warning(pop)
 
@@ -18,6 +18,7 @@ class XRCORE_API CStreamReader;
 class XRCORE_API CLocatorAPI
 {
     friend class FS_Path;
+
 public:
     struct file
     {
@@ -26,17 +27,17 @@ public:
         u32 crc; // contents CRC
         u32 ptr; // pointer inside vfs
         u32 size_real; //
-        u32 size_compressed;// if (size_real==size_compressed) - uncompressed
+        u32 size_compressed; // if (size_real==size_compressed) - uncompressed
         u32 modif; // for editor
     };
     struct archive
     {
         shared_str path;
-        void* hSrcFile, *hSrcMap;
+        void *hSrcFile, *hSrcMap;
         u32 size;
         CInifile* header;
         u32 vfs_idx;
-        archive() :hSrcFile(NULL), hSrcMap(NULL), header(NULL), size(0), vfs_idx(u32(-1)) {}
+        archive() : hSrcFile(NULL), hSrcMap(NULL), header(NULL), size(0), vfs_idx(u32(-1)) {}
         void open();
         void close();
     };
@@ -45,12 +46,9 @@ public:
     void LoadArchive(archive& A, LPCSTR entrypoint = NULL);
 
 private:
-    struct file_pred : public std::binary_function < file&, file&, bool >
+    struct file_pred : public std::binary_function<file&, file&, bool>
     {
-        IC bool operator() (const file& x, const file& y) const
-        {
-            return xr_strcmp(x.name, y.name) < 0;
-        }
+        IC bool operator()(const file& x, const file& y) const { return xr_strcmp(x.name, y.name) < 0; }
     };
     DEFINE_MAP_PRED(LPCSTR, FS_Path*, PathMap, PathPairIt, pred_str);
     PathMap pathes;
@@ -75,6 +73,7 @@ private:
     bool Recurse(LPCSTR path);
 
     files_it file_find_it(LPCSTR n);
+
 public:
     enum
     {
@@ -187,4 +186,3 @@ extern XRCORE_API CLocatorAPI* xr_FS;
 #define FS (*xr_FS)
 
 #endif // LocatorAPIH
-
