@@ -23,11 +23,12 @@
 #ifndef BACK_REFERENCE_FWD_040510_HPP
 #define BACK_REFERENCE_FWD_040510_HPP
 
-namespace luabind {
+namespace luabind
+{
 
-   template<class T> struct back_reference;
+template <class T>
+struct back_reference;
 
 } // namespace luabind
 
 #endif // BACK_REFERENCE_FWD_040510_HPP
-
