@@ -41,3 +41,6 @@ src/.vs/engine/v17/.suo
 *.log
 *.txt
 src/.vs/engine/v17/fileList.bin
+src/.vs/Eom/v17/.suo
+src/.vs/Eom/FileContentIndex/read.lock
+src/.vs/Eom/FileContentIndex/write.lock
