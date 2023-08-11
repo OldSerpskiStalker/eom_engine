@@ -8,25 +8,25 @@
 #define DLL_EXPORT_CLASS DLL_EXPORT
 
 // Function calling modes
-#define NV_CDECL        __cdecl
-#define NV_STDCALL      __stdcall
-#define NV_FASTCALL     __fastcall
-#define NV_FORCEINLINE  __forceinline
+#define NV_CDECL __cdecl
+#define NV_STDCALL __stdcall
+#define NV_FASTCALL __fastcall
+#define NV_FORCEINLINE __forceinline
 #define NV_DEPRECATED
 
 #define NV_PURE
 #define NV_CONST
 
 // Set standard function names.
-#define snprintf _snprintf
+// #define snprintf _snprintf
 #if _MSC_VER < 1500
-#	define vsnprintf _vsnprintf
+#define vsnprintf _vsnprintf
 #endif
 #define vsscanf _vsscanf
 #define chdir _chdir
-#define getcwd _getcwd 
+#define getcwd _getcwd
 
-#define va_copy(a, b)	a = b
+#define va_copy(a, b) a = b
 
 #if !defined restrict
 #define restrict
@@ -36,26 +36,24 @@
 #define __attribute__(X)
 
 #if !defined __FUNC__
-#define __FUNC__ __FUNCTION__ 
+#define __FUNC__ __FUNCTION__
 #endif
 
-
 // Type definitions
-typedef unsigned char       uint8;
-typedef signed char         int8;
+typedef unsigned char uint8;
+typedef signed char int8;
 
-typedef unsigned short      uint16;
-typedef signed short        int16;
+typedef unsigned short uint16;
+typedef signed short int16;
 
-typedef unsigned int        uint32;
-typedef signed int          int32;
+typedef unsigned int uint32;
+typedef signed int int32;
 
-typedef unsigned __int64    uint64;
-typedef signed __int64      int64;
+typedef unsigned __int64 uint64;
+typedef signed __int64 int64;
 
 // Aliases
-typedef uint32              uint;
-
+typedef uint32 uint;
 
 // Unwanted VC++ warnings to disable.
 /*

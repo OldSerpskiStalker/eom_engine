@@ -5,13 +5,12 @@
 
 #include <nvimage/nvimage.h>
 
-
 namespace nv
 {
-	class FloatImage;
+class FloatImage;
 
-	FloatImage * createNormalMipmapMap(const FloatImage * img);
+FloatImage* createNormalMipmapMap(const FloatImage* img);
 
-} // nv namespace
+} // namespace nv
 
 #endif // NV_IMAGE_NORMALMIPMAP_H

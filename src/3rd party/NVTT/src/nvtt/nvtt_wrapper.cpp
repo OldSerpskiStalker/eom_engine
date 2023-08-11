@@ -2,207 +2,182 @@
 #include "nvtt.h"
 #include "nvtt_wrapper.h"
 
-
 // InputOptions class.
-NvttInputOptions * nvttCreateInputOptions()
+NvttInputOptions* nvttCreateInputOptions() { return new nvtt::InputOptions(); }
+
+void nvttDestroyInputOptions(NvttInputOptions* inputOptions) { delete inputOptions; }
+
+void nvttSetInputOptionsTextureLayout(NvttInputOptions* inputOptions, NvttTextureType type, int w, int h, int d)
 {
-	return new nvtt::InputOptions();
+    inputOptions->setTextureLayout((nvtt::TextureType)type, w, h, d);
 }
 
-void nvttDestroyInputOptions(NvttInputOptions * inputOptions)
+void nvttResetInputOptionsTextureLayout(NvttInputOptions* inputOptions) { inputOptions->resetTextureLayout(); }
+
+NvttBoolean nvttSetInputOptionsMipmapData(
+    NvttInputOptions* inputOptions, const void* data, int w, int h, int d, int face, int mipmap)
 {
-	delete inputOptions;
+    return (NvttBoolean)inputOptions->setMipmapData(data, w, h, d, face, mipmap);
 }
 
-void nvttSetInputOptionsTextureLayout(NvttInputOptions * inputOptions, NvttTextureType type, int w, int h, int d)
+void nvttSetInputOptionsFormat(NvttInputOptions* inputOptions, NvttInputFormat format)
 {
-	inputOptions->setTextureLayout((nvtt::TextureType)type, w, h, d);
+    inputOptions->setFormat((nvtt::InputFormat)format);
 }
 
-void nvttResetInputOptionsTextureLayout(NvttInputOptions * inputOptions)
+void nvttSetInputOptionsAlphaMode(NvttInputOptions* inputOptions, NvttAlphaMode alphaMode)
 {
-	inputOptions->resetTextureLayout();
+    inputOptions->setAlphaMode((nvtt::AlphaMode)alphaMode);
 }
 
-NvttBoolean nvttSetInputOptionsMipmapData(NvttInputOptions * inputOptions, const void * data, int w, int h, int d, int face, int mipmap)
+void nvttSetInputOptionsGamma(NvttInputOptions* inputOptions, float inputGamma, float outputGamma)
 {
-	return (NvttBoolean)inputOptions->setMipmapData(data, w, h, d, face, mipmap);
+    inputOptions->setGamma(inputGamma, outputGamma);
 }
 
-void nvttSetInputOptionsFormat(NvttInputOptions * inputOptions, NvttInputFormat format)
+void nvttSetInputOptionsWrapMode(NvttInputOptions* inputOptions, NvttWrapMode mode)
 {
-	inputOptions->setFormat((nvtt::InputFormat)format);
+    inputOptions->setWrapMode((nvtt::WrapMode)mode);
 }
 
-void nvttSetInputOptionsAlphaMode(NvttInputOptions * inputOptions, NvttAlphaMode alphaMode)
+void nvttSetInputOptionsMipmapFilter(NvttInputOptions* inputOptions, NvttMipmapFilter filter)
 {
-	inputOptions->setAlphaMode((nvtt::AlphaMode)alphaMode);
+    inputOptions->setMipmapFilter((nvtt::MipmapFilter)filter);
 }
 
-void nvttSetInputOptionsGamma(NvttInputOptions * inputOptions, float inputGamma, float outputGamma)
+void nvttSetInputOptionsMipmapGeneration(NvttInputOptions* inputOptions, NvttBoolean enabled, int maxLevel)
 {
-	inputOptions->setGamma(inputGamma, outputGamma);
+    inputOptions->setMipmapGeneration(enabled != NVTT_False, maxLevel);
 }
 
-void nvttSetInputOptionsWrapMode(NvttInputOptions * inputOptions, NvttWrapMode mode)
+void nvttSetInputOptionsKaiserParameters(NvttInputOptions* inputOptions, float width, float alpha, float stretch)
 {
-	inputOptions->setWrapMode((nvtt::WrapMode)mode);
+    inputOptions->setKaiserParameters(width, alpha, stretch);
 }
 
-void nvttSetInputOptionsMipmapFilter(NvttInputOptions * inputOptions, NvttMipmapFilter filter)
+void nvttSetInputOptionsNormalMap(NvttInputOptions* inputOptions, NvttBoolean b)
 {
-	inputOptions->setMipmapFilter((nvtt::MipmapFilter)filter);
+    inputOptions->setNormalMap(b != NVTT_False);
 }
 
-void nvttSetInputOptionsMipmapGeneration(NvttInputOptions * inputOptions, NvttBoolean enabled, int maxLevel)
+void nvttSetInputOptionsConvertToNormalMap(NvttInputOptions* inputOptions, NvttBoolean convert)
 {
-	inputOptions->setMipmapGeneration(enabled != NVTT_False, maxLevel);
+    inputOptions->setConvertToNormalMap(convert != NVTT_False);
 }
 
-void nvttSetInputOptionsKaiserParameters(NvttInputOptions * inputOptions, float width, float alpha, float stretch)
+void nvttSetInputOptionsHeightEvaluation(
+    NvttInputOptions* inputOptions, float redScale, float greenScale, float blueScale, float alphaScale)
 {
-	inputOptions->setKaiserParameters(width, alpha, stretch);
+    inputOptions->setHeightEvaluation(redScale, greenScale, blueScale, alphaScale);
 }
 
-void nvttSetInputOptionsNormalMap(NvttInputOptions * inputOptions, NvttBoolean b)
+void nvttSetInputOptionsNormalFilter(NvttInputOptions* inputOptions, float small, float medium, float big, float large)
 {
-	inputOptions->setNormalMap(b != NVTT_False);
+    inputOptions->setNormalFilter(small, medium, big, large);
 }
 
-void nvttSetInputOptionsConvertToNormalMap(NvttInputOptions * inputOptions, NvttBoolean convert)
+void nvttSetInputOptionsNormalizeMipmaps(NvttInputOptions* inputOptions, NvttBoolean b)
 {
-	inputOptions->setConvertToNormalMap(convert != NVTT_False);
+    inputOptions->setNormalizeMipmaps(b != NVTT_False);
 }
 
-void nvttSetInputOptionsHeightEvaluation(NvttInputOptions * inputOptions, float redScale, float greenScale, float blueScale, float alphaScale)
+void nvttSetInputOptionsColorTransform(NvttInputOptions* inputOptions, NvttColorTransform t)
 {
-	inputOptions->setHeightEvaluation(redScale, greenScale, blueScale, alphaScale);
+    inputOptions->setColorTransform((nvtt::ColorTransform)t);
 }
 
-void nvttSetInputOptionsNormalFilter(NvttInputOptions * inputOptions, float small, float medium, float big, float large)
+void nvttSetInputOptionsLinearTransfrom(
+    NvttInputOptions* inputOptions, int channel, float w0, float w1, float w2, float w3)
 {
-	inputOptions->setNormalFilter(small, medium, big, large);
+    inputOptions->setLinearTransform(channel, w0, w1, w2, w3);
 }
 
-void nvttSetInputOptionsNormalizeMipmaps(NvttInputOptions * inputOptions, NvttBoolean b)
-{
-	inputOptions->setNormalizeMipmaps(b != NVTT_False);
-}
+void nvttSetInputOptionsMaxExtents(NvttInputOptions* inputOptions, int dim) { inputOptions->setMaxExtents(dim); }
 
-void nvttSetInputOptionsColorTransform(NvttInputOptions * inputOptions, NvttColorTransform t)
+void nvttSetInputOptionsRoundMode(NvttInputOptions* inputOptions, NvttRoundMode mode)
 {
-	inputOptions->setColorTransform((nvtt::ColorTransform)t);
+    inputOptions->setRoundMode((nvtt::RoundMode)mode);
 }
-
-void nvttSetInputOptionsLinearTransfrom(NvttInputOptions * inputOptions, int channel, float w0, float w1, float w2, float w3)
-{
-	inputOptions->setLinearTransform(channel, w0, w1, w2, w3);
-}
-
-void nvttSetInputOptionsMaxExtents(NvttInputOptions * inputOptions, int dim)
-{
-	inputOptions->setMaxExtents(dim);
-}
-
-void nvttSetInputOptionsRoundMode(NvttInputOptions * inputOptions, NvttRoundMode mode)
-{
-	inputOptions->setRoundMode((nvtt::RoundMode)mode);
-}
-
 
 // CompressionOptions class.
-NvttCompressionOptions * nvttCreateCompressionOptions()
+NvttCompressionOptions* nvttCreateCompressionOptions() { return new nvtt::CompressionOptions(); }
+
+void nvttDestroyCompressionOptions(NvttCompressionOptions* compressionOptions) { delete compressionOptions; }
+
+void nvttSetCompressionOptionsFormat(NvttCompressionOptions* compressionOptions, NvttFormat format)
 {
-	return new nvtt::CompressionOptions();
+    compressionOptions->setFormat((nvtt::Format)format);
 }
 
-void nvttDestroyCompressionOptions(NvttCompressionOptions * compressionOptions)
+void nvttSetCompressionOptionsQuality(NvttCompressionOptions* compressionOptions, NvttQuality quality)
 {
-	delete compressionOptions;
+    compressionOptions->setQuality((nvtt::Quality)quality);
 }
 
-void nvttSetCompressionOptionsFormat(NvttCompressionOptions * compressionOptions, NvttFormat format)
+void nvttSetCompressionOptionsColorWeights(
+    NvttCompressionOptions* compressionOptions, float red, float green, float blue, float alpha)
 {
-	compressionOptions->setFormat((nvtt::Format)format);
-}
-
-void nvttSetCompressionOptionsQuality(NvttCompressionOptions * compressionOptions, NvttQuality quality)
-{
-	compressionOptions->setQuality((nvtt::Quality)quality);
-}
-
-void nvttSetCompressionOptionsColorWeights(NvttCompressionOptions * compressionOptions, float red, float green, float blue, float alpha)
-{
-	compressionOptions->setColorWeights(red, green, blue, alpha);
+    compressionOptions->setColorWeights(red, green, blue, alpha);
 }
 
 /*void nvttEnableCompressionOptionsCudaCompression(NvttCompressionOptions * compressionOptions, NvttBoolean enable)
 {
-	compressionOptions->enableCudaCompression(enable != NVTT_False);
+    compressionOptions->enableCudaCompression(enable != NVTT_False);
 }*/
 
-void nvttSetCompressionOptionsPixelFormat(NvttCompressionOptions * compressionOptions, unsigned int bitcount, unsigned int rmask, unsigned int gmask, unsigned int bmask, unsigned int amask)
+void nvttSetCompressionOptionsPixelFormat(NvttCompressionOptions* compressionOptions, unsigned int bitcount,
+    unsigned int rmask, unsigned int gmask, unsigned int bmask, unsigned int amask)
 {
-	compressionOptions->setPixelFormat(bitcount, rmask, gmask, bmask, amask);
+    compressionOptions->setPixelFormat(bitcount, rmask, gmask, bmask, amask);
 }
 
-void nvttSetCompressionOptionsQuantization(NvttCompressionOptions * compressionOptions, NvttBoolean colorDithering, NvttBoolean alphaDithering, NvttBoolean binaryAlpha, int alphaThreshold)
+void nvttSetCompressionOptionsQuantization(NvttCompressionOptions* compressionOptions, NvttBoolean colorDithering,
+    NvttBoolean alphaDithering, NvttBoolean binaryAlpha, int alphaThreshold)
 {
-	compressionOptions->setQuantization(colorDithering != NVTT_False, alphaDithering != NVTT_False, binaryAlpha != NVTT_False, alphaThreshold);
+    compressionOptions->setQuantization(
+        colorDithering != NVTT_False, alphaDithering != NVTT_False, binaryAlpha != NVTT_False, alphaThreshold);
 }
-
 
 // OutputOptions class.
-NvttOutputOptions * nvttCreateOutputOptions()
+NvttOutputOptions* nvttCreateOutputOptions() { return new nvtt::OutputOptions(); }
+
+void nvttDestroyOutputOptions(NvttOutputOptions* outputOptions) { delete outputOptions; }
+
+void nvttSetOutputOptionsFileName(NvttOutputOptions* outputOptions, const char* fileName)
 {
-	return new nvtt::OutputOptions();
+    outputOptions->setFileName(fileName);
 }
 
-void nvttDestroyOutputOptions(NvttOutputOptions * outputOptions)
+void nvttSetOutputOptionsOutputHeader(NvttOutputOptions* outputOptions, NvttBoolean b)
 {
-	delete outputOptions;
-}
-
-void nvttSetOutputOptionsFileName(NvttOutputOptions * outputOptions, const char * fileName)
-{
-	outputOptions->setFileName(fileName);
-}
-
-void nvttSetOutputOptionsOutputHeader(NvttOutputOptions * outputOptions, NvttBoolean b)
-{
-	outputOptions->setOutputHeader(b != NVTT_False);
+    outputOptions->setOutputHeader(b != NVTT_False);
 }
 /*
 void nvttSetOutputOptionsErrorHandler(NvttOutputOptions * outputOptions, nvttErrorHandler errorHandler)
 {
-	outputOptions->setErrorHandler(errorHandler);
+    outputOptions->setErrorHandler(errorHandler);
 }
 
-void nvttSetOutputOptionsOutputHandler(NvttOutputOptions * outputOptions, nvttOutputHandler outputHandler, nvttImageHandler imageHandler)
+void nvttSetOutputOptionsOutputHandler(NvttOutputOptions * outputOptions, nvttOutputHandler outputHandler,
+nvttImageHandler imageHandler)
 {
 }
 */
 
-
 // Compressor class.
-NvttBoolean nvttCompress(const NvttCompressor * compressor, const NvttInputOptions * inputOptions, const NvttCompressionOptions * compressionOptions, const NvttOutputOptions * outputOptions)
+NvttBoolean nvttCompress(const NvttCompressor* compressor, const NvttInputOptions* inputOptions,
+    const NvttCompressionOptions* compressionOptions, const NvttOutputOptions* outputOptions)
 {
-	return (NvttBoolean)compressor->process(*inputOptions, *compressionOptions, *outputOptions);
+    return (NvttBoolean)compressor->process(*inputOptions, *compressionOptions, *outputOptions);
 }
 
-int nvttEstimateSize(const NvttCompressor * compressor, const NvttInputOptions * inputOptions, const NvttCompressionOptions * compressionOptions)
+int nvttEstimateSize(const NvttCompressor* compressor, const NvttInputOptions* inputOptions,
+    const NvttCompressionOptions* compressionOptions)
 {
-	return compressor->estimateSize(*inputOptions, *compressionOptions);
+    return compressor->estimateSize(*inputOptions, *compressionOptions);
 }
-
 
 // Global functions.
-const char * nvttErrorString(NvttError e)
-{
-	return nvtt::errorString((nvtt::Error)e);
-}
+const char* nvttErrorString(NvttError e) { return nvtt::errorString((nvtt::Error)e); }
 
-unsigned int nvttVersion()
-{
-	return nvtt::version();
-}
+unsigned int nvttVersion() { return nvtt::version(); }

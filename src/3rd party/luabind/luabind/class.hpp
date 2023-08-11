@@ -66,8 +66,8 @@
 
 */
 
-#include <luabind/prefix.hpp>
-#include <luabind/config.hpp>
+#include <../luabind/luabind/prefix.hpp>
+#include <../luabind/luabind/config.hpp>
 
 #include <string>
 #include <map>
@@ -90,27 +90,27 @@
 #include <boost/mpl/apply_if.hpp>
 #include <boost/mpl/logical.hpp>
 
-#include <luabind/config.hpp>
-#include <luabind/scope.hpp>
-#include <luabind/back_reference.hpp>
-#include <luabind/detail/constructor.hpp>
-#include <luabind/detail/call.hpp>
-#include <luabind/detail/signature_match.hpp>
-#include <luabind/detail/primitives.hpp>
-#include <luabind/detail/property.hpp>
-#include <luabind/detail/typetraits.hpp>
-#include <luabind/detail/class_rep.hpp>
-#include <luabind/detail/method_rep.hpp>
-#include <luabind/detail/construct_rep.hpp>
-#include <luabind/detail/object_rep.hpp>
-#include <luabind/detail/calc_arity.hpp>
-#include <luabind/detail/call_member.hpp>
-#include <luabind/detail/enum_maker.hpp>
-#include <luabind/detail/get_signature.hpp>
-#include <luabind/detail/implicit_cast.hpp>
-#include <luabind/detail/operator_id.hpp>
-#include <luabind/detail/pointee_typeid.hpp>
-#include <luabind/detail/link_compatibility.hpp>
+#include <../luabind/luabind/config.hpp>
+#include <../luabind/luabind/scope.hpp>
+#include <../luabind/luabind/back_reference.hpp>
+#include <../luabind/luabind/detail/constructor.hpp>
+#include <../luabind/luabind/detail/call.hpp>
+#include <../luabind/luabind/detail/signature_match.hpp>
+#include <../luabind/luabind/detail/primitives.hpp>
+#include <../luabind/luabind/detail/property.hpp>
+#include <../luabind/luabind/detail/typetraits.hpp>
+#include <../luabind/luabind/detail/class_rep.hpp>
+#include <../luabind/luabind/detail/method_rep.hpp>
+#include <../luabind/luabind/detail/construct_rep.hpp>
+#include <../luabind/luabind/detail/object_rep.hpp>
+#include <../luabind/luabind/detail/calc_arity.hpp>
+#include <../luabind/luabind/detail/call_member.hpp>
+#include <../luabind/luabind/detail/enum_maker.hpp>
+#include <../luabind/luabind/detail/get_signature.hpp>
+#include <../luabind/luabind/detail/implicit_cast.hpp>
+#include <../luabind/luabind/detail/operator_id.hpp>
+#include <../luabind/luabind/detail/pointee_typeid.hpp>
+#include <../luabind/luabind/detail/link_compatibility.hpp>
 
 // to remove the 'this' used in initialization list-warning
 #ifdef _MSC_VER

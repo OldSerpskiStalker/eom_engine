@@ -18,8 +18,11 @@ extern PNTAVM ntavm;
 
 // Луаджит выделяет память кусками, кратными 128К
 // Поэтому сделаю два пула по эти размеры
-#define CHUNK_SIZE (128 * 1024)
-#define CHUNK_COUNT 1024
+#define CHUNK_SIZE (64 * 1024)
+#define CHUNK_COUNT 4096
+
+#define CHUNKS_FROM_SIZE(x) ((x + CHUNK_SIZE - 1) / CHUNK_SIZE)
+
 static int inited = 0;
 void* g_heap;
 char g_heapMap[CHUNK_COUNT + 1];
@@ -43,7 +46,7 @@ void XR_INIT()
 
 	for (int i = 0; i < CHUNK_COUNT; i++)
 		g_heapMap[i] = 'x';
-	g_heapMap[CHUNK_COUNT] = '\0';
+	g_heapMap[CHUNK_COUNT] = 0;
 	g_firstFreeChunk = g_heapMap;
 
 #ifdef DEBUG_MEM	
@@ -59,13 +62,13 @@ void* XR_MMAP(size_t size)
 	sprintf(buf, "XR_MMAP(%Iu)", size);
 	OutputDebugString(buf);
 #endif
-	int chunks = size / CHUNK_SIZE;
+	int chunks = CHUNKS_FROM_SIZE(size);
 	char* s = find_free(chunks);
 	void* ptr = MFAIL;
 	if (s != NULL) {
 		ptr = (char*)g_heap + CHUNK_SIZE * (s - g_heapMap);
 		for (int i = 0; i < chunks; i++)
-			s[i] = 'a' + chunks - 1;
+			s[i] = 'a';
 		if (s == g_firstFreeChunk)
 			g_firstFreeChunk = find_free(1);
 	}
@@ -86,10 +89,10 @@ void XR_DESTROY(void* ptr, size_t size)
 	OutputDebugString(buf);
 #endif
 	char* s = g_heapMap + ((char*)ptr - (char*)g_heap) / CHUNK_SIZE;
-	int count = size / CHUNK_SIZE;
+	int count = CHUNKS_FROM_SIZE(size);
 	for (int i = 0; i < count; i++)
 		s[i] = 'x';
-	if (s < g_firstFreeChunk)
+	if (s < g_firstFreeChunk || !g_firstFreeChunk)
 		g_firstFreeChunk = s;
 #ifdef DEBUG_MEM	
 	dump_map(ptr, size, 'X');
@@ -101,6 +104,8 @@ void XR_DESTROY(void* ptr, size_t size)
 char* find_free(int size)
 {
 	char* p = g_firstFreeChunk;
+	if (!p) return NULL;
+
 	int count = 0;
 	while (*p != '\0') {
 		if (*p == 'x')
@@ -108,7 +113,7 @@ char* find_free(int size)
 		else
 			count = 0;
 		p++;
-		if (count == size)
+		if (count >= size)
 			return p - count;
 	}
 	return NULL;

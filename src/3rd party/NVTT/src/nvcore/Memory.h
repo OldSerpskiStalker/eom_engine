@@ -6,47 +6,34 @@
 #include <nvcore/nvcore.h>
 
 #include <stdlib.h> // malloc(), realloc() and free()
-#include <stddef.h>	// size_t
+#include <stddef.h> // size_t
 
-#include <new>	// new and delete
+#include <new> // new and delete
 
 // Custom memory allocator
 namespace nv
 {
-	namespace mem 
-	{
-		NVCORE_API void * malloc(size_t size);
-		NVCORE_API void * malloc(size_t size, const char * file, int line);
-		
-		NVCORE_API void free(const void * ptr);
-		NVCORE_API void * realloc(void * ptr, size_t size);
-		
-	} // mem namespace
-	
-} // nv namespace
+namespace mem
+{
+NVCORE_API void* malloc(size_t size);
+NVCORE_API void* malloc(size_t size, const char* file, int line);
 
+NVCORE_API void free(const void* ptr);
+NVCORE_API void* realloc(void* ptr, size_t size);
+
+} // namespace mem
+
+} // namespace nv
 
 // Override new/delete
 
-inline void * operator new (size_t size) throw()
-{
-	return nv::mem::malloc(size); 
-}
+inline void* operator new(size_t size) throw() { return nv::mem::malloc(size); }
 
-inline void operator delete (void *p) throw()
-{
-	nv::mem::free(p); 
-}
+inline void operator delete(void* p) throw() { nv::mem::free(p); }
 
-inline void * operator new [] (size_t size) throw()
-{
-	return nv::mem::malloc(size);
-}
+inline void* operator new[](size_t size) throw() { return nv::mem::malloc(size); }
 
-inline void operator delete [] (void * p) throw()
-{
-	nv::mem::free(p); 
-}
+inline void operator delete[](void* p) throw() { nv::mem::free(p); }
 
 /*
 #ifdef _DEBUG

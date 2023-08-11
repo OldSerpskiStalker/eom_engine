@@ -23,11 +23,11 @@
 #ifndef LUABIND_METHOD_REP_HPP_INCLUDED
 #define LUABIND_METHOD_REP_HPP_INCLUDED
 
-#include <luabind/config.hpp>
+#include <../luabind/luabind/config.hpp>
 
 #include <vector>
 
-#include <luabind/detail/overload_rep.hpp>
+#include <../luabind/luabind/detail/overload_rep.hpp>
 
 namespace luabind
 {
