@@ -25,6 +25,7 @@ void CStateCustomGroupAbstract::execute()
     get_state_current()->execute();
     prev_substate = current_substate;
 }
+
 TEMPLATE_SPECIALIZATION
 void CStateCustomGroupAbstract::setup_substates()
 {

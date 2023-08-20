@@ -16,6 +16,7 @@ CObjectAnimator::CObjectAnimator()
     m_Current = 0;
     m_Speed = 1.f;
     m_Name = "";
+    m_XFORM.identity();
 }
 
 CObjectAnimator::~CObjectAnimator() { Clear(); }

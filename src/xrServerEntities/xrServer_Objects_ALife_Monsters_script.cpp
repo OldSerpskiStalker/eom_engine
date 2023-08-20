@@ -10,6 +10,7 @@
 #include "xrServer_Objects_ALife_Monsters.h"
 #include "xrServer_script_macroses.h"
 #include "specific_character.h"
+#include "InventoryOwner.h"
 
 using namespace luabind;
 
@@ -17,9 +18,23 @@ LPCSTR profile_name_script(CSE_ALifeTraderAbstract* ta) { return *ta->character_
 
 void profile_name_set_script(CSE_ALifeTraderAbstract* ta, LPCSTR str) { ta->set_character_profile(str); }
 
-void set_character_name_script(CSE_ALifeTraderAbstract* ta, LPCSTR str) { ta->m_character_name = str; }
+void set_character_name_script(CSE_ALifeTraderAbstract* ta, LPCSTR str)
+{
+    ta->m_character_name_str = str;
+    ta->m_character_name = TranslateName(ta->m_character_name_str.c_str());
+
+    if (g_pGameLevel)
+    {
+        CObject* obj = g_pGameLevel->Objects.net_Find(ta->object_id());
+        CInventoryOwner* owner = smart_cast<CInventoryOwner*>(obj);
+        if (owner)
+            owner->ChangeName(str);
+    }
+}
 
 LPCSTR character_name_script(CSE_ALifeTraderAbstract* ta) { return ta->m_character_name.c_str(); }
+
+LPCSTR character_name_str_script(CSE_ALifeTraderAbstract* ta) { return ta->m_character_name_str.c_str(); }
 
 LPCSTR icon_name_script(CSE_ALifeTraderAbstract* ta)
 {
@@ -43,6 +58,7 @@ void CSE_ALifeTraderAbstract::script_register(lua_State* L)
                   .def("profile_name", &profile_name_script)
                   .def("set_profile_name", &profile_name_set_script)
                   .def("character_name", &character_name_script)
+                  .def("character_name_str", &character_name_str_script)
                   .def("set_character_name", &set_character_name_script)
                   .def("rank", &Rank)
                   .def("set_rank", &SetRank)

@@ -17,6 +17,7 @@ void CControlledEntityAbstract::set_task_follow(const CEntity* e)
     m_data.m_object = e;
     m_data.m_task = eTaskFollow;
 }
+
 TEMPLATE_SPECIALIZATION
 void CControlledEntityAbstract::set_task_attack(const CEntity* e)
 {
@@ -52,6 +53,7 @@ void CControlledEntityAbstract::on_die()
     m_controller->OnFreedFromControl(m_object);
     m_controller = 0;
 }
+
 TEMPLATE_SPECIALIZATION
 void CControlledEntityAbstract::on_destroy()
 {

@@ -171,12 +171,14 @@ void CScriptEngine::unload()
 
 int CScriptEngine::lua_panic(lua_State* L)
 {
+    ai().script_engine().print_stack();
     print_output(L, "PANIC", LUA_ERRRUN);
     return (0);
 }
 
 void CScriptEngine::lua_error(lua_State* L)
 {
+    ai().script_engine().print_stack();
     print_output(L, "", LUA_ERRRUN);
     ai().script_engine().on_error(L);
 
@@ -189,6 +191,7 @@ void CScriptEngine::lua_error(lua_State* L)
 
 int CScriptEngine::lua_pcall_failed(lua_State* L)
 {
+    ai().script_engine().print_stack();
     print_output(L, "", LUA_ERRRUN);
     ai().script_engine().on_error(L);
 
@@ -405,7 +408,7 @@ void CScriptEngine::process_file_if_exists(LPCSTR file_name, bool warn_if_not_ex
                 print_stack();
                 Msg("* trying to access variable %s, which doesn't exist, or to load script %s, which doesn't exist "
                     "too",
-                    file_name, S1);
+                    file_name, S);
                 m_stack_is_ready = true;
             }
 #endif

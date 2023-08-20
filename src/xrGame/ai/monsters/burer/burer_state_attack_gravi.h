@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "../state.h"
 
 template <typename _Object>
@@ -19,7 +19,7 @@ public:
     virtual bool check_completion();
 
 private:
-    // выполнять состояние
+    // ГўГ»ГЇГ®Г«Г­ГїГІГј Г±Г®Г±ГІГ®ГїГ­ГЁГҐ
     void ExecuteGraviStart();
     void ExecuteGraviContinue();
     void ExecuteGraviFire();
@@ -32,7 +32,6 @@ private:
         ACTION_GRAVI_FIRE,
         ACTION_WAIT_ANIM_END,
         ACTION_COMPLETED,
-
     } m_action;
 
     u32 m_time_gravi_started;

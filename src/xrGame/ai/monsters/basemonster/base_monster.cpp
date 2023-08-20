@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "base_monster.h"
 #include "../../../../xrphysics/PhysicsShell.h"
 #include "../../../hit.h"
@@ -43,6 +43,10 @@
 
 #include "../anti_aim_ability.h"
 
+#include "script_hit.h"
+#include "../../xrServerEntities/script_engine.h"
+#include "script_game_object.h"
+
 // Lain: added
 #include "../../../level_debug.h"
 #include "../../../../xrEngine/xrLevel.h"
@@ -73,7 +77,7 @@ CBaseMonster::CBaseMonster()
     EnemyMan.init_external(this);
     CorpseMan.init_external(this);
 
-    // Инициализация параметров анимации
+    // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїР°СЂР°РјРµС‚СЂРѕРІ Р°РЅРёРјР°С†РёРё
 
     StateMan = 0;
 
@@ -433,8 +437,8 @@ void CBaseMonster::Hit(SHit* pHDS)
     {
         float& hit_power = pHDS->power;
         float ap = pHDS->armor_piercing;
-        // пуля пробила шкуру
-        if (!fis_zero(m_fSkinArmor, EPS) && ap > m_fSkinArmor)
+        // РїСѓР»СЏ РїСЂРѕР±РёР»Р° С€РєСѓСЂСѓ
+        if (ap > m_fSkinArmor)
         {
             float d_hit_power = (ap - m_fSkinArmor) / ap;
             if (d_hit_power < m_fHitFracMonster)
@@ -443,13 +447,14 @@ void CBaseMonster::Hit(SHit* pHDS)
             hit_power *= d_hit_power;
             VERIFY(hit_power >= 0.0f);
         }
-        // пуля НЕ пробила шкуру
+        // РїСѓР»СЏ РќР• РїСЂРѕР±РёР»Р° С€РєСѓСЂСѓ
         else
         {
             hit_power *= m_fHitFracMonster;
-            pHDS->add_wound = false; // раны нет
+            pHDS->add_wound = false; // СЂР°РЅС‹ РЅРµС‚
         }
     }
+
     inherited::Hit(pHDS);
 }
 
@@ -611,7 +616,7 @@ void CBaseMonster::TranslateActionToPathParams()
     case ACT_SLEEP:
     case ACT_REST:
         // jump
-    // case ACT_JUMP:
+        // case ACT_JUMP:
     case ACT_LOOK_AROUND: bEnablePath = false; break;
     case ACT_ATTACK:
         if (!m_attack_on_move_params.enabled)
@@ -711,13 +716,13 @@ void CBaseMonster::on_kill_enemy(const CEntity* obj)
 {
     const CEntityAlive* entity = smart_cast<const CEntityAlive*>(obj);
 
-    // добавить в список трупов
+    // РґРѕР±Р°РІРёС‚СЊ РІ СЃРїРёСЃРѕРє С‚СЂСѓРїРѕРІ
     CorpseMemory.add_corpse(entity);
 
-    // удалить всю информацию о хитах
+    // СѓРґР°Р»РёС‚СЊ РІСЃСЋ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ С…РёС‚Р°С…
     HitMemory.remove_hit_info(entity);
 
-    // удалить всю информацию о звуках
+    // СѓРґР°Р»РёС‚СЊ РІСЃСЋ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ Р·РІСѓРєР°С…
     SoundMemory.clear();
 }
 
@@ -791,7 +796,7 @@ CParticlesObject* CBaseMonster::PlayParticles(
 {
     CParticlesObject* ps = CParticlesObject::Create(name.c_str(), auto_remove);
 
-    // вычислить позицию и направленность партикла
+    // РІС‹С‡РёСЃР»РёС‚СЊ РїРѕР·РёС†РёСЋ Рё РЅР°РїСЂР°РІР»РµРЅРЅРѕСЃС‚СЊ РїР°СЂС‚РёРєР»Р°
     Fmatrix matrix;
 
     matrix.identity();

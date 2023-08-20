@@ -24,7 +24,9 @@ struct SBreakPoint
     shared_str fileName;
     s32 nLine;
     SBreakPoint() { nLine = 0; };
+
     SBreakPoint(const SBreakPoint& other) { operator=(other); };
+
     SBreakPoint& operator=(const SBreakPoint& other)
     {
         fileName = other.fileName;

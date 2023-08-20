@@ -266,7 +266,6 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
         }
     }
     break;
-
     case GEG_PLAYER_WEAPON_HIDE_STATE: {
         u16 State = P.r_u16();
         BOOL Set = !!P.r_u8();

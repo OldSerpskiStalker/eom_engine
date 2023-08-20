@@ -33,6 +33,7 @@ struct enum_exporter
 {
     DECLARE_SCRIPT_REGISTER_FUNCTION
 };
+
 template <typename T>
 struct class_exporter
 {

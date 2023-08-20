@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "../xrCDB/frustum.h"
+#include "xr_ioconsole.h"
 
 #pragma warning(disable : 4995)
 // mmsystem.h
@@ -15,6 +16,7 @@
 
 #include "x_ray.h"
 #include "render.h"
+#include <chrono>
 
 // must be defined before include of FS_impl.h
 #define INCLUDE_FROM_ENGINE
@@ -39,6 +41,13 @@ ENGINE_API BOOL g_bRendering = FALSE;
 
 BOOL g_bLoaded = FALSE;
 ref_light precache_light = 0;
+
+#ifdef ECO_RENDER
+std::chrono::high_resolution_clock::time_point tlastf = std::chrono::high_resolution_clock::now(),
+                                               tcurrentf = std::chrono::high_resolution_clock::now();
+std::chrono::duration<float> time_span;
+ENGINE_API float refresh_rate = 0;
+#endif // ECO_RENDER
 
 BOOL CRenderDevice::Begin()
 {
@@ -101,6 +110,8 @@ void CRenderDevice::End(void)
             ::Sound->set_master_volume(1.f);
 
             m_pRender->ResourcesDestroyNecessaryTextures();
+
+            Msg("* [x-ray]: Handled Necessary Textures Destruction");
             Memory.mem_compact();
             Msg("* MEMORY USAGE: %lld K", Memory.mem_usage() / 1024);
             Msg("* End of synchronization A[%d] R[%d]", b_is_Active, b_is_Ready);
@@ -136,6 +147,7 @@ void CRenderDevice::End(void)
 }
 
 volatile u32 mt_Thread_marker = 0x12345678;
+
 void mt_Thread(void* ptr)
 {
     auto& device = *static_cast<CRenderDevice*>(ptr);
@@ -168,6 +180,7 @@ void mt_Thread(void* ptr)
 }
 
 #include "igame_level.h"
+
 void CRenderDevice::PreCache(u32 amount, bool b_draw_loadscreen, bool b_wait_user_input)
 {
 #ifdef DEDICATED_SERVER
@@ -200,8 +213,73 @@ ENGINE_API xr_list<LOADING_EVENT> g_loading_events;
 
 extern bool IsMainMenuActive(); // ECO_RENDER add
 
+ENGINE_API void GetMonitorResolution(u32& horizontal, u32& vertical)
+{
+    HMONITOR hMonitor = MonitorFromWindow(Device.m_hWnd, MONITOR_DEFAULTTOPRIMARY);
+
+    MONITORINFO mi;
+    mi.cbSize = sizeof(mi);
+    if (GetMonitorInfoA(hMonitor, &mi))
+    {
+        horizontal = mi.rcMonitor.right - mi.rcMonitor.left;
+        vertical = mi.rcMonitor.bottom - mi.rcMonitor.top;
+    }
+    else
+    {
+        RECT desktop;
+        const HWND hDesktop = GetDesktopWindow();
+        GetWindowRect(hDesktop, &desktop);
+        horizontal = desktop.right - desktop.left;
+        vertical = desktop.bottom - desktop.top;
+    }
+}
+
+float GetMonitorRefresh()
+{
+    DEVMODE lpDevMode;
+    memset(&lpDevMode, 0, sizeof(DEVMODE));
+    lpDevMode.dmSize = sizeof(DEVMODE);
+    lpDevMode.dmDriverExtra = 0;
+
+    if (EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &lpDevMode) == 0)
+    {
+        return 1.f / 60.f;
+    }
+    else
+        return 1.f / lpDevMode.dmDisplayFrequency;
+}
+
+extern int ps_framelimiter;
+extern u32 g_screenmode;
+
+CTimer FreezeTimer;
+void mt_FreezeThread(void* ptr)
+{
+    float freezetime = 0.f;
+    float repeatcheck = 500.f;
+
+    while (true)
+    {
+        if (g_loading_events.size())
+            freezetime = 25000.0f;
+        else
+            freezetime = 5000.0f;
+
+        repeatcheck = 500.f;
+
+        if (FreezeTimer.GetElapsed_sec() * 1000.f > freezetime)
+        {
+            FlushLog();
+            repeatcheck = 5000.f;
+        }
+        Sleep(repeatcheck);
+    }
+}
+
 void CRenderDevice::on_idle()
 {
+    FreezeTimer.Start();
+
     if (!b_is_Ready)
     {
         Sleep(100);
@@ -260,17 +338,26 @@ void CRenderDevice::on_idle()
     mt_csEnter.Leave();
 
 #ifdef ECO_RENDER // ECO_RENDER START
-    static u32 time_frame = 0;
-    u32 time_curr = timeGetTime();
-    u32 time_diff = time_curr - time_frame;
-    time_frame = time_curr;
-    u32 optimal = 10;
-    if (Device.Paused() || IsMainMenuActive())
-        optimal = 32;
-    if (time_diff < optimal)
-        Sleep(optimal - time_diff);
-#else
-    Sleep(0);
+    if (Device.Paused() || IsMainMenuActive() || ps_framelimiter)
+    {
+        if (refresh_rate == 0)
+            refresh_rate = GetMonitorRefresh();
+
+        float rr;
+
+        if (ps_framelimiter)
+            rr = 1.f / ps_framelimiter;
+        else
+            rr = refresh_rate;
+
+        time_span = std::chrono::duration_cast<std::chrono::duration<float>>(tcurrentf - tlastf);
+        while (time_span.count() < rr)
+        {
+            tcurrentf = std::chrono::high_resolution_clock::now();
+            time_span = std::chrono::duration_cast<std::chrono::duration<float>>(tcurrentf - tlastf);
+        }
+        tlastf = std::chrono::high_resolution_clock::now();
+    }
 #endif // ECO_RENDER END
 
 #ifndef DEDICATED_SERVER
@@ -323,6 +410,8 @@ void CRenderDevice::message_loop_editor()
 }
 #endif // #ifdef INGAME_EDITOR
 
+void CRenderDevice::Screenshot() { Render->Screenshot(); }
+
 void CRenderDevice::message_loop()
 {
 #ifdef INGAME_EDITOR
@@ -368,6 +457,7 @@ void CRenderDevice::Run()
     // InitializeCriticalSection (&mt_csLeave);
     mt_csEnter.Enter();
     mt_bMustExit = FALSE;
+    thread_spawn(mt_FreezeThread, "Freeze detecting thread", 0, 0);
     thread_spawn(mt_Thread, "X-RAY Secondary thread", 0, this);
     // Message cycle
     seqAppStart.Process(rp_AppStart);
@@ -410,8 +500,8 @@ void CRenderDevice::FrameMove()
         // Timer
         float fPreviousFrameTime = Timer.GetElapsed_sec();
         Timer.Start(); // previous frame
-        fTimeDelta =
-            0.1f * fTimeDelta + 0.9f * fPreviousFrameTime; // smooth random system activity - worst case ~7% error
+        fTimeDelta = 0.1f * fTimeDelta + 0.9f * fPreviousFrameTime;
+        // smooth random system activity - worst case ~7% error
         // fTimeDelta = 0.7f * fTimeDelta + 0.3f*fPreviousFrameTime; // smooth random system activity
         if (fTimeDelta > .1f)
             fTimeDelta = .1f; // limit to 15fps minimum
@@ -435,6 +525,7 @@ void CRenderDevice::FrameMove()
     //  seqFrame.Process(rp_Frame);
     Statistic->EngineTOTAL.End();
 }
+
 ENGINE_API BOOL bShowPauseString = TRUE;
 #include "IGame_Persistent.h"
 
@@ -459,7 +550,7 @@ void CRenderDevice::Pause(BOOL bOn, BOOL bTimer, BOOL bSound, LPCSTR reason)
 
         if (bTimer && (!g_pGamePersistent || g_pGamePersistent->CanBePaused()))
         {
-            g_pauseMngr.Pause(TRUE);
+            g_pauseMngr().Pause(true);
 #ifdef DEBUG
             if (!xr_strcmp(reason, "li_pause_key_no_clip"))
                 TimerGlobal.Pause(FALSE);
@@ -476,10 +567,10 @@ void CRenderDevice::Pause(BOOL bOn, BOOL bTimer, BOOL bSound, LPCSTR reason)
     }
     else
     {
-        if (bTimer && g_pauseMngr.Paused())
+        if (bTimer && g_pauseMngr().Paused())
         {
             fTimeDelta = EPS_S + EPS_S;
-            g_pauseMngr.Pause(FALSE);
+            g_pauseMngr().Pause(false);
         }
 
         if (bSound)
@@ -503,7 +594,7 @@ void CRenderDevice::Pause(BOOL bOn, BOOL bTimer, BOOL bSound, LPCSTR reason)
 #endif
 }
 
-BOOL CRenderDevice::Paused() { return g_pauseMngr.Paused(); }
+bool CRenderDevice::Paused() { return g_pauseMngr().Paused(); }
 
 void CRenderDevice::OnWM_Activate(WPARAM wParam, LPARAM lParam)
 {
@@ -511,7 +602,39 @@ void CRenderDevice::OnWM_Activate(WPARAM wParam, LPARAM lParam)
     BOOL fMinimized = (BOOL)HIWORD(wParam);
     BOOL bActive = ((fActive != WA_INACTIVE) && (!fMinimized)) ? TRUE : FALSE;
 
-    if (bActive != Device.b_is_Active)
+    if (psDeviceFlags2.test(rsAlwaysActive) && g_screenmode != 2)
+    {
+        if (Device.b_hide_cursor != bActive)
+        {
+            Device.b_hide_cursor = bActive;
+
+            if (Device.b_is_Active == FALSE)
+            {
+                Device.b_is_Active = TRUE;
+                Device.seqAppActivate.Process(rp_AppActivate);
+                app_inactive_time += TimerMM.GetElapsed_ms() - app_inactive_time_start;
+            }
+
+            if (Device.b_hide_cursor)
+            {
+                ShowCursor(FALSE);
+                if (m_hWnd)
+                {
+                    RECT winRect;
+                    GetClientRect(m_hWnd, &winRect);
+                    MapWindowPoints(m_hWnd, nullptr, reinterpret_cast<LPPOINT>(&winRect), 2);
+                    ClipCursor(&winRect);
+                }
+            }
+            else
+            {
+                Device.seqAppDeactivate.Process(rp_AppDeactivate);
+                ShowCursor(TRUE);
+                ClipCursor(NULL);
+            }
+        }
+    }
+    else if (bActive != Device.b_is_Active)
     {
         Device.b_is_Active = bActive;
 
@@ -528,7 +651,8 @@ void CRenderDevice::OnWM_Activate(WPARAM wParam, LPARAM lParam)
             if (m_hWnd)
             {
                 RECT winRect;
-                GetWindowRect(m_hWnd, &winRect);
+                GetClientRect(m_hWnd, &winRect);
+                MapWindowPoints(m_hWnd, nullptr, reinterpret_cast<LPPOINT>(&winRect), 2);
                 ClipCursor(&winRect);
             }
 #endif // #ifndef DEDICATED_SERVER

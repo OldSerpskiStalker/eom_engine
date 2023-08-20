@@ -55,7 +55,7 @@ void CObjectFactory::register_script_class(LPCSTR unknown_class, LPCSTR clsid, L
 }
 
 #ifndef NO_XR_GAME
-ENGINE_API bool g_dedicated_server;
+extern ENGINE_API bool g_dedicated_server;
 #endif // NO_XR_GAME
 
 void CObjectFactory::register_script_classes()

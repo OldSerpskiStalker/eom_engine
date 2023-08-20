@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "controller.h"
 #include "controller_state_manager.h"
 #include "../controlled_entity.h"
@@ -39,7 +39,7 @@
 
 #include "controller_psy_hit.h"
 #include "../monster_cover_manager.h"
-#include "controller_psy_aura.h"
+// #include "controller_psy_aura.h"
 
 #ifdef _DEBUG
 #include <dinput.h>
@@ -57,7 +57,6 @@ const u32 default_tube_condition_see_duration = 50;
 const u32 default_tube_condition_min_delay = 10000;
 const float default_tube_condition_min_distance = 10;
 const float default_stamina_hit = 0.2f;
-
 } // namespace controller
 } // namespace detail
 
@@ -300,7 +299,7 @@ BOOL CController::net_Spawn(CSE_Abstract* DC)
 
 void CController::UpdateControlled()
 {
-    // если есть враг, проверить может ли быть враг взят под контроль
+    // ГҐГ±Г«ГЁ ГҐГ±ГІГј ГўГ°Г ГЈ, ГЇГ°Г®ГўГҐГ°ГЁГІГј Г¬Г®Г¦ГҐГІ Г«ГЁ ГЎГ»ГІГј ГўГ°Г ГЈ ГўГ§ГїГІ ГЇГ®Г¤ ГЄГ®Г­ГІГ°Г®Г«Гј
     if (EnemyMan.get_enemy())
     {
         CControlledEntityBase* entity =
@@ -309,7 +308,7 @@ void CController::UpdateControlled()
         {
             if (!entity->is_under_control() && (m_controlled_objects.size() < m_max_controlled_number))
             {
-                // взять под контроль
+                // ГўГ§ГїГІГј ГЇГ®Г¤ ГЄГ®Г­ГІГ°Г®Г«Гј
                 entity->set_under_control(this);
                 entity->set_task_follow(this);
                 m_controlled_objects.push_back(const_cast<CEntityAlive*>(EnemyMan.get_enemy()));
@@ -537,7 +536,7 @@ void CController::draw_fire_particles()
     if (!EnemyMan.see_enemy_now())
         return;
 
-    // вычислить позицию и направленность партикла
+    // ГўГ»Г·ГЁГ±Г«ГЁГІГј ГЇГ®Г§ГЁГ¶ГЁГѕ ГЁ Г­Г ГЇГ°Г ГўГ«ГҐГ­Г­Г®Г±ГІГј ГЇГ Г°ГІГЁГЄГ«Г 
     Fvector my_head_pos;
     my_head_pos.set(get_head_position(this));
 
@@ -609,6 +608,7 @@ bool CController::can_psy_fire()
 }
 
 void CController::set_psy_fire_delay_zero() { m_psy_fire_delay = 0; }
+
 void CController::set_psy_fire_delay_default() { m_psy_fire_delay = _pmt_psy_attack_delay; }
 
 //////////////////////////////////////////////////////////////////////////

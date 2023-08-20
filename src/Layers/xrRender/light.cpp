@@ -12,6 +12,7 @@ light::light(void) : ISpatial(g_SpatialSpace)
     flags.bActive = false;
     flags.bShadow = false;
     flags.bVolumetric = false;
+    flags.bActorTorch = false;
     flags.bHudMode = false;
     position.set(0, -1000, 0);
     direction.set(0, -1, 0);
@@ -21,13 +22,13 @@ light::light(void) : ISpatial(g_SpatialSpace)
     color.set(1, 1, 1, 1);
 
     m_volumetric_quality = 1;
-    // m_volumetric_quality	= 0.5;
     m_volumetric_intensity = 1;
     m_volumetric_distance = 1;
 
     frame_render = 0;
 
 #if (RENDER == R_R2) || (RENDER == R_R3) || (RENDER == R_R4)
+    virtual_size = .1f;
     ZeroMemory(omnipart, sizeof(omnipart));
     s_spot = NULL;
     s_point = NULL;
@@ -316,7 +317,7 @@ static Fvector cmNorm[6] = {
 static Fvector cmDir[6] = {
     {1.f, 0.f, 0.f}, {-1.f, 0.f, 0.f}, {0.f, 1.f, 0.f}, {0.f, -1.f, 0.f}, {0.f, 0.f, 1.f}, {0.f, 0.f, -1.f}};
 
-void light::export(light_Package& package)
+void light::_export(light_Package& package)
 {
     if (flags.bShadow)
     {
@@ -338,11 +339,11 @@ void light::export(light_Package& package)
                 L->set_rotation(cmDir[f], R);
                 L->set_cone(PI_DIV_2);
                 L->set_range(range);
+                L->set_virtual_size(virtual_size);
                 L->set_color(color);
                 L->spatial.sector = spatial.sector; //. dangerous?
                 L->s_spot = s_spot;
                 L->s_point = s_point;
-
                 // Holger - do we need to export msaa stuff as well ?
 #if (RENDER == R_R3) || (RENDER == R_R4)
                 if (RImplementation.o.dx10_msaa)

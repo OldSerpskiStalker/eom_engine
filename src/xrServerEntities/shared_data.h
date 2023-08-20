@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 // Singleton template definition
 template <class T>
@@ -16,6 +16,7 @@ public:
 
 public:
     CSingleton() {}
+
     virtual ~CSingleton() { _self = NULL; }
 
     static void DestroySingleton()
@@ -36,6 +37,7 @@ public:
         ++_refcount;
         return _self;
     }
+
     void FreeInst()
     {
         if (0 == --_refcount)
@@ -64,6 +66,7 @@ class CSharedObj : public CSingleton<CSharedObj<SHARED_TYPE, KEY_TYPE>>
 
 public:
     CSharedObj(){};
+
     virtual ~CSharedObj()
     {
         for (SHARED_DATA_MAP_IT it = _shared_tab.begin(); it != _shared_tab.end(); ++it)
@@ -115,6 +118,7 @@ public:
         pSharedObj = CSharedObj<SHARED_TYPE, KEY_TYPE>::Instance();
         pSharedObj->_on_self_delete = auto_delete;
     }
+
     virtual ~CSharedClass() { pSharedObj->FreeInst(); }
 
     static void DeleteSharedData() { CSharedObj<SHARED_TYPE, KEY_TYPE>::DestroySingleton(); }
@@ -135,7 +139,7 @@ public:
     SHARED_TYPE* get_sd() { return _sd; }
     const SHARED_TYPE* get_sd() const { return _sd; }
 
-    // óïðàâëåíèå çàãðóçêîé äàííûõ ïðè êîìïîíåíòíîì ïîäõîäå (çàãðóçêà äàííûõ âðó÷íóþ)
+    // Ã³Ã¯Ã°Ã Ã¢Ã«Ã¥Ã­Ã¨Ã¥ Ã§Ã Ã£Ã°Ã³Ã§ÃªÃ®Ã© Ã¤Ã Ã­Ã­Ã»Ãµ Ã¯Ã°Ã¨ ÃªÃ®Ã¬Ã¯Ã®Ã­Ã¥Ã­Ã²Ã­Ã®Ã¬ Ã¯Ã®Ã¤ÃµÃ®Ã¤Ã¥ (Ã§Ã Ã£Ã°Ã³Ã§ÃªÃ  Ã¤Ã Ã­Ã­Ã»Ãµ Ã¢Ã°Ã³Ã·Ã­Ã³Ã¾)
     bool start_load_shared(KEY_TYPE key)
     {
         _sd = pSharedObj->get_shared(key);
@@ -143,6 +147,7 @@ public:
             return false;
         return true;
     }
+
     void finish_load_shared() { get_sd()->SetLoad(); }
 };
 

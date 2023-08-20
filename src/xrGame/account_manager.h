@@ -3,15 +3,17 @@
 
 #include <boost/noncopyable.hpp>
 #include "mixed_delegate.h"
-#include "GameSpy/GameSpy_FuncDefs.h"
 #include "script_export_space.h"
 #include "queued_async_method.h"
 
 class CGameSpy_GP;
 
+/**/
+struct GPConnection; // HACK, FAKE STRUCT TO PRETEND GAMESPY EXISTS
+/**/
+
 namespace gamespy_gp
 {
-
 struct new_profile_data
 {
     shared_str nick;
@@ -131,7 +133,6 @@ private:
                                                  void * param);*/
     DECLARE_SCRIPT_REGISTER_FUNCTION
 }; // class account_manager
-
 } // namespace gamespy_gp
 
 typedef gamespy_gp::account_manager gamespy_gp_account_manager;

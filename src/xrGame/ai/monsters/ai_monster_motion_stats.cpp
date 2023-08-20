@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "ai_monster_motion_stats.h"
 #include "BaseMonster/base_monster.h"
 
@@ -10,7 +10,7 @@ void CMotionStats::update()
     _new.time = pMonster->m_dwCurrentTime;
     _data[index] = _new;
 
-    // обновить значение index
+    // Г®ГЎГ­Г®ГўГЁГІГј Г§Г­Г Г·ГҐГ­ГЁГҐ index
     if ((index + 1) >= MAX_ELEMS)
     {
         for (u32 i = 0; i < (MAX_ELEMS - 1); i++)
@@ -42,7 +42,7 @@ bool CMotionStats::is_good_motion(u32 elems_checked)
 
     for (u32 i = from_index; i > to_index; i--)
     {
-        // считать только, если все элементы содержат одинаковые скорости
+        // Г±Г·ГЁГІГ ГІГј ГІГ®Г«ГјГЄГ®, ГҐГ±Г«ГЁ ГўГ±ГҐ ГЅГ«ГҐГ¬ГҐГ­ГІГ» Г±Г®Г¤ГҐГ°Г¦Г ГІ Г®Г¤ГЁГ­Г ГЄГ®ГўГ»ГҐ Г±ГЄГ®Г°Г®Г±ГІГЁ
         if (!fsimilar(test_speed, _data[i].speed))
             break;
 

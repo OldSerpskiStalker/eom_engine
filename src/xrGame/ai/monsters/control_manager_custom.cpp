@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "control_manager_custom.h"
 #include "BaseMonster/base_monster.h"
 #include "control_sequencer.h"
@@ -214,7 +214,7 @@ bool CControlManagerCustom::ta_is_active(const SAnimationTripleData& data)
 void CControlManagerCustom::ta_deactivate() { m_man->release(this, ControlCom::eControlTripleAnimation); }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// Ðàáîòà ñ ïîñëåäîâàòåëüíîñòÿìè
+// ÃÃ Ã¡Ã®Ã²Ã  Ã± Ã¯Ã®Ã±Ã«Ã¥Ã¤Ã®Ã¢Ã Ã²Ã¥Ã«Ã¼Ã­Ã®Ã±Ã²Ã¿Ã¬Ã¨
 void CControlManagerCustom::seq_init()
 {
     m_man->capture(this, ControlCom::eControlSequencer);
@@ -387,6 +387,7 @@ void CControlManagerCustom::jump(const Fvector& position)
 
     m_man->activate(ControlCom::eControlJump);
 }
+
 void CControlManagerCustom::script_capture(ControlCom::EControlType type)
 {
     if (!m_man->check_start_conditions(type))
@@ -501,7 +502,7 @@ void CControlManagerCustom::check_jump_over_physics()
     {
         const DetailPathManager::STravelPathPoint& travel_point = m_man->path_builder().detail().path()[i];
 
-        // ïîëó÷èòü ñïèñîê îáúåêòîâ âîêðóã âðàãà
+        // Ã¯Ã®Ã«Ã³Ã·Ã¨Ã²Ã¼ Ã±Ã¯Ã¨Ã±Ã®Ãª Ã®Ã¡ÃºÃ¥ÃªÃ²Ã®Ã¢ Ã¢Ã®ÃªÃ°Ã³Ã£ Ã¢Ã°Ã Ã£Ã 
         m_nearest.clear_not_free();
         Level().ObjectSpace.GetNearest(m_nearest, travel_point.position, m_object->Radius(), NULL);
 
@@ -515,7 +516,7 @@ void CControlManagerCustom::check_jump_over_physics()
 
             Fvector dir = Fvector().sub(travel_point.position, m_object->Position());
 
-            // ïðîâåðêà íà  Field-Of-View
+            // Ã¯Ã°Ã®Ã¢Ã¥Ã°ÃªÃ  Ã­Ã   Field-Of-View
             float my_h = m_object->Direction().getH();
             float h = dir.getH();
 
@@ -527,7 +528,7 @@ void CControlManagerCustom::check_jump_over_physics()
 
             dir = Fvector().sub(obj->Position(), m_object->Position());
 
-            // âû÷èñëèòü öåëåâóþ ïîçèöèþ äëÿ ïðûæêà
+            // Ã¢Ã»Ã·Ã¨Ã±Ã«Ã¨Ã²Ã¼ Ã¶Ã¥Ã«Ã¥Ã¢Ã³Ã¾ Ã¯Ã®Ã§Ã¨Ã¶Ã¨Ã¾ Ã¤Ã«Ã¿ Ã¯Ã°Ã»Ã¦ÃªÃ 
             Fvector target;
             obj->Center(target);
             target.y += obj->Radius();
@@ -582,6 +583,7 @@ void CControlManagerCustom::add_rotation_jump_data(
 
     m_rot_jump_data.push_back(data);
 }
+
 //////////////////////////////////////////////////////////////////////////
 
 void CControlManagerCustom::check_run_attack()
@@ -714,6 +716,7 @@ void CControlManagerCustom::critical_wound(LPCSTR anim)
 
     m_man->activate(ControlCom::eComCriticalWound);
 }
+
 //////////////////////////////////////////////////////////////////////////
 
 void CControlManagerCustom::remove_links(CObject* object)

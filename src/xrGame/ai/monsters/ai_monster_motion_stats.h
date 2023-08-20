@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "ai_monster_defs.h"
 
 class CBaseMonster;
@@ -20,7 +20,7 @@ class CMotionStats
     };
 
     elem _data[MAX_ELEMS];
-    u32 index; // индекс всегда указывает на подготовленное место в массиве
+    u32 index; // ГЁГ­Г¤ГҐГЄГ± ГўГ±ГҐГЈГ¤Г  ГіГЄГ Г§Г»ГўГ ГҐГІ Г­Г  ГЇГ®Г¤ГЈГ®ГІГ®ГўГ«ГҐГ­Г­Г®ГҐ Г¬ГҐГ±ГІГ® Гў Г¬Г Г±Г±ГЁГўГҐ
 
 public:
     CMotionStats(CBaseMonster* pM) : pMonster(pM), index(0){};

@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "../../../Include/xrRender/KinematicsAnimated.h"
 #include "../../../xrEngine/cameramanager.h"
@@ -12,7 +12,7 @@ typedef u32 TTime;
 
 class CBlend;
 
-// специальные параметры анимаций (animation spec params)
+// Г±ГЇГҐГ¶ГЁГ Г«ГјГ­Г»ГҐ ГЇГ Г°Г Г¬ГҐГІГ°Г» Г Г­ГЁГ¬Г Г¶ГЁГ© (animation spec params)
 #define ASP_MOVE_BKWD (1 << 0)
 #define ASP_DRAG_CORPSE (1 << 1)
 #define ASP_CHECK_CORPSE (1 << 2)
@@ -29,8 +29,8 @@ class CBlend;
 #define ASP_UPPER_STATE (1 << 13)
 #define ASP_MOVE_SMELLING (1 << 14)
 
-#define AA_FLAG_ATTACK_RAT (1 << 0) // аттака крыс?
-#define AA_FLAG_FIRE_ANYWAY (1 << 1) // трассировка не нужна
+#define AA_FLAG_ATTACK_RAT (1 << 0) // Г ГІГІГ ГЄГ  ГЄГ°Г»Г±?
+#define AA_FLAG_FIRE_ANYWAY (1 << 1) // ГІГ°Г Г±Г±ГЁГ°Г®ГўГЄГ  Г­ГҐ Г­ГіГ¦Г­Г 
 
 #define CRITICAL_STAND_TIME 1400
 #define TIME_STAND_RECHECK 2000
@@ -93,6 +93,7 @@ struct SVelocityParam
         float angular_path;
         float angular_real;
     } velocity;
+
     float min_factor;
     float max_factor;
 
@@ -265,12 +266,12 @@ enum EPState
 typedef shared_str anim_string;
 #define DEFAULT_ANIM eAnimStandIdle
 
-// элемент анимации
+// ГЅГ«ГҐГ¬ГҐГ­ГІ Г Г­ГЁГ¬Г Г¶ГЁГЁ
 struct SAnimItem
 {
     anim_string target_name; // "stand_idle_"
-    int spec_id; // (-1) - any,  (0 - ...) - идентификатор 3
-    u8 count; // количество анимаций : "idle_0", "idle_1", "idle_2"
+    int spec_id; // (-1) - any,  (0 - ...) - ГЁГ¤ГҐГ­ГІГЁГґГЁГЄГ ГІГ®Г° 3
+    u8 count; // ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г Г­ГЁГ¬Г Г¶ГЁГ© : "idle_0", "idle_1", "idle_2"
 
     SVelocityParam velocity;
 
@@ -287,7 +288,7 @@ struct SAnimItem
 
 #define SKIP_IF_AGGRESSIVE true
 
-// описание перехода
+// Г®ГЇГЁГ±Г Г­ГЁГҐ ГЇГҐГ°ГҐГµГ®Г¤Г 
 struct STransition
 {
     struct
@@ -302,7 +303,7 @@ struct STransition
     bool skip_if_aggressive;
 };
 
-// элемент движения
+// ГЅГ«ГҐГ¬ГҐГ­ГІ Г¤ГўГЁГ¦ГҐГ­ГЁГї
 struct SMotionItem
 {
     EMotionAnim anim;
@@ -316,7 +317,7 @@ struct SMotionItem
     } turn;
 };
 
-// подмена анимаций (если *flag == true, то необходимо заменить анимацию)
+// ГЇГ®Г¤Г¬ГҐГ­Г  Г Г­ГЁГ¬Г Г¶ГЁГ© (ГҐГ±Г«ГЁ *flag == true, ГІГ® Г­ГҐГ®ГЎГµГ®Г¤ГЁГ¬Г® Г§Г Г¬ГҐГ­ГЁГІГј Г Г­ГЁГ¬Г Г¶ГЁГѕ)
 struct SReplacedAnim
 {
     EMotionAnim cur_anim;
@@ -324,22 +325,22 @@ struct SReplacedAnim
     bool* flag;
 };
 
-// Определение времени аттаки по анимации
+// ГЋГЇГ°ГҐГ¤ГҐГ«ГҐГ­ГЁГҐ ГўГ°ГҐГ¬ГҐГ­ГЁ Г ГІГІГ ГЄГЁ ГЇГ® Г Г­ГЁГ¬Г Г¶ГЁГЁ
 typedef struct
 {
-    EMotionAnim anim; // параметры конкретной анимации
+    EMotionAnim anim; // ГЇГ Г°Г Г¬ГҐГІГ°Г» ГЄГ®Г­ГЄГ°ГҐГІГ­Г®Г© Г Г­ГЁГ¬Г Г¶ГЁГЁ
     u32 anim_i3;
 
-    TTime time_from; // диапазон времени когда можно наносить hit (от)
-    TTime time_to; // диапазон времени когда можно наносить hit (до)
+    TTime time_from; // Г¤ГЁГ ГЇГ Г§Г®Г­ ГўГ°ГҐГ¬ГҐГ­ГЁ ГЄГ®ГЈГ¤Г  Г¬Г®Г¦Г­Г® Г­Г Г­Г®Г±ГЁГІГј hit (Г®ГІ)
+    TTime time_to; // Г¤ГЁГ ГЇГ Г§Г®Г­ ГўГ°ГҐГ¬ГҐГ­ГЁ ГЄГ®ГЈГ¤Г  Г¬Г®Г¦Г­Г® Г­Г Г­Г®Г±ГЁГІГј hit (Г¤Г®)
 
-    Fvector trace_from; // направление трассировки (относительно центра)
+    Fvector trace_from; // Г­Г ГЇГ°Г ГўГ«ГҐГ­ГЁГҐ ГІГ°Г Г±Г±ГЁГ°Г®ГўГЄГЁ (Г®ГІГ­Г®Г±ГЁГІГҐГ«ГјГ­Г® Г¶ГҐГ­ГІГ°Г )
     Fvector trace_to;
 
-    u32 flags; // специальные флаги
+    u32 flags; // Г±ГЇГҐГ¶ГЁГ Г«ГјГ­Г»ГҐ ГґГ«Г ГЈГЁ
 
-    float damage; // урон при данной атаке
-    Fvector hit_dir; // угол направления приложения силы к объекту
+    float damage; // ГіГ°Г®Г­ ГЇГ°ГЁ Г¤Г Г­Г­Г®Г© Г ГІГ ГЄГҐ
+    Fvector hit_dir; // ГіГЈГ®Г« Г­Г ГЇГ°Г ГўГ«ГҐГ­ГЁГї ГЇГ°ГЁГ«Г®Г¦ГҐГ­ГЁГї Г±ГЁГ«Г» ГЄ Г®ГЎГєГҐГЄГІГі
 
     //-----------------------------------------
     // temp
@@ -348,7 +349,6 @@ typedef struct
     float pitch_from;
     float pitch_to;
     float dist;
-
 } SAttackAnimation;
 
 struct SAAParam
@@ -388,11 +388,13 @@ struct SCurrentAnimationInfo
             current = v;
             VERIFY2(_abs(v) < 1000, "_set_current(). monster speed is too big");
         }
+
         IC void _set_target(float v)
         {
             target = v;
             VERIFY2(_abs(v) < 1000, "_set_target(). monster speed is too big");
         }
+
         IC float _get_current() { return current; }
         IC float _get_target() { return target; }
 
@@ -455,6 +457,7 @@ struct SMotionVel
 {
     float linear;
     float angular;
+
     void set(float l, float a)
     {
         linear = l;
@@ -495,7 +498,7 @@ enum EAccelValue
 
 #define PATH_NEED_REBUILD() m_object->IsPathEnd(2, 0.5f)
 
-// тип монстра (по количеству ног)
+// ГІГЁГЇ Г¬Г®Г­Г±ГІГ°Г  (ГЇГ® ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГі Г­Г®ГЈ)
 #define QUADRUPEDAL 4
 #define BIPEDAL 2
 

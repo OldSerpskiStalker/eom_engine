@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "control_animation_base.h"
 #include "control_direction_base.h"
 #include "control_movement_base.h"
@@ -42,11 +42,11 @@ void CControlAnimationBase::reinit()
 
     aa_time_last_attack = 0;
 
-    // обновить количество анимаций
+    // Г®ГЎГ­Г®ГўГЁГІГј ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г Г­ГЁГ¬Г Г¶ГЁГ©
     m_anim_motion_map.clear();
     UpdateAnimCount();
 
-    // инициализация информации о текущей анимации
+    // ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГЁ Г® ГІГҐГЄГіГ№ГҐГ© Г Г­ГЁГ¬Г Г¶ГЁГЁ
     m_cur_anim.set_motion(eAnimStandIdle);
     m_cur_anim.index = 0;
     m_cur_anim.time_started = 0;
@@ -193,14 +193,14 @@ void CControlAnimationBase::select_animation(bool anim_end)
     else
         m_state_attack = false;
 
-    // перекрыть все определения и установть анимацию
+    // ГЇГҐГ°ГҐГЄГ°Г»ГІГј ГўГ±ГҐ Г®ГЇГ°ГҐГ¤ГҐГ«ГҐГ­ГЁГї ГЁ ГіГ±ГІГ Г­Г®ГўГІГј Г Г­ГЁГ¬Г Г¶ГЁГѕ
     m_object->ForceFinalAnimation();
 
-    // получить элемент SAnimItem, соответствующий текущей анимации
+    // ГЇГ®Г«ГіГ·ГЁГІГј ГЅГ«ГҐГ¬ГҐГ­ГІ SAnimItem, Г±Г®Г®ГІГўГҐГІГ±ГІГўГіГѕГ№ГЁГ© ГІГҐГЄГіГ№ГҐГ© Г Г­ГЁГ¬Г Г¶ГЁГЁ
     SAnimItem* anim_it = m_anim_storage[cur_anim_info().get_motion()];
     VERIFY(anim_it);
 
-    // определить необходимый индекс
+    // Г®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј Г­ГҐГ®ГЎГµГ®Г¤ГЁГ¬Г»Г© ГЁГ­Г¤ГҐГЄГ±
     int index;
 
     if (m_override_animation == cur_anim_info().get_motion() && m_override_animation_index != (u32)-1)
@@ -219,7 +219,7 @@ void CControlAnimationBase::select_animation(bool anim_end)
         index = ::Random.randI(anim_it->count);
     }
 
-    // установить анимацию
+    // ГіГ±ГІГ Г­Г®ГўГЁГІГј Г Г­ГЁГ¬Г Г¶ГЁГѕ
     string128 s1, s2;
     MotionID cur_anim = smart_cast<IKinematicsAnimated*>(m_object->Visual())
                             ->ID_Cycle_Safe(strconcat(sizeof(s2), s2, *anim_it->target_name, itoa(index, s1, 10)));
@@ -231,7 +231,7 @@ void CControlAnimationBase::select_animation(bool anim_end)
     ctrl_data->global.actual = false;
     ctrl_data->set_speed(m_cur_anim.speed._get_target());
 
-    // Заполнить текущую анимацию
+    // Г‡Г ГЇГ®Г«Г­ГЁГІГј ГІГҐГЄГіГ№ГіГѕ Г Г­ГЁГ¬Г Г¶ГЁГѕ
     string64 st, tmp;
     strconcat(sizeof(st), st, *anim_it->target_name, itoa(index, tmp, 10));
     //	xr_sprintf		(st, "%s%d", *anim_it->second.target_name, index);
@@ -242,13 +242,13 @@ void CControlAnimationBase::select_animation(bool anim_end)
     m_cur_anim.speed._set_target(-1.f);
 }
 
-// проверить существует ли переход из анимации from в to
+// ГЇГ°Г®ГўГҐГ°ГЁГІГј Г±ГіГ№ГҐГ±ГІГўГіГҐГІ Г«ГЁ ГЇГҐГ°ГҐГµГ®Г¤ ГЁГ§ Г Г­ГЁГ¬Г Г¶ГЁГЁ from Гў to
 bool CControlAnimationBase::CheckTransition(EMotionAnim from, EMotionAnim to)
 {
     if (!m_man->check_start_conditions(ControlCom::eControlSequencer))
         return false;
 
-    // поиск соответствующего перехода
+    // ГЇГ®ГЁГ±ГЄ Г±Г®Г®ГІГўГҐГІГ±ГІГўГіГѕГ№ГҐГЈГ® ГЇГҐГ°ГҐГµГ®Г¤Г 
     bool b_activated = false;
     EMotionAnim cur_from = from;
     EPState state_from = GetState(cur_from);
@@ -258,7 +258,8 @@ bool CControlAnimationBase::CheckTransition(EMotionAnim from, EMotionAnim to)
     bool bVectEmpty = m_tTransitions.empty();
 
     while (!bVectEmpty)
-    { // вход в цикл, если вектор переходов не пустой
+    {
+        // ГўГµГ®Г¤ Гў Г¶ГЁГЄГ«, ГҐГ±Г«ГЁ ГўГҐГЄГІГ®Г° ГЇГҐГ°ГҐГµГ®Г¤Г®Гў Г­ГҐ ГЇГіГ±ГІГ®Г©
 
         bool from_is_good = ((I->from.state_used) ? (I->from.state == state_from) : (I->from.anim == cur_from));
         bool target_is_good = ((I->target.state_used) ? (I->target.state == state_to) : (I->target.anim == to));
@@ -267,7 +268,7 @@ bool CControlAnimationBase::CheckTransition(EMotionAnim from, EMotionAnim to)
         {
             // if (I->skip_if_aggressive && m_object->m_bAggressive) return;
 
-            // переход годится
+            // ГЇГҐГ°ГҐГµГ®Г¤ ГЈГ®Г¤ГЁГІГ±Гї
             if (!b_activated)
             {
                 m_object->com_man().seq_init();
@@ -280,7 +281,7 @@ bool CControlAnimationBase::CheckTransition(EMotionAnim from, EMotionAnim to)
             {
                 cur_from = I->anim_transition;
                 state_from = GetState(cur_from);
-                I = m_tTransitions.begin(); // начать сначала
+                I = m_tTransitions.begin(); // Г­Г Г·Г ГІГј Г±Г­Г Г·Г Г«Г 
                 continue;
             }
             else
@@ -311,7 +312,7 @@ void CControlAnimationBase::CheckReplacedAnim()
 
 SAAParam& CControlAnimationBase::AA_GetParams(LPCSTR anim_name)
 {
-    // искать текущую анимацию в AA_VECTOR
+    // ГЁГ±ГЄГ ГІГј ГІГҐГЄГіГ№ГіГѕ Г Г­ГЁГ¬Г Г¶ГЁГѕ Гў AA_VECTOR
     MotionID motion = smart_cast<IKinematicsAnimated*>(m_object->Visual())->LL_MotionID(anim_name);
 
     for (AA_VECTOR_IT it = m_attack_anims.begin(); it != m_attack_anims.end(); it++)
@@ -326,7 +327,7 @@ SAAParam& CControlAnimationBase::AA_GetParams(LPCSTR anim_name)
 
 SAAParam& CControlAnimationBase::AA_GetParams(MotionID motion, float time_perc)
 {
-    // искать текущую анимацию в AA_VECTOR
+    // ГЁГ±ГЄГ ГІГј ГІГҐГЄГіГ№ГіГѕ Г Г­ГЁГ¬Г Г¶ГЁГѕ Гў AA_VECTOR
     for (AA_VECTOR_IT it = m_attack_anims.begin(); it != m_attack_anims.end(); it++)
     {
         if ((it->motion == motion) && (it->time == time_perc))
@@ -339,7 +340,7 @@ SAAParam& CControlAnimationBase::AA_GetParams(MotionID motion, float time_perc)
 
 EPState CControlAnimationBase::GetState(EMotionAnim a)
 {
-    // найти анимацию
+    // Г­Г Г©ГІГЁ Г Г­ГЁГ¬Г Г¶ГЁГѕ
     SAnimItem* item_it = m_anim_storage[a];
     VERIFY2(item_it, make_string("animation not found in m_anim_storage!"));
 
@@ -420,7 +421,7 @@ EAction CControlAnimationBase::VelocityIndex2Action(u32 velocity_index)
     case MonsterMovement::eVelocityParameterWalkGrowl:
         return ACT_HOME_WALK_GROWL;
         // jump
-    // case MonsterMovement::eBloodsuckerVelocityParameterJumpGround:	return ACT_JUMP;
+        // case MonsterMovement::eBloodsuckerVelocityParameterJumpGround:	return ACT_JUMP;
     case MonsterMovement::eVelocityParameterInvisible: return ACT_RUN;
     }
 
@@ -510,7 +511,7 @@ void CControlAnimationBase::UpdateAnimCount()
         if (!(*it))
             continue;
 
-        // проверить, были ли уже загружены данные
+        // ГЇГ°Г®ГўГҐГ°ГЁГІГј, ГЎГ»Г«ГЁ Г«ГЁ ГіГ¦ГҐ Г§Г ГЈГ°ГіГ¦ГҐГ­Г» Г¤Г Г­Г­Г»ГҐ
         if ((*it)->count != 0)
             return;
 
@@ -557,6 +558,7 @@ void CControlAnimationBase::AddAnimTranslation(const MotionID& motion, LPCSTR st
 {
     m_anim_motion_map.insert(mk_pair(motion, str));
 }
+
 shared_str CControlAnimationBase::GetAnimTranslation(const MotionID& motion)
 {
     shared_str ret_value;
@@ -570,11 +572,11 @@ shared_str CControlAnimationBase::GetAnimTranslation(const MotionID& motion)
 
 MotionID CControlAnimationBase::get_motion_id(EMotionAnim a, u32 index)
 {
-    // получить элемент SAnimItem, соответствующий текущей анимации
+    // ГЇГ®Г«ГіГ·ГЁГІГј ГЅГ«ГҐГ¬ГҐГ­ГІ SAnimItem, Г±Г®Г®ГІГўГҐГІГ±ГІГўГіГѕГ№ГЁГ© ГІГҐГЄГіГ№ГҐГ© Г Г­ГЁГ¬Г Г¶ГЁГЁ
     SAnimItem* anim_it = m_anim_storage[a];
     VERIFY(anim_it);
 
-    // определить необходимый индекс
+    // Г®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј Г­ГҐГ®ГЎГµГ®Г¤ГЁГ¬Г»Г© ГЁГ­Г¤ГҐГЄГ±
     if (index == u32(-1))
     {
         if (-1 != anim_it->spec_id)
@@ -617,13 +619,13 @@ void CControlAnimationBase::check_hit(MotionID motion, float time_perc)
     m_object->sound().play(MonsterSound::eMonsterSoundAttackHit);
 
     bool should_hit = true;
-    // определить дистанцию до врага
+    // Г®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј Г¤ГЁГ±ГІГ Г­Г¶ГЁГѕ Г¤Г® ГўГ°Г ГЈГ 
     Fvector d;
     d.sub(enemy->Position(), m_object->Position());
     if (d.magnitude() > params.dist)
         should_hit = false;
 
-    // проверка на  Field-Of-Hit
+    // ГЇГ°Г®ГўГҐГ°ГЄГ  Г­Г   Field-Of-Hit
     float my_h, my_p;
     float h, p;
 

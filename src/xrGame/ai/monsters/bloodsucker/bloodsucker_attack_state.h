@@ -37,6 +37,7 @@ public:
     struct StateParams : SStateDataMoveToPointEx
     {
         bool start_with_encircle;
+
         StateParams() : start_with_encircle(false) {}
     } data;
 
@@ -48,7 +49,9 @@ protected:
 
 public:
     CStateMonsterBackstubEnemy(_Object* obj) : inherited(obj, &data) {}
+
     virtual ~CStateMonsterBackstubEnemy() {}
+
     virtual void initialize();
     virtual void execute();
     virtual bool check_start_conditions();

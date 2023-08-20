@@ -16,11 +16,13 @@ private:
     bool select_target_for_move();
 
     Fvector correct_jump_pos(Fvector const& pos);
+
     enum enum_action
     {
         action_jump,
         action_attack
     };
+
     bool select_target_for_jump(enum_action action);
     bool select_target_for_attack_jump();
 
@@ -43,6 +45,7 @@ private:
         run_side_left,
         run_side_right,
     };
+
     enum_run_side m_run_side;
     TTime m_run_side_select_tick;
 
@@ -52,6 +55,7 @@ private:
         state_rotate,
         state_prepare_jump
     };
+
     enum_state m_state;
     TTime m_state_end_tick;
 
@@ -73,7 +77,6 @@ private:
     bool m_attack_jump;
 
     float m_min_run_distance;
-
 }; // ChimeraAttackState
 
 #include "chimera_attack_state_inline.h"

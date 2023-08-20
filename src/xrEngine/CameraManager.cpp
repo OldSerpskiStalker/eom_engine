@@ -78,6 +78,7 @@ SPPInfo::SPPInfo()
     cm_influence = 0.0f;
     cm_interpolate = 0.0f;
 }
+
 void SPPInfo::normalize() {}
 
 void SPPInfo::validate(LPCSTR str)

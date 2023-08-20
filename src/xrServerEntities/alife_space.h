@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
+п»ї////////////////////////////////////////////////////////////////////////////
 //	Module 		: alife_space.h
 //	Created 	: 08.01.2002
 //  Modified 	: 08.01.2003
@@ -100,7 +100,8 @@ enum EHitType
     eHitTypeFireWound,
     eHitTypeStrike,
     eHitTypeExplosion,
-    eHitTypeWound_2, // knife's alternative fire
+    eHitTypeWound_2,
+    // knife's alternative fire
     //		eHitTypePhysicStrike,
     eHitTypeLightBurn,
     eHitTypeMax,
@@ -120,6 +121,7 @@ enum EConditionRestoreType
 {
     eHealthRestoreSpeed = u32(0),
     eSatietyRestoreSpeed,
+    eThirstRestoreSpeed,
     ePowerRestoreSpeed,
     eBleedingRestoreSpeed,
     eRadiationRestoreSpeed,
@@ -151,12 +153,14 @@ enum ECombatType
     eCombatTypeDummy = u32(-1),
 };
 
-// возможность подключения аддонов
+// ГўГ®Г§Г¬Г®Г¦Г­Г®Г±ГІГј ГЇГ®Г¤ГЄГ«ГѕГ·ГҐГ­ГЁГї Г Г¤Г¤Г®Г­Г®Гў
 enum EWeaponAddonStatus
 {
-    eAddonDisabled = 0, // нельзя присоеденить
-    eAddonPermanent = 1, // постоянно подключено по умолчанию
-    eAddonAttachable = 2 // можно присоединять
+    eAddonDisabled = 0,
+    // Г­ГҐГ«ГјГ§Гї ГЇГ°ГЁГ±Г®ГҐГ¤ГҐГ­ГЁГІГј
+    eAddonPermanent = 1,
+    // ГЇГ®Г±ГІГ®ГїГ­Г­Г® ГЇГ®Г¤ГЄГ«ГѕГ·ГҐГ­Г® ГЇГ® ГіГ¬Г®Г«Г·Г Г­ГЁГѕ
+    eAddonAttachable = 2 // Г¬Г®Г¦Г­Г® ГЇГ°ГЁГ±Г®ГҐГ¤ГЁГ­ГїГІГј
 };
 
 IC EHitType g_tfString2HitType(LPCSTR caHitType)

@@ -167,9 +167,13 @@ public:
     Fvector4 hemi_color; // w = R2 correction
     Fvector3 sun_color;
     Fvector3 sun_dir;
+
+    float clouds_velocity_0; // skyloader: speed of clouds
+    float clouds_velocity_1; // skyloader: speed of second clouds
+
     float m_fSunShaftsIntensity;
     float m_fWaterIntensity;
-
+    float m_fRainDropsIntensity;
 #ifdef TREE_WIND_EFFECT
     float m_fTreeAmplitudeIntensity;
 #endif
@@ -197,6 +201,18 @@ public:
     void on_device_destroy();
 
     shared_str m_identifier;
+
+    bool nightvision_enabled;
+    float nightvision_ambi_add;
+    float nightvision_hemi_add;
+    int test_helmet_shaders;
+    bool test_helmet_shaders_enabler;
+    bool test_scope_shader;
+    bool test_scope_shader_enabler;
+    int hit_power_test;
+    float hit_power_test_power;
+    float health_current;
+    float bleending_speed;
 };
 
 class ENGINE_API CEnvDescriptorMixer : public CEnvDescriptor
@@ -212,6 +228,8 @@ public:
 
     float fog_near;
     float fog_far;
+    float ambi_nv_add;
+    float hemi_nv_add;
 
 public:
     CEnvDescriptorMixer(shared_str const& identifier);

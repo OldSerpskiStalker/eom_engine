@@ -12,9 +12,6 @@
 
 // #include "securom_api.h"
 
-extern float ps_r2_sun_shafts_min;
-extern float ps_r2_sun_shafts_value;
-
 void CEnvModifier::load(IReader* fs, u32 version)
 {
     use_flags.one();
@@ -215,6 +212,8 @@ CEnvDescriptor::CEnvDescriptor(shared_str const& identifier) : m_identifier(iden
 
     wind_velocity = 0.0f;
     wind_direction = 0.0f;
+    clouds_velocity_0 = 0.0f;
+    clouds_velocity_1 = 0.0f;
 
     ambient.set(0, 0, 0);
     hemi_color.set(1, 1, 1, 1);
@@ -223,6 +222,7 @@ CEnvDescriptor::CEnvDescriptor(shared_str const& identifier) : m_identifier(iden
 
     m_fSunShaftsIntensity = 0;
     m_fWaterIntensity = 1;
+    m_fRainDropsIntensity = 0; // Max - 1.5
 
 #ifdef TREE_WIND_EFFECT
     m_fTreeAmplitudeIntensity = 0.01;
@@ -232,6 +232,9 @@ CEnvDescriptor::CEnvDescriptor(shared_str const& identifier) : m_identifier(iden
     tb_id = "";
 
     env_ambient = NULL;
+    nightvision_enabled = false;
+    nightvision_ambi_add = pSettings->r_float("nightvision_light", "r2_ambi_nv_add");
+    nightvision_hemi_add = pSettings->r_float("nightvision_light", "r2_hemi_nv_add");
 }
 
 #define C_CHECK(C)                                                                                                     \
@@ -271,22 +274,30 @@ void CEnvDescriptor::load(CEnvironment& environment, CInifile& config)
     fog_density = config.r_float(m_identifier.c_str(), "fog_density");
     fog_distance = config.r_float(m_identifier.c_str(), "fog_distance");
     rain_density = config.r_float(m_identifier.c_str(), "rain_density");
-    clamp(rain_density, 0.f, 1.f);
+    clamp(rain_density, 0.f, 4.f);
+    if (rain_density >= 0.01)
+        rain_density += Random.randF(0.0f, 1.4f); // probability for random rain density
+
     rain_color = config.r_fvector3(m_identifier.c_str(), "rain_color");
     wind_velocity = config.r_float(m_identifier.c_str(), "wind_velocity");
+    clouds_velocity_0 = config.line_exist(m_identifier.c_str(), "clouds_velocity_0") ?
+        config.r_float(m_identifier.c_str(), "clouds_velocity_0") :
+        0.1f;
+    clouds_velocity_1 = config.line_exist(m_identifier.c_str(), "clouds_velocity_1") ?
+        config.r_float(m_identifier.c_str(), "clouds_velocity_1") :
+        0.05f;
     wind_direction = deg2rad(config.r_float(m_identifier.c_str(), "wind_direction"));
     ambient = config.r_fvector3(m_identifier.c_str(), "ambient_color");
     hemi_color = config.r_fvector4(m_identifier.c_str(), "hemisphere_color");
     sun_color = config.r_fvector3(m_identifier.c_str(), "sun_color");
-    // if (config.line_exist(m_identifier.c_str(),"sun_altitude"))
-    sun_dir.setHP(deg2rad(config.r_float(m_identifier.c_str(), "sun_altitude")),
-        deg2rad(config.r_float(m_identifier.c_str(), "sun_longitude")));
+    if (config.line_exist(m_identifier.c_str(), "sun_altitude"))
+        sun_dir.setHP(deg2rad(config.r_float(m_identifier.c_str(), "sun_altitude")),
+            deg2rad(config.r_float(m_identifier.c_str(), "sun_longitude")));
+    else
+        sun_dir.setHP(deg2rad(config.r_fvector2(m_identifier.c_str(), "sun_dir").y),
+            deg2rad(config.r_fvector2(m_identifier.c_str(), "sun_dir").x));
+
     R_ASSERT(_valid(sun_dir));
-    // else
-    // sun_dir.setHP (
-    // deg2rad(config.r_fvector2(m_identifier.c_str(),"sun_dir").y),
-    // deg2rad(config.r_fvector2(m_identifier.c_str(),"sun_dir").x)
-    // );
     // AVO: commented to allow COC run in debug. I belive Cromm set longtitude to negative value in AF3 and that's why
     // it is failing here VERIFY2(sun_dir.y < 0, "Invalid sun direction settings while loading");
 
@@ -307,8 +318,11 @@ void CEnvDescriptor::load(CEnvironment& environment, CInifile& config)
         m_fWaterIntensity = config.r_float(m_identifier.c_str(), "water_intensity");
 
 #ifdef TREE_WIND_EFFECT
-    if (config.line_exist(m_identifier.c_str(), "tree_amplitude_intensity"))
-        m_fTreeAmplitudeIntensity = config.r_float(m_identifier.c_str(), "tree_amplitude_intensity");
+    float def_min_TAI = 0.01f, def_max_TAI = 0.07f;
+    const float def_TAI = def_min_TAI +
+        (rain_density * (def_max_TAI - def_min_TAI)); // Если не прописано, дефолт будет рассчитываться от силы дождя.
+    m_fTreeAmplitudeIntensity = READ_IF_EXISTS(
+        reinterpret_cast<CInifile*>(&config), r_float, m_identifier.c_str(), "tree_amplitude_intensity", def_TAI);
 #endif
 
     C_CHECK(clouds_color);
@@ -349,7 +363,11 @@ void CEnvDescriptor::on_device_destroy()
 //-----------------------------------------------------------------------------
 // Environment Mixer
 //-----------------------------------------------------------------------------
-CEnvDescriptorMixer::CEnvDescriptorMixer(shared_str const& identifier) : CEnvDescriptor(identifier) {}
+CEnvDescriptorMixer::CEnvDescriptorMixer(shared_str const& identifier) : CEnvDescriptor(identifier)
+{
+    ambi_nv_add = pSettings->r_float("nightvision_light", "ambi_nv_add");
+    hemi_nv_add = pSettings->r_float("nightvision_light", "hemi_nv_add");
+}
 
 void CEnvDescriptorMixer::destroy()
 {
@@ -452,13 +470,12 @@ void CEnvDescriptorMixer::lerp(
     wind_velocity = fi * A.wind_velocity + f * B.wind_velocity;
     wind_direction = fi * A.wind_direction + f * B.wind_direction;
 
+    clouds_velocity_0 = fi * A.clouds_velocity_0 + f * B.clouds_velocity_0;
+    clouds_velocity_1 = fi * A.clouds_velocity_1 + f * B.clouds_velocity_1;
+
     m_fSunShaftsIntensity = fi * A.m_fSunShaftsIntensity + f * B.m_fSunShaftsIntensity;
     m_fWaterIntensity = fi * A.m_fWaterIntensity + f * B.m_fWaterIntensity;
-
-    m_fSunShaftsIntensity *= 1.0f - ps_r2_sun_shafts_min;
-    m_fSunShaftsIntensity += ps_r2_sun_shafts_min;
-    m_fSunShaftsIntensity *= ps_r2_sun_shafts_value;
-    clamp(m_fSunShaftsIntensity, 0.0f, 1.0f);
+    m_fRainDropsIntensity = fi * A.m_fRainDropsIntensity + f * B.m_fRainDropsIntensity;
 
 #ifdef TREE_WIND_EFFECT
     m_fTreeAmplitudeIntensity = fi * A.m_fTreeAmplitudeIntensity + f * B.m_fTreeAmplitudeIntensity;
@@ -475,6 +492,9 @@ void CEnvDescriptorMixer::lerp(
     if (Mdf.use_flags.test(eAmbientColor))
         ambient.add(Mdf.ambient).mul(modif_power);
 
+    if (nightvision_enabled)
+        ambient.add(ambi_nv_add);
+
     hemi_color.lerp(A.hemi_color, B.hemi_color, f);
 
     if (Mdf.use_flags.test(eHemiColor))
@@ -485,6 +505,13 @@ void CEnvDescriptorMixer::lerp(
         hemi_color.x *= modif_power;
         hemi_color.y *= modif_power;
         hemi_color.z *= modif_power;
+    }
+
+    if (nightvision_enabled)
+    {
+        hemi_color.x += hemi_nv_add;
+        hemi_color.y += hemi_nv_add;
+        hemi_color.z += hemi_nv_add;
     }
 
     sun_color.lerp(A.sun_color, B.sun_color, f);

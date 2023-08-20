@@ -25,6 +25,7 @@ void CStateCaptureJumpBloodsuckerAbstract::execute()
     get_state_current()->execute();
     prev_substate = current_substate;
 }
+
 TEMPLATE_SPECIALIZATION
 void CStateCaptureJumpBloodsuckerAbstract::setup_substates()
 {

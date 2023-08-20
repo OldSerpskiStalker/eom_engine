@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "control_path_builder_base.h"
 #include "BaseMonster/base_monster.h"
 #include "../../level_graph.h"
@@ -36,13 +36,13 @@ void CControlPathBuilderBase::prepare_builder()
 //////////////////////////////////////////////////////////////////////////
 void CControlPathBuilderBase::set_target_point(const Fvector& position, u32 node)
 {
-    // обновить актуальность
+    // Г®ГЎГ­Г®ГўГЁГІГј Г ГЄГІГіГ Г«ГјГ­Г®Г±ГІГј
     m_target_actual = m_target_actual && (m_target_set.position().similar(position) && (m_target_set.node() == node));
 
-    // установить позицию
+    // ГіГ±ГІГ Г­Г®ГўГЁГІГј ГЇГ®Г§ГЁГ¶ГЁГѕ
     m_target_set.set(position, node);
 
-    // установить глобальные параметры передвижения
+    // ГіГ±ГІГ Г­Г®ГўГЁГІГј ГЈГ«Г®ГЎГ Г«ГјГ­Г»ГҐ ГЇГ Г°Г Г¬ГҐГІГ°Г» ГЇГҐГ°ГҐГ¤ГўГЁГ¦ГҐГ­ГЁГї
     m_target_type = eMoveToTarget;
 
     set_level_path_type();
@@ -55,13 +55,13 @@ void CControlPathBuilderBase::set_target_point(u32 node)
 
 void CControlPathBuilderBase::set_retreat_from_point(const Fvector& position)
 {
-    // обновить актуальность
+    // Г®ГЎГ­Г®ГўГЁГІГј Г ГЄГІГіГ Г«ГјГ­Г®Г±ГІГј
     m_target_actual = m_target_actual && (m_target_set.position().similar(position));
 
-    // установить позицию
+    // ГіГ±ГІГ Г­Г®ГўГЁГІГј ГЇГ®Г§ГЁГ¶ГЁГѕ
     m_target_set.set(position, u32(-1));
 
-    // установить глобальные параметры передвижения
+    // ГіГ±ГІГ Г­Г®ГўГЁГІГј ГЈГ«Г®ГЎГ Г«ГјГ­Г»ГҐ ГЇГ Г°Г Г¬ГҐГІГ°Г» ГЇГҐГ°ГҐГ¤ГўГЁГ¦ГҐГ­ГЁГї
     m_target_type = eRetreatFromTarget;
 
     set_level_path_type();

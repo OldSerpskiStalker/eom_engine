@@ -8,6 +8,8 @@
 #include "IGame_ObjectPool.h"
 #endif
 
+#include "ShadersExternalData.h" //--#SM+#--
+
 class IRenderVisual;
 class IMainMenu;
 class ENGINE_API CPS_Instance;
@@ -72,6 +74,7 @@ public:
     void Prefetch();
 #endif
     IMainMenu* m_pMainMenu;
+    ShadersExternalData* m_pGShaderConstants; //--#SM+#--
 
     virtual bool OnRenderPPUI_query() { return FALSE; }; // should return true if we want to have second function called
     virtual void OnRenderPPUI_main(){};
@@ -109,6 +112,14 @@ public:
     }
 #endif
 
+    struct act_dat
+    {
+        float health;
+        float stamina;
+        float bleeding;
+        float radiation;
+    } actor_data;
+
     IGame_Persistent();
     virtual ~IGame_Persistent();
 
@@ -121,6 +132,7 @@ public:
     }
 #endif
     virtual void LoadTitle(bool change_tip = false, shared_str map_name = "") {}
+    virtual void SetLoadStageTitle(pcstr /*ls_title*/) {}
     virtual bool CanBePaused() { return true; }
 };
 

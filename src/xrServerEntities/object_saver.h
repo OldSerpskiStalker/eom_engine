@@ -188,6 +188,7 @@ struct CEmptyPredicate
     {
         return (true);
     }
+
     template <typename T1, typename T2>
     IC bool operator()(const T1& data, const T2& value, bool) const
     {

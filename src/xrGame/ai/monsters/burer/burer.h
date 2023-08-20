@@ -52,7 +52,6 @@ public:
         }
 
         void deactivate() { active = false; }
-
     } m_gravi_object;
 
     LPCSTR particle_gravi_wave;
@@ -74,6 +73,7 @@ public:
         eMonsterSoundGraviAttack = eAdditionalSounds | 0,
         eMonsterSoundTeleAttack = eAdditionalSounds | 1,
     };
+
     //////////////////////////////////////////////////////////////////////////
 
     struct gravi_params
@@ -88,7 +88,6 @@ public:
         float impulse_to_objects;
         float impulse_to_enemy;
         float hit_power;
-
     } m_gravi;
 
     u32 m_tele_max_handled_objects;

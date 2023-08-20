@@ -57,6 +57,7 @@ struct CLoader
                 object_type_traits::detail::other<typename _P::value_compare>*);
             template <typename _P>
             static object_type_traits::detail::no select(...);
+
             enum
             {
                 value = sizeof(object_type_traits::detail::yes) == sizeof(select<T>(0))
@@ -285,16 +286,19 @@ struct CEmptyPredicate
     IC void after_load(T1& data, T2& stream) const
     {
     }
+
     template <typename T1, typename T2>
     IC bool operator()(T1& data, const T2& value) const
     {
         return (true);
     }
+
     template <typename T1, typename T2>
     IC bool operator()(T1& data, const T2& value, bool) const
     {
         return (true);
     }
+
     IC bool can_clear() const { return (true); }
     IC bool can_add() const { return (true); }
 };

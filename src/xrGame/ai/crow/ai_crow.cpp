@@ -165,7 +165,9 @@ void CAI_Crow::net_Destroy()
 
 // crow update
 void CAI_Crow::switch2_FlyUp() { smart_cast<IKinematicsAnimated*>(Visual())->PlayCycle(m_Anims.m_fly.GetRandom()); }
+
 void CAI_Crow::switch2_FlyIdle() { smart_cast<IKinematicsAnimated*>(Visual())->PlayCycle(m_Anims.m_idle.GetRandom()); }
+
 void CAI_Crow::switch2_DeathDead()
 {
     // AI need to pickup this
@@ -175,6 +177,7 @@ void CAI_Crow::switch2_DeathDead()
     //
     smart_cast<IKinematicsAnimated*>(Visual())->PlayCycle(m_Anims.m_death_dead.GetRandom());
 }
+
 void CAI_Crow::switch2_DeathFall()
 {
     Fvector V;
@@ -195,13 +198,15 @@ void CAI_Crow::state_Flying(float fdt)
 
     // First, tweak the pitch
     if (vOffset.y > 1.0)
-    { // We're too low
+    {
+        // We're too low
         vHPB.y += fAT;
         if (vHPB.y > 0.8f)
             vHPB.y = 0.8f;
     }
     else if (vOffset.y < -1.0)
-    { // We're too high
+    {
+        // We're too high
         vHPB.y -= fAT;
         if (vHPB.y < -0.8f)
             vHPB.y = -0.8f;
@@ -233,10 +238,13 @@ void CAI_Crow::state_Flying(float fdt)
     vOldPosition.set(Position());
     XFORM().setHPB(vHPB.x, vHPB.y, vHPB.z);
     Position().mad(vOldPosition, vDirection, fSpeed * fdt);
+#ifdef DEBUG
     VERIFY2(valid_pos(Position()), dbg_valide_pos_string(Position(), this, "state_Flying		(float fdt)"));
+#endif
 }
 
 static Fvector vV = {0, 0, 0};
+
 void CAI_Crow::state_DeathFall()
 {
     Fvector tAcceleration;
@@ -256,20 +264,23 @@ void CAI_Crow::state_DeathFall()
         smart_cast<IKinematicsAnimated*>(Visual())->PlayCycle(m_Anims.m_death_idle.GetRandom());
         bPlayDeathIdle = false;
     }
+#ifdef DEBUG
     VERIFY2(valid_pos(Position()), dbg_valide_pos_string(Position(), this, "CAI_Crow::state_DeathFall()"));
+#endif
 }
 
 void CAI_Crow::Die(CObject* who)
 {
     inherited::Die(who);
     processing_activate(); // enable UpdateCL for dead crows - especially for physics support
-                           // and do it especially before Creating physics shell or it definitely throws processing
-                           // enable/disable calls: underflow
+    // and do it especially before Creating physics shell or it definitely throws processing enable/disable calls:
+    // underflow
     CreateSkeleton();
 
     const CGameObject* who_object = smart_cast<const CGameObject*>(who);
     callback(GameObject::eDeath)(lua_game_object(), who_object ? who_object->lua_game_object() : 0);
 };
+
 void CAI_Crow::UpdateWorkload(float fdt)
 {
     if (o_workload_frame == Device.dwFrame)
@@ -282,22 +293,27 @@ void CAI_Crow::UpdateWorkload(float fdt)
     case eDeathFall: state_DeathFall(); break;
     }
 }
+
 void CAI_Crow::UpdateCL()
 {
     inherited::UpdateCL();
+#ifdef DEBUG
     VERIFY2(valid_pos(Position()), dbg_valide_pos_string(Position(), this, " CAI_Crow::UpdateCL		()"));
+#endif
     if (m_pPhysicsShell)
     {
         m_pPhysicsShell->Update();
         XFORM().set(m_pPhysicsShell->mXFORM);
     }
 }
+
 void CAI_Crow::renderable_Render()
 {
     UpdateWorkload(Device.fTimeDelta);
     inherited::renderable_Render();
     o_workload_rframe = Device.dwFrame;
 }
+
 void CAI_Crow::shedule_Update(u32 DT)
 {
     float fDT = float(DT) / 1000.F;
@@ -358,7 +374,9 @@ void CAI_Crow::shedule_Update(u32 DT)
         ;
     else
         UpdateWorkload(fDT);
+#ifdef DEBUG
     VERIFY2(valid_pos(Position()), dbg_valide_pos_string(Position(), this, " CAI_Crow::shedule_Update		(u32 DT)"));
+#endif
 }
 
 // Core events
@@ -387,6 +405,7 @@ void CAI_Crow::net_Export(NET_Packet& P) // export to server
     P.w_u8(u8(g_Squad()));
     P.w_u8(u8(g_Group()));
 }
+
 //---------------------------------------------------------------------
 void CAI_Crow::net_Import(NET_Packet& P)
 {
@@ -413,8 +432,11 @@ void CAI_Crow::net_Import(NET_Packet& P)
     id_Group = P.r_u8();
 
     XFORM().setHPB(yaw, pitch, bank);
+#ifdef DEBUG
     VERIFY2(valid_pos(Position()), dbg_valide_pos_string(Position(), this, " CAI_Crow::net_Import	(NET_Packet& P)"));
+#endif
 }
+
 //---------------------------------------------------------------------
 void CAI_Crow::HitSignal(float /**HitAmount/**/, Fvector& /**local_dir/**/, CObject* who, s16 /**element/**/)
 {
@@ -430,8 +452,10 @@ void CAI_Crow::HitSignal(float /**HitAmount/**/, Fvector& /**local_dir/**/, CObj
     else
         smart_cast<IKinematicsAnimated*>(Visual())->PlayCycle(m_Anims.m_death_dead.GetRandom());
 }
+
 //---------------------------------------------------------------------
 void CAI_Crow::HitImpulse(float /**amount/**/, Fvector& /**vWorldDir/**/, Fvector& /**vLocalDir/**/) {}
+
 //---------------------------------------------------------------------
 void CAI_Crow::CreateSkeleton()
 {

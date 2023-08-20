@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "dog.h"
 #include "dog_state_manager.h"
 #include "../monster_velocity_space.h"
@@ -355,23 +355,23 @@ LPCSTR CAI_Dog::get_current_animation()
 {
     switch (current_anim)
     {
-    case 1: return "stand_idle_smelling_up_0"; // Нюхает вверх
-    case 2: return "stand_idle_smelling_down_0"; // Нюхает вниз
-    case 3: return "stand_idle_smelling_look_around_0"; // Нюхает по кругу
-    case 4: return "stand_idle_dig_ground_0"; // Обнюховает и роет землю
-    case 5: return "stand_idle_howl_0"; // Воет
-    case 6: return "stand_growl_idle_0"; // Рычит стоя
-    case 7: return "stand_idle_shake_0"; // Отряхивается !!!!!
-    case 8: return "stand_sit_down_0"; // Садиться
-    case 9: return "sit_idle_0"; // Cидит
-    case 10: return "sit_idle_1"; // Чухается сидя
-    case 11: return "sit_idle_2"; // Оглядывается сидя
-    case 12: return "sit_stand_up_0"; // Встает
-    case 13: return "sit_lie_down_0"; // Ложится
-    case 14: return "lie_to_sit_0"; // Подымается
-    case 15: return "stand_eat_0"; // Отрывает куски
-    case 16: return "stand_threaten_0"; // Лает
-    default: return "stand_idle_1"; // Нюхает вперед
+    case 1: return "stand_idle_smelling_up_0"; // ГЌГѕГµГ ГҐГІ ГўГўГҐГ°Гµ
+    case 2: return "stand_idle_smelling_down_0"; // ГЌГѕГµГ ГҐГІ ГўГ­ГЁГ§
+    case 3: return "stand_idle_smelling_look_around_0"; // ГЌГѕГµГ ГҐГІ ГЇГ® ГЄГ°ГіГЈГі
+    case 4: return "stand_idle_dig_ground_0"; // ГЋГЎГ­ГѕГµГ®ГўГ ГҐГІ ГЁ Г°Г®ГҐГІ Г§ГҐГ¬Г«Гѕ
+    case 5: return "stand_idle_howl_0"; // Г‚Г®ГҐГІ
+    case 6: return "stand_growl_idle_0"; //ГђГ»Г·ГЁГІ Г±ГІГ®Гї
+    case 7: return "stand_idle_shake_0"; // ГЋГІГ°ГїГµГЁГўГ ГҐГІГ±Гї !!!!!
+    case 8: return "stand_sit_down_0"; // Г‘Г Г¤ГЁГІГјГ±Гї
+    case 9: return "sit_idle_0"; // CГЁГ¤ГЁГІ
+    case 10: return "sit_idle_1"; //Г—ГіГµГ ГҐГІГ±Гї Г±ГЁГ¤Гї
+    case 11: return "sit_idle_2"; // ГЋГЈГ«ГїГ¤Г»ГўГ ГҐГІГ±Гї Г±ГЁГ¤Гї
+    case 12: return "sit_stand_up_0"; // Г‚Г±ГІГ ГҐГІ
+    case 13: return "sit_lie_down_0"; // Г‹Г®Г¦ГЁГІГ±Гї
+    case 14: return "lie_to_sit_0"; // ГЏГ®Г¤Г»Г¬Г ГҐГІГ±Гї
+    case 15: return "stand_eat_0"; // ГЋГІГ°Г»ГўГ ГҐГІ ГЄГіГ±ГЄГЁ
+    case 16: return "stand_threaten_0"; // Г‹Г ГҐГІ
+    default: return "stand_idle_1"; // ГЌГѕГµГ ГҐГІ ГўГЇГҐГ°ГҐГ¤
     }
 }
 

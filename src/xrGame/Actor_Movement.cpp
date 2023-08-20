@@ -36,10 +36,21 @@ IC static void generate_orthonormal_basis1(const Fvector& dir, Fvector& updir, F
 void CActor::g_cl_ValidateMState(float dt, u32 mstate_wf)
 {
     // Lookout
-    if (mstate_wf & mcLookout)
-        mstate_real |= mstate_wf & mcLookout;
-    else
+    if ((mstate_wf & mcLLookout) && (mstate_wf & mcRLookout))
+    {
+        // It's impossible to perform right and left lookouts in the same time
         mstate_real &= ~mcLookout;
+    }
+    else if (mstate_wf & mcLookout)
+    {
+        // Activate one of lookouts
+        mstate_real |= mstate_wf & mcLookout;
+    }
+    else
+    {
+        // No lookouts needed
+        mstate_real &= ~mcLookout;
+    }
 
     if (mstate_real & (mcJump | mcFall | mcLanding | mcLanding2))
         mstate_real &= ~mcLookout;
@@ -205,6 +216,7 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector& vControlAccel, float& Ju
         }
         // jump
         m_fJumpTime -= dt;
+        CWeapon* W = smart_cast<CWeapon*>(inventory().ActiveItem());
 
         if (CanJump() && (mstate_wf & mcJump))
         {
@@ -251,10 +263,17 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector& vControlAccel, float& Ju
         else
             mstate_real &= ~mcSprint;
         if (!(mstate_real & (mcFwd | mcLStrafe | mcRStrafe)) || mstate_real & (mcCrouch | mcClimb) ||
-            !isActorAccelerated(mstate_wf, IsZoomAimingMode()))
+            mstate_real & mcJump || !isActorAccelerated(mstate_wf, IsZoomAimingMode()) ||
+            W && W->GetState() == W->eFire)
         {
             mstate_real &= ~mcSprint;
             mstate_wishful &= ~mcSprint;
+        }
+
+        if (mstate_real & mcJump)
+        {
+            mstate_real &= ~mcFwd;
+            mstate_wishful &= ~mcFwd;
         }
 
         // check player move state
@@ -309,9 +328,47 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector& vControlAccel, float& Ju
         if (mstate_real & mcSprint && !(mstate_old & mcSprint))
             state_anm = "sprint";
         else if (mstate_real & mcLStrafe && !(mstate_old & mcLStrafe))
-            state_anm = "strafe_left";
+        {
+            //			state_anm = "strafe_left";
+
+            if (m_bZoomAimingMode)
+                state_anm = "strafe_left_aim";
+            else
+                state_anm = "strafe_left";
+        }
         else if (mstate_real & mcRStrafe && !(mstate_old & mcRStrafe))
-            state_anm = "strafe_right";
+        {
+            //			state_anm = "strafe_right";
+
+            if (m_bZoomAimingMode)
+                state_anm = "strafe_right_aim";
+            else
+                state_anm = "strafe_right";
+        }
+        else if (mstate_real & mcCrouch && !(mstate_old & mcCrouch))
+        {
+            //			state_anm = "strafe_right";
+
+            if (m_bZoomAimingMode)
+                state_anm = "crouch_down_aim";
+            else
+                state_anm = "crouch_down";
+        }
+        else if (mstate_real & mcCrouch && !(mstate_wishful & mcCrouch))
+        {
+            //			state_anm = "strafe_right";
+
+            if (m_bZoomAimingMode)
+                state_anm = "crouch_up_aim";
+            else
+                state_anm = "crouch_up";
+        }
+        else if (mstate_real & mcJump && !(mstate_old & mcJump))
+            state_anm = "jump";
+        else if (mstate_real & mcLanding)
+            state_anm = "landing";
+        else if (mstate_real & mcLanding2)
+            state_anm = "landing2";
         else if (mstate_real & mcFwd && !(mstate_old & mcFwd))
             state_anm = "move_fwd";
         else if (mstate_real & mcBack && !(mstate_old & mcBack))
@@ -352,8 +409,8 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector& vControlAccel, float& Ju
 
 #define ACTOR_ANIM_SECT "actor_animation"
 
-#define ACTOR_LLOOKOUT_ANGLE PI_DIV_4
-#define ACTOR_RLOOKOUT_ANGLE PI_DIV_4
+#define ACTOR_LLOOKOUT_ANGLE PI_DIV_4 * 1.2f
+#define ACTOR_RLOOKOUT_ANGLE PI_DIV_4 * 1.2f
 
 void CActor::g_Orientate(u32 mstate_rl, float dt)
 {
@@ -396,7 +453,7 @@ void CActor::g_Orientate(u32 mstate_rl, float dt)
     }
 
     // lerp angle for "effect" and capture torso data from camera
-    angle_lerp(r_model_yaw_delta, calc_yaw, PI_MUL_4, dt);
+    angle_lerp(r_model_yaw_delta, calc_yaw, 2, dt);
 
     // build matrix
     Fmatrix mXFORM;
@@ -417,7 +474,7 @@ void CActor::g_Orientate(u32 mstate_rl, float dt)
     }
     if (!fsimilar(tgt_roll, r_torso_tgt_roll, EPS))
     {
-        angle_lerp(r_torso_tgt_roll, tgt_roll, PI_MUL_2, dt);
+        r_torso_tgt_roll = angle_inertion_var(r_torso_tgt_roll, tgt_roll, 0.f, CurrentHeight * 9, PI_DIV_2, dt);
         r_torso_tgt_roll = angle_normalize_signed(r_torso_tgt_roll);
     }
 }
@@ -505,7 +562,7 @@ void CActor::g_cl_Orientate(u32 mstate_rl, float dt)
     {
         // if camera rotated more than 45 degrees - align model with it
         float ty = angle_normalize(r_torso.yaw);
-        if (_abs(r_model_yaw - ty) > PI_DIV_4)
+        if (_abs(r_model_yaw - ty) > PI_DIV_4 - 5)
         {
             r_model_yaw_dest = ty;
             //
@@ -517,7 +574,7 @@ void CActor::g_cl_Orientate(u32 mstate_rl, float dt)
         }
         if (mstate_rl & mcTurn)
         {
-            angle_lerp(r_model_yaw, r_model_yaw_dest, PI_MUL_2, dt);
+            angle_lerp(r_model_yaw, r_model_yaw_dest, 15, dt);
         }
     }
 }
@@ -549,9 +606,15 @@ bool isActorAccelerated(u32 mstate, bool ZoomMode)
     else
         res = true;
 
-    if (mstate & (mcCrouch | mcClimb | mcJump | mcLanding | mcLanding2))
+    if (mstate & (mcClimb | mcJump | mcLanding | mcLanding2))
         return res;
-    if (mstate & mcLookout || ZoomMode)
+    if (ZoomMode)
+        return false;
+
+    if (mstate & mcCrouch)
+        return res;
+
+    if (mstate & mcLookout)
         return false;
     return res;
 }
@@ -566,14 +629,14 @@ bool CActor::CanAccelerate()
 
 bool CActor::CanRun()
 {
-    bool can_run = !IsZoomAimingMode() && !(mstate_real & mcLookout);
+    bool can_run = !IsZoomAimingMode() && !(mstate_real & mcJump);
     return can_run;
 }
 
 bool CActor::CanSprint()
 {
     bool can_Sprint = CanAccelerate() && !conditions().IsCantSprint() && Game().PlayerCanSprint(this) && CanRun() &&
-        !(mstate_real & mcLStrafe || mstate_real & mcRStrafe) && InventoryAllowSprint();
+        !(mstate_real & mcLStrafe || mstate_real & mcRStrafe || mstate_real & mcJump) && InventoryAllowSprint();
 
     return can_Sprint && (m_block_sprint_counter <= 0);
 }

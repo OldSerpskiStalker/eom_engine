@@ -19,7 +19,6 @@ class CSE_Abstract;
 
 namespace ObjectFactory
 {
-
 #ifndef NO_XR_GAME
 typedef DLL_Pure CLIENT_BASE_CLASS;
 #endif

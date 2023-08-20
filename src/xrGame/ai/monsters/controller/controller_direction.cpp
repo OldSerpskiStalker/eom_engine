@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "controller_direction.h"
 #include "controller.h"
 #include "../../../game_object_space.h"
@@ -27,14 +27,15 @@ void CControllerDirection::bone_callback(CBoneInstance* B)
 
 void CControllerDirection::assign_bones()
 {
-    // Установка callback на кости
+    // Г“Г±ГІГ Г­Г®ГўГЄГ  callback Г­Г  ГЄГ®Г±ГІГЁ
     IKinematics* kinematics = smart_cast<IKinematics*>(m_controller->Visual());
 
     m_bone_spine = &kinematics->LL_GetBoneInstance(kinematics->LL_BoneID("bip01_spine"));
     m_bone_head = &kinematics->LL_GetBoneInstance(kinematics->LL_BoneID("bip01_head"));
 
     if (!m_controller->PPhysicsShell())
-    { // нельзя ставить колбеки, если создан физ шел - у него стоят свои колбеки!!!
+    {
+        // Г­ГҐГ«ГјГ§Гї Г±ГІГ ГўГЁГІГј ГЄГ®Г«ГЎГҐГЄГЁ, ГҐГ±Г«ГЁ Г±Г®Г§Г¤Г Г­ ГґГЁГ§ ГёГҐГ« - Гі Г­ГҐГЈГ® Г±ГІГ®ГїГІ Г±ГўГ®ГЁ ГЄГ®Г«ГЎГҐГЄГЁ!!!
         m_bone_spine->set_callback(bctCustom, bone_callback, this);
         m_bone_head->set_callback(bctCustom, bone_callback, this);
     }
@@ -58,7 +59,7 @@ void CControllerDirection::update_head_orientation()
 
     float yaw = x_spine.cur_yaw + x_head.cur_yaw;
 
-    // установить параметры вращения по yaw
+    // ГіГ±ГІГ Г­Г®ГўГЁГІГј ГЇГ Г°Г Г¬ГҐГІГ°Г» ГўГ°Г Г№ГҐГ­ГЁГї ГЇГ® yaw
     m_head_orient.current.yaw = m_man->direction().get_heading_current() + yaw;
 }
 
@@ -80,9 +81,9 @@ void CControllerDirection::head_look_point(const Fvector& look_point)
     float bone_angle_head;
     float bone_angle_torso;
 
-    // установить параметры вращения по heading
+    // ГіГ±ГІГ Г­Г®ГўГЁГІГј ГЇГ Г°Г Г¬ГҐГІГ°Г» ГўГ°Г Г№ГҐГ­ГЁГї ГЇГ® heading
     float cur_yaw = m_man->direction().get_heading_current();
-    float dy = _abs(angle_normalize_signed(dir_yaw - cur_yaw)); // дельта, на которую нужно поворачиваться
+    float dy = _abs(angle_normalize_signed(dir_yaw - cur_yaw)); // Г¤ГҐГ«ГјГІГ , Г­Г  ГЄГ®ГІГ®Г°ГіГѕ Г­ГіГ¦Г­Г® ГЇГ®ГўГ®Г°Г Г·ГЁГўГ ГІГјГ±Гї
 
     bone_angle_head = _pmt_head_bone_limit / (_pmt_head_bone_limit + _pmt_torso_bone_limit) * dy;
     bone_angle_torso = _pmt_torso_bone_limit / (_pmt_head_bone_limit + _pmt_torso_bone_limit) * dy;
@@ -113,7 +114,7 @@ void CControllerDirection::head_look_point(const Fvector& look_point)
     m_bones.SetMotion(m_bone_spine, AXIS_X, bone_angle_torso, bone_speed, 1000);
     m_bones.SetMotion(m_bone_head, AXIS_X, bone_angle_head, bone_speed, 1000);
 
-    //// установить параметры вращения по pitch (более упрощеная схема, без расчета скорости вращения)
+    //// ГіГ±ГІГ Г­Г®ГўГЁГІГј ГЇГ Г°Г Г¬ГҐГІГ°Г» ГўГ°Г Г№ГҐГ­ГЁГї ГЇГ® pitch (ГЎГ®Г«ГҐГҐ ГіГЇГ°Г®Г№ГҐГ­Г Гї Г±ГµГҐГ¬Г , ГЎГҐГ§ Г°Г Г±Г·ГҐГІГ  Г±ГЄГ®Г°Г®Г±ГІГЁ ГўГ°Г Г№ГҐГ­ГЁГї)
     // bone_angle_head		= _pmt_head_bone_limit	/ (_pmt_head_bone_limit + _pmt_torso_bone_limit) * dir_pitch;
     // bone_angle_torso	= _pmt_torso_bone_limit / (_pmt_head_bone_limit + _pmt_torso_bone_limit) * dir_pitch;
 

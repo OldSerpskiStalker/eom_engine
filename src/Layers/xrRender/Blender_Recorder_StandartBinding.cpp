@@ -12,6 +12,7 @@
 
 #include "../../xrEngine/igame_persistent.h"
 #include "../../xrEngine/environment.h"
+#include "../../xrEngine/Rain.h"
 
 #include "dxRenderDeviceRender.h"
 
@@ -252,6 +253,23 @@ class cl_sun0_color : public R_constant_setup
     }
 };
 static cl_sun0_color binder_sun0_color;
+
+class cl_sky_color : public R_constant_setup
+{
+    u32 marker;
+    Fvector4 result;
+    virtual void setup(R_constant* C)
+    {
+        if (marker != Device.dwFrame)
+        {
+            CEnvDescriptor& desc = *g_pGamePersistent->Environment().CurrentEnv;
+            result.set(desc.sky_color.x, desc.sky_color.y, desc.sky_color.z, 0);
+        }
+        RCache.set_c(C, result);
+    }
+};
+static cl_sky_color binder_sky_color;
+
 class cl_sun0_dir_w : public R_constant_setup
 {
     u32 marker;
@@ -328,9 +346,162 @@ static class cl_screen_res : public R_constant_setup
     }
 } binder_screen_res;
 
+static class cl_screen_params : public R_constant_setup
+{
+    Fvector4 result;
+    virtual void setup(R_constant* C)
+    {
+        float fov = float(Device.fFOV);
+        float aspect = float(Device.fASPECT);
+        result.set(fov, aspect, tan(deg2rad(fov) / 2), g_pGamePersistent->Environment().CurrentEnv->far_plane * 0.75f);
+        RCache.set_c(C, result);
+    }
+};
+static cl_screen_params binder_screen_params;
+
+class cl_rain_params : public R_constant_setup
+{
+    u32 marker;
+    Fvector4 result;
+    virtual void setup(R_constant* C)
+    {
+        if (marker != Device.dwFrame)
+        {
+            CEnvDescriptor& desc = *g_pGamePersistent->Environment().CurrentEnv;
+            result.set(desc.rain_density, 0.f, 0.f, 0.f);
+        }
+        RCache.set_c(C, result);
+    }
+};
+static cl_rain_params binder_rain_params;
+
+class cl_inv_v : public R_constant_setup
+{
+    u32 marker;
+    Fmatrix result;
+    virtual void setup(R_constant* C)
+    {
+        //		if (marker!=Device.dwFrame)	{
+        result.invert(Device.mView);
+        //		}
+        RCache.set_c(C, result);
+    }
+};
+static cl_inv_v binder_inv_v;
+
+// wind for clouds
+class cl_clouds_velocity : public R_constant_setup
+{
+    u32 marker;
+    Fvector4 result;
+    virtual void setup(R_constant* C)
+    {
+        if (marker != Device.dwFrame)
+        {
+            float a = g_pGamePersistent->Environment().CurrentEnv->clouds_velocity_0;
+            float b = g_pGamePersistent->Environment().CurrentEnv->clouds_velocity_1;
+            result.set(a, b, 0, 0);
+        }
+        RCache.set_c(C, result);
+    }
+};
+static cl_clouds_velocity binder_clouds_velocity;
+
+// wind for clouds
+class cl_weather_test : public R_constant_setup
+{
+    u32 marker;
+    Fvector4 result;
+    virtual void setup(R_constant* C)
+    {
+        if (marker != Device.dwFrame)
+        {
+            int test_bool_to_int;
+            BOOL indoor_weather = RImplementation.indoor_weather();
+            if (indoor_weather == true)
+                test_bool_to_int = 1;
+            else
+                test_bool_to_int = 0;
+
+            // Msg("test_ws = %i", test_bool_to_int);
+            result.set(test_bool_to_int, 0, 0, 0);
+        }
+        RCache.set_c(C, result);
+    }
+};
+static cl_weather_test binder_weather_test;
+
+class cl_lut_palette : public R_constant_setup
+{
+    u32 marker;
+    Fvector4 result;
+    virtual void setup(R_constant* C)
+    {
+        if (marker != Device.dwFrame)
+        {
+            result.set(ps_r4_lut_palette, 0, 0, 0);
+        }
+        RCache.set_c(C, result);
+    }
+};
+static cl_lut_palette binder_lut_palette;
+
+class cl_pos_decompress_params_xray : public R_constant_setup
+{
+    virtual void setup(R_constant* C)
+    {
+        float VertTan = -1.0f * tanf(deg2rad(Device.fFOV / 2.0f));
+        float HorzTan = -VertTan / Device.fASPECT;
+
+        RCache.set_c(
+            C, HorzTan, VertTan, (2.0f * HorzTan) / (float)Device.dwWidth, (2.0f * VertTan) / (float)Device.dwHeight);
+    }
+};
+static cl_pos_decompress_params_xray binder_pos_decompress_params_xray;
+
+class cl_hud_params : public R_constant_setup //--#SM+#--
+{
+    virtual void setup(R_constant* C) { RCache.set_c(C, g_pGamePersistent->m_pGShaderConstants->hud_params); }
+};
+static cl_hud_params binder_hud_params;
+
+class cl_actor_params : public R_constant_setup
+{
+    u32 marker;
+    Fvector4 result;
+
+    virtual void setup(R_constant* C)
+    {
+        float actorHealth = g_pGamePersistent->actor_data.health;
+        float actorStamina = g_pGamePersistent->actor_data.stamina;
+        float actorBleeding = g_pGamePersistent->actor_data.bleeding;
+        float actorRadiation = g_pGamePersistent->actor_data.radiation;
+
+        // Msg("health = %f, stamina = %f, bleeding = %f, radiation = %f", actorHealth, actorStamina, actorBleeding,
+        // actorRadiation);
+
+        RCache.set_c(C, actorHealth, actorStamina, actorBleeding, actorRadiation);
+    }
+};
+static cl_actor_params binder_actor_data;
+
 // Standart constant-binding
 void CBlender_Compile::SetMapping()
 {
+    r_Constant("ogse_c_screen", &binder_screen_params);
+    r_Constant("ogse_c_rain", &binder_rain_params);
+    r_Constant("m_v2w", &binder_inv_v);
+    r_Constant("clouds_velocity", &binder_clouds_velocity);
+    r_Constant("weather_section_indoor", &binder_weather_test);
+
+    r_Constant("lut_palette", &binder_lut_palette);
+
+    r_Constant("dx_Pos_Decompression_Params", &binder_pos_decompress_params_xray);
+
+    r_Constant("m_hud_params", &binder_hud_params); //--#SM+#--
+
+    r_Constant("actor_data", &binder_actor_data);
+
     // matrices
     r_Constant("m_W", &binder_w);
     r_Constant("m_invW", &binder_invw);
@@ -339,6 +510,7 @@ void CBlender_Compile::SetMapping()
     r_Constant("m_WV", &binder_wv);
     r_Constant("m_VP", &binder_vp);
     r_Constant("m_WVP", &binder_wvp);
+    r_Constant("m_inv_V", &binder_inv_v);
 
     r_Constant("m_xform_v", &tree_binder_m_xform_v);
     r_Constant("m_xform", &tree_binder_m_xform);
@@ -375,6 +547,7 @@ void CBlender_Compile::SetMapping()
 #ifndef _EDITOR
     // global-lighting (env params)
     r_Constant("L_sun_color", &binder_sun0_color);
+    r_Constant("L_sky_color", &binder_sky_color);
     r_Constant("L_sun_dir_w", &binder_sun0_dir_w);
     r_Constant("L_sun_dir_e", &binder_sun0_dir_e);
     //	r_Constant				("L_lmap_color",	&binder_lm_color);

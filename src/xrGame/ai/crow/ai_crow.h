@@ -16,6 +16,7 @@ class IKinematicsAnimated;
 class CAI_Crow : public CEntity
 {
     typedef CEntity inherited;
+
     enum ECrowStates
     {
         eUndef = -1,
@@ -30,6 +31,7 @@ class CAI_Crow : public CEntity
     {
         MAX_ANIM_COUNT = 8
     };
+
     enum
     {
         MAX_SND_COUNT = 8
@@ -66,11 +68,14 @@ protected:
         SAnim m_death_idle;
         SAnim m_death_dead;
     };
+
     SCrowAnimations m_Anims;
+
     struct SCrowSounds
     {
         SSound m_idle;
     };
+
     SCrowSounds m_Sounds;
 
     Fvector vOldPosition;
@@ -131,6 +136,7 @@ public:
     virtual void net_Import(NET_Packet& P);
 
     virtual void g_fireParams(const CHudItem* /**pHudItem/**/, Fvector& /**P/**/, Fvector& /**D/**/){};
+
     virtual void g_WeaponBones(int& /**L/**/, int& /**R1/**/, int& /**R2/**/){};
 
     virtual void HitSignal(float HitAmount, Fvector& local_dir, CObject* who, s16 element);

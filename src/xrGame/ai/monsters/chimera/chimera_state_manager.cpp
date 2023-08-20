@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "chimera.h"
 #include "chimera_state_manager.h"
 
@@ -71,7 +71,7 @@ void CStateManagerChimera::execute()
 
     select_state(state_id);
 
-    // âûïîëíèòü òåêóùåå ñîñòîÿíèå
+    // Ã¢Ã»Ã¯Ã®Ã«Ã­Ã¨Ã²Ã¼ Ã²Ã¥ÃªÃ³Ã¹Ã¥Ã¥ Ã±Ã®Ã±Ã²Ã®Ã¿Ã­Ã¨Ã¥
     get_state_current()->execute();
 
     prev_substate = current_substate;

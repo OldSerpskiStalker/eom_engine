@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "../BaseMonster/base_monster.h"
 #include "../anim_triple.h"
 #include "../../../../xrServerEntities/script_export_space.h"
@@ -15,8 +15,8 @@ class CController : public CBaseMonster, public CControlledActor
     typedef CBaseMonster inherited;
 
     u8 m_max_controlled_number;
-    ref_sound control_start_sound; // звук, который играется в голове у актера
-    ref_sound control_hit_sound; // звук, который играется в голове у актера
+    ref_sound control_start_sound; // Г§ГўГіГЄ, ГЄГ®ГІГ®Г°Г»Г© ГЁГЈГ°Г ГҐГІГ±Гї Гў ГЈГ®Г«Г®ГўГҐ Гі Г ГЄГІГҐГ°Г 
+    ref_sound control_hit_sound; // Г§ГўГіГЄ, ГЄГ®ГІГ®Г°Г»Г© ГЁГЈГ°Г ГҐГІГ±Гї Гў ГЈГ®Г«Г®ГўГҐ Гі Г ГЄГІГҐГ°Г 
 
     ref_sound m_sound_hit_fx;
     SndShockEffector* m_sndShockEffector;
@@ -106,7 +106,7 @@ public:
     void TakeUnderControl(CEntity*);
     void UpdateControlled();
     void FreeFromControl();
-    void OnFreedFromControl(const CEntity*); // если монстр сам себя освободил (destroyed || die)
+    void OnFreedFromControl(const CEntity*); // ГҐГ±Г«ГЁ Г¬Г®Г­Г±ГІГ° Г±Г Г¬ Г±ГҐГЎГї Г®Г±ГўГ®ГЎГ®Г¤ГЁГ« (destroyed || die)
 
     void set_controlled_task(u32 task);
 

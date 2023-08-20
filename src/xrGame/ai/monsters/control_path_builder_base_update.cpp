@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "control_path_builder_base.h"
 #include "BaseMonster/base_monster.h"
 #include "../../detail_path_manager.h"
@@ -8,10 +8,10 @@ void CControlPathBuilderBase::update_frame()
 {
     START_PROFILE("Base Monster/Path Builder Base/Frame Update");
 
-    // îáíîâèòü ñîñòîÿíèå áèëäåğà
+    // Ã®Ã¡Ã­Ã®Ã¢Ã¨Ã²Ã¼ Ã±Ã®Ã±Ã²Ã®Ã¿Ã­Ã¨Ã¥ Ã¡Ã¨Ã«Ã¤Ã¥Ã°Ã 
     update_path_builder_state();
 
-    // îáíîâèòü / óñòàíîâèòü öåëåâóş ïîçèöèş
+    // Ã®Ã¡Ã­Ã®Ã¢Ã¨Ã²Ã¼ / Ã³Ã±Ã²Ã Ã­Ã®Ã¢Ã¨Ã²Ã¼ Ã¶Ã¥Ã«Ã¥Ã¢Ã³Ã¾ Ã¯Ã®Ã§Ã¨Ã¶Ã¨Ã¾
     update_target_point();
 
     // set params
@@ -29,7 +29,7 @@ void CControlPathBuilderBase::update_target_point()
     if (m_path_type != MovementManager::ePathTypeLevelPath)
         return;
 
-    // ïğîâåğèòü óñëîâèÿ, êîãäà ïóòü ñòğîèòü íå íóæíî
+    // Ã¯Ã°Ã®Ã¢Ã¥Ã°Ã¨Ã²Ã¼ Ã³Ã±Ã«Ã®Ã¢Ã¨Ã¿, ÃªÃ®Ã£Ã¤Ã  Ã¯Ã³Ã²Ã¼ Ã±Ã²Ã°Ã®Ã¨Ã²Ã¼ Ã­Ã¥ Ã­Ã³Ã¦Ã­Ã®
     if (!target_point_need_update())
         return;
 
@@ -39,22 +39,22 @@ void CControlPathBuilderBase::update_target_point()
     if (global_failed())
         find_target_point_failed();
     else
-        // âûáğàòü íîäó è ïîçèöèş â ñîîòâåòñòâèè ñ æåëàåìûìè íîäîé è ïîçèöèåé
+        // Ã¢Ã»Ã¡Ã°Ã Ã²Ã¼ Ã­Ã®Ã¤Ã³ Ã¨ Ã¯Ã®Ã§Ã¨Ã¶Ã¨Ã¾ Ã¢ Ã±Ã®Ã®Ã²Ã¢Ã¥Ã²Ã±Ã²Ã¢Ã¨Ã¨ Ã± Ã¦Ã¥Ã«Ã Ã¥Ã¬Ã»Ã¬Ã¨ Ã­Ã®Ã¤Ã®Ã© Ã¨ Ã¯Ã®Ã§Ã¨Ã¶Ã¨Ã¥Ã©
         find_target_point_set();
 
     //-----------------------------------------------------------------------
     // postprocess target_point
     if (m_target_found.node() == saved_target.node())
     {
-        // level_path îñòàíåòñÿ àêòóàëüíûì - ñáğîñèòü àêòóàëüíîñòü
+        // level_path Ã®Ã±Ã²Ã Ã­Ã¥Ã²Ã±Ã¿ Ã ÃªÃ²Ã³Ã Ã«Ã¼Ã­Ã»Ã¬ - Ã±Ã¡Ã°Ã®Ã±Ã¨Ã²Ã¼ Ã ÃªÃ²Ã³Ã Ã«Ã¼Ã­Ã®Ã±Ã²Ã¼
         m_reset_actuality = true;
     }
     //-----------------------------------------------------------------------
 
-    // ñîõğàíèòü òåêóùåå âğåìÿ
+    // Ã±Ã®ÃµÃ°Ã Ã­Ã¨Ã²Ã¼ Ã²Ã¥ÃªÃ³Ã¹Ã¥Ã¥ Ã¢Ã°Ã¥Ã¬Ã¿
     m_last_time_target_set = Device.dwTimeGlobal;
 
-    // ïàğàìåòğû óñòàíîâëåíû, âêëş÷àåì àêòóàëüíîñòü
+    // Ã¯Ã Ã°Ã Ã¬Ã¥Ã²Ã°Ã» Ã³Ã±Ã²Ã Ã­Ã®Ã¢Ã«Ã¥Ã­Ã», Ã¢ÃªÃ«Ã¾Ã·Ã Ã¥Ã¬ Ã ÃªÃ²Ã³Ã Ã«Ã¼Ã­Ã®Ã±Ã²Ã¼
     m_target_actual = true;
 }
 
@@ -84,18 +84,18 @@ void CControlPathBuilderBase::update_path_builder_state()
 
     m_state = eStatePathValid;
 
-    // íåò ïóòè
+    // Ã­Ã¥Ã² Ã¯Ã³Ã²Ã¨
     if (m_man->path_builder().detail().path().empty())
     {
         m_state = eStateNoPath;
     }
-    // ïğîâåğêà íà êîíåö ïóòè
+    // Ã¯Ã°Ã®Ã¢Ã¥Ã°ÃªÃ  Ã­Ã  ÃªÃ®Ã­Ã¥Ã¶ Ã¯Ã³Ã²Ã¨
     else if (m_path_end)
     {
         m_state = eStatePathEnd;
     }
 
-    // æäàòü ïîêà íå áóäåò ïîñòğîåí ïóòü (ïóòü äîëæåí áûòü ãàğàíòèğîâàííî ïîñòğîåí)
+    // Ã¦Ã¤Ã Ã²Ã¼ Ã¯Ã®ÃªÃ  Ã­Ã¥ Ã¡Ã³Ã¤Ã¥Ã² Ã¯Ã®Ã±Ã²Ã°Ã®Ã¥Ã­ Ã¯Ã³Ã²Ã¼ (Ã¯Ã³Ã²Ã¼ Ã¤Ã®Ã«Ã¦Ã¥Ã­ Ã¡Ã»Ã²Ã¼ Ã£Ã Ã°Ã Ã­Ã²Ã¨Ã°Ã®Ã¢Ã Ã­Ã­Ã® Ã¯Ã®Ã±Ã²Ã°Ã®Ã¥Ã­)
     if ((m_last_time_target_set > m_time_path_updated_external) ||
         (!m_man->path_builder().detail().actual() &&
             (m_man->path_builder().detail().time_path_built() < m_last_time_target_set)))

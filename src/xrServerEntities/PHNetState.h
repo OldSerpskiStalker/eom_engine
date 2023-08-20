@@ -11,15 +11,18 @@ struct SPHNetState
     Fvector torque;
     Fvector position;
     Fvector previous_position;
+
     union
     {
         Fquaternion quaternion;
+
         struct
         {
             Fvector accel;
             float max_velocity;
         };
     };
+
     Fquaternion previous_quaternion;
     bool enabled;
     void net_Export(NET_Packet& P);

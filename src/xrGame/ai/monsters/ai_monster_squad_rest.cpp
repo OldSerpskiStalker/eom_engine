@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "ai_monster_squad.h"
 #include "../../entity.h"
 #include "../../ai_object_location.h"
@@ -8,7 +8,7 @@ void CMonsterSquad::ProcessIdle()
     m_temp_entities.clear();
     VERIFY(leader && !leader->getDestroy());
 
-    // Выделить элементы с общими врагами и состянием атаки
+    // Г‚Г»Г¤ГҐГ«ГЁГІГј ГЅГ«ГҐГ¬ГҐГ­ГІГ» Г± Г®ГЎГ№ГЁГ¬ГЁ ГўГ°Г ГЈГ Г¬ГЁ ГЁ Г±Г®Г±ГІГїГ­ГЁГҐГ¬ Г ГІГ ГЄГЁ
     for (MEMBER_GOAL_MAP_IT it_goal = m_goals.begin(); it_goal != m_goals.end(); it_goal++)
     {
         SMemberGoal goal = it_goal->second;
@@ -39,7 +39,7 @@ struct CPredicateSideSort
 
 void CMonsterSquad::Idle_AssignAction(ENTITY_VEC& members)
 {
-    // получить цель лидера
+    // ГЇГ®Г«ГіГ·ГЁГІГј Г¶ГҐГ«Гј Г«ГЁГ¤ГҐГ°Г 
     SMemberGoal& goal = GetGoal(leader);
 
     if (goal.type == MG_WalkGraph)
@@ -214,7 +214,7 @@ void CMonsterSquad::Idle_AssignAction(ENTITY_VEC& members)
     }
     else if (goal.type == MG_Rest)
     {
-        // пересчитать положение в команде в соответствие с целью лидера
+        // ГЇГҐГ°ГҐГ±Г·ГЁГІГ ГІГј ГЇГ®Г«Г®Г¦ГҐГ­ГЁГҐ Гў ГЄГ®Г¬Г Г­Г¤ГҐ Гў Г±Г®Г®ГІГўГҐГІГ±ГІГўГЁГҐ Г± Г¶ГҐГ«ГјГѕ Г«ГЁГ¤ГҐГ°Г 
         for (ENTITY_VEC_IT it = members.begin(); it != members.end(); it++)
         {
             if ((*it) == leader)

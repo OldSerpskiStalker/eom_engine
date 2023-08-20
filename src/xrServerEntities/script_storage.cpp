@@ -10,7 +10,6 @@
 #include "script_storage.h"
 #include "script_thread.h"
 #include <stdarg.h>
-#include "../xrCore/doug_lea_allocator.h"
 
 #if !defined(DEBUG) && defined(USE_LUAJIT_ONE)
 #include "opt.lua.h"
@@ -65,7 +64,7 @@ LPCSTR file_header = 0;
 
 #ifndef PURE_ALLOC
 // #	ifndef USE_MEMORY_MONITOR
-#define USE_DL_ALLOCATOR
+// #		define USE_DL_ALLOCATOR
 // #	endif //!USE_MEMORY_MONITOR
 #endif //! PURE_ALLOC
 
@@ -86,14 +85,16 @@ static void* lua_alloc(void* ud, void* ptr, size_t osize, size_t nsize)
         return Memory.mem_realloc(ptr, nsize);
 #endif // DEBUG_MEMORY_MANAGER
 }
+
+u32 game_lua_memory_usage() { return (0); }
 #else // USE_DL_ALLOCATOR
-#include "../xrCore/memory_allocator_options.h"
+
 #ifdef USE_ARENA_ALLOCATOR
 static const u32 s_arena_size = 96 * 1024 * 1024;
 static char s_fake_array[s_arena_size];
-static doug_lea_allocator s_allocator(s_fake_array, s_arena_size, "lua");
+//        static doug_lea_allocator	s_allocator( s_fake_array, s_arena_size, "lua" );
 #else //-USE_ARENA_ALLOCATOR
-static doug_lea_allocator s_allocator(0, 0, "lua");
+//        static doug_lea_allocator	s_allocator(0, 0, "lua");
 #endif //-USE_ARENA_ALLOCATOR
 
 static void* lua_alloc(void* ud, void* ptr, size_t osize, size_t nsize)
@@ -361,9 +362,9 @@ int CScriptStorage::vscript_log(ScriptStorage::ELuaMessageType tLuaMessageType, 
 #endif //-DEBUG
 #endif //! NO_XRGAME_SCRIPT_ENGINE
 
-// #ifndef PRINT_CALL_STACK
-// return		(0);
-// #else //PRINT_CALL_STACK
+        // #ifndef PRINT_CALL_STACK
+        // return		(0);
+        // #else //PRINT_CALL_STACK
 #ifndef NO_XRGAME_SCRIPT_ENGINE
         // AVO: allow LUA debug prints (i.e.: ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,
         // "CWeapon : cannot access class member Weapon_IsScopeAttached!");)
@@ -490,6 +491,7 @@ void CScriptStorage::print_stack()
         }
     }
 }
+
 // #endif //-PRINT_CALL_STACK
 
 // AVO: added to stop duplicate stack output prints in log
@@ -501,6 +503,7 @@ int __cdecl CScriptStorage::script_log_no_stack(ScriptStorage::ELuaMessageType t
     va_end(marker);
     return result;
 }
+
 //-AVO
 
 int __cdecl CScriptStorage::script_log(ScriptStorage::ELuaMessageType tLuaMessageType, LPCSTR caFormat, ...)
@@ -625,9 +628,10 @@ bool CScriptStorage::load_buffer(
 
     if (l_iErrorCode)
     {
-#ifdef DEBUG
-        print_output(L, caScriptName, l_iErrorCode);
-#endif //-DEBUG
+        // #ifdef DEBUG
+        if (strstr(Core.Params, "-dbg"))
+            print_output(L, caScriptName, l_iErrorCode);
+        // #endif //-DEBUG
         on_error(L);
         return (false);
     }
@@ -684,9 +688,10 @@ bool CScriptStorage::do_file(LPCSTR caScriptName, LPCSTR caNameSpaceName)
 #endif // #ifdef USE_DEBUGGER
     if (l_iErrorCode)
     {
-#ifdef DEBUG
-        print_output(lua(), caScriptName, l_iErrorCode);
-#endif
+        // #ifdef DEBUG
+        if (strstr(Core.Params, "-dbg"))
+            print_output(lua(), caScriptName, l_iErrorCode);
+        // #endif
         on_error(lua());
         lua_settop(lua(), start);
         return (false);
@@ -825,10 +830,12 @@ struct raii_guard : private boost::noncopyable
 {
     int m_error_code;
     LPCSTR const& m_error_description;
+
     raii_guard(int error_code, LPCSTR const& m_description)
         : m_error_code(error_code), m_error_description(m_description)
     {
     }
+
     ~raii_guard()
     {
 #ifdef DEBUG

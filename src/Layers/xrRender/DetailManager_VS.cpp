@@ -188,8 +188,6 @@ void CDetailManager::hw_Render()
     m_time_rot_2 += (PI_MUL_2 * fDelta / swing_current.rot2);
     m_time_pos += fDelta * swing_current.speed;
 
-    // float		tm_rot1		= (PI_MUL_2*RDEVICE.fTimeGlobal/swing_current.rot1);
-    // float		tm_rot2		= (PI_MUL_2*RDEVICE.fTimeGlobal/swing_current.rot2);
     float tm_rot1 = m_time_rot_1;
     float tm_rot2 = m_time_rot_2;
 
@@ -273,6 +271,8 @@ void CDetailManager::hw_Render_dump(ref_constant x_array, u32 var_id, u32 lod_id
                 SlotItemVecIt _iE = items->end();
                 for (; _iI != _iE; _iI++)
                 {
+                    if (*_iI == NULL)
+                        continue;
                     SlotItem& Instance = **_iI;
                     u32 base = dwBatch * 4;
 
@@ -326,8 +326,7 @@ void CDetailManager::hw_Render_dump(ref_constant x_array, u32 var_id, u32 lod_id
                 RCache.stat.r.s_details.add(dwCNT_verts);
             }
             // Clean up
-            // KD: we must not clear vis on r2 since we want details shadows
-#if RENDER == R_R2
+#if RENDER != R_R1
             if ((ps_grass_shadow == 0) ||
                 ((ps_r2_ls_flags.test(R2FLAG_SUN_DETAILS) &&
                      (RImplementation.PHASE_SMAP == RImplementation.phase)) // phase smap with shadows

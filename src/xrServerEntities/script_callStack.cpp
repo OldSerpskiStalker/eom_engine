@@ -11,7 +11,6 @@ CScriptCallStack::~CScriptCallStack() {}
 int CCallStack::OnSci(CScintillaView* pView, SCNotification* pNotify)
 {
     CLuaEditor* pEditor = ((CScintillaView*)GetView(0))->GetEditor();
-
     CPoint pt;
     int nLine;
     CString strLine;
@@ -24,7 +23,6 @@ int CCallStack::OnSci(CScintillaView* pView, SCNotification* pNotify)
         GotoStackTraceLevel(nLine-1);
         break;
     };
-
     return 0;
 }
 */

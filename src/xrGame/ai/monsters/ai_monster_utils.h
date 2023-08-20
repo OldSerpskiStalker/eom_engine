@@ -1,11 +1,11 @@
-#pragma once
+п»ї#pragma once
 
-// проверить, находится ли объект entity на ноде
-// возвращает позицию объекта, если он находится на ноде, или центр его ноды
+// ГЇГ°Г®ГўГҐГ°ГЁГІГј, Г­Г ГµГ®Г¤ГЁГІГ±Гї Г«ГЁ Г®ГЎГєГҐГЄГІ entity Г­Г  Г­Г®Г¤ГҐ
+// ГўГ®Г§ГўГ°Г Г№Г ГҐГІ ГЇГ®Г§ГЁГ¶ГЁГѕ Г®ГЎГєГҐГЄГІГ , ГҐГ±Г«ГЁ Г®Г­ Г­Г ГµГ®Г¤ГЁГІГ±Гї Г­Г  Г­Г®Г¤ГҐ, ГЁГ«ГЁ Г¶ГҐГ­ГІГ° ГҐГЈГ® Г­Г®Г¤Г»
 class CEntity;
 extern Fvector get_valid_position(const CEntity* entity, const Fvector& actual_position);
 
-// возвращает true, если объект entity находится на ноде
+// ГўГ®Г§ГўГ°Г Г№Г ГҐГІ true, ГҐГ±Г«ГЁ Г®ГЎГєГҐГЄГІ entity Г­Г ГµГ®Г¤ГЁГІГ±Гї Г­Г  Г­Г®Г¤ГҐ
 extern bool object_position_valid(const CEntity* entity);
 
 IC Fvector random_position(const Fvector& center, float R)

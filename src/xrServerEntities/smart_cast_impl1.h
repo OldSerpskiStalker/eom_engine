@@ -28,7 +28,6 @@ void add_smart_cast_stats_all(LPCSTR, LPCSTR);
 
 namespace SmartDynamicCast
 {
-
 template <typename List, typename Target>
 struct exists
 {

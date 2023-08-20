@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "../../../level.h"
 
@@ -32,7 +32,7 @@ void CStateBurerAttackTele<Object>::initialize()
     m_initial_health = object->conditions().GetHealth();
     m_end_tick = current_time() + object->m_tele_max_time;
 
-    // запретить взятие скриптом
+    // Г§Г ГЇГ°ГҐГІГЁГІГј ГўГ§ГїГІГЁГҐ Г±ГЄГ°ГЁГЇГІГ®Г¬
     object->set_script_capture(false);
 }
 
@@ -200,13 +200,15 @@ void CStateBurerAttackTele<Object>::FindFreeObjects(xr_vector<CObject*>& tpObjec
         CPhysicsShellHolder* obj = smart_cast<CPhysicsShellHolder*>(tpObjects[i]);
         CCustomMonster* custom_monster = smart_cast<CCustomMonster*>(tpObjects[i]);
         CGrenade* grenade = smart_cast<CGrenade*>(tpObjects[i]);
+        CInventoryItem* itm = smart_cast<CInventoryItem*>(tpObjects[i]);
 
         if (grenade || // grenades are handled by HandleGrenades function
             !obj || !obj->PPhysicsShell() || !obj->PPhysicsShell()->isActive() || custom_monster ||
             (obj->spawn_ini() && obj->spawn_ini()->section_exist("ph_heavy")) ||
             (obj->m_pPhysicsShell->getMass() < object->m_tele_object_min_mass) ||
             (obj->m_pPhysicsShell->getMass() > object->m_tele_object_max_mass) || (obj == object) ||
-            object->CTelekinesis::is_active_object(obj) || !obj->m_pPhysicsShell->get_ApplyByGravity())
+            object->CTelekinesis::is_active_object(obj) || !obj->m_pPhysicsShell->get_ApplyByGravity() ||
+            (itm && itm->IsQuestItem()))
             continue;
 
         tele_objects.push_back(obj);
@@ -219,15 +221,15 @@ void CStateBurerAttackTele<Object>::FindObjects()
     u32 res_size = tele_objects.size();
     tele_objects.clear_and_reserve();
 
-    // получить список объектов вокруг врага
+    // ГЇГ®Г«ГіГ·ГЁГІГј Г±ГЇГЁГ±Г®ГЄ Г®ГЎГєГҐГЄГІГ®Гў ГўГ®ГЄГ°ГіГЈ ГўГ°Г ГЈГ 
     m_nearest.clear_not_free();
     m_nearest.reserve(res_size);
     FindFreeObjects(m_nearest, object->EnemyMan.get_enemy()->Position());
 
-    // получить список объектов вокруг монстра
+    // ГЇГ®Г«ГіГ·ГЁГІГј Г±ГЇГЁГ±Г®ГЄ Г®ГЎГєГҐГЄГІГ®Гў ГўГ®ГЄГ°ГіГЈ Г¬Г®Г­Г±ГІГ°Г 
     FindFreeObjects(m_nearest, object->Position());
 
-    // получить список объектов между монстром и врагом
+    // ГЇГ®Г«ГіГ·ГЁГІГј Г±ГЇГЁГ±Г®ГЄ Г®ГЎГєГҐГЄГІГ®Гў Г¬ГҐГ¦Г¤Гі Г¬Г®Г­Г±ГІГ°Г®Г¬ ГЁ ГўГ°Г ГЈГ®Г¬
     float dist = object->EnemyMan.get_enemy()->Position().distance_to(object->Position());
     Fvector dir;
     dir.sub(object->EnemyMan.get_enemy()->Position(), object->Position());
@@ -237,7 +239,7 @@ void CStateBurerAttackTele<Object>::FindObjects()
     pos.mad(object->Position(), dir, dist / 2.f);
     FindFreeObjects(m_nearest, pos);
 
-    // оставить уникальные объекты
+    // Г®Г±ГІГ ГўГЁГІГј ГіГ­ГЁГЄГ Г«ГјГ­Г»ГҐ Г®ГЎГєГҐГЄГІГ»
     tele_objects.erase(std::unique(tele_objects.begin(), tele_objects.end()), tele_objects.end());
 }
 
@@ -293,7 +295,7 @@ void CStateBurerAttackTele<Object>::ExecuteTeleContinue()
     if (!object->EnemyMan.see_enemy_now())
         return;
 
-    // найти объект для атаки
+    // Г­Г Г©ГІГЁ Г®ГЎГєГҐГЄГІ Г¤Г«Гї Г ГІГ ГЄГЁ
     bool object_found = false;
     CTelekineticObject tele_object;
 
@@ -352,30 +354,30 @@ bool CStateBurerAttackTele<Object>::IsActiveObjects()
 template <typename Object>
 bool CStateBurerAttackTele<Object>::CheckTeleStart()
 {
-    // проверка на текущую активность
+    // ГЇГ°Г®ГўГҐГ°ГЄГ  Г­Г  ГІГҐГЄГіГ№ГіГѕ Г ГЄГІГЁГўГ­Г®Г±ГІГј
     if (IsActiveObjects())
         return false;
 
-    // проверить дистанцию до врага
+    // ГЇГ°Г®ГўГҐГ°ГЁГІГј Г¤ГЁГ±ГІГ Г­Г¶ГЁГѕ Г¤Г® ГўГ°Г ГЈГ 
     float dist = object->Position().distance_to(object->EnemyMan.get_enemy()->Position());
     if (dist < object->m_tele_min_distance)
         return false;
     if (dist > object->m_tele_max_distance)
         return false;
 
-    // найти телекинетические объекты
+    // Г­Г Г©ГІГЁ ГІГҐГ«ГҐГЄГЁГ­ГҐГІГЁГ·ГҐГ±ГЄГЁГҐ Г®ГЎГєГҐГЄГІГ»
     FindObjects();
 
-    // если нет объектов
+    // ГҐГ±Г«ГЁ Г­ГҐГІ Г®ГЎГєГҐГЄГІГ®Гў
     if (tele_objects.empty())
         return false;
 
-    // всё ок можно начинать телекинез
+    // ГўГ±Вё Г®ГЄ Г¬Г®Г¦Г­Г® Г­Г Г·ГЁГ­Г ГІГј ГІГҐГ«ГҐГЄГЁГ­ГҐГ§
     return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Выбор подходящих объектов для телекинеза
+// Г‚Г»ГЎГ®Г° ГЇГ®Г¤ГµГ®Г¤ГїГ№ГЁГµ Г®ГЎГєГҐГЄГІГ®Гў Г¤Г«Гї ГІГҐГ«ГҐГЄГЁГ­ГҐГ§Г 
 //////////////////////////////////////////////////////////////////////////
 class best_object_predicate
 {
@@ -426,12 +428,12 @@ void CStateBurerAttackTele<Object>::SelectObjects()
     std::sort(tele_objects.begin(), tele_objects.end(),
         best_object_predicate2(object->Position(), object->EnemyMan.get_enemy()->Position()));
 
-    // выбрать объект
+    // ГўГ»ГЎГ°Г ГІГј Г®ГЎГєГҐГЄГІ
     for (u32 i = 0; i < tele_objects.size(); ++i)
     {
         CPhysicsShellHolder* obj = tele_objects[i];
 
-        // применить телекинез на объект
+        // ГЇГ°ГЁГ¬ГҐГ­ГЁГІГј ГІГҐГ«ГҐГЄГЁГ­ГҐГ§ Г­Г  Г®ГЎГєГҐГЄГІ
 
         float height = object->m_tele_object_height;
 
@@ -449,7 +451,7 @@ void CStateBurerAttackTele<Object>::SelectObjects()
 
         object->StartTeleObjectParticle(obj);
 
-        // удалить из списка
+        // ГіГ¤Г Г«ГЁГІГј ГЁГ§ Г±ГЇГЁГ±ГЄГ 
         tele_objects[i] = tele_objects[tele_objects.size() - 1];
         tele_objects.pop_back();
 

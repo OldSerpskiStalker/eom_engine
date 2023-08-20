@@ -7,7 +7,6 @@ using namespace luabind;
 
 namespace gamespy_gp
 {
-
 void account_manager::script_register(lua_State* L)
 {
     module(L)[class_<account_manager>("account_manager")
@@ -32,7 +31,6 @@ void account_manager::script_register(lua_State* L)
                   .def("search_for_email", &account_manager::search_for_email)
                   .def("stop_searching_email", &account_manager::stop_searching_email)];
 }
-
 } // namespace gamespy_gp
 
 DEFINE_MIXED_DELEGATE_SCRIPT(gamespy_gp::suggest_nicks_cb, "suggest_nicks_cb");

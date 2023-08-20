@@ -66,8 +66,11 @@ private:
     Particle* particle_idle;
 
     // Sounds
+public:
     ref_sound snd_Ambient;
+    ref_sound snd_OnRoof;
 
+private:
     // Utilities
     void p_create();
     void p_destroy();

@@ -729,6 +729,7 @@ BOOL CActor::net_Spawn(CSE_Abstract* DC)
     {
         setLocal(FALSE);
     };
+
     return TRUE;
 }
 

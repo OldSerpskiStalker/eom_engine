@@ -5,6 +5,8 @@
 
 #include "EntityCondition.h"
 #include "actor_defs.h"
+#include "script_export_space.h"
+#include "Wound.h"
 
 template <typename _return_type>
 class CScriptCallbackEx;
@@ -26,6 +28,7 @@ private:
         ePhyHealthMinReached = (1 << 6),
         eCantWalkWeight = (1 << 7),
         eCantWalkWeightReached = (1 << 8),
+        eCriticalThirstReached = (1 << 9),
     };
     Flags16 m_condition_flags;
 
@@ -35,6 +38,7 @@ private:
     void UpdateTutorialThresholds();
     void UpdateSatiety();
     virtual void UpdateRadiation();
+    void UpdateThirst();
 
 public:
     CActorCondition(CActor* object);
@@ -49,6 +53,7 @@ public:
 
     virtual void ChangeAlcohol(const float value);
     virtual void ChangeSatiety(const float value);
+    virtual void ChangeThirst(const float value);
 
     void BoostParameters(const SBooster& B);
     void DisableBoostParameters(const SBooster& B);
@@ -69,7 +74,7 @@ public:
     IC void BoostRadiationProtection(const float value);
     IC void BoostTelepaticProtection(const float value);
     IC void BoostChemicalBurnProtection(const float value);
-    BOOSTER_MAP GetCurBoosterInfluences() { return m_booster_influences; };
+    BOOSTER_MAP& GetCurBoosterInfluences() { return m_booster_influences; };
 
     // хромание при потере сил и здоровья
     virtual bool IsLimping() const;
@@ -89,6 +94,8 @@ public:
     float xr_stdcall GetPsy() { return 1.0f - GetPsyHealth(); }
     float GetSatiety() { return m_fSatiety; }
     IC float GetSatietyPower() const { return m_fV_SatietyPower * m_fSatiety; };
+    float GetThirst() { return m_fThirst; }
+    IC float GetThirstPower() const { return m_fV_ThirstPower * m_fThirst; };
 
     void AffectDamage_InjuriousMaterialAndMonstersInfluence();
     float GetInjuriousMaterialDamage();
@@ -106,9 +113,13 @@ public:
     virtual void load(IReader& input_packet);
     //	IC		float const&	Satiety					()	{ return m_fSatiety; }
     IC float const& V_Satiety() { return m_fV_Satiety; }
+    IC float const& V_Thirst() { return m_fV_Thirst; }
     IC float const& V_SatietyPower() { return m_fV_SatietyPower; }
     IC float const& V_SatietyHealth() { return m_fV_SatietyHealth; }
     IC float const& SatietyCritical() { return m_fSatietyCritical; }
+    IC float const& ThirstCritical() { return m_fThirstCritical; }
+    IC float const& V_ThirstPower() { return m_fV_ThirstPower; }
+    IC float const& V_ThirstHealth() { return m_fV_ThirstHealth; }
 
     float GetZoneMaxPower(ALife::EInfluenceType type) const;
     float GetZoneMaxPower(ALife::EHitType hit_type) const;
@@ -133,6 +144,12 @@ protected:
     float m_fV_SatietyHealth;
     float m_fSatietyCritical;
     //--
+    float m_fThirst;
+    float m_fV_Thirst;
+    float m_fV_ThirstPower;
+    float m_fV_ThirstHealth;
+    float m_fThirstCritical;
+
     float m_fPowerLeakSpeed;
 
     float m_fJumpPower;
@@ -176,6 +193,8 @@ protected:
     // typedef xr_vector<SMedicineInfluenceValues>::iterator BOOSTS_VECTOR_ITER;
     // BOOSTS_VECTOR m_vecBoosts;
     ref_sound m_use_sound;
+
+    DECLARE_SCRIPT_REGISTER_FUNCTION
 };
 
 class CActorDeathEffector

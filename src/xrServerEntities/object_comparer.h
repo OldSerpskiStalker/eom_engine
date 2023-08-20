@@ -181,6 +181,7 @@ struct comparer
     {
         return (P<T>()(_1, _2));
     }
+
     IC bool operator()() const { return (P<bool>()(false, true)); }
     IC bool operator()(LPCSTR _1, LPCSTR _2) const { return (P<int>()(xr_strcmp(_1, _2), 0)); }
     IC bool operator()(LPSTR _1, LPSTR _2) const { return (P<int>()(xr_strcmp(_1, _2), 0)); }

@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "CameraDefs.h"
@@ -19,12 +18,14 @@ public:
         fLifeTime = tm;
         bHudAffect = true;
     };
+
     CEffectorCam()
     {
         eType = (ECamEffectorType)0;
         fLifeTime = 0.0f;
         bHudAffect = true;
     };
+
     virtual ~CEffectorCam(){};
     void SetType(ECamEffectorType type) { eType = type; }
     void SetHudAffect(bool val) { bHudAffect = val; }

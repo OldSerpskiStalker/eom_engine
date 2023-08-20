@@ -13,10 +13,12 @@
 // #include "hw.h"
 #include "../xrcore/ftimer.h"
 #include "stats.h"
+#include "../build_config_defines.h"
 // #include "shader.h"
 // #include "R_Backend.h"
 
 #define VIEWPORT_NEAR 0.2f
+#define HUD_VIEWPORT_NEAR 0.05f
 
 #define DEVICE_RESET_PRECACHE_FRAME_COUNT 10
 
@@ -48,6 +50,7 @@ public:
     u32 dwPrecacheFrame;
     BOOL b_is_Ready;
     BOOL b_is_Active;
+    BOOL b_hide_cursor;
 
 public:
     // Engine flow-control
@@ -112,7 +115,7 @@ class ENGINE_API CRenderDevice : public CRenderDeviceBase
 {
 private:
     // Main objects used for creating and rendering the 3D scene
-    u32 m_dwWindowStyle;
+    u64 m_dwWindowStyle;
     RECT m_rcWindowBounds;
     RECT m_rcWindowClient;
 
@@ -127,7 +130,7 @@ private:
 
 public:
     // HWND m_hWnd;
-    LRESULT MsgProc(HWND, UINT, WPARAM, LPARAM);
+    // LRESULT MsgProc(HWND, UINT, WPARAM, LPARAM);
 
     // u32 dwFrame;
     // u32 dwPrecacheFrame;
@@ -220,12 +223,13 @@ public:
         m_hWnd = NULL;
         b_is_Active = FALSE;
         b_is_Ready = FALSE;
+        b_hide_cursor = FALSE;
         Timer.Start();
         m_bNearer = FALSE;
     };
 
     void Pause(BOOL bOn, BOOL bTimer, BOOL bSound, LPCSTR reason);
-    BOOL Paused();
+    bool Paused();
 
     // Scene control
     void PreCache(u32 amount, bool b_draw_loadscreen, bool b_wait_user_input);
@@ -236,6 +240,9 @@ public:
 
     void overdrawBegin();
     void overdrawEnd();
+
+    // Console Screenshot
+    void Screenshot();
 
     // Mode control
     void DumpFlags();
@@ -319,6 +326,10 @@ extern ENGINE_API CRenderDevice Device;
 #else
 #define RDEVICE EDevice
 #endif
+
+#ifdef ECO_RENDER
+extern ENGINE_API float refresh_rate;
+#endif // ECO_RENDER
 
 extern ENGINE_API bool g_bBenchmark;
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "energy_holder.h"
 #include "../../gameobject.h"
 
@@ -55,7 +55,7 @@ void CEnergyHolder::schedule_update()
     if (!m_enable)
         return;
 
-    // Обновить значение энергии
+    // ГЋГЎГ­Г®ГўГЁГІГј Г§Г­Г Г·ГҐГ­ГЁГҐ ГЅГ­ГҐГ°ГЈГЁГЁ
     u32 cur_time = Device.dwTimeGlobal;
     float dt = float(cur_time - m_time_last_update) / 1000.f;
 
@@ -66,10 +66,10 @@ void CEnergyHolder::schedule_update()
 
     clamp(m_value, 0.f, 1.f);
 
-    // сохранить время последнего обновления
+    // Г±Г®ГµГ°Г Г­ГЁГІГј ГўГ°ГҐГ¬Гї ГЇГ®Г±Г«ГҐГ¤Г­ГҐГЈГ® Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГї
     m_time_last_update = cur_time;
 
-    // проверка на автоматическое включение/выключение поля
+    // ГЇГ°Г®ГўГҐГ°ГЄГ  Г­Г  Г ГўГІГ®Г¬Г ГІГЁГ·ГҐГ±ГЄГ®ГҐ ГўГЄГ«ГѕГ·ГҐГ­ГЁГҐ/ГўГ»ГЄГ«ГѕГ·ГҐГ­ГЁГҐ ГЇГ®Г«Гї
     if (is_active() && should_deactivate() && m_auto_deactivate)
         deactivate();
     if (!is_active() && can_activate() && m_auto_activate)

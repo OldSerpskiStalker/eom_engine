@@ -9,13 +9,19 @@
 #include "pch_script.h"
 #include "actor.h"
 #include "level_changer.h"
+#include "ActorCondition.h"
 
 using namespace luabind;
 
 #pragma optimize("s", on)
 void CActor::script_register(lua_State* L)
 {
-    module(L)[class_<CActor, CGameObject>("CActor").def(constructor<>())
+    CActorCondition::script_register(L);
+
+    module(L)[class_<CActor, CGameObject>("CActor")
+                  .def(constructor<>())
+
+                  .def("conditions", &CActor::conditions)
 
 #ifndef BENCHMARK_BUILD
                   ,

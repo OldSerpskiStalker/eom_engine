@@ -12,7 +12,6 @@
 namespace burer
 {
 float const health_delta = 0.01f;
-
 } // namespace burer
 
 template <typename Object>

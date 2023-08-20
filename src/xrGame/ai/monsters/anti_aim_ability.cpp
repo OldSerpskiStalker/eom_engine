@@ -16,7 +16,6 @@ static pcstr const s_anti_aim_freeze_time_string = "anti_aim_freeze_time";
 static pcstr const s_anti_aim_max_angle_string = "anti_aim_max_angle";
 static pcstr const s_anti_aim_detection_gain_speed_string = "anti_aim_detection_gain_speed";
 static pcstr const s_anti_aim_detection_loose_speed_string = "anti_aim_detection_loose_speed";
-
 } // namespace detail
 
 anti_aim_ability::anti_aim_ability(CBaseMonster* const object) : m_object(object)

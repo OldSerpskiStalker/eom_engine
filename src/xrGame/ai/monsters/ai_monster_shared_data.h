@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "ai_monster_defs.h"
 
 struct SMonsterSettings
@@ -6,7 +6,7 @@ struct SMonsterSettings
     // float speed factors
 
     float m_fDistToCorpse;
-    float m_fDamagedThreshold; // порог здоровья, ниже которого устанавливается флаг m_bDamaged
+    float m_fDamagedThreshold; // ГЇГ®Г°Г®ГЈ Г§Г¤Г®Г°Г®ГўГјГї, Г­ГЁГ¦ГҐ ГЄГ®ГІГ®Г°Г®ГЈГ® ГіГ±ГІГ Г­Г ГўГ«ГЁГўГ ГҐГІГ±Гї ГґГ«Г ГЈ m_bDamaged
 
     // -------------------------------------------------------
 

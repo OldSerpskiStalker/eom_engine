@@ -10,6 +10,7 @@ class CStateControlFire : public CState<_Object>
 
 public:
     CStateControlFire(_Object* obj) : inherited(obj) {}
+
     virtual ~CStateControlFire() {}
 
     virtual void reinit();

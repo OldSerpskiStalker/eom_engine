@@ -40,6 +40,7 @@ void CControlDirectionBase::face_target(const Fvector& position, u32 delay, floa
 
     m_time_last_faced = Device.dwTimeGlobal;
 }
+
 void CControlDirectionBase::face_target(const CObject* obj, u32 delay, float add_yaw)
 {
     face_target(obj->Position(), delay, add_yaw);
@@ -59,6 +60,7 @@ void CControlDirectionBase::use_path_direction(bool reversed)
 void CControlDirectionBase::set_heading_speed(float value, bool force) { m_heading.speed_target = value; }
 
 void CControlDirectionBase::set_heading(float value, bool force) { m_heading.target = value; }
+
 //////////////////////////////////////////////////////////////////////////
 //
 //////////////////////////////////////////////////////////////////////////

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "burer.h"
 #include "../../../../xrphysics/PhysicsShell.h"
 #include "../../../characterphysicssupport.h"
@@ -24,6 +24,7 @@
 
 #include "../../../../xrCore/_vector3d_ext.h"
 #include "../control_direction_base.h"
+#include "../../script_game_object.h"
 
 bool CBurer::can_scan = true;
 
@@ -139,41 +140,41 @@ void CBurer::Load(LPCSTR section)
     // SVelocityParam &velocity_steal		= 	move().get_velocity(MonsterMovement::eVelocityParameterSteal);
     //		SVelocityParam &velocity_drag		= move().get_velocity(MonsterMovement::eVelocityParameterDrag);
 
-    anim().AddAnim(eAnimStandIdle, "stand_idle_", -1, &velocity_none,
-        PS_STAND); //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
-    anim().AddAnim(eAnimStandTurnLeft, "stand_turn_ls_", -1, &velocity_turn,
-        PS_STAND); //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
-    anim().AddAnim(eAnimStandTurnRight, "stand_turn_rs_", -1, &velocity_turn,
-        PS_STAND); //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
+    anim().AddAnim(eAnimStandIdle, "stand_idle_", -1, &velocity_none, PS_STAND);
+    //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
+    anim().AddAnim(eAnimStandTurnLeft, "stand_turn_ls_", -1, &velocity_turn, PS_STAND);
+    //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
+    anim().AddAnim(eAnimStandTurnRight, "stand_turn_rs_", -1, &velocity_turn, PS_STAND);
+    //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
     //	anim().AddAnim(eAnimStandDamaged,	"stand_idle_dmg_",		-1, &velocity_none,		PS_STAND); //, 	"fx_stand_f",
     //"fx_stand_b", "fx_stand_l", "fx_stand_r");
 
-    anim().AddAnim(eAnimWalkFwd, "stand_walk_fwd_", -1, &velocity_walk,
-        PS_STAND); //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
+    anim().AddAnim(eAnimWalkFwd, "stand_walk_fwd_", -1, &velocity_walk, PS_STAND);
+    //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
     // anim().AddAnim(eAnimWalkDamaged,	"stand_walk_fwd_dmg_",	-1, &velocity_walk_dmg,	PS_STAND); //, 	"fx_stand_f",
     // "fx_stand_b", "fx_stand_l", "fx_stand_r");
-    anim().AddAnim(eAnimRun, "stand_run_fwd_", -1, &velocity_run,
-        PS_STAND); //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
+    anim().AddAnim(eAnimRun, "stand_run_fwd_", -1, &velocity_run, PS_STAND);
+    //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
     // anim().AddAnim(eAnimRunDamaged,		"stand_run_dmg_",		-1,	&velocity_run_dmg,	PS_STAND); //, 	"fx_stand_f",
     // "fx_stand_b", "fx_stand_l", "fx_stand_r");
 
-    anim().AddAnim(eAnimAttack, "stand_attack_", -1, &velocity_turn,
-        PS_STAND); //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
+    anim().AddAnim(eAnimAttack, "stand_attack_", -1, &velocity_turn, PS_STAND);
+    //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
 
-    anim().AddAnim(eAnimDie, "stand_die_", -1, &velocity_none,
-        PS_STAND); //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
+    anim().AddAnim(eAnimDie, "stand_die_", -1, &velocity_none, PS_STAND);
+    //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
 
-    anim().AddAnim(eAnimShieldStart, "stand_shield_", -1, &velocity_turn,
-        PS_STAND); //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
-    anim().AddAnim(eAnimShieldContinue, "stand_shield_idle_", -1, &velocity_turn,
-        PS_STAND); //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
+    anim().AddAnim(eAnimShieldStart, "stand_shield_", -1, &velocity_turn, PS_STAND);
+    //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
+    anim().AddAnim(eAnimShieldContinue, "stand_shield_idle_", -1, &velocity_turn, PS_STAND);
+    //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
 
-    anim().AddAnim(eAnimTeleFire, "stand_power_attack_", -1, &velocity_turn,
-        PS_STAND); //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
-    anim().AddAnim(eAnimTelekinesis, "telekinesis_", -1, &velocity_turn,
-        PS_STAND); //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
-    anim().AddAnim(eAnimGraviFire, "stand_power_attack_", -1, &velocity_turn,
-        PS_STAND); //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
+    anim().AddAnim(eAnimTeleFire, "stand_power_attack_", -1, &velocity_turn, PS_STAND);
+    //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
+    anim().AddAnim(eAnimTelekinesis, "telekinesis_", -1, &velocity_turn, PS_STAND);
+    //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
+    anim().AddAnim(eAnimGraviFire, "stand_power_attack_", -1, &velocity_turn, PS_STAND);
+    //, 	"fx_stand_f", "fx_stand_b", "fx_stand_l", "fx_stand_r");
 
     anim().AddAnim(eAnimRunTurnLeft, "stand_run_fwd_turn_left_", -1, &velocity_run, PS_STAND);
     anim().AddAnim(eAnimRunTurnRight, "stand_run_fwd_turn_right_", -1, &velocity_run, PS_STAND);
@@ -248,9 +249,16 @@ void xr_stdcall CBurer::StaminaHit()
     float const weight = active_weapon->Weight();
     float const stamina_hit = weight * m_weight_to_stamina_hit;
 
-    bool const do_weapon_drop = Actor()->conditions().GetPower() < stamina_hit * m_weapon_drop_stamina_k;
+    bool do_weapon_drop = Actor()->conditions().GetPower() < stamina_hit * m_weapon_drop_stamina_k;
 
     Actor()->conditions().PowerHit(stamina_hit, false);
+
+    if (do_weapon_drop)
+    {
+        luabind::functor<bool> funct;
+        if (ai().script_engine().functor("_G.CBurer_BeforeWeaponDropCallback", funct))
+            do_weapon_drop = funct(this->lua_game_object(), active_weapon->lua_game_object());
+    }
 
     if (do_weapon_drop)
     {
@@ -352,12 +360,12 @@ void CBurer::UpdateGraviObject()
     // draw particle
     CParticlesObject* ps = CParticlesObject::Create(particle_gravi_wave, TRUE);
 
-    // âû÷èñëèòü ïîçèöèþ è íàïðàâëåííîñòü ïàðòèêëà
+    // Ã¢Ã»Ã·Ã¨Ã±Ã«Ã¨Ã²Ã¼ Ã¯Ã®Ã§Ã¨Ã¶Ã¨Ã¾ Ã¨ Ã­Ã Ã¯Ã°Ã Ã¢Ã«Ã¥Ã­Ã­Ã®Ã±Ã²Ã¼ Ã¯Ã Ã°Ã²Ã¨ÃªÃ«Ã 
     Fmatrix pos;
     pos.identity();
     pos.k.set(dir);
     Fvector::generate_orthonormal_basis_normalized(pos.k, pos.j, pos.i);
-    // óñòàíîâèòü ïîçèöèþ
+    // Ã³Ã±Ã²Ã Ã­Ã®Ã¢Ã¨Ã²Ã¼ Ã¯Ã®Ã§Ã¨Ã¶Ã¨Ã¾
     pos.translate_over(m_gravi_object.cur_pos);
 
     ps->UpdateParent(pos, zero_vel);
@@ -374,13 +382,17 @@ void CBurer::UpdateGraviObject()
         if (!obj || !obj->m_pPhysicsShell)
             continue;
 
+        CInventoryItem* itm = smart_cast<CInventoryItem*>(obj);
+        if (itm && itm->IsQuestItem())
+            continue;
+
         Fvector dir;
         dir.sub(obj->Position(), m_gravi_object.cur_pos);
         dir.normalize();
         obj->m_pPhysicsShell->applyImpulse(dir, m_gravi.impulse_to_objects * obj->m_pPhysicsShell->getMass());
     }
 
-    // èãðàòü çâóê
+    // Ã¨Ã£Ã°Ã Ã²Ã¼ Ã§Ã¢Ã³Ãª
     Fvector snd_pos = m_gravi_object.cur_pos;
     snd_pos.y += 0.5f;
     if (sound_gravi_wave._feedback())
@@ -412,6 +424,7 @@ void CBurer::StartGraviPrepare()
 
     pA->CParticlesPlayer::StartParticles(particle_gravi_prepare, Fvector().set(0.0f, 0.1f, 0.0f), pA->ID());
 }
+
 void CBurer::StopGraviPrepare()
 {
     CActor* pA = Actor();
@@ -427,6 +440,7 @@ void CBurer::StartTeleObjectParticle(CGameObject* pO)
         return;
     PP->StartParticles(particle_tele_object, Fvector().set(0.0f, 0.1f, 0.0f), pO->ID());
 }
+
 void CBurer::StopTeleObjectParticle(CGameObject* pO)
 {
     CParticlesPlayer* PP = smart_cast<CParticlesPlayer*>(pO);
@@ -439,12 +453,12 @@ void CBurer::Hit(SHit* pHDS)
 {
     if (m_shield_active && pHDS->hit_type == ALife::eHitTypeFireWound && Device.dwFrame != last_hit_frame)
     {
-        // âû÷èñëèòü ïîçèöèþ è íàïðàâëåííîñòü ïàðòèêëà
+        // Ã¢Ã»Ã·Ã¨Ã±Ã«Ã¨Ã²Ã¼ Ã¯Ã®Ã§Ã¨Ã¶Ã¨Ã¾ Ã¨ Ã­Ã Ã¯Ã°Ã Ã¢Ã«Ã¥Ã­Ã­Ã®Ã±Ã²Ã¼ Ã¯Ã Ã°Ã²Ã¨ÃªÃ«Ã 
         Fmatrix pos;
         // CParticlesPlayer::MakeXFORM(this,element,Fvector().set(0.f,0.f,1.f),p_in_object_space,pos);
         CParticlesPlayer::MakeXFORM(this, pHDS->bone(), pHDS->dir, pHDS->p_in_bone_space, pos);
 
-        // óñòàíîâèòü particles
+        // Ã³Ã±Ã²Ã Ã­Ã®Ã¢Ã¨Ã²Ã¼ particles
         CParticlesObject* ps = CParticlesObject::Create(particle_fire_shield, TRUE);
 
         ps->UpdateParent(pos, Fvector().set(0.f, 0.f, 0.f));

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "ai_monster_squad.h"
 #include "../../entity.h"
 #include "../../entity_alive.h"
@@ -10,7 +10,7 @@ void CMonsterSquad::ProcessAttack()
     m_enemy_map.clear();
     m_temp_entities.clear();
 
-    // Âûäåëèòü ýëåìåíòû ñ îáùèìè âðàãàìè è ñîñòÿíèåì àòàêè
+    // Ã‚Ã»Ã¤Ã¥Ã«Ã¨Ã²Ã¼ Ã½Ã«Ã¥Ã¬Ã¥Ã­Ã²Ã» Ã± Ã®Ã¡Ã¹Ã¨Ã¬Ã¨ Ã¢Ã°Ã Ã£Ã Ã¬Ã¨ Ã¨ Ã±Ã®Ã±Ã²Ã¿Ã­Ã¨Ã¥Ã¬ Ã Ã²Ã ÃªÃ¨
     for (MEMBER_GOAL_MAP_IT it_goal = m_goals.begin(); it_goal != m_goals.end(); it_goal++)
     {
         //		CEntity *member = it_goal->first;
@@ -33,7 +33,7 @@ void CMonsterSquad::ProcessAttack()
         }
     }
 
-    // Ïðîéòè ïî âñåì ãðóïïàì è íàçíà÷èòü óãëû âñåì åëåìåíòàì â ãðóïïå
+    // ÃÃ°Ã®Ã©Ã²Ã¨ Ã¯Ã® Ã¢Ã±Ã¥Ã¬ Ã£Ã°Ã³Ã¯Ã¯Ã Ã¬ Ã¨ Ã­Ã Ã§Ã­Ã Ã·Ã¨Ã²Ã¼ Ã³Ã£Ã«Ã» Ã¢Ã±Ã¥Ã¬ Ã¥Ã«Ã¥Ã¬Ã¥Ã­Ã²Ã Ã¬ Ã¢ Ã£Ã°Ã³Ã¯Ã¯Ã¥
     for (ENEMY_MAP_IT it_enemy = m_enemy_map.begin(); it_enemy != m_enemy_map.end(); ++it_enemy)
     {
         ENTITY_VEC* monsters = &(*it_enemy).second;
@@ -75,7 +75,7 @@ void CMonsterSquad::set_rat_squad_index(const CEntity* m_enemy)
     m_enemy_maps.clear();
     m_entities.clear();
 
-    // Âûäåëèòü ýëåìåíòû ñ îáùåé öåëüþ
+    // Ã‚Ã»Ã¤Ã¥Ã«Ã¨Ã²Ã¼ Ã½Ã«Ã¥Ã¬Ã¥Ã­Ã²Ã» Ã± Ã®Ã¡Ã¹Ã¥Ã© Ã¶Ã¥Ã«Ã¼Ã¾
 
     for (MEMBER_GOAL_MAP_IT it_goal = m_goals.begin(); it_goal != m_goals.end(); it_goal++)
     {
@@ -121,7 +121,7 @@ void CMonsterSquad::set_squad_index(const CEntity* m_enemy)
     m_enemy_maps.clear();
     m_entities.clear();
 
-    // Âûäåëèòü ýëåìåíòû ñ îáùåé öåëüþ
+    // Ã‚Ã»Ã¤Ã¥Ã«Ã¨Ã²Ã¼ Ã½Ã«Ã¥Ã¬Ã¥Ã­Ã²Ã» Ã± Ã®Ã¡Ã¹Ã¥Ã© Ã¶Ã¥Ã«Ã¼Ã¾
 
     for (MEMBER_GOAL_MAP_IT it_goal = m_goals.begin(); it_goal != m_goals.end(); it_goal++)
     {
@@ -168,14 +168,14 @@ void CMonsterSquad::Attack_AssignTargetDir(ENTITY_VEC& members, const CEntity* e
 
     lines.clear();
 
-    // ñîðòèðîâàòü ïî óáûâàíèþ ðàññòîÿíèÿ îò npc äî âðàãà
+    // Ã±Ã®Ã°Ã²Ã¨Ã°Ã®Ã¢Ã Ã²Ã¼ Ã¯Ã® Ã³Ã¡Ã»Ã¢Ã Ã­Ã¨Ã¾ Ã°Ã Ã±Ã±Ã²Ã®Ã¿Ã­Ã¨Ã¿ Ã®Ã² npc Ã¤Ã® Ã¢Ã°Ã Ã£Ã 
     std::sort(members.begin(), members.end(), sort_predicate(enemy));
     if (members.empty())
         return;
 
     float delta_yaw = PI_MUL_2 / members.size();
 
-    // îáðàáîòàòü áëèæíèé ýëåìåíò
+    // Ã®Ã¡Ã°Ã Ã¡Ã®Ã²Ã Ã²Ã¼ Ã¡Ã«Ã¨Ã¦Ã­Ã¨Ã© Ã½Ã«Ã¥Ã¬Ã¥Ã­Ã²
     first.pE = members.back();
     first.p_from = first.pE->Position();
     first.yaw = 0;
@@ -183,7 +183,7 @@ void CMonsterSquad::Attack_AssignTargetDir(ENTITY_VEC& members, const CEntity* e
 
     lines.push_back(first);
 
-    // îáðàáîòàòü äàëüíèé ýëåìåíò
+    // Ã®Ã¡Ã°Ã Ã¡Ã®Ã²Ã Ã²Ã¼ Ã¤Ã Ã«Ã¼Ã­Ã¨Ã© Ã½Ã«Ã¥Ã¬Ã¥Ã­Ã²
     if (!members.empty())
     {
         last.pE = members[0];
@@ -198,7 +198,7 @@ void CMonsterSquad::Attack_AssignTargetDir(ENTITY_VEC& members, const CEntity* e
     float next_right_yaw = delta_yaw;
     float next_left_yaw = delta_yaw;
 
-    // ïðîõîäèì ñ êîíöà members â íà÷àëî (íà÷èíàÿ ñ íàèìåíüøåãî ðàññòîÿíèÿ)
+    // Ã¯Ã°Ã®ÃµÃ®Ã¤Ã¨Ã¬ Ã± ÃªÃ®Ã­Ã¶Ã  members Ã¢ Ã­Ã Ã·Ã Ã«Ã® (Ã­Ã Ã·Ã¨Ã­Ã Ã¿ Ã± Ã­Ã Ã¨Ã¬Ã¥Ã­Ã¼Ã¸Ã¥Ã£Ã® Ã°Ã Ã±Ã±Ã²Ã®Ã¿Ã­Ã¨Ã¿)
     while (!members.empty())
     {
         CEntity* pCur;
@@ -210,7 +210,7 @@ void CMonsterSquad::Attack_AssignTargetDir(ENTITY_VEC& members, const CEntity* e
         cur_line.p_from = pCur->Position();
         cur_line.pE = pCur;
 
-        // îïðåäåëèòü cur_line.yaw
+        // Ã®Ã¯Ã°Ã¥Ã¤Ã¥Ã«Ã¨Ã²Ã¼ cur_line.yaw
 
         float h1, p1, h2, p2;
         Fvector dir;
@@ -222,14 +222,16 @@ void CMonsterSquad::Attack_AssignTargetDir(ENTITY_VEC& members, const CEntity* e
         bool b_add_left = false;
 
         if (angle_normalize_signed(h2 - h1) > 0)
-        { // right
+        {
+            // right
             if ((next_right_yaw < PI) && !fsimilar(next_right_yaw, PI, PI / 60.f))
                 b_add_left = false;
             else
                 b_add_left = true;
         }
         else
-        { // left
+        {
+            // left
             if ((next_left_yaw < PI) && !fsimilar(next_left_yaw, PI, PI / 60.f))
                 b_add_left = true;
             else
@@ -250,7 +252,7 @@ void CMonsterSquad::Attack_AssignTargetDir(ENTITY_VEC& members, const CEntity* e
         lines.push_back(cur_line);
     }
 
-    // Ïðîéòè ïî âñåì ëèíèÿì è çàïîëíèòü òàðãåòû ó npc
+    // ÃÃ°Ã®Ã©Ã²Ã¨ Ã¯Ã® Ã¢Ã±Ã¥Ã¬ Ã«Ã¨Ã­Ã¨Ã¿Ã¬ Ã¨ Ã§Ã Ã¯Ã®Ã«Ã­Ã¨Ã²Ã¼ Ã²Ã Ã°Ã£Ã¥Ã²Ã» Ã³ npc
     float first_h, first_p;
     Fvector d;
     d.sub(target_pos, first.p_from);

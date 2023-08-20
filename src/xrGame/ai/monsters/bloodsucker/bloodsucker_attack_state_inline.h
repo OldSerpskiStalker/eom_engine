@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 // #include "bloodsucker_attack_state_hide.h"
 #include "../states/state_move_to_point.h"
@@ -41,15 +41,12 @@ void CBloodsuckerStateAttackAbstract::critical_finalize()
 
 namespace detail
 {
-
 namespace bloodsucker
 {
 const u32 encircle_time = 3000;
 const float loose_health_diff = 0.15f;
 const u32 change_behaviour_time = 1000;
-
 } // namespace bloodsucker
-
 } // namespace detail
 
 TEMPLATE_SPECIALIZATION
@@ -71,7 +68,7 @@ void CBloodsuckerStateAttackAbstract::execute()
         select_state(eStateAttack_RunAttack);
     else
     {
-        // определить тип атаки
+        // Г®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј ГІГЁГЇ Г ГІГ ГЄГЁ
         bool b_melee = false;
 
         if (prev_substate == eStateAttack_Melee)
@@ -91,7 +88,7 @@ void CBloodsuckerStateAttackAbstract::execute()
             select_state(eStateAttack_Hide);
         }
         else
-            // установить целевое состояние
+            // ГіГ±ГІГ Г­Г®ГўГЁГІГј Г¶ГҐГ«ГҐГўГ®ГҐ Г±Г®Г±ГІГ®ГїГ­ГЁГҐ
             if (b_melee)
             {
                 // check if enemy is behind me for a long time

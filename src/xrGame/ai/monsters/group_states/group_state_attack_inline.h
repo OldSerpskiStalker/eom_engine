@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "../states/monster_state_attack_melee.h"
 #include "../states/monster_state_attack_run_attack.h"
@@ -191,7 +191,7 @@ void CStateGroupAttackAbstract::execute()
     }
     else
     {
-        // определить тип атаки
+        // Г®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј ГІГЁГЇ Г ГІГ ГЄГЁ
         bool b_melee = false;
 
         if (prev_substate == eStateAttack_Melee)
@@ -206,7 +206,7 @@ void CStateGroupAttackAbstract::execute()
             b_melee = true;
         }
 
-        // установить целевое состояние
+        // ГіГ±ГІГ Г­Г®ГўГЁГІГј Г¶ГҐГ«ГҐГўГ®ГҐ Г±Г®Г±ГІГ®ГїГ­ГЁГҐ
         if (!can_attack_on_move && b_melee)
         {
             // check if enemy is behind me for a long time

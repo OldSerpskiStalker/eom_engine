@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
+п»ї////////////////////////////////////////////////////////////////////////////
 //	Module 		: base_monster_feel.cpp
 //	Created 	: 26.05.2003
 //  Modified 	: 26.05.2003
@@ -78,6 +78,7 @@ void CBaseMonster::feel_sound_new(
         SoundMemory.HearSound(who, eType, Position, power, Device.dwTimeGlobal);
     }
 }
+
 #define MAX_LOCK_TIME 2.f
 
 void CBaseMonster::HitEntity(
@@ -96,7 +97,7 @@ void CBaseMonster::HitEntity(
         Fvector position_in_bone_space;
         position_in_bone_space.set(0.f, 0.f, 0.f);
 
-        // перевод из локальных координат в мировые вектора направления импульса
+        // РїРµСЂРµРІРѕРґ РёР· Р»РѕРєР°Р»СЊРЅС‹С… РєРѕРѕСЂРґРёРЅР°С‚ РІ РјРёСЂРѕРІС‹Рµ РІРµРєС‚РѕСЂР° РЅР°РїСЂР°РІР»РµРЅРёСЏ РёРјРїСѓР»СЊСЃР°
         Fvector hit_dir;
         XFORM().transform_dir(hit_dir, dir);
         hit_dir.normalize();
@@ -111,9 +112,8 @@ void CBaseMonster::HitEntity(
         HS.weaponID = (ID()); //		l_P.w_u16	(ID());
         HS.dir = (hit_dir); //		l_P.w_dir	(hit_dir);
         HS.power = (fDamage); //		l_P.w_float	(fDamage);
-        HS.boneID = (smart_cast<IKinematics*>(pEntityNC->Visual())
-                         ->LL_GetBoneRoot()); //		l_P.w_s16
-                                              //(smart_cast<IKinematics*>(pEntityNC->Visual())->LL_GetBoneRoot());
+        HS.boneID = (smart_cast<IKinematics*>(pEntityNC->Visual())->LL_GetBoneRoot());
+        //		l_P.w_s16	(smart_cast<IKinematics*>(pEntityNC->Visual())->LL_GetBoneRoot());
         HS.p_in_bone_space = (position_in_bone_space); //		l_P.w_vec3	(position_in_bone_space);
         HS.impulse = (impulse); //		l_P.w_float	(impulse);
         HS.hit_type = hit_type; //		l_P.w_u16	( u16(ALife::eHitTypeWound) );
@@ -144,72 +144,6 @@ void CBaseMonster::HitEntity(
             float time_to_lock = fDamage * MAX_LOCK_TIME;
             clamp(time_to_lock, 0.f, MAX_LOCK_TIME);
             Actor()->lock_accel_for(int(time_to_lock * 1000));
-
-            //////////////////////////////////////////////////////////////////////////
-            //
-            //////////////////////////////////////////////////////////////////////////
-
-            CEffectorCam* ce = Actor()->Cameras().GetCamEffector((ECamEffectorType)effBigMonsterHit);
-            if (!ce)
-            {
-                const shared_str& eff_sect = pSettings->r_string(cNameSect(), "actor_hit_effect");
-                if (eff_sect.c_str())
-                {
-                    int id = -1;
-                    Fvector cam_pos, cam_dir, cam_norm;
-                    Actor()->cam_Active()->Get(cam_pos, cam_dir, cam_norm);
-                    cam_dir.normalize_safe();
-                    dir.normalize_safe();
-
-                    float ang_diff = angle_difference(cam_dir.getH(), dir.getH());
-                    Fvector cp;
-                    cp.crossproduct(cam_dir, dir);
-                    bool bUp = (cp.y > 0.0f);
-
-                    Fvector cross;
-                    cross.crossproduct(cam_dir, dir);
-                    VERIFY(ang_diff >= 0.0f && ang_diff <= PI);
-
-                    float _s1 = PI_DIV_8;
-                    float _s2 = _s1 + PI_DIV_4;
-                    float _s3 = _s2 + PI_DIV_4;
-                    float _s4 = _s3 + PI_DIV_4;
-
-                    if (ang_diff <= _s1)
-                    {
-                        id = 2;
-                    }
-                    else
-                    {
-                        if (ang_diff > _s1 && ang_diff <= _s2)
-                        {
-                            id = (bUp) ? 5 : 7;
-                        }
-                        else if (ang_diff > _s2 && ang_diff <= _s3)
-                        {
-                            id = (bUp) ? 3 : 1;
-                        }
-                        else if (ang_diff > _s3 && ang_diff <= _s4)
-                        {
-                            id = (bUp) ? 4 : 6;
-                        }
-                        else if (ang_diff > _s4)
-                        {
-                            id = 0;
-                        }
-                        else
-                        {
-                            VERIFY(0);
-                        }
-                    }
-
-                    string64 sect_name;
-
-                    xr_sprintf(sect_name, "%s_%d", eff_sect.c_str(), id);
-                    AddEffector(Actor(), effBigMonsterHit, sect_name, fDamage);
-                }
-            }
-            //////////////////////////////////////////////////////////////////////////
         }
 
         Morale.on_attack_success();
@@ -228,17 +162,17 @@ bool CBaseMonster::feel_vision_isRelevant(CObject* O)
     if ((O->spatial.type & STYPE_VISIBLEFORAI) != STYPE_VISIBLEFORAI)
         return false;
 
-    // если спит, то ничего не видит
+    // РµСЃР»Рё СЃРїРёС‚, С‚Рѕ РЅРёС‡РµРіРѕ РЅРµ РІРёРґРёС‚
     if (m_bSleep)
         return false;
 
-    // если не враг - не видит
+    // РµСЃР»Рё РЅРµ РІСЂР°Рі - РЅРµ РІРёРґРёС‚
     CEntityAlive* entity = smart_cast<CEntityAlive*>(O);
     if (entity && entity->g_Alive())
     {
         if (!EnemyMan.is_enemy(entity))
         {
-            // если видит друга - проверить наличие у него врагов
+            // РµСЃР»Рё РІРёРґРёС‚ РґСЂСѓРіР° - РїСЂРѕРІРµСЂРёС‚СЊ РЅР°Р»РёС‡РёРµ Сѓ РЅРµРіРѕ РІСЂР°РіРѕРІ
             CBaseMonster* monster = smart_cast<CBaseMonster*>(entity);
             if (monster && !m_skip_transfer_enemy)
                 EnemyMan.transfer_enemy(monster);
@@ -261,7 +195,7 @@ void CBaseMonster::HitSignal(float amount, Fvector& vLocalDir, CObject* who, s16
     if (element < 0)
         return;
 
-    // Определить направление хита (перед || зад || лево || право)
+    // РћРїСЂРµРґРµР»РёС‚СЊ РЅР°РїСЂР°РІР»РµРЅРёРµ С…РёС‚Р° (РїРµСЂРµРґ || Р·Р°Рґ || Р»РµРІРѕ || РїСЂР°РІРѕ)
     float yaw, pitch;
     vLocalDir.getHP(yaw, pitch);
 
@@ -284,7 +218,7 @@ void CBaseMonster::HitSignal(float amount, Fvector& vLocalDir, CObject* who, s16
     callback(GameObject::eHit)(
         lua_game_object(), amount, vLocalDir, smart_cast<const CGameObject*>(who)->lua_game_object(), element);
 
-    // если нейтрал - добавить как врага
+    // РµСЃР»Рё РЅРµР№С‚СЂР°Р» - РґРѕР±Р°РІРёС‚СЊ РєР°Рє РІСЂР°РіР°
     CEntityAlive* obj = smart_cast<CEntityAlive*>(who);
     if (obj && (tfGetRelationType(obj) == ALife::eRelationTypeNeutral))
         EnemyMan.add_enemy(obj);
@@ -330,9 +264,8 @@ void CBaseMonster::Hit_Wound(CObject* object, float value, const Fvector& dir, f
     HS.weaponID = (ID()); //	P.w_u16		(ID());
     HS.dir = (dir); //	P.w_dir		(dir);
     HS.power = (value); //	P.w_float	(value);
-    HS.boneID =
-        (smart_cast<IKinematics*>(object->Visual())
-                ->LL_GetBoneRoot()); //	P.w_s16		(smart_cast<IKinematics*>(object->Visual())->LL_GetBoneRoot());
+    HS.boneID = (smart_cast<IKinematics*>(object->Visual())->LL_GetBoneRoot());
+    //	P.w_s16		(smart_cast<IKinematics*>(object->Visual())->LL_GetBoneRoot());
     HS.p_in_bone_space = (Fvector().set(0.f, 0.f, 0.f)); //	P.w_vec3	(Fvector().set(0.f,0.f,0.f));
     HS.impulse = (impulse); //	P.w_float	(impulse);
     HS.hit_type = (ALife::eHitTypeWound); //	P.w_u16		(u16(ALife::eHitTypeWound));

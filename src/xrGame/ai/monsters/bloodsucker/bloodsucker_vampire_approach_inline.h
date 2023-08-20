@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #define TEMPLATE_SPECIALIZATION template <typename _Object>
 
@@ -20,7 +20,7 @@ void CStateBloodsuckerVampireApproachAbstract::initialize()
 TEMPLATE_SPECIALIZATION
 void CStateBloodsuckerVampireApproachAbstract::execute()
 {
-    // óñòàíîâêà ïàðàìåòðîâ ôóíêöèîíàëüíûõ áëîêîâ
+    // Ã³Ã±Ã²Ã Ã­Ã®Ã¢ÃªÃ  Ã¯Ã Ã°Ã Ã¬Ã¥Ã²Ã°Ã®Ã¢ Ã´Ã³Ã­ÃªÃ¶Ã¨Ã®Ã­Ã Ã«Ã¼Ã­Ã»Ãµ Ã¡Ã«Ã®ÃªÃ®Ã¢
     object->set_action(ACT_RUN);
     object->anim().accel_activate(eAT_Aggressive);
     object->anim().accel_set_braking(false);

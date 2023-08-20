@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "ai_monster_defs.h"
 #include "control_combase.h"
@@ -39,6 +39,7 @@ class CControlPathBuilderBase : public CControl_ComBase
             _position.set(-FLT_MAX, -FLT_MAX, -FLT_MAX);
             _node = u32(-1);
         }
+
         void init()
         {
             _position.set(0.f, 0.f, 0.f);
@@ -50,6 +51,7 @@ class CControlPathBuilderBase : public CControl_ComBase
             _position.set(pos);
             _node = vertex;
         }
+
         IC const Fvector& position() const { return _position; }
         // IC		  Fvector	&position	()					{ return _position; }
         IC u32 node() const { return _node; }
@@ -57,13 +59,13 @@ class CControlPathBuilderBase : public CControl_ComBase
         IC void set_position(const Fvector& p) { _position.set(p); }
     } m_target_set, m_target_found;
 
-    u32 m_time; // время перестроения пути
+    u32 m_time; // ГўГ°ГҐГ¬Гї ГЇГҐГ°ГҐГ±ГІГ°Г®ГҐГ­ГЁГї ГЇГіГІГЁ
     u32 m_last_time_target_set;
     float m_distance_to_path_end;
     bool m_failed;
     u32 m_last_time_dir_set;
 
-    bool m_target_actual; // устанавливаемый таргет соответствует предыдущему
+    bool m_target_actual; // ГіГ±ГІГ Г­Г ГўГ«ГЁГўГ ГҐГ¬Г»Г© ГІГ Г°ГЈГҐГІ Г±Г®Г®ГІГўГҐГІГ±ГІГўГіГҐГІ ГЇГ°ГҐГ¤Г»Г¤ГіГ№ГҐГ¬Гі
 
     struct
     {
@@ -92,11 +94,12 @@ class CControlPathBuilderBase : public CControl_ComBase
         eStateNoPath = u32(1) << 3,
         eStatePathFailed = u32(1) << 4
     };
+
     u32 m_state;
 
     bool m_path_end;
 
-    // состояние, в котором path_builder работает независимо
+    // Г±Г®Г±ГІГ®ГїГ­ГЁГҐ, Гў ГЄГ®ГІГ®Г°Г®Г¬ path_builder Г°Г ГЎГ®ГІГ ГҐГІ Г­ГҐГ§Г ГўГЁГ±ГЁГ¬Г®
     u32 m_time_global_failed_started;
     u32 m_time_path_updated_external;
 
@@ -164,7 +167,7 @@ private:
     void find_target_point_set();
     void find_target_point_failed();
 
-    void select_target(); // выбрать
+    void select_target(); // ГўГ»ГЎГ°Г ГІГј
 
     void set_path_builder_params(); // set params to control
 
@@ -175,7 +178,7 @@ private:
     void on_path_end();
     void on_path_updated();
 
-    // нашли позицию, найти ноду
+    // Г­Г ГёГ«ГЁ ГЇГ®Г§ГЁГ¶ГЁГѕ, Г­Г Г©ГІГЁ Г­Г®Г¤Гі
     void find_node();
 
     bool global_failed();

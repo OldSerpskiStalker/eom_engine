@@ -1,4 +1,4 @@
-#ifndef CHIMERA_ATTACK_STATE_INLINE_H_INCLUDED
+ï»¿#ifndef CHIMERA_ATTACK_STATE_INLINE_H_INCLUDED
 #define CHIMERA_ATTACK_STATE_INLINE_H_INCLUDED
 
 #include "chimera_attack_state.h"
@@ -117,7 +117,7 @@ bool ChimeraAttackState<Object>::check_if_jump_possible(Fvector const& target)
 template <class Object>
 bool ChimeraAttackState<Object>::jump(Fvector const& target, bool attack_jump)
 {
-    // ïîëó÷èòü âåêòîð íàïðàâëåíèÿ è åãî ìèð óãîë
+    // Ã¯Ã®Ã«Ã³Ã·Ã¨Ã²Ã¼ Ã¢Ã¥ÃªÃ²Ã®Ã° Ã­Ã Ã¯Ã°Ã Ã¢Ã«Ã¥Ã­Ã¨Ã¿ Ã¨ Ã¥Ã£Ã® Ã¬Ã¨Ã° Ã³Ã£Ã®Ã«
     float dir_yaw = (target - object->Position()).getH();
     dir_yaw = angle_normalize(-dir_yaw);
     float yaw_current, yaw_target;

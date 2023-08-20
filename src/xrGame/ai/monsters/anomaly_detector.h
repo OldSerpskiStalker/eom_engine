@@ -22,6 +22,7 @@ class CAnomalyDetector
     struct remove_predicate
     {
         u32 time_remember;
+
         remove_predicate(u32 time) : time_remember(time) {}
 
         IC bool operator()(const SAnomalyInfo& info)

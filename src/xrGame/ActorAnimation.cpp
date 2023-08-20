@@ -20,6 +20,7 @@
 #include "artefact.h"
 #include "IKLimbsController.h"
 #include "player_hud.h"
+#include "WeaponKnife.h"
 
 static const float y_spin0_factor = 0.0f;
 static const float y_spin1_factor = 0.4f;
@@ -413,14 +414,25 @@ void CActor::g_SetAnimation(u32 mstate_rl)
 
     if (this == Level().CurrentViewEntity())
     {
-        if ((mstate_rl & mcSprint) != (mstate_old & mcSprint))
+        if (mstate_rl & mcAnyMove)
         {
-            g_player_hud->OnMovementChanged(mcSprint);
+            if ((mstate_rl & mcSprint) != (mstate_old & mcSprint))
+            {
+                g_player_hud->OnMovementChanged(mcSprint);
+            }
+            else if ((mstate_rl & mcCrouch) != (mstate_old & mcCrouch))
+            {
+                g_player_hud->OnMovementChanged(mcCrouch);
+            }
+            else if ((mstate_rl & mcAccel) != (mstate_old & mcAccel) && !Actor()->IsZoomAimingMode())
+            {
+                g_player_hud->OnMovementChanged(mcAccel);
+            }
         }
-        else if ((mstate_rl & mcAnyMove) != (mstate_old & mcAnyMove))
-        {
+
+        if (!(mstate_old & mcAnyMove) && (mstate_rl & mcAnyMove) ||
+            (mstate_old & mcAnyMove) && !(mstate_rl & mcAnyMove))
             g_player_hud->OnMovementChanged(mcAnyMove);
-        }
     };
 
     //-----------------------------------------------------------------------
@@ -441,9 +453,6 @@ void CActor::g_SetAnimation(u32 mstate_rl)
     {
         CInventoryItem* _i = inventory().ActiveItem();
         CHudItem* H = smart_cast<CHudItem*>(_i);
-        CWeapon* W = smart_cast<CWeapon*>(_i);
-        CMissile* M = smart_cast<CMissile*>(_i);
-        CArtefact* A = smart_cast<CArtefact*>(_i);
 
         if (H)
         {
@@ -463,12 +472,14 @@ void CActor::g_SetAnimation(u32 mstate_rl)
             {
                 if (!m_bAnimTorsoPlayed)
                 {
+                    CWeapon* W = smart_cast<CWeapon*>(_i);
+                    CMissile* M = smart_cast<CMissile*>(_i);
+                    CArtefact* A = smart_cast<CArtefact*>(_i);
                     if (W)
                     {
-                        bool K = inventory().GetActiveSlot() == KNIFE_SLOT;
                         bool R3 = W->IsTriStateReload();
 
-                        if (K)
+                        if (smart_cast<CWeaponKnife*>(W))
                         {
                             switch (W->GetState())
                             {
@@ -522,6 +533,8 @@ void CActor::g_SetAnimation(u32 mstate_rl)
                             default: M_torso = TW->moving[moving_idx]; break;
                             }
                         }
+                        if (!M_torso)
+                            M_torso = ST->m_torso[4].moving[moving_idx]; // Alundaio: Fix torso animations for binoc
                     }
                     else if (M)
                     {
@@ -567,6 +580,13 @@ void CActor::g_SetAnimation(u32 mstate_rl)
                     }
                 }
             }
+        }
+        else if (!m_bAnimTorsoPlayed)
+        {
+            if (moving_idx == STorsoWpn::eSprint)
+                M_torso = ST->m_torso[0].moving[moving_idx];
+            else
+                M_torso = ST->m_torso[4].moving[moving_idx];
         }
     }
     MotionID mid = smart_cast<IKinematicsAnimated*>(Visual())->ID_Cycle("norm_idle_0");

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "bloodsucker_alien.h"
 #include "bloodsucker.h"
 #include "../../../level.h"
@@ -115,7 +115,7 @@ CAlienEffector::CAlienEffector(ECamEffectorType type, CAI_Bloodsucker* obj) : in
 
 BOOL CAlienEffector::ProcessCam(SCamEffectorInfo& info)
 {
-    // Инициализация
+    // Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї
     Fmatrix Mdef;
     Mdef.identity();
     Mdef.j.set(info.n);
@@ -167,7 +167,7 @@ BOOL CAlienEffector::ProcessCam(SCamEffectorInfo& info)
     info.fFov = m_current_fov;
     //////////////////////////////////////////////////////////////////////////
 
-    // Установить углы смещения
+    // Г“Г±ГІГ Г­Г®ГўГЁГІГј ГіГЈГ«Г» Г±Г¬ГҐГ№ГҐГ­ГЁГї
     Fmatrix R;
     R.setHPB(dangle_current.x, dangle_current.y, dangle_current.z);
 

@@ -69,6 +69,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2578C6D8-660D-48AE-9322-7422F8664F06}</ProjectGuid>
     <RootNamespace>xrEngine</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Dedicated|Win32'" Label="Configuration">
@@ -118,7 +119,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -289,6 +290,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SolutionDir)..\src\3rd party;$(IncludePath);$(xrSdkDir)include;$(xrSdkDir)include\OpenAutomate;$(xrSdkDir)include\nvapi;$(xrSdkDir)include\dxsdk</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NEW|Win32'">
     <OutDir>$(xrGameDir)bin_dbg\</OutDir>
@@ -552,7 +554,7 @@
       <BrowseInformation />
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <DebugInformationFormat>None</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
       <UndefinePreprocessorDefinitions>USE_LUAJIT_ONE</UndefinePreprocessorDefinitions>
     </ClCompile>
@@ -574,6 +576,7 @@
       <FixedBaseAddress>false</FixedBaseAddress>
       <ImportLibrary>$(xrLibDir)$(TargetName).lib</ImportLibrary>
       <AdditionalOptions>/ignore:4099</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>as-invoker-manifest-part.xml;%(AdditionalManifestFiles)</AdditionalManifestFiles>
@@ -586,7 +589,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
-      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>.;$(SolutionDir)3rd party\luajit-2\src\;$(SolutionDir)3rd party\luabind\;$(DXSDK_DIR)Include;$(XRAY_16X_LIBS)OpenAutomate\inc;$(XRAY_16X_LIBS)libogg-1.1.4\include;$(XRAY_16X_LIBS)libtheora-1.1.1\include;$(xrSdkDir)include;$(xrSdkDir)include\OpenAutomate;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;ENGINE_BUILD;_SECURE_SCL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -604,11 +607,12 @@
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <BrowseInformation>
       </BrowseInformation>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <DebugInformationFormat>None</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
       <UndefinePreprocessorDefinitions>USE_LUAJIT_ONE</UndefinePreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -623,11 +627,12 @@
       <LargeAddressAware>true</LargeAddressAware>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <FixedBaseAddress>false</FixedBaseAddress>
       <ImportLibrary>$(xrLibDir)$(TargetName).lib</ImportLibrary>
       <AdditionalOptions>/ignore:4099</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>as-invoker-manifest-part.xml;%(AdditionalManifestFiles)</AdditionalManifestFiles>
@@ -1228,6 +1233,7 @@
     <ClInclude Include="MbHelpers.h" />
     <ClInclude Include="motion.h" />
     <ClInclude Include="mp_logging.h" />
+    <ClInclude Include="Noncopyable.hpp" />
     <ClInclude Include="no_single.h" />
     <ClInclude Include="ObjectAnimator.h" />
     <ClInclude Include="ObjectDump.h" />
@@ -1243,6 +1249,7 @@
     <ClInclude Include="Rain.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="ShadersExternalData.h" />
     <ClInclude Include="Shader_xrLC.h" />
     <ClInclude Include="SkeletonMotionDefs.h" />
     <ClInclude Include="SkeletonMotions.h" />
@@ -1496,10 +1503,6 @@
     <Text Include="TODO.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)3rd party\luabind\luabind.beta7-devel.rc4.vcxproj">
-      <Project>{cc52e0b3-cc35-4934-9302-035b748f3f2c}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="$(SolutionDir)3rd party\openal\OpenAL-Windows\Router\Router.vcxproj">
       <Project>{566551f4-4ef1-4cb4-a131-f982e7606907}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>

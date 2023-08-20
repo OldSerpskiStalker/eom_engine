@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "../../../CustomMonster.h"
 
@@ -113,6 +113,7 @@ public:
     virtual void shedule_Update(u32 dt);
 
     virtual void InitThink() {}
+
     virtual void Think();
     virtual void reinit();
     virtual void reload(LPCSTR section);
@@ -157,7 +158,9 @@ public:
 
     virtual void on_before_sell(CInventoryItem* item);
     float GetSatiety() { return 0.5f; }
+
     void ChangeSatiety(float v) {}
+
     // ---------------------------------------------------------------------------------
     // Process scripts
     // ---------------------------------------------------------------------------------
@@ -195,12 +198,13 @@ public:
 
     virtual void SetTurnAnimation(bool turn_left);
 
-    // установка специфических анимаций
+    // СѓСЃС‚Р°РЅРѕРІРєР° СЃРїРµС†РёС„РёС‡РµСЃРєРёС… Р°РЅРёРјР°С†РёР№
     virtual void CheckSpecParams(u32 /**spec_params/**/) {}
+
     virtual void ForceFinalAnimation() {}
-    virtual void LookPosition(Fvector to_point,
-        float angular_speed =
-            PI_DIV_3); // каждый монстр может по-разному реализвать эту функ (e.g. кровосос с поворотом головы и т.п.)
+
+    virtual void LookPosition(Fvector to_point, float angular_speed = PI_DIV_3);
+    // РєР°Р¶РґС‹Р№ РјРѕРЅСЃС‚СЂ РјРѕР¶РµС‚ РїРѕ-СЂР°Р·РЅРѕРјСѓ СЂРµР°Р»РёР·РІР°С‚СЊ СЌС‚Сѓ С„СѓРЅРє (e.g. РєСЂРѕРІРѕСЃРѕСЃ СЃ РїРѕРІРѕСЂРѕС‚РѕРј РіРѕР»РѕРІС‹ Рё С‚.Рї.)
 
     // Team
     virtual void ChangeTeam(int team, int squad, int group);
@@ -221,7 +225,9 @@ public:
     // ---------------------------------------------------------------------------------
 
     virtual void event_on_step() {}
+
     virtual void on_threaten_execute() {}
+
     // ---------------------------------------------------------------------------------
     // Memory
     void UpdateMemory();
@@ -409,6 +415,7 @@ public:
     CControlManagerCustom& com_man() { return m_com_manager; }
 
     virtual bool check_start_conditions(ControlCom::EControlType);
+
     virtual void on_activate_control(ControlCom::EControlType) {}
 
 protected:
@@ -447,8 +454,8 @@ protected:
 public:
     virtual char* get_monster_class_name() = 0;
 
-//////////////////////////////////////////////////////////////////////////
-// DEBUG stuff
+    //////////////////////////////////////////////////////////////////////////
+    // DEBUG stuff
 #ifdef DEBUG
 
     template <class Type>
@@ -590,6 +597,7 @@ public:
     shared_str get_section() const { return m_section; }
 
     anti_aim_ability* get_anti_aim() { return m_anti_aim; }
+
     virtual void on_attack_on_run_hit() {}
 
 private:

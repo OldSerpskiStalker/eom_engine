@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "control_direction.h"
 #include "BaseMonster/base_monster.h"
 #include "control_manager.h"
@@ -45,7 +45,7 @@ void CControlDirection::update_frame()
 
     m_data.pitch.target_speed = m_pitch.current_speed = diff;
 
-    // поправка угловой скорости в соответствии с текущей и таргетовой линейной скоростями
+    // ГЇГ®ГЇГ°Г ГўГЄГ  ГіГЈГ«Г®ГўГ®Г© Г±ГЄГ®Г°Г®Г±ГІГЁ Гў Г±Г®Г®ГІГўГҐГІГ±ГІГўГЁГЁ Г± ГІГҐГЄГіГ№ГҐГ© ГЁ ГІГ Г°ГЈГҐГІГ®ГўГ®Г© Г«ГЁГ­ГҐГ©Г­Г®Г© Г±ГЄГ®Г°Г®Г±ГІГїГ¬ГЁ
     // heading speed correction
     if (!fis_zero(m_man->movement().velocity_current()) && !fis_zero(m_man->movement().velocity_target()) &&
         m_data.linear_dependency)
@@ -121,7 +121,7 @@ void CControlDirection::pitch_correction()
 
         if (cur_point.position.distance_to_sqr(next_point.position) > 1)
         {
-            // получаем искомый вектор направления
+            // ГЇГ®Г«ГіГ·Г ГҐГ¬ ГЁГ±ГЄГ®Г¬Г»Г© ГўГҐГЄГІГ®Г° Г­Г ГЇГ°Г ГўГ«ГҐГ­ГЁГї
             Fvector target_dir;
             target_dir.sub(next_point.position, cur_point.position);
             m_data.pitch.target_angle = -target_dir.getP();
@@ -138,12 +138,12 @@ void CControlDirection::pitch_correction()
     Fvector position_on_plane;
     P.project(position_on_plane, m_object->Position());
 
-    // находим проекцию точки, лежащей на векторе текущего направления
+    // Г­Г ГµГ®Г¤ГЁГ¬ ГЇГ°Г®ГҐГЄГ¶ГЁГѕ ГІГ®Г·ГЄГЁ, Г«ГҐГ¦Г Г№ГҐГ© Г­Г  ГўГҐГЄГІГ®Г°ГҐ ГІГҐГЄГіГ№ГҐГЈГ® Г­Г ГЇГ°Г ГўГ«ГҐГ­ГЁГї
     Fvector dir_point, proj_point;
     dir_point.mad(position_on_plane, m_object->Direction(), 1.f);
     P.project(proj_point, dir_point);
 
-    // получаем искомый вектор направления
+    // ГЇГ®Г«ГіГ·Г ГҐГ¬ ГЁГ±ГЄГ®Г¬Г»Г© ГўГҐГЄГІГ®Г° Г­Г ГЇГ°Г ГўГ«ГҐГ­ГЁГї
     Fvector target_dir;
     target_dir.sub(proj_point, position_on_plane);
 
@@ -181,12 +181,14 @@ bool CControlDirection::is_from_right(const Fvector& position)
 
     return (from_right(yaw, m_heading.current_angle));
 }
+
 bool CControlDirection::is_from_right(float yaw) { return (from_right(yaw, m_heading.current_angle)); }
 
 bool CControlDirection::is_turning(float eps_angle)
 {
     return (!fsimilar(m_heading.current_angle, m_data.heading.target_angle, eps_angle));
 }
+
 void CControlDirection::get_heading(float& current, float& target)
 {
     current = m_heading.current_angle;

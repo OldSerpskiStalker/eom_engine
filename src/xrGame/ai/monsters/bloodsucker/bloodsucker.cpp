@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "bloodsucker.h"
 #include "bloodsucker_state_manager.h"
 #include "../../../actor.h"
@@ -48,7 +48,6 @@ float const default_runaway_invisible_time = 3000;
 char const* const full_visibility_radius_string = "full_visibility_radius";
 char const* const partial_visibility_radius_string = "partial_visibility_radius";
 char const* const visibility_state_change_min_delay_string = "visibility_state_change_min_delay";
-
 } // namespace bloodsucker
 } // namespace detail
 
@@ -363,13 +362,13 @@ void CAI_Bloodsucker::BoneCallback(CBoneInstance* B)
 
 void CAI_Bloodsucker::vfAssignBones()
 {
-    // Установка callback на кости
+    // Г“Г±ГІГ Г­Г®ГўГЄГ  callback Г­Г  ГЄГ®Г±ГІГЁ
 
     bone_spine = &smart_cast<IKinematics*>(Visual())->LL_GetBoneInstance(
         smart_cast<IKinematics*>(Visual())->LL_BoneID("bip01_spine"));
     bone_head = &smart_cast<IKinematics*>(Visual())->LL_GetBoneInstance(
         smart_cast<IKinematics*>(Visual())->LL_BoneID("bip01_head"));
-    if (!PPhysicsShell()) // нельзя ставить колбеки, если создан физ шел - у него стоят свои колбеки!!!
+    if (!PPhysicsShell()) // Г­ГҐГ«ГјГ§Гї Г±ГІГ ГўГЁГІГј ГЄГ®Г«ГЎГҐГЄГЁ, ГҐГ±Г«ГЁ Г±Г®Г§Г¤Г Г­ ГґГЁГ§ ГёГҐГ« - Гі Г­ГҐГЈГ® Г±ГІГ®ГїГІ Г±ГўГ®ГЁ ГЄГ®Г«ГЎГҐГЄГЁ!!!
     {
         bone_spine->set_callback(bctCustom, BoneCallback, this);
         bone_head->set_callback(bctCustom, BoneCallback, this);
@@ -387,15 +386,15 @@ void CAI_Bloodsucker::vfAssignBones()
 
 void CAI_Bloodsucker::LookDirection(Fvector to_dir, float bone_turn_speed)
 {
-    //// получаем вектор направления к источнику звука и его мировые углы
+    //// ГЇГ®Г«ГіГ·Г ГҐГ¬ ГўГҐГЄГІГ®Г° Г­Г ГЇГ°Г ГўГ«ГҐГ­ГЁГї ГЄ ГЁГ±ГІГ®Г·Г­ГЁГЄГі Г§ГўГіГЄГ  ГЁ ГҐГЈГ® Г¬ГЁГ°Г®ГўГ»ГҐ ГіГЈГ«Г»
     // float		yaw,pitch;
     // to_dir.getHP(yaw,pitch);
 
-    //// установить параметры вращения по yaw
-    // float cur_yaw = -movement().m_body.current.yaw;						// текущий мировой угол монстра
-    // float bone_angle;											// угол для боны
+    //// ГіГ±ГІГ Г­Г®ГўГЁГІГј ГЇГ Г°Г Г¬ГҐГІГ°Г» ГўГ°Г Г№ГҐГ­ГЁГї ГЇГ® yaw
+    // float cur_yaw = -movement().m_body.current.yaw;						// ГІГҐГЄГіГ№ГЁГ© Г¬ГЁГ°Г®ГўГ®Г© ГіГЈГ®Г« Г¬Г®Г­Г±ГІГ°Г 
+    // float bone_angle;											// ГіГЈГ®Г« Г¤Г«Гї ГЎГ®Г­Г»
 
-    // float dy = _abs(angle_normalize_signed(yaw - cur_yaw));		// дельта, на которую нужно поворачиваться
+    // float dy = _abs(angle_normalize_signed(yaw - cur_yaw));		// Г¤ГҐГ«ГјГІГ , Г­Г  ГЄГ®ГІГ®Г°ГіГѕ Г­ГіГ¦Г­Г® ГЇГ®ГўГ®Г°Г Г·ГЁГўГ ГІГјГ±Гї
 
     // if (angle_difference(cur_yaw,yaw) <= MAX_BONE_ANGLE) {		// bone turn only
     //	bone_angle = dy;
@@ -410,7 +409,7 @@ void CAI_Bloodsucker::LookDirection(Fvector to_dir, float bone_turn_speed)
     // Bones.SetMotion(bone_spine, AXIS_X, bone_angle, bone_turn_speed, 100);
     // Bones.SetMotion(bone_head,	AXIS_X, bone_angle, bone_turn_speed, 100);
 
-    //// установить параметры вращения по pitch
+    //// ГіГ±ГІГ Г­Г®ГўГЁГІГј ГЇГ Г°Г Г¬ГҐГІГ°Г» ГўГ°Г Г№ГҐГ­ГЁГї ГЇГ® pitch
     // clamp(pitch, -MAX_BONE_ANGLE, MAX_BONE_ANGLE);
     // pitch /= 2;
 
@@ -623,7 +622,7 @@ void CAI_Bloodsucker::post_fsm_update()
 
     // EMonsterState state = StateMan->get_state_type();
     //
-    //  установить агрессивность
+    //  ГіГ±ГІГ Г­Г®ГўГЁГІГј Г ГЈГ°ГҐГ±Г±ГЁГўГ­Г®Г±ГІГј
     // bool aggressive =	(is_state(state, eStateAttack)) ||
     //					(is_state(state, eStatePanic))	||
     //					(is_state(state, eStateHitted));
@@ -666,6 +665,7 @@ void CAI_Bloodsucker::set_invis()
 void CAI_Bloodsucker::set_collision_off(bool b_collision) { collision_off = b_collision; }
 
 bool CAI_Bloodsucker::is_collision_off() { return collision_off; }
+
 void CAI_Bloodsucker::jump(const Fvector& position, float factor)
 {
     com_man().script_jump(position, factor);
@@ -681,6 +681,7 @@ void CAI_Bloodsucker::set_drag_jump(CEntityAlive* e, LPCSTR s, const Fvector& po
     m_drag_anim_jump = true;
     m_animated = true;
 }
+
 bool CAI_Bloodsucker::is_drag_anim_jump() { return m_drag_anim_jump; }
 
 bool CAI_Bloodsucker::is_animated() { return m_animated; }
@@ -799,6 +800,7 @@ void CAI_Bloodsucker::start_invisible_predator()
     state_invisible = true;
     predator_start();
 }
+
 void CAI_Bloodsucker::stop_invisible_predator()
 {
     state_invisible = false;

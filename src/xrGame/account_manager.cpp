@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "account_manager.h"
-#include "gamespy/GameSpy_GP.h"
 
 #include "MainMenu.h" //for accesssing to login_manager, if there's deleting profile
 #include "login_manager.h" //for deleting profile (verifying) and deleting profile class instance
@@ -9,7 +8,6 @@
 
 namespace gamespy_gp
 {
-
 account_manager::account_manager(CGameSpy_GP* gsgp_inst)
 {
     m_gamespy_gp = gsgp_inst;
@@ -17,6 +15,7 @@ account_manager::account_manager(CGameSpy_GP* gsgp_inst)
 }
 
 account_manager::~account_manager() {}
+
 void __stdcall account_manager::only_log_creation_cb(bool success, char const* descr)
 {
     if (success)
@@ -50,6 +49,7 @@ void __stdcall account_manager::only_log_profiles(u32 const profiles_count, char
     }
     Msg("- No GameSpy account profiles found: %s", description ? description : "unknown error");
 }
+
 void __stdcall account_manager::only_log_suggestions(u32 const profiles_count, char const* description)
 {
     if (description)
@@ -218,11 +218,18 @@ void account_manager::create_profile(
         return;
     }
 
-    GPResult tmp_res = m_gamespy_gp->NewUser(nick, unique_nick, email, password, &account_manager::new_user_cb, this);
-    if (tmp_res != GP_NO_ERROR)
-    {
-        m_account_creation_cb(false, CGameSpy_GP::TryToTranslate(tmp_res).c_str());
-    }
+    // GPResult tmp_res = m_gamespy_gp->NewUser(
+    //	nick,
+    //	unique_nick,
+    //	email,
+    //	password,
+    //	&account_manager::new_user_cb,
+    //	this
+    //);
+    // if (tmp_res != GP_NO_ERROR)
+    //{
+    //	m_account_creation_cb(false, CGameSpy_GP::TryToTranslate(tmp_res).c_str());
+    // }
 }
 
 void account_manager::delete_profile(account_operation_cb dpcb)
@@ -236,19 +243,22 @@ void account_manager::delete_profile(account_operation_cb dpcb)
         m_profile_deleting_cb = dpcb;
     }
 
-    login_manager* tmp_lmngr = MainMenu()->GetLoginMngr();
-    VERIFY(tmp_lmngr);
-    if (!tmp_lmngr->get_current_profile())
-    {
-        m_profile_deleting_cb(false, "mp_gp_not_logged_in");
-        return;
-    }
+    // login_manager* tmp_lmngr = MainMenu()->GetLoginMngr();
+    // VERIFY(tmp_lmngr);
+    // if (!tmp_lmngr->get_current_profile())
+    //{
+    //	m_profile_deleting_cb(false, "mp_gp_not_logged_in");
+    //	return;
+    // }
 
-    GPResult tmp_res = m_gamespy_gp->DeleteProfile(&account_manager::delete_profile_cb, this);
-    if (tmp_res != GP_NO_ERROR)
-    {
-        m_profile_deleting_cb(false, CGameSpy_GP::TryToTranslate(tmp_res).c_str());
-    }
+    // GPResult tmp_res = m_gamespy_gp->DeleteProfile(
+    //	&account_manager::delete_profile_cb,
+    //	this
+    //);
+    // if (tmp_res != GP_NO_ERROR)
+    //{
+    //	m_profile_deleting_cb(false, CGameSpy_GP::TryToTranslate(tmp_res).c_str());
+    // }
 }
 
 void account_manager::get_account_profiles(char const* email, char const* password, account_profiles_cb profiles_cb)
@@ -266,6 +276,7 @@ void account_manager::get_account_profiles(char const* email, char const* passwo
 }
 
 bool account_manager::is_get_account_profiles_active() const { return m_get_account_profiles_qam.is_active(); }
+
 void account_manager::reinit_get_account_profiles()
 {
     m_account_profiles_cb.clear();
@@ -279,15 +290,19 @@ void account_manager::get_account_profiles_raw(get_account_params_t const& args,
     VERIFY(!m_account_profiles_cb);
     m_account_profiles_cb = profiles_cb;
 
-    GPResult tmp_res =
-        m_gamespy_gp->GetUserNicks(args.m_t1.c_str(), args.m_t2.c_str(), &account_manager::user_nicks_cb, this);
+    // GPResult tmp_res = m_gamespy_gp->GetUserNicks(
+    //	args.m_t1.c_str(),
+    //	args.m_t2.c_str(),
+    //	&account_manager::user_nicks_cb,
+    //	this
+    //);
 
-    if (tmp_res != GP_NO_ERROR)
-    {
-        m_account_profiles_cb.clear();
-        profiles_cb(0, CGameSpy_GP::TryToTranslate(tmp_res).c_str());
-        return;
-    }
+    // if (tmp_res != GP_NO_ERROR)
+    //{
+    //	m_account_profiles_cb.clear();
+    //	profiles_cb(0, CGameSpy_GP::TryToTranslate(tmp_res).c_str());
+    //	return;
+    // }
 }
 
 void account_manager::release_account_profiles(u32 const profiles_count, char const* description)
@@ -325,15 +340,20 @@ void account_manager::search_for_email_raw(search_for_email_params_t const& emai
     VERIFY(!m_found_email_cb);
     m_found_email_cb = found_email_cb;
 
-    GPResult tmp_res = m_gamespy_gp->ProfileSearch(
-        shared_str(), shared_str(), email.m_t1.c_str(), &account_manager::search_profile_cb, this);
+    // GPResult tmp_res = m_gamespy_gp->ProfileSearch(
+    //	shared_str(),
+    //	shared_str(),
+    //	email.m_t1.c_str(),
+    //	&account_manager::search_profile_cb,
+    //	this
+    //);
 
-    if (tmp_res != GP_NO_ERROR)
-    {
-        m_found_email_cb.clear();
-        found_email_cb(false, CGameSpy_GP::TryToTranslate(tmp_res).c_str());
-        return;
-    }
+    // if (tmp_res != GP_NO_ERROR)
+    //{
+    //	m_found_email_cb.clear();
+    //	found_email_cb(false, CGameSpy_GP::TryToTranslate(tmp_res).c_str());
+    //	return;
+    // }
 }
 
 void account_manager::release_found_email(bool found, char const* user_name){};
@@ -361,14 +381,18 @@ void account_manager::suggest_unique_nicks_raw(suggest_uniqie_nicks_params_t con
     m_suggested_nicks.clear();
     m_suggested_nicks_ptrs.clear();
 
-    GPResult tmp_res = m_gamespy_gp->SuggestUNicks(unick.m_t1, &account_manager::unicks_suggestion_cb, this);
-
-    if (tmp_res != GP_NO_ERROR)
-    {
-        sncb(0, CGameSpy_GP::TryToTranslate(tmp_res).c_str());
-        m_suggest_nicks_cb.clear();
-        return;
-    }
+    // GPResult tmp_res = m_gamespy_gp->SuggestUNicks(
+    //	unick.m_t1,
+    //	&account_manager::unicks_suggestion_cb,
+    //	this
+    //);
+    //
+    // if (tmp_res != GP_NO_ERROR)
+    //{
+    //	sncb(0, CGameSpy_GP::TryToTranslate(tmp_res).c_str());
+    //	m_suggest_nicks_cb.clear();
+    //	return;
+    // }
 }
 
 void account_manager::release_suggest_uniqie_nicks(u32 const, char const*) {}
@@ -383,104 +407,105 @@ void account_manager::reinit_suggest_unique_nicks()
 
 void __cdecl account_manager::new_user_cb(GPConnection* connection, void* arg, void* param)
 {
-    GPNewUserResponseArg* creation_resp = static_cast<GPNewUserResponseArg*>(arg);
-    VERIFY(creation_resp != NULL);
-    account_manager* tmp_inst = static_cast<account_manager*>(param);
-    VERIFY(tmp_inst);
-    VERIFY(tmp_inst->m_account_creation_cb);
-    if (creation_resp->result != GP_NO_ERROR)
-    {
-        tmp_inst->m_account_creation_cb(false, CGameSpy_GP::TryToTranslate(creation_resp->result).c_str());
-        return;
-    }
-    tmp_inst->m_account_creation_cb(true, "");
+    // GPNewUserResponseArg* creation_resp = static_cast<GPNewUserResponseArg*>(arg);
+    // VERIFY(creation_resp != NULL);
+    // account_manager* tmp_inst = static_cast<account_manager*>(param);
+    // VERIFY(tmp_inst);
+    // VERIFY(tmp_inst->m_account_creation_cb);
+    // if (creation_resp->result != GP_NO_ERROR)
+    //{
+    //	tmp_inst->m_account_creation_cb(false, CGameSpy_GP::TryToTranslate(creation_resp->result).c_str());
+    //	return;
+    // }
+    // tmp_inst->m_account_creation_cb(true, "");
 }
 
 void __cdecl account_manager::user_nicks_cb(GPConnection* connection, void* arg, void* param)
 {
-    account_manager* tmp_inst = static_cast<account_manager*>(param);
-    VERIFY(tmp_inst);
-    GPGetUserNicksResponseArg* tmp_arg = static_cast<GPGetUserNicksResponseArg*>(arg);
+    // account_manager* tmp_inst			= static_cast<account_manager*>(param);
+    // VERIFY(tmp_inst);
+    // GPGetUserNicksResponseArg* tmp_arg	= static_cast<GPGetUserNicksResponseArg*>(arg);
+    //
+    // account_profiles_cb	tmp_cb = tmp_inst->m_account_profiles_cb;
+    // tmp_inst->m_account_profiles_cb.clear();
 
-    account_profiles_cb tmp_cb = tmp_inst->m_account_profiles_cb;
-    tmp_inst->m_account_profiles_cb.clear();
+    // if (tmp_arg->result != GP_NO_ERROR)
+    //{
+    //	tmp_cb(0, CGameSpy_GP::TryToTranslate(tmp_arg->result).c_str());
+    //	return;
+    // }
 
-    if (tmp_arg->result != GP_NO_ERROR)
-    {
-        tmp_cb(0, CGameSpy_GP::TryToTranslate(tmp_arg->result).c_str());
-        return;
-    }
-
-    for (int i = 0; i < tmp_arg->numNicks; ++i)
-    {
-        tmp_inst->m_result_profiles.push_back(tmp_arg->nicks[i]);
-        tmp_inst->m_result_profiles_ptrs.push_back(tmp_inst->m_result_profiles.back().c_str());
-    }
-    tmp_cb(tmp_arg->numNicks, "");
+    // for (int i = 0; i < tmp_arg->numNicks; ++i)
+    //{
+    //	tmp_inst->m_result_profiles.push_back(tmp_arg->nicks[i]);
+    //	tmp_inst->m_result_profiles_ptrs.push_back(
+    //		tmp_inst->m_result_profiles.back().c_str()
+    //	);
+    // }
+    // tmp_cb(tmp_arg->numNicks, "");
 }
 
 void __cdecl account_manager::unicks_suggestion_cb(GPConnection* connection, void* arg, void* param)
 {
-    account_manager* tmp_inst = static_cast<account_manager*>(param);
-    VERIFY(tmp_inst);
-    GPSuggestUniqueNickResponseArg* tmp_arg = static_cast<GPSuggestUniqueNickResponseArg*>(arg);
-    VERIFY(tmp_arg);
-    suggest_nicks_cb tmp_cb = tmp_inst->m_suggest_nicks_cb;
-    tmp_inst->m_suggest_nicks_cb.clear();
+    // account_manager* tmp_inst				= static_cast<account_manager*>(param);
+    // VERIFY(tmp_inst);
+    // GPSuggestUniqueNickResponseArg*	tmp_arg = static_cast<GPSuggestUniqueNickResponseArg*>(arg);
+    // VERIFY(tmp_arg);
+    // suggest_nicks_cb tmp_cb = tmp_inst->m_suggest_nicks_cb;
+    // tmp_inst->m_suggest_nicks_cb.clear();
 
-    if (tmp_arg->result != GP_NO_ERROR)
-    {
-        tmp_cb(0, CGameSpy_GP::TryToTranslate(tmp_arg->result).c_str());
-        return;
-    }
+    // if (tmp_arg->result != GP_NO_ERROR)
+    //{
+    //	tmp_cb(0, CGameSpy_GP::TryToTranslate(tmp_arg->result).c_str());
+    //	return;
+    // }
 
-    for (int i = 0; i < tmp_arg->numSuggestedNicks; ++i)
-    {
-        tmp_inst->m_suggested_nicks.push_back(tmp_arg->suggestedNicks[i]);
-        tmp_inst->m_suggested_nicks_ptrs.push_back(tmp_inst->m_suggested_nicks.back().c_str());
-    }
-    tmp_cb(tmp_arg->numSuggestedNicks, "");
+    // for (int i = 0; i < tmp_arg->numSuggestedNicks; ++i)
+    //{
+    //	tmp_inst->m_suggested_nicks.push_back		(tmp_arg->suggestedNicks[i]);
+    //	tmp_inst->m_suggested_nicks_ptrs.push_back	(tmp_inst->m_suggested_nicks.back().c_str());
+    // }
+    // tmp_cb(tmp_arg->numSuggestedNicks, "");
 }
 
 void __cdecl account_manager::delete_profile_cb(GPConnection* connection, void* arg, void* param)
 {
-    account_manager* tmp_inst = static_cast<account_manager*>(param);
-    VERIFY(tmp_inst);
-    GPDeleteProfileResponseArg* tmp_arg = static_cast<GPDeleteProfileResponseArg*>(arg);
-    if (tmp_arg->result != GP_NO_ERROR)
-    {
-        tmp_inst->m_profile_deleting_cb(false, CGameSpy_GP::TryToTranslate(tmp_arg->result).c_str());
-        return;
-    }
-    VERIFY(tmp_inst->m_gamespy_gp);
-    login_manager* tmp_lmngr = MainMenu()->GetLoginMngr();
-    VERIFY(tmp_lmngr);
-    tmp_lmngr->delete_profile_obj();
-    tmp_inst->m_profile_deleting_cb(true, "");
+    // account_manager* tmp_inst				= static_cast<account_manager*>(param);
+    // VERIFY(tmp_inst);
+    // GPDeleteProfileResponseArg* tmp_arg		= static_cast<GPDeleteProfileResponseArg*>(arg);
+    // if (tmp_arg->result != GP_NO_ERROR)
+    //{
+    //	tmp_inst->m_profile_deleting_cb(false, CGameSpy_GP::TryToTranslate(tmp_arg->result).c_str());
+    //	return;
+    // }
+    // VERIFY(tmp_inst->m_gamespy_gp);
+    // login_manager*	tmp_lmngr				= MainMenu()->GetLoginMngr();
+    // VERIFY(tmp_lmngr);
+    // tmp_lmngr->delete_profile_obj			();
+    // tmp_inst->m_profile_deleting_cb			(true, "");
 }
 
 void __cdecl account_manager::search_profile_cb(GPConnection* connection, void* arg, void* param)
 {
-    account_manager* tmp_inst = static_cast<account_manager*>(param);
-    VERIFY(tmp_inst);
-    GPProfileSearchResponseArg* tmp_arg = static_cast<GPProfileSearchResponseArg*>(arg);
+    // account_manager* tmp_inst				= static_cast<account_manager*>(param);
+    // VERIFY(tmp_inst);
+    // GPProfileSearchResponseArg* tmp_arg		= static_cast<GPProfileSearchResponseArg*>(arg);
+    //
+    // found_email_cb	tmp_cb = tmp_inst->m_found_email_cb;
+    // tmp_inst->m_found_email_cb.clear();
 
-    found_email_cb tmp_cb = tmp_inst->m_found_email_cb;
-    tmp_inst->m_found_email_cb.clear();
-
-    if (tmp_arg->result != GP_NO_ERROR)
-    {
-        tmp_cb(false, CGameSpy_GP::TryToTranslate(tmp_arg->result).c_str());
-        return;
-    }
-    if (tmp_arg->numMatches == 0)
-    {
-        tmp_cb(false, "");
-        return;
-    }
-    GPProfileSearchMatch* first_match = tmp_arg->matches;
-    VERIFY(first_match->nick);
-    tmp_cb(true, first_match->nick);
+    // if (tmp_arg->result != GP_NO_ERROR)
+    //{
+    //	tmp_cb(false, CGameSpy_GP::TryToTranslate(tmp_arg->result).c_str());
+    //	return;
+    // }
+    // if (tmp_arg->numMatches == 0)
+    //{
+    //	tmp_cb(false, "");
+    //	return;
+    // }
+    // GPProfileSearchMatch*	first_match		= tmp_arg->matches;
+    // VERIFY(first_match->nick);
+    // tmp_cb(true, first_match->nick);
 }
-
 } // namespace gamespy_gp

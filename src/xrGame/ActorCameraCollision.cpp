@@ -31,8 +31,8 @@ static void	cammera_shell_collide_callback( bool& do_collide, bool bo1, dContact
 	if(oposite_matrial->Flags.test(SGameMtl::flPassable))
 		return;
 
-	dxGeomUserData	*my_data			=	retrieveGeomUserData( bo1 ? c.geom.g1 : c.geom.g2 );
-	dxGeomUserData	*oposite_data		=	retrieveGeomUserData( bo1 ? c.geom.g2 : c.geom.g1 ) ;
+	dxGeomUserData* my_data			=	retrieveGeomUserData( bo1 ? c.geom.g1 : c.geom.g2 );
+	dxGeomUserData* oposite_data		=	retrieveGeomUserData( bo1 ? c.geom.g2 : c.geom.g1 ) ;
 
 	VERIFY( my_data );
 	if( oposite_data && oposite_data->ph_ref_object == my_data->ph_ref_object )
@@ -58,7 +58,7 @@ static void	cammera_shell_collide_callback( bool& do_collide, bool bo1, dContact
 }
 static void cammera_shell_character_collide_callback( bool& do_collide, bool bo1, dContact& c, SGameMtl* material_1, SGameMtl* material_2 )
 {
-	dxGeomUserData	*oposite_data		=	retrieveGeomUserData( bo1 ? c.geom.g2 : c.geom.g1 ) ;
+	dxGeomUserData* oposite_data		=	retrieveGeomUserData( bo1 ? c.geom.g2 : c.geom.g1 ) ;
 	do_collide =  false;
 	if( !oposite_data || !oposite_data->ph_object || oposite_data->ph_object->CastType()!=CPHObject::tpCharacter)
 		return;
@@ -71,7 +71,7 @@ static void cammera_shell_character_collide_callback( bool& do_collide, bool bo1
 }
 
 
-static void get_viewport_geom(Fvector &box, Fmatrix &form, const CCameraBase &camera , float _viewport_near )
+static void get_viewport_geom(Fvector& box, Fmatrix& form, const CCameraBase& camera , float _viewport_near )
 {
 	box.z = _viewport_near / 2.f;
 	viewport_size ( _viewport_near, camera, box.x, box.y );
@@ -96,11 +96,11 @@ static void get_viewport_geom(Fvector &box, Fmatrix &form, const CCameraBase &ca
 
 static const float actor_camera_hudge_mass = 10.f;
 static const float actor_camera_hudge_mass_size = 10000000.f;
-CPhysicsShell	* create_camera_shell(  )
+CPhysicsShell* create_camera_shell(  )
 {
-	CGameObject	*actor = smart_cast<CGameObject	*>( Level().CurrentEntity() );
+	CGameObject* actor = smart_cast<CGameObject	*>( Level().CurrentEntity() );
 	VERIFY( Level().CurrentEntity() );
-	CPhysicsShell	*shell = P_build_SimpleShell( actor, actor_camera_hudge_mass , true );
+	CPhysicsShell* shell = P_build_SimpleShell( actor, actor_camera_hudge_mass , true );
 	CPhysicsElement* roote = shell->get_ElementByStoreOrder( 0 );
 	Fobb obb; obb.m_halfsize.set(0.5f,0.5f,0.5f); obb.m_rotate.identity();obb.m_translate.set(0,0,0);
 	//roote->add_Box(obb);
@@ -108,7 +108,7 @@ CPhysicsShell	* create_camera_shell(  )
 	character_test_geom->build( Fvector().set( 0, 0, 0 ) );//roote->mass_Center()
 	character_test_geom->set_body( roote->get_body() );
 	character_test_geom->set_ref_object(smart_cast<CPhysicsShellHolder*>(actor));
-	CPHGeometryBits::set_ignore_static( *character_test_geom );
+	CPHGeometryBits::set_ignore_static(* character_test_geom );
 	roote->add_geom( character_test_geom );
 	VERIFY( shell );
 	shell->set_ApplyByGravity( false );
@@ -123,7 +123,7 @@ CPhysicsShell	* create_camera_shell(  )
 	VERIFY( roote );
 	roote->set_local_mass_center( Fvector().set(0,0,0) );
 	VERIFY( roote->numberOfGeoms() );
-	CODEGeom	*root_geom = roote->geometry( 0 );
+	CODEGeom* root_geom = roote->geometry( 0 );
 	VERIFY( root_geom );
 	root_geom->set_local_form_bt( Fidentity );
 	shell->DisableCollision();
@@ -149,18 +149,18 @@ void	update_current_entity_camera_collision( CPhysicsShellHolder* l_actor )
 			CActor::actor_camera_shell = create_camera_shell(  );
 }
 
-void get_camera_box( Fvector &box_size, Fmatrix &xform, const CCameraBase & camera, float _viewport_near)
+void get_camera_box( Fvector& box_size, Fmatrix& xform, const CCameraBase& camera, float _viewport_near)
 {
 	get_viewport_geom ( box_size, xform, camera, _viewport_near );
 	box_size.add(Fvector().set(camera_collision_sckin_depth,camera_collision_sckin_depth,camera_collision_sckin_depth));
 }
-void get_old_camera_box( Fvector &old_box_size, Fmatrix &old_form, const CPhysicsElement *roote, const CBoxGeom* box )
+void get_old_camera_box( Fvector& old_box_size, Fmatrix& old_form, const CPhysicsElement* roote, const CBoxGeom* box )
 {
 	roote->GetGlobalTransformDynamic( &old_form );
 	box->get_size( old_box_size );
 }
 
-void set_camera_collision( const Fvector &box_size, const Fmatrix &xform, CPhysicsElement *roote, CBoxGeom* box )
+void set_camera_collision( const Fvector& box_size, const Fmatrix& xform, CPhysicsElement* roote, CBoxGeom* box )
 {
 	box->set_size( box_size );
 	CBoxGeom* character_collision_geom = smart_cast<CBoxGeom*>( roote->geometry( 1 ) );
@@ -177,7 +177,7 @@ void set_camera_collision( const Fvector &box_size, const Fmatrix &xform, CPhysi
 	roote->SetTransform( xform );
 }
 
-void	do_collide_and_move(const Fmatrix &xform, CPhysicsShellHolder* l_actor, CPhysicsShell	*shell, CPhysicsElement *roote )
+void	do_collide_and_move(const Fmatrix& xform, CPhysicsShellHolder* l_actor, CPhysicsShell* shell, CPhysicsElement* roote )
 {
 	///////////////////////////////////////////////////////////////////
 	VERIFY( ph_world );
@@ -211,7 +211,7 @@ void	do_collide_and_move(const Fmatrix &xform, CPhysicsShellHolder* l_actor, CPh
 	shell->Disable();
 }
 
-bool do_collide_not_move(const Fmatrix &xform, CPhysicsShellHolder* l_actor, CPhysicsShell	*shell, CPhysicsElement *roote)
+bool do_collide_not_move(const Fmatrix& xform, CPhysicsShellHolder* l_actor, CPhysicsShell* shell, CPhysicsElement* roote)
 {
 		///////////////////////////////////////////////////////////////////
 	VERIFY( ph_world );
@@ -230,16 +230,16 @@ bool do_collide_not_move(const Fmatrix &xform, CPhysicsShellHolder* l_actor, CPh
 	return cam_collided;
 }
 
-bool test_camera_box( const Fvector &box_size, const Fmatrix &xform )
+bool test_camera_box( const Fvector& box_size, const Fmatrix& xform )
 {
 	CPhysicsShellHolder* l_actor = smart_cast<CPhysicsShellHolder*>( Level().CurrentEntity() );
 	update_current_entity_camera_collision( l_actor );
 
-	CPhysicsShell	*shell =  CActor::actor_camera_shell;
+	CPhysicsShell* shell =  CActor::actor_camera_shell;
 	VERIFY( shell );
-	CPhysicsElement *roote = shell->get_ElementByStoreOrder( 0 );
+	CPhysicsElement* roote = shell->get_ElementByStoreOrder( 0 );
 	VERIFY( roote );
-	CODEGeom	*root_geom = roote->geometry( 0 );
+	CODEGeom* root_geom = roote->geometry( 0 );
 	VERIFY( root_geom );
 	CBoxGeom* box  = smart_cast<CBoxGeom*>( root_geom );
 	VERIFY( box );
@@ -259,9 +259,9 @@ void	collide_camera( CCameraBase & camera, float _viewport_near  )
 	update_current_entity_camera_collision( l_actor );
 	Fvector box_size; Fmatrix xform;
 	get_camera_box( box_size, xform , camera, _viewport_near );
-	CPhysicsShell	*shell =  CActor::actor_camera_shell;
+	CPhysicsShell* shell =  CActor::actor_camera_shell;
 	VERIFY( shell );
-	CPhysicsElement *roote = shell->get_ElementByStoreOrder( 0 );
+	CPhysicsElement* roote = shell->get_ElementByStoreOrder( 0 );
 	VERIFY( roote );
 	CODEGeom	*root_geom = roote->geometry( 0 );
 	VERIFY( root_geom );

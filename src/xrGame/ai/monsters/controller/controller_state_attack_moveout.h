@@ -24,6 +24,7 @@ class CStateControlMoveOut : public CState<_Object>
 
 public:
     CStateControlMoveOut(_Object* obj) : inherited(obj) {}
+
     virtual ~CStateControlMoveOut() {}
 
     virtual void initialize();

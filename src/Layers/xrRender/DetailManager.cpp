@@ -258,7 +258,6 @@ void CDetailManager::Unload()
 }
 
 extern ECORE_API float r_ssaDISCARD;
-extern BOOL ps_no_scale_on_fade;
 
 void CDetailManager::UpdateVisibleM()
 {
@@ -290,7 +289,7 @@ void CDetailManager::UpdateVisibleM()
             {
                 continue;
             }
-            u32 mask = 0xff;
+            u32 mask = 255;
             u32 res = View.testSAABB(MS.vis.sphere.P, MS.vis.sphere.R, MS.vis.box.data(), mask);
             if (fcvNone == res)
             {
@@ -359,9 +358,8 @@ void CDetailManager::UpdateVisibleM()
                         for (; siIT != siEND; siIT++)
                         {
                             SlotItem& Item = *(*siIT);
-                            float scale = ps_no_scale_on_fade ? (Item.scale_calculated = Item.scale) :
-                                                                (Item.scale_calculated = Item.scale * alpha_i);
-                            float ssa = ps_no_scale_on_fade ? scale : scale * scale * Rq_drcp;
+                            float scale = Item.scale_calculated = Item.scale * alpha_i;
+                            float ssa = scale * scale * Rq_drcp;
                             if (ssa < r_ssaDISCARD)
                             {
                                 continue;
@@ -434,6 +432,8 @@ void CDetailManager::Render()
 
 void __stdcall CDetailManager::MT_CALC()
 {
+    if (this == nullptr)
+        return;
 #ifndef _EDITOR
     if (0 == RImplementation.Details)
         return; // possibly deleted

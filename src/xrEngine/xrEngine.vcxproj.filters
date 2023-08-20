@@ -106,12 +106,6 @@
     <Filter Include="Engine\Collision Core">
       <UniqueIdentifier>{27ef9226-06f1-48a5-adc5-40991aa22c05}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Console">
-      <UniqueIdentifier>{0f1086cd-e02a-4030-ae77-22e04fa5cf74}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Console\commands">
-      <UniqueIdentifier>{758ebbb6-fd04-48c4-a303-7f110452ea17}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Core">
       <UniqueIdentifier>{d0fc2a3a-c3e4-41ca-8027-79e04f61f8ba}</UniqueIdentifier>
     </Filter>
@@ -249,6 +243,12 @@
     </Filter>
     <Filter Include="My Amplifier Results">
       <UniqueIdentifier>{6aec60dd-7590-4a0f-accf-2550c71f6aa4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Console">
+      <UniqueIdentifier>{0f1086cd-e02a-4030-ae77-22e04fa5cf74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Console\commands">
+      <UniqueIdentifier>{758ebbb6-fd04-48c4-a303-7f110452ea17}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -618,6 +618,8 @@
     <ClInclude Include="xrSASH.h">
       <Filter>OpenAutomate</Filter>
     </ClInclude>
+    <ClInclude Include="Noncopyable.hpp" />
+    <ClInclude Include="ShadersExternalData.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="defines.cpp">

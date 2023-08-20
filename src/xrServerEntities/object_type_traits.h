@@ -91,10 +91,12 @@ struct yes
 {
     char a[1];
 };
+
 struct no
 {
     char a[2];
 };
+
 template <typename T>
 struct other
 {
@@ -276,11 +278,15 @@ struct is_base_and_derived_or_same_from_template
 };
 
 declare_has(iterator);
+
 declare_has(const_iterator);
+
 //		declare_has(reference);
 //		declare_has(const_reference);
 declare_has(value_type);
+
 declare_has(size_type);
+
 //		declare_has(value_compare);
 
 template <typename T>

@@ -350,6 +350,10 @@ protected:
     CActorCameraManager* m_pActorEffector;
     static float f_Ladder_cam_limit;
 
+public: //--#SM+#--
+    float fFPCamYawMagnitude;
+    float fFPCamPitchMagnitude;
+
 public:
     virtual void feel_touch_new(CObject* O);
     virtual void feel_touch_delete(CObject* O);
@@ -434,8 +438,10 @@ protected:
 
 public:
     float m_fWalkAccel;
+    float m_fWalkAccel1;
     float m_fJumpSpeed;
     float m_fRunFactor;
+    float m_fRunFactor1;
     float m_fRunBackFactor;
     float m_fWalkBackFactor;
     float m_fCrouchFactor;
@@ -443,7 +449,15 @@ public:
     float m_fSprintFactor;
 
     float m_fWalk_StrafeFactor;
+    float m_fWalk_StrafeFactor1;
     float m_fRun_StrafeFactor;
+    float m_fRun_StrafeFactor1;
+
+    void CActor::UpdateConfigParams();
+    float m_fAdditionalWalkAccel;
+    float m_fAdditionalJumpSpeed;
+    float m_fWalkAccelCfg;
+    float m_fJumpSpeedCfg;
 
 public:
     Fvector GetMovementSpeed() { return NET_SavedAccel; };

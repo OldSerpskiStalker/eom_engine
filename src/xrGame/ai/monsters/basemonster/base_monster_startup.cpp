@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "base_monster.h"
 #include "../../../ai_space.h"
 #include "../../../hit.h"
@@ -35,7 +35,6 @@
 
 namespace detail
 {
-
 namespace base_monster
 {
 const float feel_enemy_who_just_hit_max_distance = 20;
@@ -48,9 +47,7 @@ const float aom_prepare_time = 0;
 const float aom_attack_radius = 0.6f;
 const float aom_update_side_period = 4000;
 const float aom_prediction_factor = 1.3f;
-
 } // namespace base_monster
-
 } // namespace detail
 
 void CBaseMonster::Load(LPCSTR section)
@@ -374,7 +371,7 @@ BOOL CBaseMonster::net_Spawn(CSE_Abstract* DC)
 
 void CBaseMonster::net_Destroy()
 {
-    // ôóíêöèÿ äîëæåíà áûòü âûçâàíà ïåðåä inherited
+    // Ã´Ã³Ã­ÃªÃ¶Ã¨Ã¿ Ã¤Ã®Ã«Ã¦Ã¥Ã­Ã  Ã¡Ã»Ã²Ã¼ Ã¢Ã»Ã§Ã¢Ã Ã­Ã  Ã¯Ã¥Ã°Ã¥Ã¤ inherited
     if (m_controlled)
         m_controlled->on_destroy();
     if (StateMan)

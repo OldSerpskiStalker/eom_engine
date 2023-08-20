@@ -23,11 +23,14 @@ class CALifeOnlineOfflineGroupBrain;
 #pragma warning(disable : 4005)
 
 SERVER_ENTITY_DECLARE_BEGIN0(CSE_ALifeTraderAbstract)
+
 enum eTraderFlags
 {
     eTraderFlagInfiniteAmmo = u32(1) << 0,
+    eTraderFlagNightVisionActive = u32(1) << 1,
     eTraderFlagDummy = u32(-1),
 };
+
 //	float							m_fCumulativeItemMass;
 //	int								m_iCumulativeItemVolume;
 u32 m_dwMoney;
@@ -47,6 +50,7 @@ CHARACTER_COMMUNITY_INDEX m_community_index;
 CHARACTER_REPUTATION_VALUE m_reputation;
 CHARACTER_RANK_VALUE m_rank;
 xr_string m_character_name;
+xr_string m_character_name_str;
 shared_str m_icon_name;
 bool m_deadbody_can_take;
 bool m_deadbody_closed;
@@ -85,12 +89,13 @@ void __stdcall OnChangeProfile(PropValue* sender);
 virtual void add_online(const bool& update_registries);
 virtual void add_offline(const xr_vector<ALife::_OBJECT_ID>& saved_children, const bool& update_registries);
 #if 0 // def DEBUG
-			bool					check_inventory_consistency	();
+	bool					check_inventory_consistency();
 #endif
 void vfInitInventory();
 virtual void spawn_supplies();
 #endif
 SERVER_ENTITY_DECLARE_END
+
 add_to_type_list(CSE_ALifeTraderAbstract)
 #define script_type_list save_type_list(CSE_ALifeTraderAbstract)
 
@@ -117,6 +122,7 @@ virtual CSE_Abstract* cast_abstract() { return this; };
 virtual CSE_ALifeTraderAbstract* cast_trader_abstract() { return this; };
 virtual CSE_ALifeTrader* cast_trader() { return this; };
 SERVER_ENTITY_DECLARE_END
+
 add_to_type_list(CSE_ALifeTrader)
 #define script_type_list save_type_list(CSE_ALifeTrader)
 
@@ -131,6 +137,7 @@ u32 m_start_time_shift;
 CSE_ALifeCustomZone(LPCSTR caSection);
 virtual ~CSE_ALifeCustomZone();
 SERVER_ENTITY_DECLARE_END
+
 add_to_type_list(CSE_ALifeCustomZone)
 #define script_type_list save_type_list(CSE_ALifeCustomZone)
 
@@ -160,6 +167,7 @@ virtual CSE_ALifeDynamicObject* tpfGetBestDetector();
 virtual bool keep_saved_data_anyway() const;
 #endif
 SERVER_ENTITY_DECLARE_END
+
 add_to_type_list(CSE_ALifeAnomalousZone)
 #define script_type_list save_type_list(CSE_ALifeAnomalousZone)
 
@@ -168,6 +176,7 @@ add_to_type_list(CSE_ALifeAnomalousZone)
 virtual ~CSE_ALifeTorridZone();
 virtual CSE_Motion* __stdcall motion();
 SERVER_ENTITY_DECLARE_END
+
 add_to_type_list(CSE_ALifeTorridZone)
 #define script_type_list save_type_list(CSE_ALifeTorridZone)
 
@@ -176,6 +185,7 @@ CSE_ALifeZoneVisual(LPCSTR caSection);
 virtual ~CSE_ALifeZoneVisual();
 virtual CSE_Visual* __stdcall visual();
 SERVER_ENTITY_DECLARE_END
+
 add_to_type_list(CSE_ALifeZoneVisual)
 #define script_type_list save_type_list(CSE_ALifeZoneVisual)
 
@@ -219,8 +229,8 @@ virtual u8 g_group();
 IC float get_health() const { return fHealth; }
 IC ALife::_OBJECT_ID get_killer_id() const { return m_killer_id; }
 
-IC void set_health(float const health_value);
-IC void set_killer_id(ALife::_OBJECT_ID const killer_id);
+void set_health(float const health_value);
+void set_killer_id(ALife::_OBJECT_ID const killer_id);
 
 IC bool g_Alive() const { return (get_health() > 0.f); }
 virtual bool used_ai_locations() const;
@@ -238,6 +248,7 @@ virtual void on_spawn();
 virtual bool match_configuration() const;
 #endif
 SERVER_ENTITY_DECLARE_END
+
 add_to_type_list(CSE_ALifeCreatureAbstract)
 #define script_type_list save_type_list(CSE_ALifeCreatureAbstract)
 
@@ -284,6 +295,7 @@ IC CALifeMonsterBrain& brain() const
     VERIFY(m_brain);
     return (*m_brain);
 }
+
 virtual CALifeMonsterBrain* create_brain();
 virtual u32 ef_creature_type() const;
 virtual u32 ef_weapon_type() const;
@@ -305,6 +317,7 @@ virtual ALife::EMeetActionType tfGetActionType(
     CSE_ALifeSchedulable* tpALifeSchedulable, int iGroupIndex, bool bMutualDetection);
 virtual bool bfActive();
 virtual CSE_ALifeDynamicObject* tpfGetBestDetector();
+
 virtual void vfDetachAll(bool bFictitious = false){};
 void vfCheckForPopulationChanges();
 virtual void add_online(const bool& update_registries);
@@ -325,6 +338,7 @@ CALifeMonsterBrain* m_brain;
 
 public:
 SERVER_ENTITY_DECLARE_END
+
 add_to_type_list(CSE_ALifeMonsterAbstract)
 #define script_type_list save_type_list(CSE_ALifeMonsterAbstract)
 
@@ -371,6 +385,7 @@ virtual CSE_ALifeTraderAbstract* cast_trader_abstract() { return this; };
 public:
 virtual BOOL Net_Relevant();
 SERVER_ENTITY_DECLARE_END
+
 add_to_type_list(CSE_ALifeCreatureActor)
 #define script_type_list save_type_list(CSE_ALifeCreatureActor)
 
@@ -379,6 +394,7 @@ add_to_type_list(CSE_ALifeCreatureActor)
 virtual ~CSE_ALifeCreatureCrow();
 virtual bool used_ai_locations() const;
 SERVER_ENTITY_DECLARE_END
+
 add_to_type_list(CSE_ALifeCreatureCrow)
 #define script_type_list save_type_list(CSE_ALifeCreatureCrow)
 
@@ -387,6 +403,7 @@ add_to_type_list(CSE_ALifeCreatureCrow)
 virtual ~CSE_ALifeCreaturePhantom();
 virtual bool used_ai_locations() const;
 SERVER_ENTITY_DECLARE_END
+
 add_to_type_list(CSE_ALifeCreaturePhantom)
 #define script_type_list save_type_list(CSE_ALifeCreaturePhantom)
 
@@ -424,6 +441,7 @@ virtual const CSE_Abstract* base() const;
 virtual CSE_Abstract* cast_abstract() { return this; };
 virtual CSE_ALifeInventoryItem* cast_inventory_item() { return this; };
 SERVER_ENTITY_DECLARE_END
+
 add_to_type_list(CSE_ALifeMonsterRat)
 #define script_type_list save_type_list(CSE_ALifeMonsterRat)
 
@@ -445,6 +463,7 @@ float fAttackAngle;
 CSE_ALifeMonsterZombie(LPCSTR caSection); // constructor for variable initialization
 virtual ~CSE_ALifeMonsterZombie();
 SERVER_ENTITY_DECLARE_END
+
 add_to_type_list(CSE_ALifeMonsterZombie)
 #define script_type_list save_type_list(CSE_ALifeMonsterZombie)
 
@@ -454,7 +473,9 @@ CSE_ALifeMonsterBase(LPCSTR caSection); // constructor for variable initializati
 virtual ~CSE_ALifeMonsterBase();
 virtual void load(NET_Packet& tNetPacket);
 virtual CSE_Abstract* cast_abstract() { return this; }
+
 virtual void spawn_supplies(LPCSTR) {}
+
 virtual void spawn_supplies() {}
 #ifdef XRGAME_EXPORTS
 virtual void on_spawn();
@@ -462,6 +483,7 @@ virtual void add_online(const bool& update_registries);
 virtual void add_offline(const xr_vector<ALife::_OBJECT_ID>& saved_children, const bool& update_registries);
 #endif // XRGAME_EXPORTS
 SERVER_ENTITY_DECLARE_END
+
 add_to_type_list(CSE_ALifeMonsterBase)
 #define script_type_list save_type_list(CSE_ALifeMonsterBase)
 
@@ -471,6 +493,7 @@ virtual ~CSE_ALifePsyDogPhantom();
 virtual CSE_Abstract* cast_abstract() { return this; }
 virtual bool bfActive() { return false; }
 SERVER_ENTITY_DECLARE_END
+
 add_to_type_list(CSE_ALifePsyDogPhantom)
 #define script_type_list save_type_list(CSE_ALifePsyDogPhantom)
 
@@ -492,6 +515,7 @@ IC CALifeHumanBrain& brain() const
     VERIFY(m_brain);
     return (*m_brain);
 }
+
 virtual CALifeMonsterBrain* create_brain();
 
 #ifdef XRGAME_EXPORTS
@@ -516,6 +540,7 @@ private:
 CALifeHumanBrain* m_brain;
 
 SERVER_ENTITY_DECLARE_END
+
 add_to_type_list(CSE_ALifeHumanAbstract)
 #define script_type_list save_type_list(CSE_ALifeHumanAbstract)
 
@@ -527,6 +552,7 @@ virtual ~CSE_ALifeHumanStalker();
 virtual void load(NET_Packet& tNetPacket);
 virtual CSE_Abstract* cast_abstract() { return this; }
 SERVER_ENTITY_DECLARE_END
+
 add_to_type_list(CSE_ALifeHumanStalker)
 #define script_type_list save_type_list(CSE_ALifeHumanStalker)
 
@@ -599,6 +625,7 @@ virtual void update(){};
 #endif
 
 SERVER_ENTITY_DECLARE_END
+
 add_to_type_list(CSE_ALifeOnlineOfflineGroup)
 #define script_type_list save_type_list(CSE_ALifeOnlineOfflineGroup)
 

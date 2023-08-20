@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "cat.h"
 #include "cat_state_manager.h"
 
@@ -80,7 +80,7 @@ void CStateManagerCat::execute()
 
     select_state(state_id);
 
-    // âûïîëíèòü òåêóùåå ñîñòîÿíèå
+    // Ã¢Ã»Ã¯Ã®Ã«Ã­Ã¨Ã²Ã¼ Ã²Ã¥ÃªÃ³Ã¹Ã¥Ã¥ Ã±Ã®Ã±Ã²Ã®Ã¿Ã­Ã¨Ã¥
     get_state_current()->execute();
 
     prev_substate = current_substate;

@@ -5,6 +5,7 @@ struct StackTrace
     char szDesc[255];
     char szFile[255];
     int nLine;
+
     StackTrace()
     {
         szDesc[0] = 0;
@@ -18,6 +19,7 @@ struct Variable
     char szName[255];
     char szType[50];
     char szValue[255];
+
     Variable()
     {
         szName[0] = 0;
@@ -36,12 +38,15 @@ struct SScriptThread
     bool active;
     char name[255];
     char process[255];
+
     SScriptThread() : /**pScript(0),/**/ lua(0), scriptID(-1), active(false)
     {
         name[0] = 0;
         process[0] = 0;
     };
+
     SScriptThread(const SScriptThread& other) { operator=(other); };
+
     SScriptThread& operator=(const SScriptThread& other)
     {
         //		pScript			= other.pScript;

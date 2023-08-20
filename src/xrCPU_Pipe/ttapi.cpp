@@ -190,7 +190,7 @@ process2:
     while (!(dwAffinitiMask & dwCurrentMask))
         dwCurrentMask <<= 1;
 
-    SetThreadAffinityMask(GetCurrentThread(), dwCurrentMask);
+    // SetThreadAffinityMask( GetCurrentThread() , dwCurrentMask );
     // Msg("Master Thread Affinity Mask : 0x%8.8X" , dwCurrentMask );
 
     // Creating threads
@@ -208,7 +208,7 @@ process2:
             dwCurrentMask <<= 1;
         while (!(dwAffinitiMask & dwCurrentMask));
 
-        SetThreadAffinityMask(ttapi_threads_handles[i], dwCurrentMask);
+        // SetThreadAffinityMask( ttapi_threads_handles[ i ] , dwCurrentMask );
         // Msg("Helper Thread #%u Affinity Mask : 0x%8.8X" , i + 1 , dwCurrentMask );
 
         // Setting thread name

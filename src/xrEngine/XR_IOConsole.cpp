@@ -29,7 +29,7 @@ static u32 const cursor_font_color = color_rgba(255, 255, 255, 255);
 static u32 const total_font_color = color_rgba(250, 250, 15, 180);
 static u32 const default_font_color = color_rgba(250, 250, 250, 250);
 
-static u32 const back_color = color_rgba(20, 20, 20, 200);
+static u32 const back_color = color_rgba(0, 0, 0, 110);
 static u32 const tips_back_color = color_rgba(20, 20, 20, 200);
 static u32 const tips_select_color = color_rgba(90, 90, 140, 230);
 static u32 const tips_word_color = color_rgba(5, 100, 56, 200);
@@ -171,7 +171,7 @@ void CConsole::OnFrame()
 void CConsole::OutFont(LPCSTR text, float& pos_y)
 {
     float str_length = pFont->SizeOf_(text);
-    float scr_width = 1.98f * Device.fWidth_2;
+    float scr_width = 2.0f * Device.fWidth_2;
     if (str_length > scr_width) // 1024.0f
     {
         float f = 0.0f;
@@ -228,7 +228,7 @@ void CConsole::OnRender()
 
     if (!pFont)
     {
-        pFont = xr_new<CGameFont>("hud_font_di", CGameFont::fsDeviceIndependent);
+        pFont = xr_new<CGameFont>("ui_font_letterica18_russian", CGameFont::fsDeviceIndependent);
         pFont->SetHeightI(0.025f);
     }
     if (!pFont2)
@@ -605,6 +605,8 @@ void CConsole::ExecuteCommand(LPCSTR cmd_str, bool record_cmd)
 
 void CConsole::Show()
 {
+    if (!(strstr(Core.Params, "-khuli_tebe_nado")))
+        return;
     // SECUROM_MARKER_HIGH_SECURITY_ON(11)
 
     if (bVisible)

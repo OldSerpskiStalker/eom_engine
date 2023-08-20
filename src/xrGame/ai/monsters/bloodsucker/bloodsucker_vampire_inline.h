@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "bloodsucker_vampire_execute.h"
 #include "../states/state_hide_from_point.h"
@@ -102,7 +102,7 @@ bool CStateBloodsuckerVampireAbstract::check_start_conditions()
     if (object->berserk_always)
         return false;
 
-    // ÿâëÿåòñÿ ëè âðàã àêòåðîì
+    // Ã¿Ã¢Ã«Ã¿Ã¥Ã²Ã±Ã¿ Ã«Ã¨ Ã¢Ã°Ã Ã£ Ã ÃªÃ²Ã¥Ã°Ã®Ã¬
     const CEntityAlive* enemy = object->EnemyMan.get_enemy();
     if (!smart_cast<CActor const*>(enemy))
         return false;
@@ -125,15 +125,15 @@ bool CStateBloodsuckerVampireAbstract::check_start_conditions()
 TEMPLATE_SPECIALIZATION
 bool CStateBloodsuckerVampireAbstract::check_completion()
 {
-    // åñëè óáåæàë
+    // Ã¥Ã±Ã«Ã¨ Ã³Ã¡Ã¥Ã¦Ã Ã«
     if ((current_substate == eStateVampire_Hide) && get_state_current()->check_completion())
         return true;
 
-    // åñëè âðàã èçìåíèëñÿ
+    // Ã¥Ã±Ã«Ã¨ Ã¢Ã°Ã Ã£ Ã¨Ã§Ã¬Ã¥Ã­Ã¨Ã«Ã±Ã¿
     if (enemy != object->EnemyMan.get_enemy())
         return true;
 
-    // åñëè àêòåðà óæå êîíòðîëèò äðóãîé êðîâîñîñ
+    // Ã¥Ã±Ã«Ã¨ Ã ÃªÃ²Ã¥Ã°Ã  Ã³Ã¦Ã¥ ÃªÃ®Ã­Ã²Ã°Ã®Ã«Ã¨Ã² Ã¤Ã°Ã³Ã£Ã®Ã© ÃªÃ°Ã®Ã¢Ã®Ã±Ã®Ã±
     if ((current_substate != eStateVampire_Execute) && object->CControlledActor::is_controlling())
         return true;
 

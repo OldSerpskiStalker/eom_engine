@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "base_monster.h"
 #include "../ai_monster_squad.h"
 #include "../ai_monster_squad_manager.h"
@@ -17,21 +17,21 @@ void CBaseMonster::Think()
     if (!g_Alive() || getDestroy())
         return;
 
-    // Инициализировать
+    // Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§ГЁГ°Г®ГўГ ГІГј
     InitThink();
     anim().ScheduledInit();
 
-    // Обновить память
+    // ГЋГЎГ­Г®ГўГЁГІГј ГЇГ Г¬ГїГІГј
     START_PROFILE("Base Monster/Think/Update Memory");
     UpdateMemory();
     STOP_PROFILE;
 
-    // Обновить сквад
+    // ГЋГЎГ­Г®ГўГЁГІГј Г±ГЄГўГ Г¤
     START_PROFILE("Base Monster/Think/Update Squad");
     monster_squad().update(this);
     STOP_PROFILE;
 
-    // Запустить FSM
+    // Г‡Г ГЇГіГ±ГІГЁГІГј FSM
     START_PROFILE("Base Monster/Think/FSM");
     update_fsm();
     STOP_PROFILE;
@@ -43,12 +43,12 @@ void CBaseMonster::update_fsm()
 {
     StateMan->update();
 
-    // завершить обработку установленных в FSM параметров
+    // Г§Г ГўГҐГ°ГёГЁГІГј Г®ГЎГ°Г ГЎГ®ГІГЄГі ГіГ±ГІГ Г­Г®ГўГ«ГҐГ­Г­Г»Гµ Гў FSM ГЇГ Г°Г Г¬ГҐГІГ°Г®Гў
     post_fsm_update();
 
     TranslateActionToPathParams();
 
-    // информировать squad о своих целях
+    // ГЁГ­ГґГ®Г°Г¬ГЁГ°Г®ГўГ ГІГј squad Г® Г±ГўГ®ГЁГµ Г¶ГҐГ«ГїГµ
     squad_notify();
 
 #ifdef DEBUG

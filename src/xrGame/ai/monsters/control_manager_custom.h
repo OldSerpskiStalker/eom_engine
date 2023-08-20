@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "control_combase.h"
 
 #include "anim_triple.h"
@@ -54,7 +54,7 @@ public:
     // Sequencer
     void seq_init();
     void seq_add(MotionID motion);
-    void seq_switch(); // Перейти в следующее состояние, если такового не имеется - завершить
+    void seq_switch(); // ГЏГҐГ°ГҐГ©ГІГЁ Гў Г±Г«ГҐГ¤ГіГѕГ№ГҐГҐ Г±Г®Г±ГІГ®ГїГ­ГЁГҐ, ГҐГ±Г«ГЁ ГІГ ГЄГ®ГўГ®ГЈГ® Г­ГҐ ГЁГ¬ГҐГҐГІГ±Гї - Г§Г ГўГҐГ°ГёГЁГІГј
     void seq_run(MotionID motion);
 
     //-------------------------------------------------------------------------------

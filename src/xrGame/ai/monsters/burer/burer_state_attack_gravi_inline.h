@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 template <typename Object>
 CStateBurerAttackGravi<Object>::CStateBurerAttackGravi(Object* obj) : inherited(obj), m_action()
@@ -72,7 +72,7 @@ void CStateBurerAttackGravi<Object>::critical_finalize()
 template <typename Object>
 bool CStateBurerAttackGravi<Object>::check_start_conditions()
 {
-    // îáðàáîòàòü îáúåêòû
+    // Ã®Ã¡Ã°Ã Ã¡Ã®Ã²Ã Ã²Ã¼ Ã®Ã¡ÃºÃ¥ÃªÃ²Ã»
     if (object->get_force_gravi_attack())
         return true;
     float dist = object->Position().distance_to(object->EnemyMan.get_enemy()->Position());
@@ -111,7 +111,7 @@ void CStateBurerAttackGravi<Object>::ExecuteGraviStart()
 template <typename Object>
 void CStateBurerAttackGravi<Object>::ExecuteGraviContinue()
 {
-    // ïðîâåðèòü íà ãðàâè óäàð
+    // Ã¯Ã°Ã®Ã¢Ã¥Ã°Ã¨Ã²Ã¼ Ã­Ã  Ã£Ã°Ã Ã¢Ã¨ Ã³Ã¤Ã Ã°
     float dist = object->Position().distance_to(object->EnemyMan.get_enemy()->Position());
 
     float time_to_hold = (abs(dist - object->m_gravi.min_dist) / object->m_gravi.min_dist);

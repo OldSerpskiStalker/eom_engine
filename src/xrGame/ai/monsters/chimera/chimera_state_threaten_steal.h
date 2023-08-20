@@ -8,6 +8,7 @@ class CStateChimeraThreatenSteal : public CStateMonsterMoveToPointEx<_Object>
 
 public:
     IC CStateChimeraThreatenSteal(_Object* obj) : inherited(obj) {}
+
     virtual void initialize();
     virtual void finalize();
     virtual void execute();

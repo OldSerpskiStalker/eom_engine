@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "bloodsucker_vampire_effector.h"
 
 CVampirePPEffector::CVampirePPEffector(const SPPInfo& ppi, float life_time)
@@ -49,6 +49,7 @@ BOOL CVampirePPEffector::Process(SPPInfo& pp)
 #define DELTA_ANGLE_Z DELTA_ANGLE_X
 #define ANGLE_SPEED 0.2f
 #define BEST_DISTANCE 0.3f
+
 CVampireCameraEffector::CVampireCameraEffector(float time, const Fvector& src, const Fvector& tgt)
     : inherited(eCEVampire, time)
 {
@@ -80,10 +81,10 @@ BOOL CVampireCameraEffector::ProcessCam(SCamEffectorInfo& info)
     if (fLifeTime < 0)
         return FALSE;
 
-    // ïðîöåíò îñòàâøåãîñÿ âðåìåíè
+    // Ã¯Ã°Ã®Ã¶Ã¥Ã­Ã² Ã®Ã±Ã²Ã Ã¢Ã¸Ã¥Ã£Ã®Ã±Ã¿ Ã¢Ã°Ã¥Ã¬Ã¥Ã­Ã¨
     float time_left_perc = fLifeTime / m_time_total;
 
-    // Èíèöèàëèçàöèÿ
+    // ÃˆÃ­Ã¨Ã¶Ã¨Ã Ã«Ã¨Ã§Ã Ã¶Ã¨Ã¿
     Fmatrix Mdef;
     Mdef.identity();
     Mdef.j.set(info.n);
@@ -130,7 +131,7 @@ BOOL CVampireCameraEffector::ProcessCam(SCamEffectorInfo& info)
 
     //////////////////////////////////////////////////////////////////////////
 
-    // Óñòàíîâèòü óãëû ñìåùåíèÿ
+    // Ã“Ã±Ã²Ã Ã­Ã®Ã¢Ã¨Ã²Ã¼ Ã³Ã£Ã«Ã» Ã±Ã¬Ã¥Ã¹Ã¥Ã­Ã¨Ã¿
     Fmatrix R;
     R.setHPB(dangle_current.x, dangle_current.y, dangle_current.z);
 

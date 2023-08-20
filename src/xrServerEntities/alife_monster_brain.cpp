@@ -143,14 +143,14 @@ void CALifeMonsterBrain::select_task()
 void CALifeMonsterBrain::update()
 {
 #if 0 // def DEBUG
-	if (!Level().MapManager().HasMapLocation("debug_stalker",object().ID)) {
-		CMapLocation				*map_location = 
+	if (!Level().MapManager().HasMapLocation("debug_stalker", object().ID)) {
+		CMapLocation				*map_location =
 			Level().MapManager().AddMapLocation(
 				"debug_stalker",
 				object().ID
 			);
 
-		map_location->SetHint		(object().name_replace());
+		map_location->SetHint(object().name_replace());
 	}
 #endif
 

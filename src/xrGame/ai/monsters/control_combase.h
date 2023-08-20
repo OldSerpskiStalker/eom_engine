@@ -13,23 +13,29 @@ class CControl_Com
 {
 public:
     CControl_Com() { m_inited = false; }
+
     virtual ~CControl_Com() {}
+
     // common routines
     void init_external(CControl_Manager* cm, CBaseMonster* obj)
     {
         m_man = cm;
         m_object = obj;
     }
+
     virtual void load(LPCSTR section) {}
+
     virtual void reinit()
     {
         m_active = false;
         m_inited = true;
     }
+
     virtual void reload(LPCSTR section) {}
 
     // update
     virtual void update_schedule() {}
+
     virtual void update_frame() {}
 
     virtual CControl_ComControlled* ced() { return 0; }
@@ -40,6 +46,7 @@ public:
         m_active = val;
         val ? activate() : deactivate();
     }
+
     bool is_active() { return m_active; }
     bool is_inited() { return m_inited; }
 
@@ -47,6 +54,7 @@ public:
 
 protected:
     virtual void activate() {}
+
     virtual void deactivate() {}
 
 protected:
@@ -69,12 +77,14 @@ public:
         m_capturer = 0;
         reset_data();
     }
+
     virtual void reset_data() {}
 
     virtual ControlCom::IComData* data() { return 0; }
 
     // init/deinit current work
     virtual void on_capture() { reset_data(); }
+
     virtual void on_release() {}
 
     bool is_locked() { return m_locked; }
@@ -93,10 +103,12 @@ class CControl_ComControlling
 {
 public:
     virtual ~CControl_ComControlling() {}
+
     virtual void reinit() {}
 
     // initialize/finalize controlling com
     virtual void on_start_control(ControlCom::EControlType type) {}
+
     virtual void on_stop_control(ControlCom::EControlType type) {}
 
     // event handling
@@ -126,6 +138,7 @@ class CControl_ComPure : public CControl_Com, public CControl_ComControlledStora
 {
 public:
     virtual CControl_ComControlled* ced() { return this; }
+
     virtual void reinit()
     {
         CControl_Com::reinit();
@@ -133,12 +146,14 @@ public:
         set_active();
     }
 };
+
 //////////////////////////////////////////////////////////////////////////
 // Base
 class CControl_ComBase : public CControl_Com, public CControl_ComControlling
 {
 public:
     virtual CControl_ComControlling* cing() { return this; }
+
     virtual void reinit()
     {
         CControl_Com::reinit();
@@ -146,6 +161,7 @@ public:
         set_active();
     }
 };
+
 //////////////////////////////////////////////////////////////////////////
 // Custom
 template <class T = ControlCom::IComData>
@@ -154,6 +170,7 @@ class CControl_ComCustom : public CControl_Com, public CControl_ComControlledSto
 public:
     virtual CControl_ComControlled* ced() { return this; }
     virtual CControl_ComControlling* cing() { return this; }
+
     virtual void reinit()
     {
         CControl_Com::reinit();

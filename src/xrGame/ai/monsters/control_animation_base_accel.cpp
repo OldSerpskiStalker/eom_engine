@@ -1,10 +1,11 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "control_animation_base.h"
 #include "BaseMonster/base_monster.h"
 #include "../../detail_path_manager.h"
 #include "monster_velocity_space.h"
 
 void CControlAnimationBase::accel_init() { m_accel.active = false; }
+
 void CControlAnimationBase::accel_load(LPCSTR section)
 {
     m_accel.calm = pSettings->r_float(section, "Accel_Calm");
@@ -51,7 +52,7 @@ bool CControlAnimationBase::accel_chain_get(
     VELOCITY_CHAIN_VEC_IT B = m_accel.chain.begin(), I;
     VELOCITY_CHAIN_VEC_IT E = m_accel.chain.end();
 
-    // ïğîéòè ïî âñåì Chain-âåêòîğàì
+    // Ã¯Ã°Ã®Ã©Ã²Ã¨ Ã¯Ã® Ã¢Ã±Ã¥Ã¬ Chain-Ã¢Ã¥ÃªÃ²Ã®Ã°Ã Ã¬
     for (I = B; I != E; I++)
     {
         SEQ_VECTOR_IT IT_B = I->begin(), IT;
@@ -61,7 +62,7 @@ bool CControlAnimationBase::accel_chain_get(
 
         bool found = false;
 
-        // Ïğîéòè ïî òåêóùåìó âåêòîğó
+        // ÃÃ°Ã®Ã©Ã²Ã¨ Ã¯Ã® Ã²Ã¥ÃªÃ³Ã¹Ã¥Ã¬Ã³ Ã¢Ã¥ÃªÃ²Ã®Ã°Ã³
         for (IT = IT_B; IT != IT_E; IT++)
         {
             SAnimItem* item_it = m_anim_storage[*IT];
@@ -103,7 +104,7 @@ bool CControlAnimationBase::accel_chain_test()
 {
     string256 error_msg;
 
-    // ïğîéòè ïî âñåì Chain-âåêòîğàì
+    // Ã¯Ã°Ã®Ã©Ã²Ã¨ Ã¯Ã® Ã¢Ã±Ã¥Ã¬ Chain-Ã¢Ã¥ÃªÃ²Ã®Ã°Ã Ã¬
     for (VELOCITY_CHAIN_VEC_IT I = m_accel.chain.begin(); I != m_accel.chain.end(); I++)
     {
         VERIFY2(I->size() >= 2, error_msg);
@@ -112,7 +113,7 @@ bool CControlAnimationBase::accel_chain_test()
         SAnimItem* anim_to;
         VERIFY(anim_from);
 
-        // Ïğîéòè ïî òåêóùåìó âåêòîğó
+        // ÃÃ°Ã®Ã©Ã²Ã¨ Ã¯Ã® Ã²Ã¥ÃªÃ³Ã¹Ã¥Ã¬Ã³ Ã¢Ã¥ÃªÃ²Ã®Ã°Ã³
         for (SEQ_VECTOR_IT IT = I->begin() + 1; IT != I->end(); IT++)
         {
             anim_to = m_anim_storage[*IT];
@@ -146,8 +147,8 @@ bool CControlAnimationBase::accel_check_braking(float before_interval, float nom
     if (m_man->path_builder().is_path_end(braking_dist))
         return (braking_mode = true);
 
-    // ïğîâåğèòü òî÷êè ïóòè, ãäå íåîáõîäèìî îñòàíîâèòüñÿ
-    float dist = 0.f; // äèñòàíöèÿ äî íàéäåííîé òî÷êè
+    // Ã¯Ã°Ã®Ã¢Ã¥Ã°Ã¨Ã²Ã¼ Ã²Ã®Ã·ÃªÃ¨ Ã¯Ã³Ã²Ã¨, Ã£Ã¤Ã¥ Ã­Ã¥Ã®Ã¡ÃµÃ®Ã¤Ã¨Ã¬Ã® Ã®Ã±Ã²Ã Ã­Ã®Ã¢Ã¨Ã²Ã¼Ã±Ã¿
+    float dist = 0.f; // Ã¤Ã¨Ã±Ã²Ã Ã­Ã¶Ã¨Ã¿ Ã¤Ã® Ã­Ã Ã©Ã¤Ã¥Ã­Ã­Ã®Ã© Ã²Ã®Ã·ÃªÃ¨
     for (u32 i = m_man->path_builder().detail().curr_travel_point_index() + 1;
          i < m_man->path_builder().detail().path().size(); i++)
     {

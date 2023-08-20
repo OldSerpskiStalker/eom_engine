@@ -17,8 +17,6 @@ public:
 
     virtual void CheckSpecParams(u32 spec_params);
 
-    void try_to_jump();
-
     virtual void HitEntityInJump(const CEntity* pEntity);
 
     virtual char* get_monster_class_name() { return "cat"; }

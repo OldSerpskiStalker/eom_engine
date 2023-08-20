@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #define TEMPLATE_SPECIALIZATION template <typename _Object>
 
@@ -64,7 +64,7 @@ bool CStateControllerControlHitAbstract::check_start_conditions()
     if (!object->EnemyMan.see_enemy_now())
         return false;
 
-    // всё ок, можно начать атаку
+    // ГўГ±Вё Г®ГЄ, Г¬Г®Г¦Г­Г® Г­Г Г·Г ГІГј Г ГІГ ГЄГі
     return true;
 }
 
@@ -93,7 +93,7 @@ void CStateControllerControlHitAbstract::execute_hit_prepare()
 TEMPLATE_SPECIALIZATION
 void CStateControllerControlHitAbstract::execute_hit_continue()
 {
-    // проверить на грави удар
+    // ГЇГ°Г®ГўГҐГ°ГЁГІГј Г­Г  ГЈГ°Г ГўГЁ ГіГ¤Г Г°
     if (time_control_started + CONTROL_PREPARE_TIME < Device.dwTimeGlobal)
     {
         m_action = eActionFire;

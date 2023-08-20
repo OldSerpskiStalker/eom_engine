@@ -12,6 +12,7 @@ protected:
 
 public:
     CStateControllerAttack(_Object* obj);
+
     virtual ~CStateControllerAttack() {}
 
     virtual void initialize();
@@ -21,7 +22,9 @@ public:
     virtual void execute();
     virtual void setup_substates();
     virtual void check_force_state();
+
     virtual void remove_links(CObject*) {}
+
     bool check_home_point();
 };
 

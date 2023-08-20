@@ -251,8 +251,7 @@ void xrSASH::EndBenchmark()
 void InitInput();
 void destroyInput();
 void InitEngine();
-void InitSound1();
-void InitSound2();
+void InitSound();
 void destroySound();
 void destroyEngine();
 
@@ -476,9 +475,6 @@ void xrSASH::TryInitEngine(bool bNoRun)
 
     Engine.External.Initialize();
 
-    if (bNoRun)
-        InitSound1();
-
     Console->Execute("unbindall");
     Console->ExecuteScript(Console->ConfigFile);
     if (m_bOpenAutomate)
@@ -490,7 +486,7 @@ void xrSASH::TryInitEngine(bool bNoRun)
 
     if (bNoRun)
     {
-        InitSound2();
+        InitSound();
         Device.Create();
     }
 }

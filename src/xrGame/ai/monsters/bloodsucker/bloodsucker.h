@@ -163,6 +163,7 @@ public:
 
 public:
     void set_manual_control(bool value) {}
+
     void manual_activate();
     void manual_deactivate();
 

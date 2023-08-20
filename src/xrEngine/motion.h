@@ -33,17 +33,21 @@ struct st_BoneMotion
     {
         flWorldOrient = 1 << 0,
     };
+
     shared_str name;
     CEnvelope* envs[ctMaxChannel];
     Flags8 m_Flags;
+
     st_BoneMotion()
     {
         name = 0;
         m_Flags.zero();
         ZeroMemory(envs, sizeof(CEnvelope*) * ctMaxChannel);
     }
+
     void SetName(LPCSTR nm) { name = nm; }
 };
+
 // vector по костям
 DEFINE_VECTOR(st_BoneMotion, BoneMotionVec, BoneMotionIt);
 
@@ -57,6 +61,7 @@ protected:
         mtSkeleton,
         ForceDWORD = u32(-1)
     };
+
     EMotionType mtype;
     int iFrameStart, iFrameEnd;
     float fFPS;
@@ -80,6 +85,7 @@ public:
         }
         name = tmp;
     }
+
     LPCSTR Name() { return name.c_str(); }
     int FrameStart() { return iFrameStart; }
     int FrameEnd() { return iFrameEnd; }
@@ -221,22 +227,26 @@ public:
         max_t = 0.f;
         tmp = 0.f;
     }
+
     void Set(CCustomMotion* M);
     void Set(float start_frame, float end_frame, float fps);
     float Frame() { return t_current; }
     void Update(float dt, float speed, bool loop);
+
     void Play()
     {
         bPlay = true;
         t_current = min_t;
         tmp = min_t;
     }
+
     void Stop()
     {
         bPlay = false;
         t_current = min_t;
         tmp = min_t;
     }
+
     void Pause(bool val) { bPlay = !val; }
 };
 

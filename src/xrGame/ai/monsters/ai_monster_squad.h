@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 // Lain:
 #include "../../steering_behaviour.h"
@@ -6,17 +6,24 @@
 class CEntity;
 class CEntityAlive;
 class CBaseMonster;
+
 //////////////////////////////////////////////////////////////////////////
 // Member local goal notification
 //////////////////////////////////////////////////////////////////////////
 enum EMemberGoalType
 {
-    MG_AttackEnemy, // entity
-    MG_PanicFromEnemy, // entity
-    MG_InterestingSound, // position
-    MG_DangerousSound, // position
-    MG_WalkGraph, // node
-    MG_Rest, // node, position
+    MG_AttackEnemy,
+    // entity
+    MG_PanicFromEnemy,
+    // entity
+    MG_InterestingSound,
+    // position
+    MG_DangerousSound,
+    // position
+    MG_WalkGraph,
+    // node
+    MG_Rest,
+    // node, position
     MG_None,
 };
 
@@ -53,7 +60,7 @@ enum ESquadCommandType
 
 struct SSquadCommand
 {
-    ESquadCommandType type; // тип команды
+    ESquadCommandType type; // ГІГЁГЇ ГЄГ®Г¬Г Г­Г¤Г»
 
     const CEntity* entity;
     Fvector position;
@@ -72,10 +79,10 @@ private:
     CEntity* leader;
     DEFINE_MAP(CEntity*, SMemberGoal, MEMBER_GOAL_MAP, MEMBER_GOAL_MAP_IT);
 
-    // карта целей членов группы (обновляется со стороны объекта)
+    // ГЄГ Г°ГІГ  Г¶ГҐГ«ГҐГ© Г·Г«ГҐГ­Г®Гў ГЈГ°ГіГЇГЇГ» (Г®ГЎГ­Г®ГўГ«ГїГҐГІГ±Гї Г±Г® Г±ГІГ®Г°Г®Г­Г» Г®ГЎГєГҐГЄГІГ )
     MEMBER_GOAL_MAP m_goals;
 
-    // карта комманд членов группы (обновляется со стороны squad manager)
+    // ГЄГ Г°ГІГ  ГЄГ®Г¬Г¬Г Г­Г¤ Г·Г«ГҐГ­Г®Гў ГЈГ°ГіГЇГЇГ» (Г®ГЎГ­Г®ГўГ«ГїГҐГІГ±Гї Г±Г® Г±ГІГ®Г°Г®Г­Г» squad manager)
     MEMBER_COMMAND_MAP m_commands;
 
     DEFINE_VECTOR(u32, NODES_VECTOR, NODES_VECTOR_IT);
@@ -125,14 +132,14 @@ public:
     u8 get_index(CEntity* m_object);
 
     ///////////////////////////////////////////////////////////////////////////////////////
-    //  Общие данные
+    //  ГЋГЎГ№ГЁГҐ Г¤Г Г­Г­Г»ГҐ
     //////////////////////////////////////////////////////////////////////////////////////
 
     DEFINE_VECTOR(CEntity*, ENTITY_VEC, ENTITY_VEC_IT);
     ENTITY_VEC m_temp_entities;
 
     ///////////////////////////////////////////////////////////////////////////////////////
-    //  Атака группой монстров
+    //  ГЂГІГ ГЄГ  ГЈГ°ГіГЇГЇГ®Г© Г¬Г®Г­Г±ГІГ°Г®Гў
     //////////////////////////////////////////////////////////////////////////////////////
 
     DEFINE_MAP(const CEntity*, ENTITY_VEC, ENEMY_MAP, ENEMY_MAP_IT);
@@ -148,6 +155,7 @@ public:
         Fvector p_from;
         float yaw;
     };
+
     xr_vector<_elem> lines;
     // ------------
 
@@ -159,7 +167,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////////////////////////////////
-    //  групповой idle
+    //  ГЈГ°ГіГЇГЇГ®ГўГ®Г© idle
     //////////////////////////////////////////////////////////////////////////////////////
     ENTITY_VEC front, back, left, right;
 

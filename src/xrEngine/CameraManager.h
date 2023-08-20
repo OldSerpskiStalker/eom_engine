@@ -7,8 +7,11 @@ struct ENGINE_API SPPInfo
     struct SColor
     {
         float r, g, b;
+
         SColor() {}
+
         SColor(float _r, float _g, float _b) : r(_r), g(_g), b(_b) {}
+
         IC operator u32()
         {
             int _r = clampr(iFloor(r * 255.f + .5f), 0, 255);
@@ -26,6 +29,7 @@ struct ENGINE_API SPPInfo
             b += ppi.b;
             return *this;
         }
+
         IC SColor& operator-=(const SColor& ppi)
         {
             r -= ppi.r;
@@ -33,6 +37,7 @@ struct ENGINE_API SPPInfo
             b -= ppi.b;
             return *this;
         }
+
         IC SColor& set(float _r, float _g, float _b)
         {
             r = _r;
@@ -41,12 +46,17 @@ struct ENGINE_API SPPInfo
             return *this;
         }
     };
+
     float blur, gray;
+
     struct SDuality
     {
         float h, v;
+
         SDuality() {}
+
         SDuality(float _h, float _v) : h(_h), v(_v) {}
+
         IC SDuality& set(float _h, float _v)
         {
             h = _h;
@@ -54,12 +64,16 @@ struct ENGINE_API SPPInfo
             return *this;
         }
     } duality;
+
     struct SNoise
     {
         float intensity, grain;
         float fps;
+
         SNoise() {}
+
         SNoise(float _i, float _g, float _f) : intensity(_i), grain(_g), fps(_f) {}
+
         IC SNoise& set(float _i, float _g, float _f)
         {
             intensity = _i;
@@ -91,6 +105,7 @@ DEFINE_VECTOR(CEffectorPP*, EffectorPPVec, EffectorPPIt);
 #define effCustomEffectorStartID 10000
 
 struct SCamEffectorInfo;
+
 class ENGINE_API CCameraManager
 {
 protected:
@@ -149,6 +164,7 @@ public:
     CCameraManager(bool bApplyOnUpdate);
     virtual ~CCameraManager();
 };
+
 ENGINE_API extern SPPInfo pp_identity;
 ENGINE_API extern SPPInfo pp_zero;
 

@@ -264,9 +264,7 @@ PROTECT_API void InitInput()
 }
 void destroyInput() { xr_delete(pInput); }
 
-PROTECT_API void InitSound1() { CSound_manager_interface::_create(0); }
-
-PROTECT_API void InitSound2() { CSound_manager_interface::_create(1); }
+PROTECT_API void InitSound() { CSound_manager_interface::_create(); }
 
 void destroySound() { CSound_manager_interface::_destroy(); }
 
@@ -332,9 +330,8 @@ void CheckPrivilegySlowdown()
 
 void Startup()
 {
-    InitSound1();
+    InitSound();
     execUserScript();
-    InitSound2();
 
     // ...command line for auto start
     {
@@ -364,6 +361,7 @@ void Startup()
     logoWindow = NULL;
 
     // Main cycle
+    Msg("* [x-ray]: Starting Main Loop");
     Memory.mem_usage();
     Device.Run();
 
@@ -733,7 +731,7 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* lp
     g_dedicated_server = true;
 #endif // DEDICATED_SERVER
 
-    SetThreadAffinityMask(GetCurrentThread(), 1);
+    // SetThreadAffinityMask(GetCurrentThread(), 1);
 
     // Title window
     logoWindow = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_STARTUP), 0, logDlgProc);
@@ -796,8 +794,6 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* lp
 
         InitConsole();
 
-        Engine.External.CreateRendererList();
-
         LPCSTR benchName = "-batch_benchmark ";
         if (strstr(lpCmdLine, benchName))
         {
@@ -828,20 +824,6 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* lp
                 return 0;
         };
 
-#ifndef DEDICATED_SERVER
-        if (strstr(Core.Params, "-r2a"))
-            Console->Execute("renderer renderer_r2a");
-        else if (strstr(Core.Params, "-r2"))
-            Console->Execute("renderer renderer_r2");
-        else
-        {
-            CCC_LoadCFG_custom* pTmp = xr_new<CCC_LoadCFG_custom>("renderer ");
-            pTmp->Execute(Console->ConfigFile);
-            xr_delete(pTmp);
-        }
-#else
-    Console->Execute("renderer renderer_r1");
-#endif
         //. InitInput ( );
         Engine.External.Initialize();
         Console->Execute("stat_memory");
@@ -887,8 +869,6 @@ int stack_overflow_exception_filter(int exception_code)
     else
         return EXCEPTION_CONTINUE_SEARCH;
 }
-
-#include <boost/crc.hpp>
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* lpCmdLine, int nCmdShow)
 {
@@ -1213,6 +1193,8 @@ PROTECT_API void CApplication::LoadDraw()
     Device.End();
 }
 
+void CApplication::SetLoadStageTitle(pcstr _ls_title) { xr_strcpy(ls_title, _ls_title); }
+
 void CApplication::LoadTitleInt(LPCSTR str1, LPCSTR str2, LPCSTR str3)
 {
     xr_strcpy(ls_header, str1);
@@ -1228,8 +1210,8 @@ void CApplication::LoadStage()
     phase_timer.Start();
     Msg("* phase cmem: %lld K", Memory.mem_usage() / 1024);
 
-    if (g_pGamePersistent->GameType() == 1 && strstr(Core.Params, "alife"))
-        max_load_stage = 17;
+    if (g_pGamePersistent->GameType() == 1 && !xr_strcmp(g_pGamePersistent->m_game_params.m_alife, "alife"))
+        max_load_stage = 18;
     else
         max_load_stage = 14;
     LoadDraw();

@@ -16,6 +16,8 @@
 #include "Grenade.h"
 #include "game_base_space.h"
 #include "Artefact.h"
+#include "WeaponKnife.h"
+#include "HUDManager.h"
 
 static const float VEL_MAX = 10.f;
 static const float VEL_A_MAX = 10.f;
@@ -63,6 +65,71 @@ float CActor::GetWeaponAccuracy() const
 
 void CActor::g_fireParams(const CHudItem* pHudItem, Fvector& fire_pos, Fvector& fire_dir)
 {
+    /*
+    CWeapon *weapon = smart_cast<CWeapon*>(inventory().ActiveItem());
+    if(weapon && !(weapon->IsZoomed() && weapon->ZoomTexture() && !weapon->IsRotatingToZoom()))
+    {
+        fire_pos = weapon->get_LastFP();
+        fire_dir = weapon->get_LastFD();
+        fire_pos.mad(fire_dir, -1.0f);    //для того чтобы пули не летели через стену.
+    }
+    else if(weapon && (weapon->IsZoomed() && weapon->ZoomTexture() && !weapon->IsRotatingToZoom()))
+    {
+        fire_pos = Cameras().Position();
+        fire_dir = Cameras().Direction();
+        fire_pos.mad(fire_dir, -1.0f);    //для того чтобы пули не летели через стену.
+    }
+    else
+    {
+        const CMissile *pMissile = smart_cast <const CMissile*> (pHudItem);
+        const CWeaponKnife *knife = smart_cast<const CWeaponKnife*>(pHudItem);
+        if (knife)
+        {
+            fire_pos = Cameras().Position();
+            fire_dir = Cameras().Direction();
+        }
+        else if (pMissile)
+        {
+            fire_pos = Cameras().Position();
+            Fvector offset;
+            XFORM().transform_dir(offset, pMissile->throw_point_offset());
+            fire_pos.add(offset);
+            fire_dir = Cameras().Direction();
+        }
+
+    }
+    */
+    /*
+    fire_pos = Cameras().Position();
+    fire_dir = Cameras().Direction();
+
+    const CMissile    *pMissile = smart_cast <const CMissile*> (pHudItem);
+    CWeapon *wpn = smart_cast<CWeapon*>(inventory().ActiveItem());
+    const CWeaponKnife *knife = smart_cast<const CWeaponKnife*>(pHudItem);
+    if (pMissile) {
+        Fvector offset;
+        XFORM().transform_dir(offset, m_vMissileOffset);
+        fire_pos.add(offset);
+    }
+    else if (wpn && !(wpn->IsZoomed() && wpn->ZoomTexture() && !wpn->IsRotatingToZoom()))
+    {
+        fire_pos.set(wpn->get_LastFP());
+        Fvector pos;
+        pos.mad(Device.vCameraPosition, Device.vCameraDirection, HUD().GetCurrentRayQuery().range);    //точка куда
+    стреляем fire_dir.sub(pos, fire_pos).normalize(); fire_pos.mad(fire_dir, -1.0f);    //для того чтобы пули не летели
+    через стену.
+    }
+    else if (wpn && (wpn->IsZoomed() && wpn->ZoomTexture() && !wpn->IsRotatingToZoom()))
+    {
+        fire_pos = Cameras().Position();
+        fire_dir = Cameras().Direction();
+    }
+    else if (knife)
+    {
+        fire_pos = Cameras().Position();
+        fire_dir = Cameras().Direction();
+    }
+    */
     fire_pos = Cameras().Position();
     fire_dir = Cameras().Direction();
 

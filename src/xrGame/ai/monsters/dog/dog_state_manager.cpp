@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "dog.h"
 #include "dog_state_manager.h"
 #include "../control_animation_base.h"
@@ -17,13 +17,10 @@
 
 namespace detail
 {
-
 namespace dog
 {
 const float atack_decision_maxdist = 6.f;
-
 } // namespace dog
-
 } // namespace detail
 
 CStateManagerDog::CStateManagerDog(CAI_Dog* monster) : inherited(monster)
@@ -160,7 +157,7 @@ void CStateManagerDog::execute()
         }
     }
 
-    // âûïîëíèòü òåêóùåå ñîñòîÿíèå
+    // Ã¢Ã»Ã¯Ã®Ã«Ã­Ã¨Ã²Ã¼ Ã²Ã¥ÃªÃ³Ã¹Ã¥Ã¥ Ã±Ã®Ã±Ã²Ã®Ã¿Ã­Ã¨Ã¥
     get_state_current()->execute();
 
     prev_substate = current_substate;

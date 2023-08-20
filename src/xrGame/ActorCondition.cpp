@@ -45,6 +45,7 @@ CActorCondition::CActorCondition(CActor* object) : inherited(object)
     m_fSprintK = 0.f;
     m_fAlcohol = 0.f;
     m_fSatiety = 1.0f;
+    m_fThirst = 1.0f;
 
     //	m_vecBoosts.clear();
 
@@ -116,6 +117,12 @@ void CActorCondition::LoadCondition(LPCSTR entity_section)
     m_fV_SatietyPower = pSettings->r_float(section, "satiety_power_v");
     m_fV_SatietyHealth = pSettings->r_float(section, "satiety_health_v");
 
+    m_fThirstCritical = pSettings->r_float(section, "thirst_critical");
+    clamp(m_fThirstCritical, 0.0f, 1.0f);
+    m_fV_Thirst = pSettings->r_float(section, "thirst_v");
+    m_fV_ThirstPower = pSettings->r_float(section, "thirst_power_v");
+    m_fV_ThirstHealth = pSettings->r_float(section, "thirst_health_v");
+
     m_MaxWalkWeight = pSettings->r_float(section, "max_walk_weight");
 
     m_zone_max_power[ALife::infl_rad] = pSettings->r_float(section, "radio_zone_max_power");
@@ -176,6 +183,7 @@ void CActorCondition::UpdateCondition()
     {
         UpdateSatiety();
         UpdateBoosters();
+        UpdateThirst();
 
         m_fAlcohol += m_fV_Alcohol * m_fDeltaTime;
         clamp(m_fAlcohol, 0.0f, 1.0f);
@@ -197,7 +205,7 @@ void CActorCondition::UpdateCondition()
     float base_weight = object().MaxCarryWeight();
     float cur_weight = object().inventory().TotalWeight();
 
-    if ((object().mstate_real & mcAnyMove))
+    if ((object().mstate_real & mcAnyMove) || (object().mstate_real & mcFall))
     {
         ConditionWalk(cur_weight / base_weight, isActorAccelerated(object().mstate_real, object().IsZoomAimingMode()),
             (object().mstate_real & mcSprint) != 0);
@@ -271,11 +279,17 @@ void CActorCondition::UpdateCondition()
 
     UpdateSatiety();
     UpdateBoosters();
+    UpdateThirst();
 
     inherited::UpdateCondition();
 
     if (IsGameTypeSingle())
         UpdateTutorialThresholds();
+
+    float sat_k = m_fSatiety;
+    float thr_k = m_fThirst;
+    m_fPowerMax =
+        0.2f + (0.4f * sat_k + 0.4f * thr_k); // кароче стамина не опустится ниже даже если мы максимально голодные 20%
 
     if (GetHealth() < 0.05f && m_death_effector == NULL && IsGameTypeSingle())
     {
@@ -440,6 +454,23 @@ void CActorCondition::UpdateSatiety()
     }
 }
 
+void CActorCondition::UpdateThirst()
+{
+    if (m_fThirst > 0)
+    {
+        m_fThirst -= m_fV_Thirst * m_fDeltaTime;
+        clamp(m_fThirst, 0.0f, 1.0f);
+    }
+
+    float thirst_health_koef =
+        (m_fThirst - m_fThirstCritical) / (m_fThirst >= m_fThirstCritical ? 1 - m_fThirstCritical : m_fThirstCritical);
+    if (CanBeHarmed())
+    {
+        m_fDeltaHealth += m_fV_ThirstHealth * thirst_health_koef * m_fDeltaTime;
+        m_fDeltaPower += m_fV_ThirstPower * m_fThirst * m_fDeltaTime;
+    }
+}
+
 CWound* CActorCondition::ConditionHit(SHit* pHDS)
 {
     if (GodMode())
@@ -466,7 +497,10 @@ void CActorCondition::ConditionWalk(float weight, bool accel, bool sprint)
 {
     float power = m_fWalkPower;
     power += m_fWalkWeightPower * weight * (weight > 1.f ? m_fOverweightWalkK : 1.f);
-    power *= m_fDeltaTime * (accel ? (sprint ? m_fSprintK : m_fAccelK) : 1.f);
+    if ((object().mstate_real & mcFall))
+        power *= m_fDeltaTime * (accel ? (sprint ? m_fSprintK : 0) : 1.f);
+    else
+        power *= m_fDeltaTime * (accel ? (sprint ? m_fSprintK : m_fAccelK) : 1.f);
     m_fPower -= HitPowerEffect(power);
 }
 
@@ -527,10 +561,12 @@ void CActorCondition::save(NET_Packet& output_packet)
     save_data(m_fAlcohol, output_packet);
     save_data(m_condition_flags, output_packet);
     save_data(m_fSatiety, output_packet);
+    save_data(m_fThirst, output_packet);
 
     save_data(m_curr_medicine_influence.fHealth, output_packet);
     save_data(m_curr_medicine_influence.fPower, output_packet);
     save_data(m_curr_medicine_influence.fSatiety, output_packet);
+    save_data(m_curr_medicine_influence.fThirst, output_packet);
     save_data(m_curr_medicine_influence.fRadiation, output_packet);
     save_data(m_curr_medicine_influence.fWoundsHeal, output_packet);
     save_data(m_curr_medicine_influence.fMaxPowerUp, output_packet);
@@ -554,10 +590,12 @@ void CActorCondition::load(IReader& input_packet)
     load_data(m_fAlcohol, input_packet);
     load_data(m_condition_flags, input_packet);
     load_data(m_fSatiety, input_packet);
+    load_data(m_fThirst, input_packet);
 
     load_data(m_curr_medicine_influence.fHealth, input_packet);
     load_data(m_curr_medicine_influence.fPower, input_packet);
     load_data(m_curr_medicine_influence.fSatiety, input_packet);
+    load_data(m_curr_medicine_influence.fThirst, input_packet);
     load_data(m_curr_medicine_influence.fRadiation, input_packet);
     load_data(m_curr_medicine_influence.fWoundsHeal, input_packet);
     load_data(m_curr_medicine_influence.fMaxPowerUp, input_packet);
@@ -582,6 +620,7 @@ void CActorCondition::reinit()
     inherited::reinit();
     m_bLimping = false;
     m_fSatiety = 1.f;
+    m_fThirst = 1.f;
 }
 
 void CActorCondition::ChangeAlcohol(float value) { m_fAlcohol += value; }
@@ -589,6 +628,12 @@ void CActorCondition::ChangeSatiety(float value)
 {
     m_fSatiety += value;
     clamp(m_fSatiety, 0.0f, 1.0f);
+}
+
+void CActorCondition::ChangeThirst(float value)
+{
+    m_fThirst += value;
+    clamp(m_fThirst, 0.0f, 1.0f);
 }
 
 void CActorCondition::BoostParameters(const SBooster& B)
@@ -674,6 +719,7 @@ void CActorCondition::UpdateTutorialThresholds()
     static float _cPowerMaxThr = pSettings->r_float("tutorial_conditions_thresholds", "max_power");
     static float _cBleeding = pSettings->r_float("tutorial_conditions_thresholds", "bleeding");
     static float _cSatiety = pSettings->r_float("tutorial_conditions_thresholds", "satiety");
+    static float _cThirst = pSettings->r_float("tutorial_conditions_thresholds", "thirst");
     static float _cRadiation = pSettings->r_float("tutorial_conditions_thresholds", "radiation");
     static float _cWpnCondition = pSettings->r_float("tutorial_conditions_thresholds", "weapon_jammed");
     static float _cPsyHealthThr = pSettings->r_float("tutorial_conditions_thresholds", "psy_health");
@@ -838,7 +884,13 @@ bool CActorCondition::ApplyBooster(const SBooster& B, const shared_str& sect)
 
         BOOSTER_MAP::iterator it = m_booster_influences.find(B.m_type);
         if (it != m_booster_influences.end())
+        {
+            if (B.fBoostValue * B.fBoostTime < (*it).second.fBoostValue * (*it).second.fBoostTime)
+            {
+                return true;
+            }
             DisableBoostParameters((*it).second);
+        }
 
         m_booster_influences[B.m_type] = B;
         BoostParameters(B);

@@ -102,7 +102,7 @@ void CControlRunAttack::on_event(ControlCom::EEventType type, ControlCom::IEvent
         VERIFY(blend);
 
         // animation time
-        float anim_time = blend->timeTotal / blend->speed;
+        float anim_time = blend ? blend->timeTotal / blend->speed : 0.0f;
 
         // run velocity
         u32 velocity_mask = MonsterMovement::eVelocityParameterRunNormal;

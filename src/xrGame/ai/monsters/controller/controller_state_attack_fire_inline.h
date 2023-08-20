@@ -39,6 +39,7 @@ void CStateControlFireAbstract::finalize()
     object->set_psy_fire_delay_default();
     m_time_state_last_execute = time();
 }
+
 TEMPLATE_SPECIALIZATION
 void CStateControlFireAbstract::critical_finalize()
 {

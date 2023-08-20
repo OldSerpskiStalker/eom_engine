@@ -137,7 +137,6 @@ LRESULT CScriptDebugger::DebugMessage(UINT nMsg, WPARAM wParam, LPARAM lParam)
         SendMessageToIde(msg);
     }
     break;
-
     } // case
 
     return 0;

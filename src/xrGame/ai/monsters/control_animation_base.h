@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "control_combase.h"
 #include "ai_monster_defs.h"
@@ -16,19 +16,19 @@ class CControlAnimationBase : public CControl_ComBase
     typedef CControl_ComBase inherited;
 
 protected:
-    REPLACED_ANIM m_tReplacedAnims; // анимации подмены
+    REPLACED_ANIM m_tReplacedAnims; // Г Г­ГЁГ¬Г Г¶ГЁГЁ ГЇГ®Г¤Г¬ГҐГ­Г»
 
-    // сохранённые анимации
+    // Г±Г®ГµГ°Г Г­ВёГ­Г­Г»ГҐ Г Г­ГЁГ¬Г Г¶ГЁГЁ
     EMotionAnim prev_motion;
 
-    // исправления сосояния 'бега на месте'
+    // ГЁГ±ГЇГ°Г ГўГ«ГҐГ­ГЁГї Г±Г®Г±Г®ГїГ­ГЁГї 'ГЎГҐГЈГ  Г­Г  Г¬ГҐГ±ГІГҐ'
     TTime time_start_stand;
 
-    // работа с анимациями атаки
-    TTime aa_time_last_attack; // время последнего нанесения хита
+    // Г°Г ГЎГ®ГІГ  Г± Г Г­ГЁГ¬Г Г¶ГЁГїГ¬ГЁ Г ГІГ ГЄГЁ
+    TTime aa_time_last_attack; // ГўГ°ГҐГ¬Гї ГЇГ®Г±Г«ГҐГ¤Г­ГҐГЈГ® Г­Г Г­ГҐГ±ГҐГ­ГЁГї ГµГЁГІГ 
 
     // -------------------------------------------------------------------------
-    u32 spec_params; // дополнительные параметры
+    u32 spec_params; // Г¤Г®ГЇГ®Г«Г­ГЁГІГҐГ«ГјГ­Г»ГҐ ГЇГ Г°Г Г¬ГҐГІГ°Г»
 
     TTime fx_time_last_play;
 
@@ -38,7 +38,7 @@ protected:
     struct
     {
         bool active;
-        bool enable_braking; // не использовать при торможении
+        bool enable_braking; // Г­ГҐ ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ ГІГј ГЇГ°ГЁ ГІГ®Г°Г¬Г®Г¦ГҐГ­ГЁГЁ
 
         EAccelType type;
 
@@ -52,8 +52,8 @@ protected:
 
     EMotionAnim spec_anim;
 
-    MOTION_ITEM_MAP m_tMotions; // карта соответсвий EAction к SMotionItem
-    TRANSITION_ANIM_VECTOR m_tTransitions; // вектор переходов из одной анимации в другую
+    MOTION_ITEM_MAP m_tMotions; // ГЄГ Г°ГІГ  Г±Г®Г®ГІГўГҐГІГ±ГўГЁГ© EAction ГЄ SMotionItem
+    TRANSITION_ANIM_VECTOR m_tTransitions; // ГўГҐГЄГІГ®Г° ГЇГҐГ°ГҐГµГ®Г¤Г®Гў ГЁГ§ Г®Г¤Г­Г®Г© Г Г­ГЁГ¬Г Г¶ГЁГЁ Гў Г¤Г°ГіГЈГіГѕ
 
     t_fx_index default_fx_indexes;
     FX_MAP_STRING fx_map_string;
@@ -89,14 +89,14 @@ public:
 
     void ScheduledInit();
 
-    // создание карты анимаций (выполнять на Monster::Load)
+    // Г±Г®Г§Г¤Г Г­ГЁГҐ ГЄГ Г°ГІГ» Г Г­ГЁГ¬Г Г¶ГЁГ© (ГўГ»ГЇГ®Г«Г­ГїГІГј Г­Г  Monster::Load)
     void AddAnim(EMotionAnim ma, LPCSTR tn, int s_id, SVelocityParam* vel, EPState p_s);
     void AddAnim(EMotionAnim ma, LPCSTR tn, int s_id, SVelocityParam* vel, EPState p_s, LPCSTR fx_front, LPCSTR fx_back,
         LPCSTR fx_left, LPCSTR fx_right);
 
     // -------------------------------------
 
-    // добавить анимацию перехода (A - Animation, S - Position)
+    // Г¤Г®ГЎГ ГўГЁГІГј Г Г­ГЁГ¬Г Г¶ГЁГѕ ГЇГҐГ°ГҐГµГ®Г¤Г  (A - Animation, S - Position)
     void AddTransition(EMotionAnim from, EMotionAnim to, EMotionAnim trans, bool chain, bool skip_aggressive = false);
     void AddTransition(EMotionAnim from, EPState to, EMotionAnim trans, bool chain, bool skip_aggressive = false);
     void AddTransition(EPState from, EMotionAnim to, EMotionAnim trans, bool chain, bool skip_aggressive = false);
@@ -119,7 +119,7 @@ public:
 
     EMotionAnim GetCurAnim() { return cur_anim_info().get_motion(); }
 
-    // работа с анимациями атак
+    // Г°Г ГЎГ®ГІГ  Г± Г Г­ГЁГ¬Г Г¶ГЁГїГ¬ГЁ Г ГІГ ГЄ
     void AA_reload(LPCSTR section);
     SAAParam& AA_GetParams(LPCSTR anim_name);
     SAAParam& AA_GetParams(MotionID motion, float time_perc);
@@ -132,11 +132,11 @@ public:
 protected:
     void UpdateAnimCount();
 
-    // работа с анимациями атак
+    // Г°Г ГЎГ®ГІГ  Г± Г Г­ГЁГ¬Г Г¶ГЁГїГ¬ГЁ Г ГІГ ГЄ
     void AA_Clear();
     void AA_SwitchAnimation(EMotionAnim a, u32 i3);
 
-    // дополнительные функции
+    // Г¤Г®ГЇГ®Г«Г­ГЁГІГҐГ«ГјГ­Г»ГҐ ГґГіГ­ГЄГ¶ГЁГЁ
     EPState GetState(EMotionAnim a);
     void CheckReplacedAnim();
 
@@ -184,6 +184,7 @@ public:
         m_accel.active = false;
         m_accel.enable_braking = false;
     }
+
     IC void accel_set_braking(bool val = true) { m_accel.enable_braking = val; }
 
     float accel_get(EAccelValue val = eAV_Accel);
@@ -212,7 +213,7 @@ public:
     shared_str GetAnimTranslation(const MotionID& motion);
 
 public:
-    // информация о текущей анимации
+    // ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГї Г® ГІГҐГЄГіГ№ГҐГ© Г Г­ГЁГ¬Г Г¶ГЁГЁ
     SCurrentAnimationInfo m_cur_anim;
     SCurrentAnimationInfo& cur_anim_info() { return m_cur_anim; }
 
@@ -227,6 +228,7 @@ public:
     u32 get_animation_variants_count(EMotionAnim anim) const;
     // you need to call it with default arguments to turn it off
     void set_override_animation(EMotionAnim anim = eAnimUndefined, u32 index = -1);
+    void set_override_animation_script(EMotionAnim anim = eAnimUndefined, u32 index = -1);
     void set_override_animation(pcstr name);
     void clear_override_animation();
     EMotionAnim get_override_animation() const { return m_override_animation; }

@@ -239,21 +239,21 @@ IC void blend_lerp(float& cur, float tgt, float speed, float dt)
 #if 0
 static LPCSTR state_to_string(const CLensFlare::LFState& state)
 {
-    switch (state)
-    {
-    case CLensFlare::lfsNone:
-        return("none");
-    case CLensFlare::lfsIdle:
-        return("idle");
-    case CLensFlare::lfsHide:
-        return("hide");
-    case CLensFlare::lfsShow:
-        return("show");
-    default:
-        NODEFAULT;
-    }
+	switch (state)
+	{
+	case CLensFlare::lfsNone:
+		return("none");
+	case CLensFlare::lfsIdle:
+		return("idle");
+	case CLensFlare::lfsHide:
+		return("hide");
+	case CLensFlare::lfsShow:
+		return("show");
+	default:
+		NODEFAULT;
+	}
 #ifdef DEBUG
-    return (0);
+	return (0);
 #endif // DEBUG
 }
 #endif

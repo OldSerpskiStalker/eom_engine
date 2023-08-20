@@ -412,7 +412,8 @@ void CDbgLuaHelper::CoverGlobals()
         int i = 1;
         const char* name;
         while ((name = lua_getlocal(L, &ar, i++)) != NULL)
-        { /* SAVE lvalue */
+        {
+            /* SAVE lvalue */
             lua_pushstring(L, name); /* SAVE lvalue name */
             lua_pushvalue(L, -1); /* SAVE lvalue name name */
             lua_pushvalue(L, -1); /* SAVE lvalue name name name */

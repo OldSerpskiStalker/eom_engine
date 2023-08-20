@@ -116,6 +116,33 @@ void setup_location_types(GameGraph::TERRAIN_VECTOR& m_vertex_types, CInifile co
 
 using namespace ALife;
 
+xr_string TranslateName(LPCSTR nameStr)
+{
+    xr_string ret;
+
+    // Savegame (before this tweak) + custom npc compatibility
+    if (!strstr(nameStr, ":lname_"))
+    {
+        ret = (*CStringTable().translate(nameStr));
+        return ret;
+    }
+
+    // Split name string and translate it
+    R_ASSERT2(_GetItemCount(nameStr, ':') == 2, nameStr);
+
+    string512 name;
+    _GetItem(nameStr, 0, name, ':');
+
+    string512 lname;
+    _GetItem(nameStr, 1, lname, ':');
+
+    ret = (*CStringTable().translate(name));
+    ret += " ";
+    ret += (*CStringTable().translate(lname));
+
+    return ret;
+}
+
 ////////////////////////////////////////////////////////////////////////////
 // CSE_ALifeTraderAbstract
 ////////////////////////////////////////////////////////////////////////////
@@ -250,7 +277,8 @@ void CSE_ALifeTraderAbstract::STATE_Read(NET_Packet& tNetPacket, u16 size)
 
         if (m_wVersion > 104)
         {
-            load_data(m_character_name, tNetPacket);
+            load_data(m_character_name_str, tNetPacket);
+            m_character_name = TranslateName(m_character_name_str.c_str());
         }
     }
 
@@ -432,13 +460,13 @@ void CSE_ALifeTraderAbstract::set_specific_character(shared_str new_spec_char)
 
     m_icon_name = selected_char.IconName();
 
-    m_character_name = *(CStringTable().translate(selected_char.Name()));
+    m_character_name_str = selected_char.Name();
 
     LPCSTR gen_name = "GENERATE_NAME_";
-    if (strstr(m_character_name.c_str(), gen_name))
+    if (strstr(m_character_name_str.c_str(), gen_name))
     {
         // select name and lastname
-        xr_string subset = m_character_name.c_str() + xr_strlen(gen_name);
+        xr_string subset = m_character_name_str.c_str() + xr_strlen(gen_name);
 
         string_path t1;
         strconcat(sizeof(t1), t1, "stalker_names_", subset.c_str());
@@ -450,15 +478,18 @@ void CSE_ALifeTraderAbstract::set_specific_character(shared_str new_spec_char)
         n += subset;
         n += "_";
         n += itoa(::Random.randI(name_cnt), S, 10);
-        m_character_name = *(CStringTable().translate(n.c_str()));
-        m_character_name += " ";
+        m_character_name_str = n.c_str();
+        m_character_name_str += ":";
 
         n = "lname_";
         n += subset;
         n += "_";
         n += itoa(::Random.randI(last_name_cnt), S, 10);
-        m_character_name += *(CStringTable().translate(n.c_str()));
+        m_character_name_str += n.c_str();
     }
+
+    m_character_name = TranslateName(m_character_name_str.c_str());
+
     u32 min_m = selected_char.MoneyDef().min_money;
     u32 max_m = selected_char.MoneyDef().max_money;
     if (min_m != 0 && max_m != 0)
@@ -1025,13 +1056,13 @@ bool CSE_ALifeCreatureAbstract::can_switch_offline() const
     return (inherited::can_switch_offline() && (get_health() > 0.f));
 }
 
-IC void CSE_ALifeCreatureAbstract::set_health(float const health_value)
+void CSE_ALifeCreatureAbstract::set_health(float const health_value)
 {
     VERIFY(!((get_killer_id() != u16(-1)) && (health_value > 0.f)));
     fHealth = health_value;
 }
 
-IC void CSE_ALifeCreatureAbstract::set_killer_id(ALife::_OBJECT_ID const killer_id) { m_killer_id = killer_id; }
+void CSE_ALifeCreatureAbstract::set_killer_id(ALife::_OBJECT_ID const killer_id) { m_killer_id = killer_id; }
 
 ////////////////////////////////////////////////////////////////////////////
 // CSE_ALifeMonsterAbstract

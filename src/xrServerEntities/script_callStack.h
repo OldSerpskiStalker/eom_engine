@@ -1,6 +1,7 @@
 #pragma once
 
 class CScriptDebugger;
+
 struct SPath
 {
     string_path path;

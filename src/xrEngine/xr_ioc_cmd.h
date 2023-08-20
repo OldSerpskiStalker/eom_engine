@@ -25,6 +25,11 @@
         static cls x##cls(p1, p2, p3, p4);                                                                             \
         Console->AddCommand(&x##cls);                                                                                  \
     }
+#define CMD5(cls, p1, p2, p3, p4, p5)                                                                                  \
+    {                                                                                                                  \
+        static cls x##cls(p1, p2, p3, p4, p5);                                                                         \
+        Console->AddCommand(&x##cls);                                                                                  \
+    }
 
 #include "xrSASH.h"
 
@@ -296,7 +301,7 @@ public:
     virtual void Execute(LPCSTR args)
     {
         Fvector v;
-        if (3 != sscanf(args, "%f,%f,%f", &v.x, &v.y, &v.z))
+        if ((3 != sscanf(args, "%f,%f,%f", &v.x, &v.y, &v.z)) && (3 != sscanf(args, "(%f, %f, %f)", &v.x, &v.y, &v.z)))
         {
             InvalidSyntax();
             return;

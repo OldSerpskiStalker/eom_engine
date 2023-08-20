@@ -559,6 +559,7 @@ void SAnimParams::Set(CCustomMotion* M)
     tmp = t_current;
     // bPlay=true;
 }
+
 void SAnimParams::Update(float dt, float speed, bool loop)
 {
     if (!bPlay)

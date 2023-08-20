@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "boar.h"
 #include "boar_state_manager.h"
 #include "../../../../Include/xrRender/KinematicsAnimated.h"
@@ -150,7 +150,7 @@ BOOL CAI_Boar::net_Spawn(CSE_Abstract* DC)
     if (!inherited::net_Spawn(DC))
         return (FALSE);
 
-    if (!PPhysicsShell()) // нельзя ставить колбеки, если создан физ шел - у него стоят свои колбеки!!!
+    if (!PPhysicsShell()) // Г­ГҐГ«ГјГ§Гї Г±ГІГ ГўГЁГІГј ГЄГ®Г«ГЎГҐГЄГЁ, ГҐГ±Г«ГЁ Г±Г®Г§Г¤Г Г­ ГґГЁГ§ ГёГҐГ« - Гі Г­ГҐГЈГ® Г±ГІГ®ГїГІ Г±ГўГ®ГЁ ГЄГ®Г«ГЎГҐГЄГЁ!!!
     {
         CBoneInstance& BI = smart_cast<IKinematics*>(Visual())->LL_GetBoneInstance(
             smart_cast<IKinematics*>(Visual())->LL_BoneID("bip01_head"));

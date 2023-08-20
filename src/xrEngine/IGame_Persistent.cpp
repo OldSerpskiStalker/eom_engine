@@ -35,6 +35,7 @@ IGame_Persistent::IGame_Persistent()
     RDEVICE.seqFrame.Add(this, REG_PRIORITY_HIGH + 1);
     RDEVICE.seqAppActivate.Add(this);
     RDEVICE.seqAppDeactivate.Add(this);
+    m_pGShaderConstants = new ShadersExternalData(); //--#SM+#--
 
     m_pMainMenu = NULL;
 
@@ -60,6 +61,7 @@ IGame_Persistent::~IGame_Persistent()
 #ifndef _EDITOR
     xr_delete(pEnvironment);
 #endif
+    xr_delete(m_pGShaderConstants); //--#SM+#--
 }
 
 void IGame_Persistent::OnAppActivate() {}
@@ -134,7 +136,7 @@ void IGame_Persistent::Disconnect()
 void IGame_Persistent::OnGameStart()
 {
 #ifndef _EDITOR
-    // LoadTitle("st_prefetching_objects");
+    SetLoadStageTitle("st_prefetching_objects");
     LoadTitle();
     if (!strstr(Core.Params, "-noprefetch"))
         Prefetch();

@@ -49,6 +49,9 @@ void CActor::IR_OnKeyboardPress(int cmd)
     if (m_input_external_handler && !m_input_external_handler->authorized(cmd))
         return;
 
+    //	if (load_screen_renderer.IsActive())
+    //		return;
+
     switch (cmd)
     {
     case kWPN_FIRE: {
@@ -119,14 +122,13 @@ void CActor::IR_OnKeyboardPress(int cmd)
         SwitchTorch();
         break;
     }
-
     case kDETECTOR: {
-        PIItem det_active = inventory().ItemFromSlot(DETECTOR_SLOT);
-        if (det_active)
+        PIItem dev_active = inventory().ItemFromSlot(DETECTOR_SLOT);
+        if (dev_active)
         {
-            CCustomDetector* det = smart_cast<CCustomDetector*>(det_active);
-            det->ToggleDetector(g_player_hud->attached_item(0) != NULL);
-            return;
+            CCustomDevice* dev = smart_cast<CCustomDevice*>(dev_active);
+            if (dev)
+                dev->ToggleDevice(g_player_hud->attached_item(0) != NULL);
         }
     }
     break;
@@ -612,10 +614,8 @@ void CActor::SwitchNightVision()
     CWeapon* wpn2 = NULL;
     if (inventory().ItemFromSlot(INV_SLOT_2))
         wpn1 = smart_cast<CWeapon*>(inventory().ItemFromSlot(INV_SLOT_2));
-
     if (inventory().ItemFromSlot(INV_SLOT_3))
         wpn2 = smart_cast<CWeapon*>(inventory().ItemFromSlot(INV_SLOT_3));
-
     xr_vector<CAttachableItem*> const& all = CAttachmentOwner::attached_objects();
     xr_vector<CAttachableItem*>::const_iterator it = all.begin();
     xr_vector<CAttachableItem*>::const_iterator it_e = all.end();
@@ -626,10 +626,8 @@ void CActor::SwitchNightVision()
         {
             if (wpn1 && wpn1->IsZoomed())
                 return;
-
             if (wpn2 && wpn2->IsZoomed())
                 return;
-
             torch->SwitchNightVision();
             return;
         }

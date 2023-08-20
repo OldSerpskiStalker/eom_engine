@@ -11,12 +11,18 @@ CAdvancedDetector::~CAdvancedDetector() {}
 
 void CAdvancedDetector::CreateUI()
 {
-    R_ASSERT(NULL == m_ui);
+    R_ASSERT(nullptr == m_ui);
     m_ui = xr_new<CUIArtefactDetectorAdv>();
     ui().construct(this);
 }
 
 CUIArtefactDetectorAdv& CAdvancedDetector::ui() { return *((CUIArtefactDetectorAdv*)m_ui); }
+
+void CAdvancedDetector::ResetUI()
+{
+    if (m_ui)
+        ui().SetValue(0.0f, Fvector().set(0, 0, 0));
+}
 
 void CAdvancedDetector::UpdateAf()
 {
@@ -138,6 +144,7 @@ void CUIArtefactDetectorAdv::update()
     */
     m_cur_y_rot = angle_inertion_var(m_cur_y_rot, dest_y_rot, PI_DIV_4, PI_MUL_4, PI_MUL_2, Device.fTimeDelta);
 }
+
 void CAdvancedDetector::on_a_hud_attach()
 {
     inherited::on_a_hud_attach();

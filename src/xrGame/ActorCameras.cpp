@@ -26,6 +26,9 @@
 #include "IKLimbsController.h"
 #include "GamePersistent.h"
 
+ENGINE_API extern float psHUD_FOV; //--#SM+#--
+ENGINE_API extern float psHUD_FOV_def; //--#SM+#--
+
 void CActor::cam_Set(EActorCameras style)
 {
     CCameraBase* old_cam = cam_Active();
@@ -56,11 +59,14 @@ void CActor::camUpdateLadder(float dt)
 {
     if (!character_physics_support()->movement()->ElevatorState())
         return;
-    if (cameras[eacFirstEye]->bClampYaw)
+
+    CCameraBase* C = cameras[eacFirstEye];
+
+    if (C->bClampYaw)
         return;
     float yaw = (-XFORM().k.getH());
 
-    float& cam_yaw = cameras[eacFirstEye]->yaw;
+    float& cam_yaw = C->yaw;
     float delta = angle_difference_signed(yaw, cam_yaw);
 
     if (-0.05f < delta && 0.05f > delta)
@@ -68,9 +74,8 @@ void CActor::camUpdateLadder(float dt)
         yaw = cam_yaw + delta;
         float lo = (yaw - f_Ladder_cam_limit);
         float hi = (yaw + f_Ladder_cam_limit);
-        cameras[eacFirstEye]->lim_yaw[0] = lo;
-        cameras[eacFirstEye]->lim_yaw[1] = hi;
-        cameras[eacFirstEye]->bClampYaw = true;
+        C->lim_yaw.set(lo, hi);
+        C->bClampYaw = true;
     }
     else
     {
@@ -80,8 +85,8 @@ void CActor::camUpdateLadder(float dt)
     IElevatorState* es = character_physics_support()->movement()->ElevatorState();
     if (es && es->State() == clbClimbingDown)
     {
-        float& cam_pitch = cameras[eacFirstEye]->pitch;
-        const float ldown_pitch = cameras[eacFirstEye]->lim_pitch.y;
+        float& cam_pitch = C->pitch;
+        const float ldown_pitch = C->lim_pitch.y;
         float delta = angle_difference_signed(ldown_pitch, cam_pitch);
         if (delta > 0.f)
             cam_pitch += delta * _min(dt * 10.f, 1.f);
@@ -253,7 +258,8 @@ void CActor::cam_Lookout(const Fmatrix& xform, float camera_height)
                 da = PI / 1000.f;
                 if (!fis_zero(r_torso.roll))
                     da *= r_torso.roll / _abs(r_torso.roll);
-                for (float angle = 0.f; _abs(angle) < _abs(alpha); angle += da)
+                float angle = 0.f;
+                for (; _abs(angle) < _abs(alpha); angle += da)
                 {
                     Fvector pt;
                     calc_gl_point(pt, xform, radius, angle);
@@ -290,6 +296,29 @@ void CActor::cam_Update(float dt, float fFOV)
     if (m_holder)
         return;
 
+    // HUD FOV Update --#SM+#--
+    // HUD FOV Update
+    if (this == Level().CurrentControlEntity())
+    {
+        if (eacFirstEye == cam_active)
+        {
+            CHudItem* pItem = smart_cast<CHudItem*>(inventory().ActiveItem());
+            CHudItem* pDevice = smart_cast<CHudItem*>(inventory().ItemFromSlot(DETECTOR_SLOT));
+
+            if (pItem && pItem->HudItemData() && pDevice && pDevice->HudItemData())
+                psHUD_FOV = fminf(pItem->GetHudFov(), pDevice->GetHudFov());
+            else if (pItem && pItem->HudItemData())
+                psHUD_FOV = pItem->GetHudFov();
+            else if (pDevice && pDevice->HudItemData())
+                psHUD_FOV = pDevice->GetHudFov();
+            else
+                psHUD_FOV = psHUD_FOV_def;
+        }
+        else
+            psHUD_FOV = psHUD_FOV_def;
+    }
+    //--#SM+#--
+
     if ((mstate_real & mcClimb) && (cam_active != eacFreeLook))
         camUpdateLadder(dt);
     on_weapon_shot_update();
@@ -315,6 +344,9 @@ void CActor::cam_Update(float dt, float fFOV)
 
     // Alex ADD: smooth crouch fix
     float HeightInterpolationSpeed = 4.f;
+
+    if (CurrentHeight < 0.0f)
+        CurrentHeight = CameraHeight();
 
     if (CurrentHeight != CameraHeight())
     {
@@ -377,18 +409,24 @@ void CActor::cam_Update(float dt, float fFOV)
         collide_camera(*cameras[eacFirstEye], _viewport_near, this);
     }
 
-    // Alundaio -psp always
-    // if( psActorFlags.test(AF_PSP) )
-    //{
     Cameras().UpdateFromCamera(C);
-    //}else
-    //{
-    //	Cameras().UpdateFromCamera			(cameras[eacFirstEye]);
-    //}
-    //-Alundaio
 
     fCurAVelocity = vPrevCamDir.sub(cameras[eacFirstEye]->vDirection).magnitude() / Device.fTimeDelta;
     vPrevCamDir = cameras[eacFirstEye]->vDirection;
+
+    // Высчитываем разницу между предыдущим и текущим Yaw \ Pitch от 1-го лица //--#SM+ Begin#--
+    float& cam_yaw_cur = cameras[eacFirstEye]->yaw;
+    static float cam_yaw_prev = cam_yaw_cur;
+
+    float& cam_pitch_cur = cameras[eacFirstEye]->pitch;
+    static float cam_pitch_prev = cam_pitch_cur;
+
+    fFPCamYawMagnitude = angle_difference_signed(cam_yaw_prev, cam_yaw_cur) / Device.fTimeDelta; // L+ / R-
+    fFPCamPitchMagnitude = angle_difference_signed(cam_pitch_prev, cam_pitch_cur) / Device.fTimeDelta; // U+ / D-
+
+    cam_yaw_prev = cam_yaw_cur;
+    cam_pitch_prev = cam_pitch_cur;
+    //--#SM+ End#--
 
 #ifdef DEBUG
     if (dbg_draw_camera_collision)

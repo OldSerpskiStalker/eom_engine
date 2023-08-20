@@ -15,11 +15,13 @@ class CMailSlotMsg
     char m_buff[2048];
     DWORD m_len;
     int m_pos;
+
     inline void Read(void* dst, int sz)
     {
         _memcpy(dst, (void*)(&m_buff[0] + m_pos), sz);
         m_pos += sz;
     };
+
     inline void Write(const void* src, int sz)
     {
         _memcpy((void*)(&m_buff[0] + m_pos), src, sz);
@@ -29,12 +31,14 @@ class CMailSlotMsg
 
 public:
     CMailSlotMsg() { Reset(); };
+
     inline void Reset()
     {
         m_len = 0;
         m_pos = 0;
         _memset(m_buff, 0, 2048);
     };
+
     inline void SetBuffer(const char* b, int sz)
     {
         Reset();
@@ -108,6 +112,7 @@ inline HANDLE CreateMailSlotByName(LPSTR slotName)
 
     return hSlot;
 }
+
 inline BOOL CheckExisting(LPSTR slotName)
 {
     HANDLE hFile;
@@ -123,6 +128,7 @@ inline BOOL CheckExisting(LPSTR slotName)
 
     return res;
 }
+
 inline BOOL SendMailslotMessage(LPSTR slotName, CMailSlotMsg& msg)
 {
     BOOL fResult;

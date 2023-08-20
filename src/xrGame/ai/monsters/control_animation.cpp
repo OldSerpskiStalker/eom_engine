@@ -67,11 +67,13 @@ static void global_animation_end_callback(CBlend* B)
     CControlAnimation* controller = (CControlAnimation*)B->CallbackParam;
     controller->m_global_animation_end = true;
 }
+
 static void legs_animation_end_callback(CBlend* B)
 {
     CControlAnimation* controller = (CControlAnimation*)B->CallbackParam;
     controller->m_legs_animation_end = true;
 }
+
 static void torso_animation_end_callback(CBlend* B)
 {
     CControlAnimation* controller = (CControlAnimation*)B->CallbackParam;
@@ -256,6 +258,7 @@ void CControlAnimation::restart()
     if (m_data.torso.blend)
         restart(m_data.torso, torso_animation_end_callback);
 }
+
 void CControlAnimation::freeze()
 {
     if (m_freeze)

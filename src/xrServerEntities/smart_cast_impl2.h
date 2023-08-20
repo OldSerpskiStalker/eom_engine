@@ -16,7 +16,6 @@
     {                                                                                                                  \
         return p->C();                                                                                                 \
     };
-
 #ifdef XRGAME_EXPORTS
 template <>
 CGameObject* SmartDynamicCast::smart_cast<CGameObject, CObject>(CObject* p)

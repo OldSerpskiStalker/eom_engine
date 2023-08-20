@@ -18,6 +18,7 @@ public:
 };
 
 IC IPureDestroyableObject::~IPureDestroyableObject() {}
+
 template <typename _storage_type>
 class IPureLoadableObject
 {
@@ -30,6 +31,7 @@ template <typename _storage_type>
 IC IPureLoadableObject<_storage_type>::~IPureLoadableObject()
 {
 }
+
 template <typename _storage_type>
 class IPureSavableObject
 {
@@ -42,6 +44,7 @@ template <typename _storage_type>
 IC IPureSavableObject<_storage_type>::~IPureSavableObject()
 {
 }
+
 template <typename _storage_type_load, typename _storage_type_save>
 class IPureSerializeObject : public IPureLoadableObject<_storage_type_load>,
                              public IPureSavableObject<_storage_type_save>
@@ -54,6 +57,7 @@ template <typename _storage_type_load, typename _storage_type_save>
 IC IPureSerializeObject<typename _storage_type_load, typename _storage_type_save>::~IPureSerializeObject()
 {
 }
+
 class IPureServerObject : public IPureSerializeObject<IReader, IWriter>
 {
 public:
@@ -65,6 +69,7 @@ public:
 };
 
 IC IPureServerObject::~IPureServerObject() {}
+
 class IPureSchedulableObject
 {
 public:

@@ -1,3 +1,4 @@
+
 ////////////////////////////////////////////////////////////////////////////
 //	Module 		: xrServer_Objects.h
 //	Created 	: 19.09.2002
@@ -62,6 +63,7 @@ struct SRotation
 {
     float yaw, pitch, roll;
     SRotation() { yaw = pitch = roll = 0; }
+
     SRotation(float y, float p, float r)
     {
         yaw = y;

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "control_path_builder.h"
 #include "control_manager.h"
 #include "BaseMonster/base_monster.h"
@@ -73,7 +73,7 @@ void CControlPathBuilder::update_schedule()
     {
         detail().set_path_type(eDetailPathTypeSmooth);
 
-        // установить direction
+        // ГіГ±ГІГ Г­Г®ГўГЁГІГј direction
         detail().set_use_dest_orientation(m_data.use_dest_orientation);
         if (m_data.use_dest_orientation)
             detail().set_dest_direction(m_data.dest_orientation);
@@ -137,7 +137,7 @@ bool CControlPathBuilder::build_special(const Fvector& target, u32 node, u32 vel
 
     if (node == u32(-1))
     {
-        // нода в прямой видимости?
+        // Г­Г®Г¤Г  Гў ГЇГ°ГїГ¬Г®Г© ГўГЁГ¤ГЁГ¬Г®Г±ГІГЁ?
         restrictions().add_border(object().Position(), target);
         node = ai().level_graph().check_position_in_direction(
             object().ai_location().level_vertex_id(), object().Position(), target);

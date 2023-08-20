@@ -1,4 +1,3 @@
-
 //	Module 		: ai_monsters_misc.cpp
 //	Created 	: 23.07.2002
 //  Modified 	: 23.07.2002

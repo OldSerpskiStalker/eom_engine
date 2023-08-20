@@ -26,6 +26,7 @@ public:
         flPositionRigid = (1 << 1),
         flDirectionRigid = (1 << 2),
     };
+
     Flags32 m_Flags;
 
     ECameraStyle style;
@@ -51,27 +52,32 @@ public:
     CCameraBase(CObject* p, u32 flags);
     virtual ~CCameraBase();
     virtual void Load(LPCSTR section);
+
     void SetParent(CObject* p)
     {
         parent = p;
         VERIFY(p);
     }
+
     virtual void OnActivate(CCameraBase* old_cam) { ; }
     virtual void OnDeactivate() { ; }
     virtual void Move(int cmd, float val = 0, float factor = 1.0f) { ; }
     virtual void Update(Fvector& point, Fvector& noise_angle) { ; }
+
     virtual void Get(Fvector& P, Fvector& D, Fvector& N)
     {
         P.set(vPosition);
         D.set(vDirection);
         N.set(vNormal);
     }
+
     virtual void Set(const Fvector& P, const Fvector& D, const Fvector& N)
     {
         vPosition.set(P);
         vDirection.set(D);
         vNormal.set(N);
     }
+
     virtual void Set(float Y, float P, float R)
     {
         yaw = Y;

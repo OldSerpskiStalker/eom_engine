@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "ai_monster_squad.h"
 #include "../../entity.h"
 #include "../../entity_alive.h"
@@ -16,35 +16,35 @@ CMonsterSquad::~CMonsterSquad() {}
 
 void CMonsterSquad::RegisterMember(CEntity* pE)
 {
-    // Äîáàâèòü öåëü
+    // Ã„Ã®Ã¡Ã Ã¢Ã¨Ã²Ã¼ Ã¶Ã¥Ã«Ã¼
     SMemberGoal G;
     m_goals.insert(mk_pair(pE, G));
 
-    // Äîáàâèòü êîìàíäó
+    // Ã„Ã®Ã¡Ã Ã¢Ã¨Ã²Ã¼ ÃªÃ®Ã¬Ã Ã­Ã¤Ã³
     SSquadCommand C;
     C.type = SC_NONE;
     m_commands.insert(mk_pair(pE, C));
 
-    // óñòàíîâèòü ëèäåðà
+    // Ã³Ã±Ã²Ã Ã­Ã®Ã¢Ã¨Ã²Ã¼ Ã«Ã¨Ã¤Ã¥Ã°Ã 
     if (!leader)
         leader = pE;
 }
 
 void CMonsterSquad::RemoveMember(CEntity* pE)
 {
-    // óäàëèòü èç öåëåé
+    // Ã³Ã¤Ã Ã«Ã¨Ã²Ã¼ Ã¨Ã§ Ã¶Ã¥Ã«Ã¥Ã©
     MEMBER_GOAL_MAP_IT it_goal = m_goals.find(pE);
     if (it_goal == m_goals.end())
         return;
     m_goals.erase(it_goal);
 
-    // óäàëèòü èç êîìàíä
+    // Ã³Ã¤Ã Ã«Ã¨Ã²Ã¼ Ã¨Ã§ ÃªÃ®Ã¬Ã Ã­Ã¤
     MEMBER_COMMAND_MAP_IT it_command = m_commands.find(pE);
     if (it_command == m_commands.end())
         return;
     m_commands.erase(it_command);
 
-    // åñëè óäàëÿåìûé åëåìåíò ÿâëÿåòñÿ ëèäåðîì - ïåðåíàçíà÷èòü ëèäåðà
+    // Ã¥Ã±Ã«Ã¨ Ã³Ã¤Ã Ã«Ã¿Ã¥Ã¬Ã»Ã© Ã¥Ã«Ã¥Ã¬Ã¥Ã­Ã² Ã¿Ã¢Ã«Ã¿Ã¥Ã²Ã±Ã¿ Ã«Ã¨Ã¤Ã¥Ã°Ã®Ã¬ - Ã¯Ã¥Ã°Ã¥Ã­Ã Ã§Ã­Ã Ã·Ã¨Ã²Ã¼ Ã«Ã¨Ã¤Ã¥Ã°Ã 
     if (leader == pE)
     {
         if (m_goals.empty())
@@ -53,7 +53,7 @@ void CMonsterSquad::RemoveMember(CEntity* pE)
             leader = m_goals.begin()->first;
     }
 
-    // óñëè ïîñëåäíèé ýëåìåíò, î÷èñòèòü çàëî÷åííûå êàâåðû
+    // Ã³Ã±Ã«Ã¨ Ã¯Ã®Ã±Ã«Ã¥Ã¤Ã­Ã¨Ã© Ã½Ã«Ã¥Ã¬Ã¥Ã­Ã², Ã®Ã·Ã¨Ã±Ã²Ã¨Ã²Ã¼ Ã§Ã Ã«Ã®Ã·Ã¥Ã­Ã­Ã»Ã¥ ÃªÃ Ã¢Ã¥Ã°Ã»
     if (m_goals.empty())
     {
         m_locked_covers.clear();
@@ -66,7 +66,7 @@ bool CMonsterSquad::SquadActive()
     if (!leader)
         return false;
 
-    // ïðîâåðèòü êîëè÷åñòâî æèâûõ îáúåêòîâ â ãðóïïå
+    // Ã¯Ã°Ã®Ã¢Ã¥Ã°Ã¨Ã²Ã¼ ÃªÃ®Ã«Ã¨Ã·Ã¥Ã±Ã²Ã¢Ã® Ã¦Ã¨Ã¢Ã»Ãµ Ã®Ã¡ÃºÃ¥ÃªÃ²Ã®Ã¢ Ã¢ Ã£Ã°Ã³Ã¯Ã¯Ã¥
     u32 alive_num = 0;
     for (MEMBER_GOAL_MAP_IT it = m_goals.begin(); it != m_goals.end(); it++)
         if (it->first->g_Alive())
@@ -83,7 +83,7 @@ u8 CMonsterSquad::squad_alife_count()
     if (!leader)
         return u8(0);
 
-    // ïðîâåðèòü êîëè÷åñòâî æèâûõ îáúåêòîâ â ãðóïïå
+    // Ã¯Ã°Ã®Ã¢Ã¥Ã°Ã¨Ã²Ã¼ ÃªÃ®Ã«Ã¨Ã·Ã¥Ã±Ã²Ã¢Ã® Ã¦Ã¨Ã¢Ã»Ãµ Ã®Ã¡ÃºÃ¥ÃªÃ²Ã®Ã¢ Ã¢ Ã£Ã°Ã³Ã¯Ã¯Ã¥
     u8 alive_num = 0;
     for (MEMBER_GOAL_MAP_IT it = m_goals.begin(); it != m_goals.end(); it++)
         if (it->first->g_Alive())
@@ -146,13 +146,13 @@ void CMonsterSquad::GetCommand(CEntity* pE, SSquadCommand& com) { com = GetComma
 
 void CMonsterSquad::UpdateSquadCommands()
 {
-    // Îòìåíèòü âñå êîìàíäû â ãðóïïå
+    // ÃŽÃ²Ã¬Ã¥Ã­Ã¨Ã²Ã¼ Ã¢Ã±Ã¥ ÃªÃ®Ã¬Ã Ã­Ã¤Ã» Ã¢ Ã£Ã°Ã³Ã¯Ã¯Ã¥
     for (MEMBER_COMMAND_MAP_IT it = m_commands.begin(); it != m_commands.end(); it++)
     {
         it->second.type = SC_NONE;
     }
 
-    // Óäàëèòü âñå öåëè, îáúåêòû êîòîðûõ íåâàëèäíû èëè óøëè â îôôëàéí
+    // Ã“Ã¤Ã Ã«Ã¨Ã²Ã¼ Ã¢Ã±Ã¥ Ã¶Ã¥Ã«Ã¨, Ã®Ã¡ÃºÃ¥ÃªÃ²Ã» ÃªÃ®Ã²Ã®Ã°Ã»Ãµ Ã­Ã¥Ã¢Ã Ã«Ã¨Ã¤Ã­Ã» Ã¨Ã«Ã¨ Ã³Ã¸Ã«Ã¨ Ã¢ Ã®Ã´Ã´Ã«Ã Ã©Ã­
     for (MEMBER_GOAL_MAP_IT it_goal = m_goals.begin(); it_goal != m_goals.end(); ++it_goal)
     {
         SMemberGoal goal = it_goal->second;
@@ -168,7 +168,7 @@ void CMonsterSquad::UpdateSquadCommands()
 
 void CMonsterSquad::remove_links(CObject* O)
 {
-    // Óäàëèòü âñå öåëè, îáúåêòû êîòîðûõ íåâàëèäíû èëè óøëè â îôôëàéí
+    // Ã“Ã¤Ã Ã«Ã¨Ã²Ã¼ Ã¢Ã±Ã¥ Ã¶Ã¥Ã«Ã¨, Ã®Ã¡ÃºÃ¥ÃªÃ²Ã» ÃªÃ®Ã²Ã®Ã°Ã»Ãµ Ã­Ã¥Ã¢Ã Ã«Ã¨Ã¤Ã­Ã» Ã¨Ã«Ã¨ Ã³Ã¸Ã«Ã¨ Ã¢ Ã®Ã´Ã´Ã«Ã Ã©Ã­
     for (MEMBER_GOAL_MAP_IT it_goal = m_goals.begin(); it_goal != m_goals.end(); ++it_goal)
     {
         SMemberGoal goal = it_goal->second;
@@ -179,7 +179,7 @@ void CMonsterSquad::remove_links(CObject* O)
         }
     }
 
-    // Óäàëèòü âñå öåëè, îáúåêòû êîòîðûõ íåâàëèäíû èëè óøëè â îôôëàéí
+    // Ã“Ã¤Ã Ã«Ã¨Ã²Ã¼ Ã¢Ã±Ã¥ Ã¶Ã¥Ã«Ã¨, Ã®Ã¡ÃºÃ¥ÃªÃ²Ã» ÃªÃ®Ã²Ã®Ã°Ã»Ãµ Ã­Ã¥Ã¢Ã Ã«Ã¨Ã¤Ã­Ã» Ã¨Ã«Ã¨ Ã³Ã¸Ã«Ã¨ Ã¢ Ã®Ã´Ã´Ã«Ã Ã©Ã­
     for (MEMBER_COMMAND_MAP_IT it = m_commands.begin(); it != m_commands.end(); it++)
     {
         SSquadCommand com = it->second;
@@ -240,6 +240,7 @@ void CMonsterSquad::unlock_corpse(const CEntityAlive* corpse)
     if (it != m_locked_corpses.end())
         m_locked_corpses.erase(it);
 }
+
 //////////////////////////////////////////////////////////////////////////
 
 squad_grouping_behaviour::squad_grouping_behaviour(

@@ -64,10 +64,12 @@ DECLARE_SPECIALIZATION(IRenderVisual, IKinematics, dcast_RenderVisual);
 
 #ifndef DO_NOT_DECLARE_TYPE_LIST
 class ENGINE_API ISpatial;
+
 namespace Feel
 {
 class ENGINE_API Sound;
 }
+
 typedef Feel::Sound Feel__Sound;
 template <>
 extern Feel::Sound* SmartDynamicCast::smart_cast<Feel::Sound, ISpatial>(ISpatial* p);

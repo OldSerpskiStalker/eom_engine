@@ -13,7 +13,7 @@
 
 using namespace luabind;
 
-void LuaLog(LPCSTR caMessage)
+void LuaLog1(LPCSTR caMessage)
 {
 #ifndef MASTER_GOLD
     ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeMessage, "%s", caMessage);
@@ -54,6 +54,7 @@ void ErrorLog(LPCSTR caMessage)
 
 // AVO:
 void PrintStack() { ai().script_engine().print_stack(); }
+
 //-AVO
 
 void FlushLogs()
@@ -198,7 +199,7 @@ void CScriptEngine::script_register(lua_State* L)
 {
     module(L)[
         // def("log1", (void(*) (LPCSTR msg)) &Log), // AVO: fixed log func
-        def("log", &LuaLog), def("print_stack", &PrintStack), def("error_log", &ErrorLog), def("flush", &FlushLogs),
+        def("log", &LuaLog1), def("print_stack", &PrintStack), def("error_log", &ErrorLog), def("flush", &FlushLogs),
         def("prefetch", &prefetch_module), def("verify_if_thread_is_running", &verify_if_thread_is_running),
         def("editor", &is_editor), def("bit_and", &bit_and), def("bit_or", &bit_or), def("bit_xor", &bit_xor),
         def("bit_not", &bit_not), def("user_name", &user_name), def("time_global", &script_time_global),
@@ -217,7 +218,7 @@ void CScriptEngine::script_register(lua_State* L)
             .def("time", &profile_timer_script::time)];
 
     // function(L, "print_stack", PrintStack);
-    // function(L, "log", LuaLog);
+    // function(L, "log", LuaLog1);
     // function(L, "error_log", ErrorLog);
     // function(L, "flush", FlushLogs);
     // function(L, "prefetch", prefetch_module);

@@ -226,6 +226,11 @@ void CBlender_BmmD::Compile(CBlender_Compile& C)
         C.r_dx10Texture("s_dn_b", strconcat(sizeof(mask), mask, oB_Name, "_bump"));
         C.r_dx10Texture("s_dn_a", strconcat(sizeof(mask), mask, oA_Name, "_bump"));
 
+        C.r_dx10Texture("s_dnE_r", strconcat(sizeof(mask), mask, oR_Name, "_bump#"));
+        C.r_dx10Texture("s_dnE_g", strconcat(sizeof(mask), mask, oG_Name, "_bump#"));
+        C.r_dx10Texture("s_dnE_b", strconcat(sizeof(mask), mask, oB_Name, "_bump#"));
+        C.r_dx10Texture("s_dnE_a", strconcat(sizeof(mask), mask, oA_Name, "_bump#"));
+
         C.r_dx10Sampler("smp_base");
         C.r_dx10Sampler("smp_linear");
 

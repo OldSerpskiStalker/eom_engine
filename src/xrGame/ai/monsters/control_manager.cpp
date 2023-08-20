@@ -74,6 +74,7 @@ void CControl_Manager::load(LPCSTR section)
     for (CONTROLLERS_MAP_IT it = m_control_elems.begin(); it != m_control_elems.end(); ++it)
         it->second->load(section);
 }
+
 void CControl_Manager::reload(LPCSTR section)
 {
     for (CONTROLLERS_MAP_IT it = m_control_elems.begin(); it != m_control_elems.end(); ++it)
@@ -209,6 +210,7 @@ void CControl_Manager::add(CControl_Com* com, ControlCom::EControlType type)
     m_control_elems[type] = com;
     com->init_external(this, m_object);
 }
+
 void CControl_Manager::set_base_controller(CControl_Com* com, ControlCom::EControlType type)
 {
     m_base_elems[type] = com;
@@ -219,6 +221,7 @@ void CControl_Manager::install_path_manager(CControlPathBuilder* pman) { m_path 
 bool CControl_Manager::is_pure(CControl_Com* com) { return (com->cing() == 0); }
 
 bool CControl_Manager::is_base(CControl_Com* com) { return (com->ced() == 0); }
+
 bool CControl_Manager::is_locked(CControl_Com* com) { return (com->ced() && com->ced()->is_locked()); }
 
 // capture
@@ -336,11 +339,13 @@ void CControl_Manager::activate(ControlCom::EControlType type)
     check_active_com(m_control_elems[type], eAdd);
     m_object->on_activate_control(type);
 }
+
 void CControl_Manager::deactivate(ControlCom::EControlType type)
 {
     m_control_elems[type]->set_active(false);
     check_active_com(m_control_elems[type], eRemove);
 }
+
 void CControl_Manager::deactivate(CControl_Com* com) { deactivate(com_type(com)); }
 
 bool CControl_Manager::is_captured(ControlCom::EControlType type)
@@ -394,6 +399,7 @@ void CControl_Manager::move_stop(CControl_Com* com)
     ctrl_move->velocity_target = 0;
     ctrl_move->acc = flt_max;
 }
+
 void CControl_Manager::dir_stop(CControl_Com* com)
 {
     SControlDirectionData* ctrl_dir = (SControlDirectionData*)data(com, ControlCom::eControlDir);

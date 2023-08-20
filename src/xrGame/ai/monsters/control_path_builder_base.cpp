@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "control_path_builder_base.h"
 #include "BaseMonster/base_monster.h"
 #include "../../phmovementcontrol.h"
@@ -113,10 +113,10 @@ void CControlPathBuilderBase::set_target_accessible(STarget& target, const Fvect
     }
 }
 
-// îáíîâèò	ü èíôîðìàöèþ î ïîñòðîåííîì ïóòè (m_failed)
+// Ã®Ã¡Ã­Ã®Ã¢Ã¨Ã²	Ã¼ Ã¨Ã­Ã´Ã®Ã°Ã¬Ã Ã¶Ã¨Ã¾ Ã® Ã¯Ã®Ã±Ã²Ã°Ã®Ã¥Ã­Ã­Ã®Ã¬ Ã¯Ã³Ã²Ã¨ (m_failed)
 void CControlPathBuilderBase::on_path_built()
 {
-    // ïðîâåðêà íà êîíåö ïóòè
+    // Ã¯Ã°Ã®Ã¢Ã¥Ã°ÃªÃ  Ã­Ã  ÃªÃ®Ã­Ã¥Ã¶ Ã¯Ã³Ã²Ã¨
     if (!m_man->path_builder().detail().path().empty() &&
         (m_man->path_builder().detail().curr_travel_point_index() < m_man->path_builder().detail().path().size() - 1))
         m_path_end = false;
@@ -124,7 +124,7 @@ void CControlPathBuilderBase::on_path_built()
 
 void CControlPathBuilderBase::on_path_updated()
 {
-    // åñëè level_path_manager failed
+    // Ã¥Ã±Ã«Ã¨ level_path_manager failed
     if (m_man->path_builder().level_path().failed())
     {
         m_failed = true;
@@ -132,16 +132,16 @@ void CControlPathBuilderBase::on_path_updated()
         VERIFY(!m_man->path_builder().level_path().failed());
     }
 
-    // åñëè level_path_manager failed
+    // Ã¥Ã±Ã«Ã¨ level_path_manager failed
     if (m_man->path_builder().detail().failed())
         m_failed = true;
 
-    // ïðîâåðêà íà êîíåö ïóòè, åñëè ýòîò ïóòü íå êîíå÷íûé
+    // Ã¯Ã°Ã®Ã¢Ã¥Ã°ÃªÃ  Ã­Ã  ÃªÃ®Ã­Ã¥Ã¶ Ã¯Ã³Ã²Ã¨, Ã¥Ã±Ã«Ã¨ Ã½Ã²Ã®Ã² Ã¯Ã³Ã²Ã¼ Ã­Ã¥ ÃªÃ®Ã­Ã¥Ã·Ã­Ã»Ã©
     if ((m_man->path_builder().detail().path().empty() ||
             (m_man->path_builder().detail().curr_travel_point_index() >=
                 m_man->path_builder().detail().path().size() - 1)) &&
         m_man->path_builder().detail().actual() && m_man->path_builder().enabled() &&
-        // êîíå÷íûé ïóòü?
+        // ÃªÃ®Ã­Ã¥Ã·Ã­Ã»Ã© Ã¯Ã³Ã²Ã¼?
         m_target_set.node() != m_object->ai_location().level_vertex_id() && m_target_actual)
     {
         m_failed = true;
