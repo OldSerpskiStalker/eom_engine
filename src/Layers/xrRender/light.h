@@ -9,6 +9,8 @@
 #	include "light_GI.h"
 #endif //(RENDER==R_R2) || (RENDER==R_R3) || (RENDER==R_R4)
 
+#define MIN_VIRTUAL_SIZE 0.01f
+
 class	light		:	public IRender_Light, public ISpatial
 {
 public:
@@ -19,6 +21,7 @@ public:
 		u32			bShadow	:	1;
 		u32			bVolumetric:1;
 		u32			bHudMode:	1;
+		u32			bActorTorch : 1;		
 
 	}				flags;
 	Fvector			position	;
@@ -35,11 +38,13 @@ public:
 	float			m_volumetric_intensity;
 	float			m_volumetric_distance;
 
+	float			virtual_size;
+
 #if (RENDER==R_R2) || (RENDER==R_R3) || (RENDER==R_R4)
 	float			falloff;			// precalc to make light equal to zero at light range
 	float	        attenuation0;		// Constant attenuation		
 	float	        attenuation1;		// Linear attenuation		
-	float	        attenuation2;		// Quadratic attenuation	
+	float	        attenuation2;		// Quadratic attenuation
 
 	light*						omnipart	[6]	;
 	xr_vector<light_indirect>	indirect		;
@@ -95,8 +100,10 @@ public:
 #endif	//	(RENDER==R_R2) || (RENDER==R_R3) || (RENDER==R_R4)
 
 public:
+	IC		bool	is_actor_torch			()								{ return !!flags.bActorTorch; }
 	virtual void	set_type				(LT type)						{ flags.type = type;		}
 	virtual void	set_active				(bool b);
+	virtual void	set_actor_torch			(bool b)						{ flags.bActorTorch = b; };	
 	virtual bool	get_active				()								{ return flags.bActive;		}
 	virtual void	set_shadow				(bool b)						
 	{ 
@@ -115,7 +122,13 @@ public:
 	virtual void	set_rotation			(const Fvector& D, const Fvector& R);
 	virtual void	set_cone				(float angle);
 	virtual void	set_range				(float R);
-	virtual void	set_virtual_size		(float R)						{};
+	
+	virtual void set_virtual_size(float S) {
+#if RENDER != R_R1
+		virtual_size = (S > MIN_VIRTUAL_SIZE) ? S : MIN_VIRTUAL_SIZE;
+#endif
+	}
+	
 	virtual void	set_color				(const Fcolor& C)				{ color.set(C);				}
 	virtual void	set_color				(float r, float g, float b)		{ color.set(r,g,b,1);		}
 	virtual void	set_texture				(LPCSTR name);
@@ -133,7 +146,7 @@ public:
 	void			xform_calc				();
 	void			vis_prepare				();
 	void			vis_update				();
-	void			export 					(light_Package& dest);
+	void			_export 					(light_Package& dest);
 	void			set_attenuation_params	(float a0, float a1, float a2, float fo);
 #endif // (RENDER==R_R2) || (RENDER==R_R3) || (RENDER==R_R4)
 

@@ -27,7 +27,6 @@ void fix_texture_name(LPSTR fn)
 		*_ext = 0;
 }
 
-  ENGINE_API int g_current_renderer;
   #ifndef _EDITOR
   ENGINE_API bool is_enough_address_space_available();
   #else
@@ -50,7 +49,7 @@ int get_texture_load_lod(LPCSTR fn)
 		if( strstr(fn, it->first.c_str()) )
 		{
 			if(psTextureLOD<1) {
-				if ( enough_address_space_available || (g_current_renderer < 2) )
+				if ( enough_address_space_available )
 					return 0;
 				else
 					return 1;
@@ -145,12 +144,16 @@ ID3DTexture2D*	TW_LoadTextureFromTexture
 
 	// Create HW-surface
 	if (D3DX_DEFAULT==t_dest_fmt)	t_dest_fmt = t_from_desc0.Format;
-	R_CHK					(D3DXCreateTexture(
-		HW.pDevice,
-		top_width,top_height,
-		levels_exist,0,t_dest_fmt,
-		D3DPOOL_MANAGED,&t_dest
-		));
+//	R_CHK					(D3DXCreateTexture(
+//		HW.pDevice,
+//		top_width,top_height,
+//		levels_exist,0,t_dest_fmt,
+//		D3DPOOL_MANAGED,&t_dest
+//		));
+
+	R_CHK(D3DXCreateTexture(HW.pDevice, top_width, top_height, levels_exist, 0, t_dest_fmt,
+		(RImplementation.o.no_ram_textures ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED),
+		&t_dest));
 
 	// Copy surfaces & destroy temporary
 	ID3DTexture2D* T_src= t_from;
@@ -382,19 +385,24 @@ _DDS:
 
 _DDS_CUBE:
 		{
-			HRESULT const result	=
-				D3DXCreateCubeTextureFromFileInMemoryEx(
-					HW.pDevice,
-					S->pointer(),S->length(),
-					D3DX_DEFAULT,
-					IMG.MipLevels,0,
-					IMG.Format,
-					D3DPOOL_MANAGED,
-					D3DX_DEFAULT,
-					D3DX_DEFAULT,
-					0,&IMG,0,
-					&pTextureCUBE
-				);
+//			HRESULT const result	=
+//				D3DXCreateCubeTextureFromFileInMemoryEx(
+//					HW.pDevice,
+//					S->pointer(),S->length(),
+//					D3DX_DEFAULT,
+//					IMG.MipLevels,0,
+//					IMG.Format,
+//					D3DPOOL_MANAGED,
+//					D3DX_DEFAULT,
+//					D3DX_DEFAULT,
+//					0,&IMG,0,
+//					&pTextureCUBE
+//				);
+			HRESULT const result = D3DXCreateCubeTextureFromFileInMemoryEx(HW.pDevice, S->pointer(), S->length(), D3DX_DEFAULT,
+				IMG.MipLevels, 0, IMG.Format,
+				(RImplementation.o.no_ram_textures ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED),
+				D3DX_DEFAULT, D3DX_DEFAULT, 0, &IMG, nullptr, &pTextureCUBE);
+
 			FS.r_close				(S);
 
 			if ( FAILED(result) ) {
@@ -419,10 +427,11 @@ _DDS_2D:
 			strlwr					(fn);
 			// Load   SYS-MEM-surface, bound to device restrictions
 			ID3DTexture2D*		T_sysmem;
+			UINT dim = HW.Caps.raster.bNonPow2 ? D3DX_DEFAULT_NONPOW2 : D3DX_DEFAULT;
 			HRESULT const result	=
 				D3DXCreateTextureFromFileInMemoryEx(
 					HW.pDevice,S->pointer(),S->length(),
-					D3DX_DEFAULT,D3DX_DEFAULT,
+					dim, dim,
 					IMG.MipLevels,0,
 					IMG.Format,
 					D3DPOOL_SYSTEMMEM,

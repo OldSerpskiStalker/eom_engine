@@ -27,6 +27,11 @@ void fix_texture_name(LPSTR fn)
 
 int get_texture_load_lod(LPCSTR fn)
 {
+    if (strstr(fn, "act_mutant_boar_u"))
+        return 0;
+
+#ifdef USE_REDUCE_LOD_TEXTURE_LIST
+
     CInifile::Sect& sect = pSettings->r_section("reduce_lod_texture_list");
     CInifile::SectCIt it_ = sect.Data.begin();
     CInifile::SectCIt it_e_ = sect.Data.end();
@@ -54,6 +59,8 @@ int get_texture_load_lod(LPCSTR fn)
                 return 2;
         }
     }
+
+#endif
 
     if (psTextureLOD < 2)
     {
@@ -318,7 +325,7 @@ ID3DBaseTexture* CRender::texture_load(LPCSTR fRName, u32& ret_msize, bool bStag
     ZeroMemory(&IMG, sizeof(IMG));
 
     //	Staging control
-    static bool bAllowStaging = !strstr(Core.Params, "-no_staging");
+    static bool bAllowStaging = !RImplementation.o.no_ram_textures;
     bStaging &= bAllowStaging;
 
     ID3DBaseTexture* pTexture2D = NULL;
@@ -441,7 +448,7 @@ _DDS_CUBE : {
     }
     else
     {
-        LoadInfo.Usage = D3D_USAGE_DEFAULT;
+        LoadInfo.Usage = D3D_USAGE_IMMUTABLE;
         LoadInfo.BindFlags = D3D_BIND_SHADER_RESOURCE;
     }
 
@@ -505,7 +512,7 @@ _DDS_2D : {
     }
     else
     {
-        LoadInfo.Usage = D3D_USAGE_DEFAULT;
+        LoadInfo.Usage = D3D_USAGE_IMMUTABLE;
         LoadInfo.BindFlags = D3D_BIND_SHADER_RESOURCE;
     }
     LoadInfo.pSrcInfo = &IMG;

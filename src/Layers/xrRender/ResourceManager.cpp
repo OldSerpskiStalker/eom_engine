@@ -397,7 +397,7 @@ void CResourceManager::DeferredUpload()
     CTimer timer;
     timer.Start();
 
-    if (m_textures.size() <= 100)
+    if (m_textures.size() <= 100) // ieiei 100 oaenoo? ii?ii caa?oceou e ia nicaaaay aoi?ie
     {
         Msg("CResourceManager::DeferredUpload -> one thread");
         for (map_TextureIt t = m_textures.begin(); t != m_textures.end(); t++)
@@ -405,6 +405,8 @@ void CResourceManager::DeferredUpload()
     }
     else
     {
+        // Ooo iaaa?iia i?aaeeuiaa aoaao aua e oa?eai ie i?eaycaou,
+        // aa e ia?aie?eou iaen. eo ?enei, o.e. 17 iioieia yoi o?a ii-iiaio ia?aai?
         u32 th_count = (m_textures.size() / 100) + 1;
         std::thread* th_arr = new std::thread[th_count];
         for (auto tex : m_textures)
@@ -421,14 +423,16 @@ void CResourceManager::DeferredUpload()
 
     Msg("texture loading time: %d", timer.GetElapsed_ms());
 }
-/*
-void	CResourceManager::DeferredUnload	()
+
+void CResourceManager::DeferredUnload()
 {
-    if (!RDEVICE.b_is_Ready)				return;
-    for (map_TextureIt t=m_textures.begin(); t!=m_textures.end(); t++)
-        t->second->Unload();
+    if (!RDEVICE.b_is_Ready)
+        return;
+
+    for (auto& texture : m_textures)
+        texture.second->Unload();
 }
-*/
+
 #ifdef _EDITOR
 void CResourceManager::ED_UpdateTextures(AStringVec* names)
 {
@@ -494,8 +498,8 @@ void CResourceManager::_DumpMemoryUsage()
     {
         xr_multimap<u32, std::pair<u32, shared_str>>::iterator I = mtex.begin();
         xr_multimap<u32, std::pair<u32, shared_str>>::iterator E = mtex.end();
-        for (; I != E; I++)
-            Msg("* %4.1f : [%4d] %s", float(I->first) / 1024.f, I->second.first, I->second.second.c_str());
+        //		for (; I!=E; I++)
+        // Msg			("* %4.1f : [%4d] %s",float(I->first)/1024.f, I->second.first, I->second.second.c_str());
     }
 }
 

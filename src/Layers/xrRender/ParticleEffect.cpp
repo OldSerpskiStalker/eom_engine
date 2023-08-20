@@ -293,120 +293,62 @@ __forceinline void fsincos(const float angle, float& sine, float& cosine)
 }
 
 IC void FillSprite(FVF::LIT*& pv, const Fvector& T, const Fvector& R, const Fvector& pos, const Fvector2& lt,
-    const Fvector2& rb, float r1, float r2, u32 clr, float sina, float cosa)
+    const Fvector2& rb, float r1, float r2, u32 clr, float angle)
 {
-#ifdef _GPA_ENABLED
-    TAL_SCOPED_TASK_NAMED("FillSprite()");
-#endif // _GPA_ENABLED
+    float sa = _sin(angle);
+    float ca = _cos(angle);
+    Fvector Vr, Vt;
+    Vr.x = T.x * r1 * sa + R.x * r1 * ca;
+    Vr.y = T.y * r1 * sa + R.y * r1 * ca;
+    Vr.z = T.z * r1 * sa + R.z * r1 * ca;
+    Vt.x = T.x * r2 * ca - R.x * r2 * sa;
+    Vt.y = T.y * r2 * ca - R.y * r2 * sa;
+    Vt.z = T.z * r2 * ca - R.z * r2 * sa;
 
-    __m128 Vr, Vt, _T, _R, _pos, _zz, _sa, _ca, a, b, c, d;
-
-    _sa = _mm_set1_ps(sina);
-    _ca = _mm_set1_ps(cosa);
-
-    _T = _mm_load_ss((float*)&T.x);
-    _T = _mm_loadh_pi(_T, (__m64*)&T.y);
-
-    _R = _mm_load_ss((float*)&R.x);
-    _R = _mm_loadh_pi(_R, (__m64*)&R.y);
-
-    _pos = _mm_load_ss((float*)&pos.x);
-    _pos = _mm_loadh_pi(_pos, (__m64*)&pos.y);
-
-    _zz = _mm_setzero_ps();
-
-    Vr = _mm_mul_ps(_mm_set1_ps(r1), _mm_add_ps(_mm_mul_ps(_T, _sa), _mm_mul_ps(_R, _ca)));
-    Vt = _mm_mul_ps(_mm_set1_ps(r2), _mm_sub_ps(_mm_mul_ps(_T, _ca), _mm_mul_ps(_R, _sa)));
-
-    a = _mm_sub_ps(Vt, Vr);
-    b = _mm_add_ps(Vt, Vr);
-    c = _mm_sub_ps(_zz, a);
-    d = _mm_sub_ps(_zz, b);
-
-    a = _mm_add_ps(a, _pos);
-    d = _mm_add_ps(d, _pos);
-    b = _mm_add_ps(b, _pos);
-    c = _mm_add_ps(c, _pos);
-
-    _mm_store_ss((float*)&pv->p.x, d);
-    _mm_storeh_pi((__m64*)&pv->p.y, d);
-    pv->color = clr;
-    pv->t.set(lt.x, rb.y);
+    Fvector a, b, c, d;
+    a.sub(Vt, Vr);
+    b.add(Vt, Vr);
+    c.invert(a);
+    d.invert(b);
+    pv->set(d.x + pos.x, d.y + pos.y, d.z + pos.z, clr, lt.x, rb.y);
     pv++;
-
-    _mm_store_ss((float*)&pv->p.x, a);
-    _mm_storeh_pi((__m64*)&pv->p.y, a);
-    pv->color = clr;
-    pv->t.set(lt.x, lt.y);
+    pv->set(a.x + pos.x, a.y + pos.y, a.z + pos.z, clr, lt.x, lt.y);
     pv++;
-
-    _mm_store_ss((float*)&pv->p.x, c);
-    _mm_storeh_pi((__m64*)&pv->p.y, c);
-    pv->color = clr;
-    pv->t.set(rb.x, rb.y);
+    pv->set(c.x + pos.x, c.y + pos.y, c.z + pos.z, clr, rb.x, rb.y);
     pv++;
-
-    _mm_store_ss((float*)&pv->p.x, b);
-    _mm_storeh_pi((__m64*)&pv->p.y, b);
-    pv->color = clr;
-    pv->t.set(rb.x, lt.y);
+    pv->set(b.x + pos.x, b.y + pos.y, b.z + pos.z, clr, rb.x, lt.y);
     pv++;
 }
 
 IC void FillSprite(FVF::LIT*& pv, const Fvector& pos, const Fvector& dir, const Fvector2& lt, const Fvector2& rb,
-    float r1, float r2, u32 clr, float sina, float cosa)
+    float r1, float r2, u32 clr, float angle)
 {
-#ifdef _GPA_ENABLED
-    TAL_SCOPED_TASK_NAMED("FillSpriteTransform()");
-#endif // _GPA_ENABLED
-
+    float sa = _sin(angle);
+    float ca = _cos(angle);
     const Fvector& T = dir;
     Fvector R;
+    R.crossproduct(T, Device.vCameraDirection).normalize_safe();
+    Fvector Vr, Vt;
+    Vr.x = T.x * r1 * sa + R.x * r1 * ca;
+    Vr.y = T.y * r1 * sa + R.y * r1 * ca;
+    Vr.z = T.z * r1 * sa + R.z * r1 * ca;
+    Vt.x = T.x * r2 * ca - R.x * r2 * sa;
+    Vt.y = T.y * r2 * ca - R.y * r2 * sa;
+    Vt.z = T.z * r2 * ca - R.z * r2 * sa;
 
-    // R.crossproduct(T,RDEVICE.vCameraDirection).normalize_safe();
-
-    __m128 _t, _t1, _t2, _r, _r1, _r2;
-
-    // crossproduct
-
-    _t = _mm_load_ss((float*)&T.x);
-    _t = _mm_loadh_pi(_t, (__m64*)&T.y);
-
-    _r = _mm_load_ss((float*)&RDEVICE.vCameraDirection.x);
-    _r = _mm_loadh_pi(_r, (__m64*)&RDEVICE.vCameraDirection.y);
-
-    _t1 = _mm_shuffle_ps(_t, _t, _MM_SHUFFLE(0, 3, 1, 2));
-    _t2 = _mm_shuffle_ps(_t, _t, _MM_SHUFFLE(2, 0, 1, 3));
-
-    _r1 = _mm_shuffle_ps(_r, _r, _MM_SHUFFLE(2, 0, 1, 3));
-    _r2 = _mm_shuffle_ps(_r, _r, _MM_SHUFFLE(0, 3, 1, 2));
-
-    _t1 = _mm_mul_ps(_t1, _r1);
-    _t2 = _mm_mul_ps(_t2, _r2);
-
-    _t1 = _mm_sub_ps(_t1, _t2); // z | y | 0 | x
-
-    // normalize_safe
-
-    _t2 = _mm_mul_ps(_t1, _t1); // zz | yy | 00 | xx
-    _r1 = _mm_movehl_ps(_t2, _t2); // zz | yy | zz | yy
-    _t2 = _mm_add_ss(_t2, _r1); // zz | yy | 00 | xx + yy
-    _r1 = _mm_shuffle_ps(_r1, _r1, _MM_SHUFFLE(1, 1, 1, 1)); // zz | zz | zz | zz
-    _t2 = _mm_add_ss(_t2, _r1); // zz | yy | 00 | xx + yy + zz
-
-    _r1 = _mm_set_ss(std::numeric_limits<float>::min());
-
-    if (_mm_comigt_ss(_t2, _r1))
-    {
-        _t2 = _mm_rsqrt_ss(_t2);
-        _t2 = _mm_shuffle_ps(_t2, _t2, _MM_SHUFFLE(0, 0, 0, 0));
-        _t1 = _mm_mul_ps(_t1, _t2);
-    }
-
-    _mm_store_ss((float*)&R.x, _t1);
-    _mm_storeh_pi((__m64*)&R.y, _t1);
-
-    FillSprite(pv, T, R, pos, lt, rb, r1, r2, clr, sina, cosa);
+    Fvector a, b, c, d;
+    a.sub(Vt, Vr);
+    b.add(Vt, Vr);
+    c.invert(a);
+    d.invert(b);
+    pv->set(d.x + pos.x, d.y + pos.y, d.z + pos.z, clr, lt.x, rb.y);
+    pv++;
+    pv->set(a.x + pos.x, a.y + pos.y, a.z + pos.z, clr, lt.x, lt.y);
+    pv++;
+    pv->set(c.x + pos.x, c.y + pos.y, c.z + pos.z, clr, rb.x, rb.y);
+    pv++;
+    pv->set(b.x + pos.x, b.y + pos.y, b.z + pos.z, clr, rb.x, lt.y);
+    pv++;
 }
 
 extern ENGINE_API float psHUD_FOV;
@@ -502,11 +444,11 @@ void ParticleRenderStream(LPVOID lpvParams)
                     Fvector p;
                     pPE.m_XFORM.transform_tiny(p, m.pos);
                     M.mulA_43(pPE.m_XFORM);
-                    FillSprite(pv, M.k, M.i, p, lt, rb, r_x, r_y, m.color, sina, cosa);
+                    FillSprite(pv, M.k, M.i, p, lt, rb, r_x, r_y, m.color, m.rot.x);
                 }
                 else
                 {
-                    FillSprite(pv, M.k, M.i, m.pos, lt, rb, r_x, r_y, m.color, sina, cosa);
+                    FillSprite(pv, M.k, M.i, m.pos, lt, rb, r_x, r_y, m.color, m.rot.x);
                 }
             }
             else if ((speed >= EPS_S) && pPE.m_Def->m_Flags.is(CPEDef::dfFaceAlign))
@@ -526,11 +468,11 @@ void ParticleRenderStream(LPVOID lpvParams)
                     Fvector p;
                     pPE.m_XFORM.transform_tiny(p, m.pos);
                     M.mulA_43(pPE.m_XFORM);
-                    FillSprite(pv, M.j, M.i, p, lt, rb, r_x, r_y, m.color, sina, cosa);
+                    FillSprite(pv, M.j, M.i, p, lt, rb, r_x, r_y, m.color, m.rot.x);
                 }
                 else
                 {
-                    FillSprite(pv, M.j, M.i, m.pos, lt, rb, r_x, r_y, m.color, sina, cosa);
+                    FillSprite(pv, M.j, M.i, m.pos, lt, rb, r_x, r_y, m.color, m.rot.x);
                 }
             }
             else
@@ -545,11 +487,11 @@ void ParticleRenderStream(LPVOID lpvParams)
                     Fvector p, d;
                     pPE.m_XFORM.transform_tiny(p, m.pos);
                     pPE.m_XFORM.transform_dir(d, dir);
-                    FillSprite(pv, p, d, lt, rb, r_x, r_y, m.color, sina, cosa);
+                    FillSprite(pv, p, d, lt, rb, r_x, r_y, m.color, m.rot.x);
                 }
                 else
                 {
-                    FillSprite(pv, m.pos, dir, lt, rb, r_x, r_y, m.color, sina, cosa);
+                    FillSprite(pv, m.pos, dir, lt, rb, r_x, r_y, m.color, m.rot.x);
                 }
             }
         }
@@ -559,11 +501,11 @@ void ParticleRenderStream(LPVOID lpvParams)
             {
                 Fvector p;
                 pPE.m_XFORM.transform_tiny(p, m.pos);
-                FillSprite(pv, RDEVICE.vCameraTop, RDEVICE.vCameraRight, p, lt, rb, r_x, r_y, m.color, sina, cosa);
+                FillSprite(pv, Device.vCameraTop, Device.vCameraRight, p, lt, rb, r_x, r_y, m.color, m.rot.x);
             }
             else
             {
-                FillSprite(pv, RDEVICE.vCameraTop, RDEVICE.vCameraRight, m.pos, lt, rb, r_x, r_y, m.color, sina, cosa);
+                FillSprite(pv, Device.vCameraTop, Device.vCameraRight, m.pos, lt, rb, r_x, r_y, m.color, m.rot.x);
             }
         }
     }
@@ -590,7 +532,7 @@ void CParticleEffect::Render(float)
 
             u32 nWorkers = ttapi_GetWorkersCount();
 
-            if (p_cnt < nWorkers * 20)
+            if (p_cnt < (nWorkers * 64))
                 nWorkers = 1;
 
             PRS_PARAMS* prsParams = (PRS_PARAMS*)_alloca(sizeof(PRS_PARAMS) * nWorkers);
@@ -626,8 +568,8 @@ void CParticleEffect::Render(float)
                 Fmatrix FTold = Device.mFullTransform;
                 if (GetHudMode())
                 {
-                    RDEVICE.mProject.build_projection(deg2rad(psHUD_FOV * Device.fFOV), Device.fASPECT, VIEWPORT_NEAR,
-                        g_pGamePersistent->Environment().CurrentEnv->far_plane);
+                    RDEVICE.mProject.build_projection(deg2rad(psHUD_FOV * Device.fFOV), Device.fASPECT,
+                        HUD_VIEWPORT_NEAR, g_pGamePersistent->Environment().CurrentEnv->far_plane);
 
                     Device.mFullTransform.mul(Device.mProject, Device.mView);
                     RCache.set_xform_project(Device.mProject);

@@ -98,23 +98,29 @@ R_occlusion::occq_result R_occlusion::occq_get(u32& ID)
     HRESULT hr;
     // CHK_DX		(used[ID].Q->GetData(&fragments,sizeof(fragments),D3DGETDATA_FLUSH));
     // Msg			("get  : [%2d] - %d => %d", used[ID].order, ID, fragments);
-    CTimer T;
-    T.Start();
-    Device.Statistic->RenderDUMP_Wait.Begin();
-    // while	((hr=used[ID].Q->GetData(&fragments,sizeof(fragments),D3DGETDATA_FLUSH))==S_FALSE) {
-    VERIFY2(ID < used.size(), make_string("_Pos = %d, size() = %d ", ID, used.size()));
-    while ((hr = GetData(used[ID].Q, &fragments, sizeof(fragments))) == S_FALSE)
+
+    if ((hr = GetData(used[ID].Q, &fragments, sizeof(fragments))) == S_FALSE)
+        fragments = (occq_result)-1; // 0xffffffff;
+
+    /*
+    CTimer	T;
+    T.Start	();
+    Device.Statistic->RenderDUMP_Wait.Begin	();
+    //while	((hr=used[ID].Q->GetData(&fragments,sizeof(fragments),D3DGETDATA_FLUSH))==S_FALSE) {
+    VERIFY2( ID<used.size(),make_string("_Pos = %d, size() = %d ", ID, used.size()));
+    while	((hr=GetData(used[ID].Q, &fragments,sizeof(fragments)))==S_FALSE)
     {
         if (!SwitchToThread())
             Sleep(ps_r2_wait_sleep);
 
         if (T.GetElapsed_ms() > 500)
         {
-            fragments = (occq_result)-1; // 0xffffffff;
+            fragments	= (occq_result)-1;//0xffffffff;
             break;
         }
     }
-    Device.Statistic->RenderDUMP_Wait.End();
+    Device.Statistic->RenderDUMP_Wait.End	();
+    */
     if (hr == D3DERR_DEVICELOST)
         fragments = 0xffffffff;
 

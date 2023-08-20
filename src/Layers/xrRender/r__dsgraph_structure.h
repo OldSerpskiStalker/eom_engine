@@ -41,13 +41,13 @@ public:
     R_dsgraph::mapMatrixPasses_T mapMatrixPasses[2];
     R_dsgraph::mapSorted_T mapSorted;
     R_dsgraph::mapHUD_T mapHUD;
+    R_dsgraph::mapHUD_T mapHUDEmissive;
+    R_dsgraph::mapHUD_T mapHUDSorted;
     R_dsgraph::mapLOD_T mapLOD;
     R_dsgraph::mapSorted_T mapDistort;
-
 #if RENDER != R_R1
     R_dsgraph::mapSorted_T mapWmark; // sorted
     R_dsgraph::mapSorted_T mapEmissive;
-    R_dsgraph::mapSorted_T mapHUDEmissive;
 #endif
 
     // Runtime structures
@@ -165,6 +165,10 @@ public:
         mapHUD.destroy();
         mapLOD.destroy();
         mapDistort.destroy();
+        mapHUDSorted.destroy();
+
+        mapHUDEmissive.destroy();
+        mapHUDSorted.destroy();
 
 #if RENDER != R_R1
         mapWmark.destroy();
@@ -187,7 +191,9 @@ public:
     void r_dsgraph_render_hud_ui();
     void r_dsgraph_render_lods(bool _setup_zb, bool _clear);
     void r_dsgraph_render_sorted();
+    void r_dsgraph_render_hud_sorted();
     void r_dsgraph_render_emissive();
+    void r_dsgraph_render_hud_emissive();
     void r_dsgraph_render_wmarks();
     void r_dsgraph_render_distort();
     void r_dsgraph_render_subspace(IRender_Sector* _sector, CFrustum* _frustum, Fmatrix& mCombined, Fvector& _cop,

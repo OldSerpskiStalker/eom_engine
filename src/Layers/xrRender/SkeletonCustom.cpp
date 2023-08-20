@@ -544,6 +544,7 @@ void CKinematics::Visibility_Update()
             children_invisible.push_back(children[c_it]);
             swap(children[c_it], children.back());
             children.pop_back();
+            Update_Visibility = TRUE;
         }
     }
 
@@ -558,6 +559,7 @@ void CKinematics::Visibility_Update()
             children.push_back(children_invisible[_it]);
             swap(children_invisible[_it], children_invisible.back());
             children_invisible.pop_back();
+            Update_Visibility = TRUE;
         }
     }
 }
@@ -703,7 +705,7 @@ void CKinematics::AddWallmark(
         xr_new<CSkeletonWallmark>(this, parent_xform, shader, cp, RDEVICE.fTimeGlobal);
     wm->m_LocalBounds.set(cp, size * 2.f);
     wm->XFORM()->transform_tiny(wm->m_Bounds.P, cp);
-    wm->m_Bounds.R = wm->m_Bounds.R;
+    wm->m_Bounds.R = wm->m_LocalBounds.R;
 
     Fvector tmp;
     tmp.invert(D);
@@ -726,7 +728,6 @@ void CKinematics::AddWallmark(
     wallmarks.push_back(wm);
 }
 
-static const float LIFE_TIME = 30.f;
 struct zero_wm_pred : public std::unary_function<intrusive_ptr<CSkeletonWallmark>, bool>
 {
     bool operator()(const intrusive_ptr<CSkeletonWallmark> x) { return x == 0; }
@@ -741,7 +742,7 @@ void CKinematics::CalculateWallmarks()
         for (SkeletonWMVecIt it = wallmarks.begin(); it != wallmarks.end(); it++)
         {
             intrusive_ptr<CSkeletonWallmark>& wm = *it;
-            float w = (RDEVICE.fTimeGlobal - wm->TimeStart()) / LIFE_TIME;
+            float w = (RDEVICE.fTimeGlobal - wm->TimeStart()) / ps_r__WallmarkTTL;
             if (w < 1.f)
             {
                 // append wm to WallmarkEngine
@@ -777,7 +778,7 @@ void CKinematics::RenderWallmark(intrusive_ptr<CSkeletonWallmark> wm, FVF::LIT*&
     for (u32 f_idx = 0; f_idx < wm->m_Faces.size(); f_idx++)
     {
         CSkeletonWallmark::WMFace F = wm->m_Faces[f_idx];
-        float w = (RDEVICE.fTimeGlobal - wm->TimeStart()) / LIFE_TIME;
+        float w = (RDEVICE.fTimeGlobal - wm->TimeStart()) / ps_r__WallmarkTTL;
         for (u32 k = 0; k < 3; k++)
         {
             Fvector P;
@@ -787,7 +788,7 @@ void CKinematics::RenderWallmark(intrusive_ptr<CSkeletonWallmark> wm, FVF::LIT*&
                 Fmatrix& xform0 = LL_GetBoneInstance(F.bone_id[k][0]).mRenderTransform;
                 xform0.transform_tiny(P, F.vert[k]);
             }
-            else
+            else if (F.bone_id[k][1] == F.bone_id[k][2])
             {
                 // 2-link
                 Fvector P0, P1;
@@ -795,7 +796,48 @@ void CKinematics::RenderWallmark(intrusive_ptr<CSkeletonWallmark> wm, FVF::LIT*&
                 Fmatrix& xform1 = LL_GetBoneInstance(F.bone_id[k][1]).mRenderTransform;
                 xform0.transform_tiny(P0, F.vert[k]);
                 xform1.transform_tiny(P1, F.vert[k]);
-                P.lerp(P0, P1, F.weight[k]);
+                P.lerp(P0, P1, F.weight[k][0]);
+            }
+            else if (F.bone_id[k][2] == F.bone_id[k][3])
+            {
+                // 3-link
+                Fvector P0, P1, P2;
+                Fmatrix& xform0 = LL_GetBoneInstance(F.bone_id[k][0]).mRenderTransform;
+                Fmatrix& xform1 = LL_GetBoneInstance(F.bone_id[k][1]).mRenderTransform;
+                Fmatrix& xform2 = LL_GetBoneInstance(F.bone_id[k][2]).mRenderTransform;
+                xform0.transform_tiny(P0, F.vert[k]);
+                xform1.transform_tiny(P1, F.vert[k]);
+                xform2.transform_tiny(P2, F.vert[k]);
+                float w0 = F.weight[k][0];
+                float w1 = F.weight[k][1];
+                P0.mul(w0);
+                P1.mul(w1);
+                P2.mul(1 - w0 - w1);
+                P = P0;
+                P.add(P1);
+                P.add(P2);
+            }
+            else
+            {
+                // 4-link
+                Fvector PB[4];
+                for (int i = 0; i < 4; ++i)
+                {
+                    Fmatrix& xform = LL_GetBoneInstance(F.bone_id[k][i]).mRenderTransform;
+                    xform.transform_tiny(PB[i], F.vert[k]);
+                }
+
+                float s = 0.f;
+                for (int i = 0; i < 3; ++i)
+                {
+                    PB[i].mul(F.weight[k][i]);
+                    s += F.weight[k][i];
+                }
+                PB[3].mul(1 - s);
+
+                P = PB[0];
+                for (int i = 1; i < 4; ++i)
+                    P.add(PB[i]);
             }
             wm->XFORM()->transform_tiny(V->p, P);
             V->t.set(F.uv[k]);

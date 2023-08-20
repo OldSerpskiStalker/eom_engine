@@ -76,29 +76,17 @@ void R_dsgraph_structure::r_dsgraph_insert_dynamic(dxRender_Visual* pVisual, Fve
     // Create common node
     // NOTE: Invisible elements exist only in R1
     _MatrixItem item = {SSA, RI.val_pObject, pVisual, *RI.val_pTransform};
-
     // HUD rendering
     if (RI.val_bHUD)
     {
         if (sh->flags.bStrictB2F)
         {
-            mapSorted_Node* N = mapSorted.insertInAnyWay(distSQ);
-            N->val.ssa = SSA;
-            N->val.pObject = RI.val_pObject;
-            N->val.pVisual = pVisual;
-            N->val.Matrix = *RI.val_pTransform;
-            N->val.se = sh;
-            return;
-        }
-        else
-        {
-            mapHUD_Node* N = mapHUD.insertInAnyWay(distSQ);
-            N->val.ssa = SSA;
-            N->val.pObject = RI.val_pObject;
-            N->val.pVisual = pVisual;
-            N->val.Matrix = *RI.val_pTransform;
-            N->val.se = sh;
-#if RENDER != R_R1
+            //			mapSorted_Node* N = mapHUDSorted.insertInAnyWay(distSQ);
+            //			N->val.ssa = SSA;
+            //			N->val.pObject = RI.val_pObject;
+            //			N->val.pVisual = pVisual;
+            //			N->val.Matrix = *RI.val_pTransform;
+            //			N->val.se = sh;
             if (sh->flags.bEmissive)
             {
                 mapSorted_Node* N = mapHUDEmissive.insertInAnyWay(distSQ);
@@ -108,9 +96,34 @@ void R_dsgraph_structure::r_dsgraph_insert_dynamic(dxRender_Visual* pVisual, Fve
                 N->val.Matrix = *RI.val_pTransform;
                 N->val.se = &*pVisual->shader->E[4]; // 4=L_special
             }
-#endif //	RENDER!=R_R1
-            return;
+            mapSorted_Node* N = mapHUDSorted.insertInAnyWay(distSQ);
+            N->val.ssa = SSA;
+            N->val.pObject = RI.val_pObject;
+            N->val.pVisual = pVisual;
+            N->val.Matrix = *RI.val_pTransform;
+            N->val.se = sh;
         }
+        else
+        {
+            mapHUD_Node* N = mapHUD.insertInAnyWay(distSQ);
+            N->val.ssa = SSA;
+            N->val.pObject = RI.val_pObject;
+            N->val.pVisual = pVisual;
+            N->val.Matrix = *RI.val_pTransform;
+            N->val.se = sh;
+        }
+#if RENDER != R_R1
+        if (sh->flags.bEmissive)
+        {
+            mapSorted_Node* N = mapHUDEmissive.insertInAnyWay(distSQ);
+            N->val.ssa = SSA;
+            N->val.pObject = RI.val_pObject;
+            N->val.pVisual = pVisual;
+            N->val.Matrix = *RI.val_pTransform;
+            N->val.se = sh_d; // 4=L_special
+        }
+#endif // RENDER!=R_R1
+        return;
     }
 
     // Shadows registering
@@ -470,16 +483,16 @@ void CRender::add_leafs_Dynamic(dxRender_Visual* pVisual)
     case MT_PARTICLE_GROUP: {
         // Add all children, doesn't perform any tests
         PS::CParticleGroup* pG = (PS::CParticleGroup*)pVisual;
-        for (PS::CParticleGroup::SItemVecIt i_it = pG->items.begin(); i_it != pG->items.end(); ++i_it)
+        for (PS::CParticleGroup::SItemVecIt i_it = pG->items.begin(); i_it != pG->items.end(); i_it++)
         {
             PS::CParticleGroup::SItem& I = *i_it;
             if (I._effect)
                 add_leafs_Dynamic(I._effect);
             for (xr_vector<dxRender_Visual*>::iterator pit = I._children_related.begin();
-                 pit != I._children_related.end(); ++pit)
+                 pit != I._children_related.end(); pit++)
                 add_leafs_Dynamic(*pit);
             for (xr_vector<dxRender_Visual*>::iterator pit = I._children_free.begin(); pit != I._children_free.end();
-                 ++pit)
+                 pit++)
                 add_leafs_Dynamic(*pit);
         }
     }
@@ -489,7 +502,7 @@ void CRender::add_leafs_Dynamic(dxRender_Visual* pVisual)
         FHierrarhyVisual* pV = (FHierrarhyVisual*)pVisual;
         I = pV->children.begin();
         E = pV->children.end();
-        for (; I != E; ++I)
+        for (; I != E; I++)
             add_leafs_Dynamic(*I);
     }
         return;
@@ -517,7 +530,7 @@ void CRender::add_leafs_Dynamic(dxRender_Visual* pVisual)
             pV->CalculateWallmarks(); //. bug?
             I = pV->children.begin();
             E = pV->children.end();
-            for (; I != E; ++I)
+            for (; I != E; I++)
                 add_leafs_Dynamic(*I);
         }
     }
@@ -546,16 +559,16 @@ void CRender::add_leafs_Static(dxRender_Visual* pVisual)
     case MT_PARTICLE_GROUP: {
         // Add all children, doesn't perform any tests
         PS::CParticleGroup* pG = (PS::CParticleGroup*)pVisual;
-        for (PS::CParticleGroup::SItemVecIt i_it = pG->items.begin(); i_it != pG->items.end(); ++i_it)
+        for (PS::CParticleGroup::SItemVecIt i_it = pG->items.begin(); i_it != pG->items.end(); i_it++)
         {
             PS::CParticleGroup::SItem& I = *i_it;
             if (I._effect)
                 add_leafs_Dynamic(I._effect);
             for (xr_vector<dxRender_Visual*>::iterator pit = I._children_related.begin();
-                 pit != I._children_related.end(); ++pit)
+                 pit != I._children_related.end(); pit++)
                 add_leafs_Dynamic(*pit);
             for (xr_vector<dxRender_Visual*>::iterator pit = I._children_free.begin(); pit != I._children_free.end();
-                 ++pit)
+                 pit++)
                 add_leafs_Dynamic(*pit);
         }
     }
@@ -565,7 +578,7 @@ void CRender::add_leafs_Static(dxRender_Visual* pVisual)
         FHierrarhyVisual* pV = (FHierrarhyVisual*)pVisual;
         I = pV->children.begin();
         E = pV->children.end();
-        for (; I != E; ++I)
+        for (; I != E; I++)
             add_leafs_Static(*I);
     }
         return;
@@ -576,7 +589,7 @@ void CRender::add_leafs_Static(dxRender_Visual* pVisual)
         pV->CalculateBones(TRUE);
         I = pV->children.begin();
         E = pV->children.end();
-        for (; I != E; ++I)
+        for (; I != E; I++)
             add_leafs_Static(*I);
     }
         return;
@@ -602,7 +615,7 @@ void CRender::add_leafs_Static(dxRender_Visual* pVisual)
             // Add all children, doesn't perform any tests
             I = pV->children.begin();
             E = pV->children.end();
-            for (; I != E; ++I)
+            for (; I != E; I++)
                 add_leafs_Static(*I);
         }
     }
@@ -651,10 +664,10 @@ BOOL CRender::add_Dynamic(dxRender_Visual* pVisual, u32 planes)
                 if (I._effect)
                     add_Dynamic(I._effect, planes);
                 for (xr_vector<dxRender_Visual*>::iterator pit = I._children_related.begin();
-                     pit != I._children_related.end(); ++pit)
+                     pit != I._children_related.end(); pit++)
                     add_Dynamic(*pit, planes);
                 for (xr_vector<dxRender_Visual*>::iterator pit = I._children_free.begin();
-                     pit != I._children_free.end(); ++pit)
+                     pit != I._children_free.end(); pit++)
                     add_Dynamic(*pit, planes);
             }
             else
@@ -662,10 +675,10 @@ BOOL CRender::add_Dynamic(dxRender_Visual* pVisual, u32 planes)
                 if (I._effect)
                     add_leafs_Dynamic(I._effect);
                 for (xr_vector<dxRender_Visual*>::iterator pit = I._children_related.begin();
-                     pit != I._children_related.end(); ++pit)
+                     pit != I._children_related.end(); pit++)
                     add_leafs_Dynamic(*pit);
                 for (xr_vector<dxRender_Visual*>::iterator pit = I._children_free.begin();
-                     pit != I._children_free.end(); ++pit)
+                     pit != I._children_free.end(); pit++)
                     add_leafs_Dynamic(*pit);
             }
         }
@@ -678,12 +691,12 @@ BOOL CRender::add_Dynamic(dxRender_Visual* pVisual, u32 planes)
         E = pV->children.end();
         if (fcvPartial == VIS)
         {
-            for (; I != E; ++I)
+            for (; I != E; I++)
                 add_Dynamic(*I, planes);
         }
         else
         {
-            for (; I != E; ++I)
+            for (; I != E; I++)
                 add_leafs_Dynamic(*I);
         }
     }
@@ -712,7 +725,7 @@ BOOL CRender::add_Dynamic(dxRender_Visual* pVisual, u32 planes)
             pV->CalculateWallmarks(); //. bug?
             I = pV->children.begin();
             E = pV->children.end();
-            for (; I != E; ++I)
+            for (; I != E; I++)
                 add_leafs_Dynamic(*I);
         }
         /*
@@ -755,7 +768,7 @@ void CRender::add_Static(dxRender_Visual* pVisual, u32 planes)
     case MT_PARTICLE_GROUP: {
         // Add all children, doesn't perform any tests
         PS::CParticleGroup* pG = (PS::CParticleGroup*)pVisual;
-        for (PS::CParticleGroup::SItemVecIt i_it = pG->items.begin(); i_it != pG->items.end(); ++i_it)
+        for (PS::CParticleGroup::SItemVecIt i_it = pG->items.begin(); i_it != pG->items.end(); i_it++)
         {
             PS::CParticleGroup::SItem& I = *i_it;
             if (fcvPartial == VIS)
@@ -763,10 +776,10 @@ void CRender::add_Static(dxRender_Visual* pVisual, u32 planes)
                 if (I._effect)
                     add_Dynamic(I._effect, planes);
                 for (xr_vector<dxRender_Visual*>::iterator pit = I._children_related.begin();
-                     pit != I._children_related.end(); ++pit)
+                     pit != I._children_related.end(); pit++)
                     add_Dynamic(*pit, planes);
                 for (xr_vector<dxRender_Visual*>::iterator pit = I._children_free.begin();
-                     pit != I._children_free.end(); ++pit)
+                     pit != I._children_free.end(); pit++)
                     add_Dynamic(*pit, planes);
             }
             else
@@ -774,10 +787,10 @@ void CRender::add_Static(dxRender_Visual* pVisual, u32 planes)
                 if (I._effect)
                     add_leafs_Dynamic(I._effect);
                 for (xr_vector<dxRender_Visual*>::iterator pit = I._children_related.begin();
-                     pit != I._children_related.end(); ++pit)
+                     pit != I._children_related.end(); pit++)
                     add_leafs_Dynamic(*pit);
                 for (xr_vector<dxRender_Visual*>::iterator pit = I._children_free.begin();
-                     pit != I._children_free.end(); ++pit)
+                     pit != I._children_free.end(); pit++)
                     add_leafs_Dynamic(*pit);
             }
         }
@@ -790,12 +803,12 @@ void CRender::add_Static(dxRender_Visual* pVisual, u32 planes)
         E = pV->children.end();
         if (fcvPartial == VIS)
         {
-            for (; I != E; ++I)
+            for (; I != E; I++)
                 add_Static(*I, planes);
         }
         else
         {
-            for (; I != E; ++I)
+            for (; I != E; I++)
                 add_leafs_Static(*I);
         }
     }
@@ -809,12 +822,12 @@ void CRender::add_Static(dxRender_Visual* pVisual, u32 planes)
         E = pV->children.end();
         if (fcvPartial == VIS)
         {
-            for (; I != E; ++I)
+            for (; I != E; I++)
                 add_Static(*I, planes);
         }
         else
         {
-            for (; I != E; ++I)
+            for (; I != E; I++)
                 add_leafs_Static(*I);
         }
     }
@@ -841,7 +854,7 @@ void CRender::add_Static(dxRender_Visual* pVisual, u32 planes)
             // Add all children, perform tests
             I = pV->children.begin();
             E = pV->children.end();
-            for (; I != E; ++I)
+            for (; I != E; I++)
                 add_leafs_Static(*I);
         }
     }

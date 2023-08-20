@@ -8,6 +8,8 @@
 
 #include "FBasicVisual.h"
 
+extern ENGINE_API float psHUD_FOV;
+
 using namespace R_dsgraph;
 
 extern float r_ssaDISCARD;
@@ -27,10 +29,8 @@ void __fastcall mapNormal_Render(mapNormalItems& N)
 {
     // *** DIRECT ***
     std::sort(N.begin(), N.end(), cmp_normal_items);
-    _NormalItem *I = &*N.begin(), *E = &*N.end();
-    for (; I != E; I++)
+    for (auto& Ni : N)
     {
-        _NormalItem& Ni = *I;
         float LOD = calcLOD(Ni.ssa, Ni.pVisual->vis.sphere.R);
 #ifdef USE_DX11
         RCache.LOD.set_LOD(LOD);
@@ -46,10 +46,8 @@ void __fastcall mapMatrix_Render(mapMatrixItems& N)
 {
     // *** DIRECT ***
     std::sort(N.begin(), N.end(), cmp_matrix_items);
-    _MatrixItem *I = &*N.begin(), *E = &*N.end();
-    for (; I != E; I++)
+    for (auto& Ni : N)
     {
-        _MatrixItem& Ni = *I;
         RCache.set_xform_world(Ni.Matrix);
         RImplementation.apply_object(Ni.pObject);
         RImplementation.apply_lmaterial();
@@ -520,15 +518,13 @@ void R_dsgraph_structure::r_dsgraph_render_graph(u32 _priority, bool _clear)
 // HUD render
 void R_dsgraph_structure::r_dsgraph_render_hud()
 {
-    extern ENGINE_API float psHUD_FOV;
-
     // PIX_EVENT(r_dsgraph_render_hud);
 
     // Change projection
     Fmatrix Pold = Device.mProject;
     Fmatrix FTold = Device.mFullTransform;
-    Device.mProject.build_projection(deg2rad(psHUD_FOV * Device.fFOV /* *Device.fASPECT*/), Device.fASPECT,
-        VIEWPORT_NEAR, g_pGamePersistent->Environment().CurrentEnv->far_plane);
+    Device.mProject.build_projection(deg2rad(psHUD_FOV < 1.f ? psHUD_FOV * Device.fFOV : psHUD_FOV), Device.fASPECT,
+        HUD_VIEWPORT_NEAR, g_pGamePersistent->Environment().CurrentEnv->far_plane);
 
     Device.mFullTransform.mul(Device.mProject, Device.mView);
     RCache.set_xform_project(Device.mProject);
@@ -542,35 +538,6 @@ void R_dsgraph_structure::r_dsgraph_render_hud()
     if (g_hud && g_hud->RenderActiveItemUIQuery())
         r_dsgraph_render_hud_ui(); // hud ui
 #endif
-    /*
-    if(g_hud && g_hud->RenderActiveItemUIQuery())
-    {
-#if	RENDER!=R_R1
-        // Targets, use accumulator for temporary storage
-        const ref_rt	rt_null;
-        //	Reset all rt.
-        //RCache.set_RT(0,	0);
-        RCache.set_RT(0,	1);
-        RCache.set_RT(0,	2);
-        //if (RImplementation.o.albedo_wo)	RCache.set_RT(RImplementation.Target->rt_Accumulator->pRT,	0);
-        //else								RCache.set_RT(RImplementation.Target->rt_Color->pRT,	0);
-        if (RImplementation.o.albedo_wo)	RImplementation.Target->u_setrt (RImplementation.Target->rt_Accumulator,
-rt_null,	rt_null,	HW.pBaseZB); else								RImplementation.Target->u_setrt
-(RImplementation.Target->rt_Color,			rt_null,	rt_null,	HW.pBaseZB);
-        //	View port is reset in DX9 when you change rt
-        rmNear						();
-#endif
-        g_hud->RenderActiveItemUI	();
-
-#if	RENDER!=R_R1
-        //RCache.set_RT(0,	0);
-        // Targets, use accumulator for temporary storage
-        if (RImplementation.o.albedo_wo)	RImplementation.Target->u_setrt		(RImplementation.Target->rt_Position,
-RImplementation.Target->rt_Normal,	RImplementation.Target->rt_Accumulator,	HW.pBaseZB); else
-RImplementation.Target->u_setrt		(RImplementation.Target->rt_Position,	RImplementation.Target->rt_Normal,
-RImplementation.Target->rt_Color,		HW.pBaseZB); #endif
-    }
-    */
 
     rmNormal();
 
@@ -584,13 +551,11 @@ void R_dsgraph_structure::r_dsgraph_render_hud_ui()
 {
     VERIFY(g_hud && g_hud->RenderActiveItemUIQuery());
 
-    extern ENGINE_API float psHUD_FOV;
-
     // Change projection
     Fmatrix Pold = Device.mProject;
     Fmatrix FTold = Device.mFullTransform;
-    Device.mProject.build_projection(deg2rad(psHUD_FOV * Device.fFOV /* *Device.fASPECT*/), Device.fASPECT,
-        VIEWPORT_NEAR, g_pGamePersistent->Environment().CurrentEnv->far_plane);
+    Device.mProject.build_projection(deg2rad(psHUD_FOV < 1.f ? psHUD_FOV * Device.fFOV : psHUD_FOV), Device.fASPECT,
+        HUD_VIEWPORT_NEAR, g_pGamePersistent->Environment().CurrentEnv->far_plane);
 
     Device.mFullTransform.mul(Device.mProject, Device.mView);
     RCache.set_xform_project(Device.mProject);
@@ -601,22 +566,10 @@ void R_dsgraph_structure::r_dsgraph_render_hud_ui()
     RCache.set_RT(0, 1);
     RCache.set_RT(0, 2);
 #if (RENDER == R_R3) || (RENDER == R_R4)
-    if (!RImplementation.o.dx10_msaa)
-    {
-        if (RImplementation.o.albedo_wo)
-            RImplementation.Target->u_setrt(RImplementation.Target->rt_Accumulator, rt_null, rt_null, HW.pBaseZB);
-        else
-            RImplementation.Target->u_setrt(RImplementation.Target->rt_Color, rt_null, rt_null, HW.pBaseZB);
-    }
+    if (RImplementation.o.albedo_wo)
+        RImplementation.Target->u_setrt(RImplementation.Target->rt_Accumulator, rt_null, rt_null, HW.pBaseZB);
     else
-    {
-        if (RImplementation.o.albedo_wo)
-            RImplementation.Target->u_setrt(
-                RImplementation.Target->rt_Accumulator, rt_null, rt_null, RImplementation.Target->rt_MSAADepth->pZRT);
-        else
-            RImplementation.Target->u_setrt(
-                RImplementation.Target->rt_Color, rt_null, rt_null, RImplementation.Target->rt_MSAADepth->pZRT);
-    }
+        RImplementation.Target->u_setrt(RImplementation.Target->rt_Color, rt_null, rt_null, HW.pBaseZB);
 #else // (RENDER==R_R3) || (RENDER==R_R4)
     if (RImplementation.o.albedo_wo)
         RImplementation.Target->u_setrt(RImplementation.Target->rt_Accumulator, rt_null, rt_null, HW.pBaseZB);
@@ -642,6 +595,26 @@ void R_dsgraph_structure::r_dsgraph_render_sorted()
     // Sorted (back to front)
     mapSorted.traverseRL(sorted_L1);
     mapSorted.clear();
+
+    // Change projection
+    Fmatrix Pold = Device.mProject;
+    Fmatrix FTold = Device.mFullTransform;
+    Device.mProject.build_projection(deg2rad(psHUD_FOV < 1.f ? psHUD_FOV * Device.fFOV : psHUD_FOV), Device.fASPECT,
+        HUD_VIEWPORT_NEAR, g_pGamePersistent->Environment().CurrentEnv->far_plane);
+
+    Device.mFullTransform.mul(Device.mProject, Device.mView);
+    RCache.set_xform_project(Device.mProject);
+
+    // Rendering
+    rmNear();
+    mapHUDSorted.traverseRL(sorted_L1);
+    mapHUDSorted.clear();
+    rmNormal();
+
+    // Restore projection
+    Device.mProject = Pold;
+    Device.mFullTransform = FTold;
+    RCache.set_xform_project(Device.mProject);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -653,15 +626,11 @@ void R_dsgraph_structure::r_dsgraph_render_emissive()
     mapEmissive.traverseLR(sorted_L1);
     mapEmissive.clear();
 
-    //	HACK: Calculate this only once
-
-    extern ENGINE_API float psHUD_FOV;
-
     // Change projection
     Fmatrix Pold = Device.mProject;
     Fmatrix FTold = Device.mFullTransform;
-    Device.mProject.build_projection(deg2rad(psHUD_FOV * Device.fFOV /* *Device.fASPECT*/), Device.fASPECT,
-        VIEWPORT_NEAR, g_pGamePersistent->Environment().CurrentEnv->far_plane);
+    Device.mProject.build_projection(deg2rad(psHUD_FOV < 1.f ? psHUD_FOV * Device.fFOV : psHUD_FOV), Device.fASPECT,
+        HUD_VIEWPORT_NEAR, g_pGamePersistent->Environment().CurrentEnv->far_plane);
 
     Device.mFullTransform.mul(Device.mProject, Device.mView);
     RCache.set_xform_project(Device.mProject);
@@ -679,6 +648,61 @@ void R_dsgraph_structure::r_dsgraph_render_emissive()
     Device.mFullTransform = FTold;
     RCache.set_xform_project(Device.mProject);
 #endif
+}
+
+// thx to K.D.
+//////////////////////////////////////////////////////////////////////////
+// HUD emissive render
+void R_dsgraph_structure::r_dsgraph_render_hud_emissive()
+{
+    ENGINE_API extern float psHUD_FOV;
+
+    // Change projection
+    Fmatrix Pold = Device.mProject;
+    Fmatrix FTold = Device.mFullTransform;
+    Device.mProject.build_projection(deg2rad(psHUD_FOV * Device.fFOV), Device.fASPECT, VIEWPORT_NEAR,
+        g_pGamePersistent->Environment().CurrentEnv->far_plane);
+
+    Device.mFullTransform.mul(Device.mProject, Device.mView);
+    RCache.set_xform_project(Device.mProject);
+
+    // Rendering
+    rmNear();
+    mapHUDEmissive.traverseLR(sorted_L1);
+    mapHUDEmissive.clear();
+    rmNormal();
+
+    // Restore projection
+    Device.mProject = Pold;
+    Device.mFullTransform = FTold;
+    RCache.set_xform_project(Device.mProject);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HUD sorted render
+void R_dsgraph_structure::r_dsgraph_render_hud_sorted()
+{
+    ENGINE_API extern float psHUD_FOV;
+
+    // Change projection
+    Fmatrix Pold = Device.mProject;
+    Fmatrix FTold = Device.mFullTransform;
+    Device.mProject.build_projection(deg2rad(psHUD_FOV * Device.fFOV), Device.fASPECT, VIEWPORT_NEAR,
+        g_pGamePersistent->Environment().CurrentEnv->far_plane);
+
+    Device.mFullTransform.mul(Device.mProject, Device.mView);
+    RCache.set_xform_project(Device.mProject);
+
+    // Rendering
+    rmNear();
+    mapHUDSorted.traverseRL(sorted_L1);
+    mapHUDSorted.clear();
+    rmNormal();
+
+    // Restore projection
+    Device.mProject = Pold;
+    Device.mFullTransform = FTold;
+    RCache.set_xform_project(Device.mProject);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -785,8 +809,8 @@ void R_dsgraph_structure::r_dsgraph_render_subspace(IRender_Sector* _sector, CFr
             }
         }
 #if RENDER != R_R1
-        if (g_pGameLevel && (phase == RImplementation.PHASE_SMAP) && ps_actor_shadow_flags.test(RFLAG_ACTOR_SHADOW))
-            g_hud->Render_Actor_Shadow(); // Swartz: actor shadow
+        if (g_pGameLevel && (phase == RImplementation.PHASE_SMAP))
+            g_hud->Render_Actor_Shadow(); // Actor Shadow
 #endif
     }
 
@@ -820,7 +844,7 @@ void R_dsgraph_structure::r_dsgraph_render_R1_box(IRender_Sector* _S, Fbox& BB, 
             FHierrarhyVisual* pV = (FHierrarhyVisual*)V;
             I = pV->children.begin();
             E = pV->children.end();
-            for (; I != E; ++I)
+            for (; I != E; I++)
             {
                 dxRender_Visual* T = *I;
                 if (BB.intersect(T->vis.box))
@@ -835,7 +859,7 @@ void R_dsgraph_structure::r_dsgraph_render_R1_box(IRender_Sector* _S, Fbox& BB, 
             pV->CalculateBones(TRUE);
             I = pV->children.begin();
             E = pV->children.end();
-            for (; I != E; ++I)
+            for (; I != E; I++)
             {
                 dxRender_Visual* T = *I;
                 if (BB.intersect(T->vis.box))
@@ -847,7 +871,7 @@ void R_dsgraph_structure::r_dsgraph_render_R1_box(IRender_Sector* _S, Fbox& BB, 
             FLOD* pV = (FLOD*)V;
             I = pV->children.begin();
             E = pV->children.end();
-            for (; I != E; ++I)
+            for (; I != E; I++)
             {
                 dxRender_Visual* T = *I;
                 if (BB.intersect(T->vis.box))
