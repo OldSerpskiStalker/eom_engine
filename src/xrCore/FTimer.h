@@ -7,17 +7,17 @@ class CTimer_paused;
 class XRCORE_API pauseMngr
 {
     xr_vector<CTimer_paused*> m_timers;
-    BOOL m_paused;
+    bool m_paused;
 
 public:
     pauseMngr();
-    BOOL Paused() { return m_paused; };
-    void Pause(BOOL b);
-    void Register(CTimer_paused* t);
-    void UnRegister(CTimer_paused* t);
+    bool Paused() { return m_paused; };
+    void Pause(bool b);
+    void Register(CTimer_paused& t);
+    void UnRegister(CTimer_paused& t);
 };
 
-extern XRCORE_API pauseMngr g_pauseMngr;
+extern XRCORE_API pauseMngr& g_pauseMngr();
 
 class XRCORE_API CTimerBase
 {
@@ -25,16 +25,18 @@ protected:
     u64 qwStartTime;
     u64 qwPausedTime;
     u64 qwPauseAccum;
-    BOOL bPause;
+    bool bPause;
 
 public:
-    CTimerBase() : qwStartTime(0), qwPausedTime(0), qwPauseAccum(0), bPause(FALSE) {}
+    CTimerBase() : qwStartTime(0), qwPausedTime(0), qwPauseAccum(0), bPause(false) {}
+
     ICF void Start()
     {
         if (bPause)
             return;
         qwStartTime = CPU::QPC() - qwPauseAccum;
     }
+
     ICF u64 GetElapsed_ticks() const
     {
         if (bPause)
@@ -42,6 +44,7 @@ public:
         else
             return CPU::QPC() - qwStartTime - CPU::qpc_overhead - qwPauseAccum;
     }
+
     IC u32 GetElapsed_ms() const { return u32(GetElapsed_ticks() * u64(1000) / CPU::qpc_freq); }
     IC float GetElapsed_sec() const
     {
@@ -54,6 +57,7 @@ public:
 #endif
         return _result;
     }
+
     IC void Dump() const { Msg("* Elapsed time (sec): %f", GetElapsed_sec()); }
 };
 
@@ -140,9 +144,11 @@ class XRCORE_API CTimer_paused_ex : public CTimer
 
 public:
     CTimer_paused_ex() {}
+
     virtual ~CTimer_paused_ex() {}
-    IC BOOL Paused() const { return bPause; }
-    IC void Pause(BOOL b)
+
+    IC bool Paused() const { return bPause; }
+    IC void Pause(const bool b)
     {
         if (bPause == b)
             return;
@@ -164,11 +170,12 @@ public:
 class XRCORE_API CTimer_paused : public CTimer_paused_ex
 {
 public:
-    CTimer_paused() { g_pauseMngr.Register(this); }
-    virtual ~CTimer_paused() { g_pauseMngr.UnRegister(this); }
+    CTimer_paused() { g_pauseMngr().Register(*this); }
+    virtual ~CTimer_paused() { g_pauseMngr().UnRegister(*this); }
 };
 
 extern XRCORE_API BOOL g_bEnableStatGather;
+
 class XRCORE_API CStatTimer
 {
 public:
@@ -189,6 +196,7 @@ public:
         count++;
         T.Start();
     }
+
     ICF void End()
     {
         if (!g_bEnableStatGather)

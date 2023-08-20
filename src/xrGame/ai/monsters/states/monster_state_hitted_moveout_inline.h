@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #define TEMPLATE_SPECIALIZATION template <typename _Object>
 #define CStateMonsterHittedMoveOutAbstract CStateMonsterHittedMoveOut<_Object>
@@ -17,7 +17,7 @@ void CStateMonsterHittedMoveOutAbstract::initialize()
 TEMPLATE_SPECIALIZATION
 void CStateMonsterHittedMoveOutAbstract::execute()
 {
-    // ïðîâåðèòü íà çàâåðøåíèå ïóòè
+    // Ã¯Ã°Ã®Ã¢Ã¥Ã°Ã¨Ã²Ã¼ Ã­Ã  Ã§Ã Ã¢Ã¥Ã°Ã¸Ã¥Ã­Ã¨Ã¥ Ã¯Ã³Ã²Ã¨
     if (object->control().path_builder().detail().time_path_built() > time_state_started)
     {
         if (object->control().path_builder().is_path_end(DIST_TO_PATH_END))

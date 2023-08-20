@@ -14,6 +14,7 @@ class CStatePsyDogHide : public CState<_Object>
 
 public:
     CStatePsyDogHide(_Object* obj) : inherited(obj) {}
+
     virtual ~CStatePsyDogHide() {}
 
     virtual void initialize();

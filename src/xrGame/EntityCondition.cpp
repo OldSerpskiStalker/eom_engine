@@ -176,7 +176,7 @@ void CEntityCondition::ChangeBleeding(const float percent)
     for (WOUND_VECTOR_IT it = m_WoundVector.begin(); m_WoundVector.end() != it; ++it)
     {
         (*it)->Incarnation(percent, m_fMinWoundSize);
-        if (0 == (*it)->TotalSize())
+        if (fis_zero((*it)->TotalSize()))
             (*it)->SetDestroy(true);
     }
 }
@@ -346,29 +346,21 @@ CWound* CEntityCondition::AddWound(float hit_power, ALife::EHitType hit_type, u1
 
     // запомнить кость по которой ударили и силу удара
     WOUND_VECTOR_IT it = m_WoundVector.begin();
-    for (; it != m_WoundVector.end(); it++)
+    WOUND_VECTOR_IT en = m_WoundVector.end();
+    for (; it != en; ++it)
     {
-        if ((*it)->GetBoneNum() == element)
-            break;
+        CWound* pWound = (*it);
+        if (pWound->GetBoneNum() == element)
+        {
+            pWound->AddHit(hit_power * ::Random.randF(0.5f, 1.5f), hit_type);
+            return pWound;
+        }
     }
 
-    CWound* pWound = NULL;
+    CWound* pWound = xr_new<CWound>(element);
+    pWound->AddHit(hit_power * ::Random.randF(0.5f, 1.5f), hit_type);
+    m_WoundVector.push_back(pWound);
 
-    // новая рана
-    if (it == m_WoundVector.end())
-    {
-        pWound = xr_new<CWound>(element);
-        pWound->AddHit(hit_power * ::Random.randF(0.5f, 1.5f), hit_type);
-        m_WoundVector.push_back(pWound);
-    }
-    // старая
-    else
-    {
-        pWound = *it;
-        pWound->AddHit(hit_power * ::Random.randF(0.5f, 1.5f), hit_type);
-    }
-
-    VERIFY(pWound);
     return pWound;
 }
 
@@ -388,74 +380,111 @@ CWound* CEntityCondition::ConditionHit(SHit* pHDS)
 
     switch (pHDS->hit_type)
     {
+    // Учитываем иммунитеты
+    // Пси-воздействие
     case ALife::eHitTypeTelepatic:
+        // Хит = хит - защита от бустера
         hit_power -= m_fBoostTelepaticProtection;
+        // Изменён алгоритм учёта иммунитета
+        // Хит = хит * базовый иммунитет персонажа * (1 - иммунитет от бустеров)
+        hit_power *= GetHitImmunity(pHDS->hit_type) * (1 - m_fBoostTelepaticImmunity);
+        // Фильтр значения хита. Если отрицательный, то зануляем
         if (hit_power < 0.f)
             hit_power = 0.f;
-        hit_power *= GetHitImmunity(pHDS->hit_type) - m_fBoostTelepaticImmunity;
+        // Меняем пси-здоровье
         ChangePsyHealth(-hit_power);
+        // Наносим ущерб здоровью
         m_fHealthLost = hit_power * m_fHealthHitPart;
         m_fDeltaHealth -= CanBeHarmed() ? m_fHealthLost : 0;
+        // Снижаем запас сил
         m_fDeltaPower -= hit_power * m_fPowerHitPart;
+        // Кровотечение
         bAddWound = false;
         break;
     case ALife::eHitTypeLightBurn:
+    // Термическое воздействие
     case ALife::eHitTypeBurn:
-        hit_power *= GetHitImmunity(ALife::eHitTypeBurn) - m_fBoostBurnImmunity;
+        // DEBUG
+        // Вывод параметров иммунитета (использовалось на этапе изучения механизма нанесения хитов)
+        // Все функции работают; при необходимости можно раскомментировать и отследить иммунитет через консоль
+        // float own_burn_immunity = GetHitImmunity(ALife::eHitTypeBurn);
+        // float boost_burn_immunity = m_fBoostBurnImmunity;
+        // Log("own_burn_immunity = ", GetHitImmunity(ALife::eHitTypeBurn));
+        // Log("boost_burn_immunity = ", m_fBoostBurnImmunity);
+        // Log("hit_power = ", hit_power);
+        // DEBUG
+        hit_power *= GetHitImmunity(ALife::eHitTypeBurn) * (1 - m_fBoostBurnImmunity);
+        if (hit_power < 0.f)
+            hit_power = 0.f;
         m_fHealthLost = hit_power * m_fHealthHitPart * m_fHitBoneScale;
         m_fDeltaHealth -= CanBeHarmed() ? m_fHealthLost : 0;
         m_fDeltaPower -= hit_power * m_fPowerHitPart;
-        //		bAddWound		=  is_special_hit_2_self;
         bAddWound = false;
         break;
+    // Химический ожог
     case ALife::eHitTypeChemicalBurn:
         hit_power -= m_fBoostChemicalBurnProtection;
+        hit_power *= GetHitImmunity(pHDS->hit_type) * (1 - m_fBoostChemicalBurnImmunity);
         if (hit_power < 0.f)
             hit_power = 0.f;
-        hit_power *= GetHitImmunity(pHDS->hit_type) - m_fBoostChemicalBurnImmunity;
         m_fHealthLost = hit_power * m_fHealthHitPart;
         m_fDeltaHealth -= CanBeHarmed() ? m_fHealthLost : 0;
         m_fDeltaPower -= hit_power * m_fPowerHitPart;
         bAddWound = false;
         break;
+    // Поражение током
     case ALife::eHitTypeShock:
-        hit_power *= GetHitImmunity(pHDS->hit_type) - m_fBoostShockImmunity;
+        hit_power *= GetHitImmunity(pHDS->hit_type) * (1 - m_fBoostShockImmunity);
         m_fHealthLost = hit_power * m_fHealthHitPart;
         m_fDeltaHealth -= CanBeHarmed() ? m_fHealthLost : 0;
         m_fDeltaPower -= hit_power * m_fPowerHitPart;
         bAddWound = false;
         break;
+    // Воздействие радиации
     case ALife::eHitTypeRadiation:
         hit_power -= m_fBoostRadiationProtection;
+        hit_power *= GetHitImmunity(pHDS->hit_type) * (1 - m_fBoostRadiationImmunity);
         if (hit_power < 0.f)
             hit_power = 0.f;
-        hit_power *= GetHitImmunity(pHDS->hit_type) - m_fBoostRadiationImmunity;
         m_fDeltaRadiation += hit_power;
         bAddWound = false;
         return NULL;
         break;
+    // Физические воздействия
+    // Взрыв
     case ALife::eHitTypeExplosion:
-        hit_power *= GetHitImmunity(pHDS->hit_type) - m_fBoostExplImmunity;
+        hit_power *= GetHitImmunity(pHDS->hit_type) * (1 - m_fBoostExplImmunity);
+        if (hit_power < 0.f)
+            hit_power = 0.f;
         m_fHealthLost = hit_power * m_fHealthHitPart;
         m_fDeltaHealth -= CanBeHarmed() ? m_fHealthLost : 0;
         m_fDeltaPower -= hit_power * m_fPowerHitPart;
         break;
+    // Огнестрел
     case ALife::eHitTypeStrike:
         //	case ALife::eHitTypePhysicStrike:
-        hit_power *= GetHitImmunity(pHDS->hit_type) - m_fBoostStrikeImmunity;
+        hit_power *= GetHitImmunity(pHDS->hit_type) * (1 - m_fBoostStrikeImmunity);
+        if (hit_power < 0.f)
+            hit_power = 0.f;
         m_fHealthLost = hit_power * m_fHealthHitPart;
         m_fDeltaHealth -= CanBeHarmed() ? m_fHealthLost : 0;
         m_fDeltaPower -= hit_power * m_fPowerHitPart;
         bAddWound = false;
         break;
+    // Ещё один огнестрел О_о
     case ALife::eHitTypeFireWound:
-        hit_power *= GetHitImmunity(pHDS->hit_type) - m_fBoostFireWoundImmunity;
+        hit_power *= GetHitImmunity(pHDS->hit_type) * (1 - m_fBoostFireWoundImmunity);
+        if (hit_power < 0.f)
+            hit_power = 0.f;
         m_fHealthLost = hit_power * m_fHealthHitPart * m_fHitBoneScale;
         m_fDeltaHealth -= CanBeHarmed() ? m_fHealthLost : 0;
         m_fDeltaPower -= hit_power * m_fPowerHitPart;
         break;
+    // Разрыв (тип воздействия мутантов)
     case ALife::eHitTypeWound:
-        hit_power *= GetHitImmunity(pHDS->hit_type) - m_fBoostWoundImmunity;
+        hit_power *= GetHitImmunity(pHDS->hit_type) * (1 - m_fBoostWoundImmunity);
+        if (hit_power < 0.f)
+            hit_power = 0.f;
         m_fHealthLost = hit_power * m_fHealthHitPart * m_fHitBoneScale;
         m_fDeltaHealth -= CanBeHarmed() ? m_fHealthLost : 0;
         m_fDeltaPower -= hit_power * m_fPowerHitPart;
@@ -465,6 +494,7 @@ CWound* CEntityCondition::ConditionHit(SHit* pHDS)
     }
     break;
     }
+    // Lex Addon (correct by Suhar_) 8.07.2016		(end)
 
     if (bDebug && !is_special_hit_2_self)
     {
@@ -485,12 +515,12 @@ CWound* CEntityCondition::ConditionHit(SHit* pHDS)
 
 float CEntityCondition::BleedingSpeed()
 {
-    float bleeding_speed = 0;
+    float bleeding_speed = 0.f;
 
     for (WOUND_VECTOR_IT it = m_WoundVector.begin(); m_WoundVector.end() != it; ++it)
         bleeding_speed += (*it)->TotalSize();
-
-    return (m_WoundVector.empty() ? 0.f : bleeding_speed / m_WoundVector.size());
+    clamp(bleeding_speed, 0.0f, 10.f);
+    return bleeding_speed;
 }
 
 void CEntityCondition::UpdateHealth()
@@ -610,6 +640,7 @@ bool CEntityCondition::ApplyInfluence(const SMedicineInfluenceValues& V, const s
     ChangeHealth(V.fHealth);
     ChangePower(V.fPower);
     ChangeSatiety(V.fSatiety);
+    ChangeThirst(V.fThirst);
     ChangeRadiation(V.fRadiation);
     ChangeBleeding(V.fWoundsHeal);
     SetMaxPower(GetMaxPower() + V.fMaxPowerUp);
@@ -624,6 +655,7 @@ void SMedicineInfluenceValues::Load(const shared_str& sect)
     fHealth = pSettings->r_float(sect.c_str(), "eat_health");
     fPower = pSettings->r_float(sect.c_str(), "eat_power");
     fSatiety = pSettings->r_float(sect.c_str(), "eat_satiety");
+    fThirst = pSettings->r_float(sect.c_str(), "eat_thirst");
     fRadiation = pSettings->r_float(sect.c_str(), "eat_radiation");
     fWoundsHeal = pSettings->r_float(sect.c_str(), "wounds_heal_perc");
     clamp(fWoundsHeal, 0.f, 1.f);

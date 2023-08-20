@@ -1,9 +1,10 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "telekinesis.h"
 #include "../../entity_alive.h"
 #include "../../../xrphysics/PhysicsShell.h"
 
 CTelekinesis::CTelekinesis() { active = false; }
+
 CTelekinesis::~CTelekinesis()
 {
     for (TELE_OBJECTS_IT it = objects.begin(); it != objects.end(); ++it)
@@ -25,7 +26,7 @@ CTelekineticObject* CTelekinesis::activate(
         return 0;
     }
 
-    // добавить объект
+    // Г¤Г®ГЎГ ГўГЁГІГј Г®ГЎГєГҐГЄГІ
     objects.push_back(tele_object);
 
     if (!objects.empty())
@@ -34,11 +35,12 @@ CTelekineticObject* CTelekinesis::activate(
 }
 
 void CTelekinesis::clear() { objects.clear(); }
+
 void CTelekinesis::deactivate()
 {
     active = false;
 
-    // отпустить все объекты
+    // Г®ГІГЇГіГ±ГІГЁГІГј ГўГ±ГҐ Г®ГЎГєГҐГЄГІГ»
     //
     for (TELE_OBJECTS_IT it = objects.begin(); it != objects.end(); ++it)
     {
@@ -54,7 +56,7 @@ void CTelekinesis::clear_deactivate()
 {
     active = false;
 
-    // отпустить все объекты
+    // Г®ГІГЇГіГ±ГІГЁГІГј ГўГ±ГҐ Г®ГЎГєГҐГЄГІГ»
     //
     for (u32 i = 0; i < objects.size(); i++)
     {
@@ -69,17 +71,19 @@ struct SFindPred
 {
     CPhysicsShellHolder* obj;
     SFindPred(CPhysicsShellHolder* aobj) { obj = aobj; }
+
     bool operator()(CTelekineticObject* tele_obj) { return tele_obj->get_object() == obj; }
 };
+
 void CTelekinesis::deactivate(CPhysicsShellHolder* obj)
 {
-    // найти объект
+    // Г­Г Г©ГІГЁ Г®ГЎГєГҐГЄГІ
 
     TELE_OBJECTS_IT it = std::find_if(objects.begin(), objects.end(), SFindPred(obj));
     if (it == objects.end())
         return;
 
-    // отпустить объект
+    // Г®ГІГЇГіГ±ГІГЁГІГј Г®ГЎГєГҐГЄГІ
     (*it)->release();
 
     // remove from list, delete...
@@ -88,7 +92,7 @@ void CTelekinesis::deactivate(CPhysicsShellHolder* obj)
 
 void CTelekinesis::remove_object(CPhysicsShellHolder* obj)
 {
-    // найти объект
+    // Г­Г Г©ГІГЁ Г®ГЎГєГҐГЄГІ
     TELE_OBJECTS_IT it = std::find_if(objects.begin(), objects.end(), SFindPred(obj));
     if (it == objects.end())
         return;
@@ -101,10 +105,10 @@ void CTelekinesis::remove_object(TELE_OBJECTS_IT it)
     // release memory
     xr_delete(*it);
 
-    // удалить
+    // ГіГ¤Г Г«ГЁГІГј
     objects.erase(it);
 
-    // проверить на полную деактивацию
+    // ГЇГ°Г®ГўГҐГ°ГЁГІГј Г­Г  ГЇГ®Г«Г­ГіГѕ Г¤ГҐГ ГЄГІГЁГўГ Г¶ГЁГѕ
     if (objects.empty())
     {
         clear();
@@ -112,6 +116,7 @@ void CTelekinesis::remove_object(TELE_OBJECTS_IT it)
         active = false;
     }
 }
+
 void CTelekinesis::fire_all(const Fvector& target)
 {
     if (!active)
@@ -123,16 +128,16 @@ void CTelekinesis::fire_all(const Fvector& target)
     deactivate();
 }
 
-// бросить объект 'obj' в позицию 'target' с учетом коэф силы
+// ГЎГ°Г®Г±ГЁГІГј Г®ГЎГєГҐГЄГІ 'obj' Гў ГЇГ®Г§ГЁГ¶ГЁГѕ 'target' Г± ГіГ·ГҐГІГ®Г¬ ГЄГ®ГЅГґ Г±ГЁГ«Г»
 void CTelekinesis::fire(CPhysicsShellHolder* obj, const Fvector& target, float power)
 {
-    // найти объект
+    // Г­Г Г©ГІГЁ Г®ГЎГєГҐГЄГІ
 
     TELE_OBJECTS_IT it = std::find_if(objects.begin(), objects.end(), SFindPred(obj));
     if (it == objects.end())
         return;
 
-    // бросить объект
+    // ГЎГ°Г®Г±ГЁГІГј Г®ГЎГєГҐГЄГІ
     (*it)->fire(target, power);
 }
 
@@ -142,13 +147,13 @@ void CTelekinesis::fire_t(CPhysicsShellHolder* obj, const Fvector& target, float
     if (it == objects.end())
         return;
 
-    // бросить объект
+    // ГЎГ°Г®Г±ГЁГІГј Г®ГЎГєГҐГЄГІ
     (*it)->fire_t(target, time);
 }
 
 bool CTelekinesis::is_active_object(CPhysicsShellHolder* obj)
 {
-    // найти объект
+    // Г­Г Г©ГІГЁ Г®ГЎГєГҐГЄГІ
     TELE_OBJECTS_IT it = std::find_if(objects.begin(), objects.end(), SFindPred(obj));
     if (it == objects.end())
         return false;
@@ -161,7 +166,7 @@ void CTelekinesis::schedule_update()
     if (!active)
         return;
 
-    // обновить состояние объектов
+    // Г®ГЎГ­Г®ГўГЁГІГј Г±Г®Г±ГІГ®ГїГ­ГЁГҐ Г®ГЎГєГҐГЄГІГ®Гў
     for (u32 i = 0; i < objects.size(); i++)
     {
         CTelekineticObject* cur_obj = objects[i];
@@ -195,7 +200,7 @@ static bool RemovePred(CTelekineticObject* tele_object)
 
 void CTelekinesis::clear_notrelevant()
 {
-    // убрать все объеты со старыми параметрами
+    // ГіГЎГ°Г ГІГј ГўГ±ГҐ Г®ГЎГєГҐГІГ» Г±Г® Г±ГІГ Г°Г»Г¬ГЁ ГЇГ Г°Г Г¬ГҐГІГ°Г Г¬ГЁ
     objects.erase(std::remove_if(objects.begin(), objects.end(), &RemovePred), objects.end());
 }
 
@@ -228,5 +233,5 @@ u32 CTelekinesis::get_objects_count()
     return count;
 }
 
-// объект был удален - удалить все связи на объект
+// Г®ГЎГєГҐГЄГІ ГЎГ»Г« ГіГ¤Г Г«ГҐГ­ - ГіГ¤Г Г«ГЁГІГј ГўГ±ГҐ Г±ГўГїГ§ГЁ Г­Г  Г®ГЎГєГҐГЄГІ
 void CTelekinesis::remove_links(CObject* O) { remove_object(smart_cast<CPhysicsShellHolder*>(O)); }

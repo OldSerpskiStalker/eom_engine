@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "snork.h"
 #include "snork_jump.h"
 // #include "../jump_ability.h"
@@ -74,14 +74,14 @@
 //	Fvector target_position;
 //	target->Center				(target_position);
 //
-//	// ïîëó÷èòü âåêòîð íàïðàâëåíèÿ è åãî ìèð óãîë
+//	// Ã¯Ã®Ã«Ã³Ã·Ã¨Ã²Ã¼ Ã¢Ã¥ÃªÃ²Ã®Ã° Ã­Ã Ã¯Ã°Ã Ã¢Ã«Ã¥Ã­Ã¨Ã¿ Ã¨ Ã¥Ã£Ã® Ã¬Ã¨Ã° Ã³Ã£Ã®Ã«
 //	Fvector		dir;
 //	float		dir_yaw, dir_pitch;
 //
 //	dir.sub		(target_position, source_position);
 //	dir.getHP	(dir_yaw, dir_pitch);
 //
-//	// ïðîâåðêà íà angle è íà dist
+//	// Ã¯Ã°Ã®Ã¢Ã¥Ã°ÃªÃ  Ã­Ã  angle Ã¨ Ã­Ã  dist
 //	float yaw_current, yaw_target;
 //	m_object->control().direction().get_heading(yaw_current, yaw_target);
 //	if (angle_difference(yaw_current, -dir_yaw) < PI_DIV_6) {
@@ -107,8 +107,8 @@
 //	float			yaw, pitch;
 //	Fvector().sub	(m_target_object->Position(), m_object->Position()).getHP(yaw, pitch);
 //
-//	// ïîëó÷èòü âåêòîð íàïðàâëåíèÿ è åãî ìèð óãîë
-//	//// ïðîâåðêà íà angle è íà dist
+//	// Ã¯Ã®Ã«Ã³Ã·Ã¨Ã²Ã¼ Ã¢Ã¥ÃªÃ²Ã®Ã° Ã­Ã Ã¯Ã°Ã Ã¢Ã«Ã¥Ã­Ã¨Ã¿ Ã¨ Ã¥Ã£Ã® Ã¬Ã¨Ã° Ã³Ã£Ã®Ã«
+//	//// Ã¯Ã°Ã®Ã¢Ã¥Ã°ÃªÃ  Ã­Ã  angle Ã¨ Ã­Ã  dist
 //	//if (angle_difference(m_object->movement().m_body.current.yaw, -yaw) < PI_DIV_2) {
 //	//	return;
 //	//}

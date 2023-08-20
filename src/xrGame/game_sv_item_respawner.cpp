@@ -12,6 +12,7 @@ item_respawn_manager::spawn_item::spawn_item()
     last_spawn_time = 0;
     last_game_id = u16(-1);
 }
+
 item_respawn_manager::spawn_item::spawn_item(u32 r_time)
 {
     item_object = NULL;
@@ -61,16 +62,15 @@ item_respawn_manager::~item_respawn_manager()
     clear_respawns();
     clear_respawn_sections();
 }
+
 /*
 void item_respawn_manager::load_respawn_items(shared_str const section)
 {
     clear_respawns();
     CInifile*	level_ini_file	= Level().pLevel;
     R_ASSERT2	(level_ini_file, "level ini file not initialized");
-
     if (!level_ini_file->section_exist(section.c_str()))
         return;
-
     CInifile::Sect resp_sect	= level_ini_file->r_section(section.c_str());
 
     typedef CInifile::Items::iterator sect_iter;
@@ -82,7 +82,6 @@ void item_respawn_manager::load_respawn_items(shared_str const section)
         m_respawns.insert(std::make_pair(i->first, spawn_item(temp_int * 1000)));
     }
 }
-
 void item_respawn_manager::check_to_spawn(CSE_Abstract* item)
 {
     R_ASSERT(item);

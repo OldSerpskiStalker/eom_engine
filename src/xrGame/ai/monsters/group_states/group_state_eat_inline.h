@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "../states/state_data.h"
 #include "../states/state_move_to_point.h"
@@ -203,7 +203,7 @@ void CStateGroupEatAbstract::setup_substates()
 
     if (current_substate == eStateEat_CorpseApproachRun)
     {
-        // Îïðåäåëèòü ïîçèöèþ áëèæàéøåé áîíû ó òðóïà
+        // ÃŽÃ¯Ã°Ã¥Ã¤Ã¥Ã«Ã¨Ã²Ã¼ Ã¯Ã®Ã§Ã¨Ã¶Ã¨Ã¾ Ã¡Ã«Ã¨Ã¦Ã Ã©Ã¸Ã¥Ã© Ã¡Ã®Ã­Ã» Ã³ Ã²Ã°Ã³Ã¯Ã 
         Fvector nearest_bone_pos;
         const CEntityAlive* corpse = object->EatedCorpse;
         if ((corpse->m_pPhysicsShell == NULL) || (!corpse->m_pPhysicsShell->isActive()))
@@ -279,7 +279,7 @@ void CStateGroupEatAbstract::setup_substates()
 
     if (current_substate == eStateEat_CorpseApproachWalk)
     {
-        // Îïðåäåëèòü ïîçèöèþ áëèæàéøåé áîíû ó òðóïà
+        // ÃŽÃ¯Ã°Ã¥Ã¤Ã¥Ã«Ã¨Ã²Ã¼ Ã¯Ã®Ã§Ã¨Ã¶Ã¨Ã¾ Ã¡Ã«Ã¨Ã¦Ã Ã©Ã¸Ã¥Ã© Ã¡Ã®Ã­Ã» Ã³ Ã²Ã°Ã³Ã¯Ã 
         Fvector nearest_bone_pos;
         const CEntityAlive* corpse = object->EatedCorpse;
 

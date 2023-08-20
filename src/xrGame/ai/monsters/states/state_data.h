@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 //////////////////////////////////////////////////////////////////////////
 // SStateDataAction
@@ -55,7 +55,7 @@ struct SStateDataMoveToPoint
 //////////////////////////////////////////////////////////////////////////
 struct SStateDataMoveToPointEx : public SStateDataMoveToPoint
 {
-    u32 time_to_rebuild; // u32(-1) - не перестраивать, 0-по-умолчанию, ...
+    u32 time_to_rebuild; // u32(-1) - Г­ГҐ ГЇГҐГ°ГҐГ±ГІГ°Г ГЁГўГ ГІГј, 0-ГЇГ®-ГіГ¬Г®Г«Г·Г Г­ГЁГѕ, ...
 
     SStateDataMoveToPointEx() { time_to_rebuild = u32(-1); }
 };

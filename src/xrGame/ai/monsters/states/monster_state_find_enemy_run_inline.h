@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #define TEMPLATE_SPECIALIZATION template <typename _Object>
 
@@ -27,7 +27,7 @@ void CStateMonsterFindEnemyRunAbstract::initialize()
     Fvector test_position;
     test_position.mad(target_point, dir, 10.f);
 
-    // провериь возможность пробежать дальше
+    // ГЇГ°Г®ГўГҐГ°ГЁГј ГўГ®Г§Г¬Г®Г¦Г­Г®Г±ГІГј ГЇГ°Г®ГЎГҐГ¦Г ГІГј Г¤Г Г«ГјГёГҐ
     if (ai().level_graph().valid_vertex_position(test_position))
     {
         u32 vertex_id = ai().level_graph().vertex_id(test_position);

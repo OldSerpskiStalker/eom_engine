@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 class CBaseMonster;
 class CEntityAlive;
 
@@ -26,12 +26,12 @@ public:
     void init_external(CBaseMonster* obj) { m_object = obj; }
     IC void load(LPCSTR section);
 
-    // инициализировано состояние атаки
+    // ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§ГЁГ°Г®ГўГ Г­Г® Г±Г®Г±ГІГ®ГїГ­ГЁГҐ Г ГІГ ГЄГЁ
     IC void init_attack();
     void on_hit_attempt(bool hit_success);
 
-    // Получить расстояние от fire_bone до врага
-    // Выполнить RayQuery от fire_bone в enemy.center
+    // ГЏГ®Г«ГіГ·ГЁГІГј Г°Г Г±Г±ГІГ®ГїГ­ГЁГҐ Г®ГІ fire_bone Г¤Г® ГўГ°Г ГЈГ 
+    // Г‚Г»ГЇГ®Г«Г­ГЁГІГј RayQuery Г®ГІ fire_bone Гў enemy.center
     float distance_to_enemy(const CEntityAlive* enemy);
 
     IC float get_min_distance();

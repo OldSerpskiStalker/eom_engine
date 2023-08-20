@@ -1,4 +1,4 @@
-#include "pch_script.h"
+ï»¿#include "pch_script.h"
 #include "monster_enemy_memory.h"
 #include "BaseMonster/base_monster.h"
 #include "../../memory_manager.h"
@@ -58,7 +58,7 @@ void CMonsterEnemyMemory::update()
         }
     }
 
-    if (monster->SoundMemory.IsRememberSound())
+    if (monster->SoundMemory.IsRememberSound() && g_actor && g_actor->memory().visual().visible_now(monster))
     {
         SoundElem sound;
         bool dangerous;
@@ -67,12 +67,11 @@ void CMonsterEnemyMemory::update()
         {
             if (CEntityAlive const* enemy = smart_cast<CEntityAlive const*>(sound.who))
             {
-                float const xz_dist = monster->Position().distance_to_xz(g_actor->Position());
-                float const y_dist = _abs(monster->Position().y - g_actor->Position().y);
+                float const xz_dist = monster->Position().distance_to_xz(enemy->Position());
+                float const y_dist = _abs(monster->Position().y - enemy->Position().y);
 
                 if (monster->CCustomMonster::useful(&monster->memory().enemy(), enemy) && y_dist < 10 &&
-                    xz_dist < monster->get_feel_enemy_who_made_sound_max_distance() &&
-                    g_actor->memory().visual().visible_now(monster))
+                    xz_dist < monster->get_feel_enemy_who_made_sound_max_distance())
                 {
                     add_enemy(enemy);
 
@@ -110,10 +109,10 @@ void CMonsterEnemyMemory::update()
         }
     }
 
-    // óäàëèòü óñòàðåâøèõ âðàãîâ
+    // Ã³Ã¤Ã Ã«Ã¨Ã²Ã¼ Ã³Ã±Ã²Ã Ã°Ã¥Ã¢Ã¸Ã¨Ãµ Ã¢Ã°Ã Ã£Ã®Ã¢
     remove_non_actual();
 
-    // îáíîâèòü îïàñíîñòü
+    // Ã®Ã¡Ã­Ã®Ã¢Ã¨Ã²Ã¼ Ã®Ã¯Ã Ã±Ã­Ã®Ã±Ã²Ã¼
     for (ENEMIES_MAP_IT it = m_objects.begin(); it != m_objects.end(); it++)
     {
         u8 relation_value = u8(monster->tfGetRelationType(it->first));
@@ -133,12 +132,12 @@ void CMonsterEnemyMemory::add_enemy(const CEntityAlive* enemy)
     ENEMIES_MAP_IT it = m_objects.find(enemy);
     if (it != m_objects.end())
     {
-        // îáíîâèòü äàííûå î âðàãå
+        // Ã®Ã¡Ã­Ã®Ã¢Ã¨Ã²Ã¼ Ã¤Ã Ã­Ã­Ã»Ã¥ Ã® Ã¢Ã°Ã Ã£Ã¥
         it->second = enemy_info;
     }
     else
     {
-        // äîáàâèòü âðàãà â ñïèñîê îáúåêòîâ
+        // Ã¤Ã®Ã¡Ã Ã¢Ã¨Ã²Ã¼ Ã¢Ã°Ã Ã£Ã  Ã¢ Ã±Ã¯Ã¨Ã±Ã®Ãª Ã®Ã¡ÃºÃ¥ÃªÃ²Ã®Ã¢
         m_objects.insert(mk_pair(enemy, enemy_info));
     }
 }
@@ -154,13 +153,13 @@ void CMonsterEnemyMemory::add_enemy(const CEntityAlive* enemy, const Fvector& po
     ENEMIES_MAP_IT it = m_objects.find(enemy);
     if (it != m_objects.end())
     {
-        // îáíîâèòü äàííûå î âðàãå
+        // Ã®Ã¡Ã­Ã®Ã¢Ã¨Ã²Ã¼ Ã¤Ã Ã­Ã­Ã»Ã¥ Ã® Ã¢Ã°Ã Ã£Ã¥
         if (it->second.time < enemy_info.time)
             it->second = enemy_info;
     }
     else
     {
-        // äîáàâèòü âðàãà â ñïèñîê îáúåêòîâ
+        // Ã¤Ã®Ã¡Ã Ã¢Ã¨Ã²Ã¼ Ã¢Ã°Ã Ã£Ã  Ã¢ Ã±Ã¯Ã¨Ã±Ã®Ãª Ã®Ã¡ÃºÃ¥ÃªÃ²Ã®Ã¢
         m_objects.insert(mk_pair(enemy, enemy_info));
     }
 }
@@ -169,12 +168,12 @@ void CMonsterEnemyMemory::remove_non_actual()
 {
     TTime cur_time = Device.dwTimeGlobal;
 
-    // óäàëèòü 'ñòàðûõ' âðàãîâ è òåõ, ðàññòîÿíèå äî êîòîðûõ > 30ì è äð.
+    // Ã³Ã¤Ã Ã«Ã¨Ã²Ã¼ 'Ã±Ã²Ã Ã°Ã»Ãµ' Ã¢Ã°Ã Ã£Ã®Ã¢ Ã¨ Ã²Ã¥Ãµ, Ã°Ã Ã±Ã±Ã²Ã®Ã¿Ã­Ã¨Ã¥ Ã¤Ã® ÃªÃ®Ã²Ã®Ã°Ã»Ãµ > 30Ã¬ Ã¨ Ã¤Ã°.
     for (ENEMIES_MAP_IT it = m_objects.begin(), nit; it != m_objects.end(); it = nit)
     {
         nit = it;
         ++nit;
-        // ïðîâåðèòü óñëîâèÿ óäàëåíèÿ
+        // Ã¯Ã°Ã®Ã¢Ã¥Ã°Ã¨Ã²Ã¼ Ã³Ã±Ã«Ã®Ã¢Ã¨Ã¿ Ã³Ã¤Ã Ã«Ã¥Ã­Ã¨Ã¿
         if (!it->first || !it->first->g_Alive() || it->first->getDestroy() ||
             (it->second.time + time_memory < cur_time) || (it->first->g_Team() == monster->g_Team()) ||
             !monster->memory().enemy().is_useful(it->first))

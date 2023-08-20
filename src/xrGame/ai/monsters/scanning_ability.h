@@ -47,6 +47,7 @@ public:
     void disable();
 
     virtual void on_scan_success() {}
+
     virtual void on_scanning() {}
 
 private:

@@ -5,7 +5,6 @@
 
 namespace file_transfer
 {
-
 class filereceiver_node
 {
 private:
@@ -20,6 +19,7 @@ private:
 public:
     filereceiver_node(shared_str const& file_name, receiving_state_callback_t const& callback);
     filereceiver_node(CMemoryWriter* mem_writer, receiving_state_callback_t const& callback);
+
     filereceiver_node& operator=(filereceiver_node const& copy) { NODEFAULT; };
     ~filereceiver_node();
 
@@ -36,7 +36,6 @@ public:
 }; // class filereceiver_node
 
 void split_received_to_buffers(u8* data_ptr, u32 data_size, buffer_vector<const_buffer_t>& dst_buffers);
-
 } // namespace file_transfer
 
 #endif // #ifndef FILERECEIVER_NODE

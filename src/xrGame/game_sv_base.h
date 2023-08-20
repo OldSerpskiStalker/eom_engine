@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "game_base.h"
 #include "alife_space.h"
@@ -52,6 +52,7 @@ protected:
         shared_str map_name;
         shared_str map_ver;
     };
+
     DEF_DEQUE(MAP_ROTATION_LIST, SMapRot);
     bool m_bMapRotation;
     bool m_bMapNeedRotation;
@@ -80,27 +81,37 @@ public:
 public:
     virtual void OnPlayerConnect(ClientID id_who);
     virtual void OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID);
+
     virtual void OnPlayerReady(ClientID id_who){};
+
     virtual void OnPlayerEnteredGame(ClientID id_who){};
+
     virtual void OnPlayerConnectFinished(ClientID id_who){};
+
     virtual void OnPlayerFire(ClientID id_who, NET_Packet& P){};
+
     virtual void OnPlayer_Sell_Item(ClientID id_who, NET_Packet& P){};
     void GenerateGameMessage(NET_Packet& P);
 
-    virtual void OnRoundStart(); // старт раунда
-    virtual void OnRoundEnd(); //	round_end_reason			// конец раунда
+    virtual void OnRoundStart(); // Г±ГІГ Г°ГІ Г°Г ГіГ­Г¤Г 
+    virtual void OnRoundEnd(); //	round_end_reason			// ГЄГ®Г­ГҐГ¶ Г°Г ГіГ­Г¤Г 
 
     void MapRotation_AddMap(LPCSTR MapName, LPCSTR MapVer);
     void MapRotation_ListMaps();
     virtual bool OnNextMap() { return false; }
+
     virtual void OnPrevMap() {}
+
     virtual bool SwitchToNextMap() { return m_bMapNeedRotation; };
 
     virtual BOOL IsVotingEnabled();
     virtual BOOL IsVotingEnabled(u16 flag);
     virtual bool IsVotingActive() { return false; };
+
     virtual void SetVotingActive(bool Active){};
+
     virtual void OnVoteStart(LPCSTR VoteCommand, ClientID sender){};
+
     virtual void OnVoteStop(){};
 
 public:
@@ -146,7 +157,9 @@ public:
 
     // Events
     virtual BOOL OnPreCreate(CSE_Abstract* E) { return TRUE; };
+
     virtual void OnCreate(u16 id_who){};
+
     virtual void OnPostCreate(u16 id_who){};
     virtual BOOL OnTouch(u16 eid_who, u16 eid_target, BOOL bForced = FALSE) = 0; // TRUE=allow ownership, FALSE=denied
     virtual void OnDetach(u16 eid_who, u16 eid_target) = 0;
@@ -154,15 +167,15 @@ public:
 
     virtual void OnDestroyObject(u16 eid_who);
 
-    virtual void OnHit(u16 id_hitter, u16 id_hitted, NET_Packet& P); // кто-то получил Hit
-    virtual void OnPlayerHitPlayer(u16 id_hitter, u16 id_hitted, NET_Packet& P){}; // игрок получил Hit
+    virtual void OnHit(u16 id_hitter, u16 id_hitted, NET_Packet& P); // ГЄГІГ®-ГІГ® ГЇГ®Г«ГіГ·ГЁГ« Hit
+    virtual void OnPlayerHitPlayer(u16 id_hitter, u16 id_hitted, NET_Packet& P){}; // ГЁГЈГ°Г®ГЄ ГЇГ®Г«ГіГ·ГЁГ« Hit
 
     // Main
     virtual void Create(shared_str& options);
     virtual void Update();
     virtual void net_Export_State(NET_Packet& P, ClientID id_to); // full state
-    virtual void net_Export_Update(
-        NET_Packet& P, ClientID id_to, ClientID id); // just incremental update for specific client
+    virtual void net_Export_Update(NET_Packet& P, ClientID id_to, ClientID id);
+    // just incremental update for specific client
     virtual void net_Export_GameTime(NET_Packet& P); // update GameTime only for remote clients
 
     virtual bool change_level(NET_Packet& net_packet, ClientID sender);
@@ -185,6 +198,7 @@ public:
     virtual void remove_restriction(NET_Packet& packet, u16 id);
     virtual void remove_all_restrictions(NET_Packet& packet, u16 id);
     virtual bool custom_sls_default() { return false; };
+
     virtual void sls_default(){};
     virtual shared_str level_name(const shared_str& server_options) const;
 

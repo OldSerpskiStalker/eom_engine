@@ -98,6 +98,7 @@ void CTAGameClCaptionsManager::ShowInProgressCaptions()
 }
 
 void CTAGameClCaptionsManager::ShowPendingCaptions() {}
+
 void CTAGameClCaptionsManager::ShowScoreCaptions()
 {
     VERIFY(m_winner_team != etSpectatorsTeam);

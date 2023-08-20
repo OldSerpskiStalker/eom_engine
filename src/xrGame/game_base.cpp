@@ -6,10 +6,10 @@
 #include "xrMessages.h"
 
 u64 g_qwStartGameTime = 12 * 60 * 60 * 1000;
-float g_fTimeFactor = pSettings->r_float("alife", "time_factor");
+float g_fTimeFactor = 10.0f;
 u64 g_qwEStartGameTime = 12 * 60 * 60 * 1000;
 
-ENGINE_API bool g_dedicated_server;
+extern ENGINE_API bool g_dedicated_server;
 EGameIDs ParseStringToGameType(LPCSTR str);
 
 game_PlayerState::game_PlayerState(NET_Packet* account_info)
@@ -178,6 +178,7 @@ void game_PlayerState::SetGameID(u16 NewID)
     mOldIDs.push_back(GameID);
     GameID = NewID;
 }
+
 bool game_PlayerState::HasOldID(u16 ID)
 {
     OLD_GAME_ID_it ID_i = std::find(mOldIDs.begin(), mOldIDs.end(), ID);

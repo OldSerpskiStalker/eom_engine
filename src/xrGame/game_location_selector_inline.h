@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
+ï»¿////////////////////////////////////////////////////////////////////////////
 //	Module 		: game_location_selector_inline.h
 //	Created 	: 02.10.2001
 //  Modified 	: 18.11.2003
@@ -82,11 +82,11 @@ IC void CGameLocationSelector::select_random_location(
     m_graph->begin(start_vertex_id, i, e);
     for (; i != e; ++i)
     {
-        // * íå ñîîòâåòñòâóåò ïðåäûäåùåé âåðøèíå
+        // * Ã­Ã¥ Ã±Ã®Ã®Ã²Ã¢Ã¥Ã²Ã±Ã²Ã¢Ã³Ã¥Ã² Ã¯Ã°Ã¥Ã¤Ã»Ã¤Ã¥Ã¹Ã¥Ã© Ã¢Ã¥Ã°Ã¸Ã¨Ã­Ã¥
         if ((*i).vertex_id() == m_previous_vertex_id)
             continue;
 
-        // * âåðøèíà íà òåêóùåì óðîâíå?
+        // * Ã¢Ã¥Ã°Ã¸Ã¨Ã­Ã  Ã­Ã  Ã²Ã¥ÃªÃ³Ã¹Ã¥Ã¬ Ã³Ã°Ã®Ã¢Ã­Ã¥?
         if ((m_graph->vertex((*i).vertex_id())->level_id() != ai().level_graph().level_id()))
             continue;
 
@@ -96,7 +96,7 @@ IC void CGameLocationSelector::select_random_location(
 
         const u8* curr_types = m_graph->vertex((*i).vertex_id())->vertex_type();
 
-        // * ïîäõîäèò ïî ìàñêå
+        // * Ã¯Ã®Ã¤ÃµÃ®Ã¤Ã¨Ã² Ã¯Ã® Ã¬Ã Ã±ÃªÃ¥
         for (I = B; I != E; ++I)
             if (m_graph->mask((*I).tMask, curr_types))
                 ++branch_factor;
@@ -117,11 +117,11 @@ IC void CGameLocationSelector::select_random_location(
         m_graph->begin(start_vertex_id, i, e);
         for (; i != e; ++i)
         {
-            // * íå ñîîòâåòñòâóåò ïðåäûäåùåé âåðøèíå
+            // * Ã­Ã¥ Ã±Ã®Ã®Ã²Ã¢Ã¥Ã²Ã±Ã²Ã¢Ã³Ã¥Ã² Ã¯Ã°Ã¥Ã¤Ã»Ã¤Ã¥Ã¹Ã¥Ã© Ã¢Ã¥Ã°Ã¸Ã¨Ã­Ã¥
             if ((*i).vertex_id() == m_previous_vertex_id)
                 continue;
 
-            // * âåðøèíà íà òåêóùåì óðîâíå?
+            // * Ã¢Ã¥Ã°Ã¸Ã¨Ã­Ã  Ã­Ã  Ã²Ã¥ÃªÃ³Ã¹Ã¥Ã¬ Ã³Ã°Ã®Ã¢Ã­Ã¥?
             if ((m_graph->vertex((*i).vertex_id())->level_id() != ai().level_graph().level_id()))
                 continue;
 
@@ -131,7 +131,7 @@ IC void CGameLocationSelector::select_random_location(
 
             const u8* curr_types = m_graph->vertex((*i).vertex_id())->vertex_type();
 
-            // * ïîäõîäèò ïî ìàñêå
+            // * Ã¯Ã®Ã¤ÃµÃ®Ã¤Ã¨Ã² Ã¯Ã® Ã¬Ã Ã±ÃªÃ¥
             for (I = B; I != E; ++I)
                 if (m_graph->mask((*I).tMask, curr_types))
                 {

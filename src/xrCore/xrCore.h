@@ -47,6 +47,9 @@
 #endif
 #define _HAS_EXCEPTIONS 1 // STL
 #define XRAY_EXCEPTIONS 1 // XRAY
+
+#define XR_NOEXCEPT noexcept
+#define XR_NOEXCEPT_OP(x) noexcept(x)
 #else
 // "release"
 #if defined(_CPPUNWIND) && !defined __BORLANDC__
@@ -56,6 +59,9 @@
 #define XRAY_EXCEPTIONS 0 // XRAY
 #define LUABIND_NO_EXCEPTIONS
 #pragma warning(disable : 4530)
+
+#define XR_NOEXCEPT throw()
+#define XR_NOEXCEPT_OP(x)
 #endif
 
 #if !defined(_MT)
@@ -202,6 +208,7 @@
 #include <map>
 
 #ifndef _EDITOR
+#define _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
 #include <hash_map>
 #include <hash_set>
 #endif
@@ -327,6 +334,8 @@ public:
     string_path WorkingPath;
     string64 UserName;
     string64 CompName;
+    string64 UserDate;
+    string64 UserTime;
     char* Params;
     DWORD dwFrame;
 

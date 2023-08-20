@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "psy_dog.h"
 #include "../../../level_graph.h"
 #include "../../../ai_space.h"
@@ -24,6 +24,7 @@ CPsyDog::CPsyDog()
     m_max_phantoms_count = NULL;
     m_phantoms_die_time = NULL;
 }
+
 CPsyDog::~CPsyDog()
 {
     xr_delete(m_aura);
@@ -53,11 +54,13 @@ BOOL CPsyDog::net_Spawn(CSE_Abstract* dc)
 
     return TRUE;
 }
+
 void CPsyDog::reinit()
 {
     inherited::reinit();
     m_aura->reinit();
 }
+
 void CPsyDog::reload(LPCSTR section) { inherited::reload(section); }
 
 //////////////////////////////////////////////////////////////////////////
@@ -157,6 +160,7 @@ void CPsyDog::Think()
 
 void CPsyDog::net_Destroy()
 {
+    m_aura->on_death();
     delete_all_phantoms();
     inherited::net_Destroy();
 }
@@ -176,7 +180,9 @@ u8 CPsyDog::get_phantoms_count() { return u8(m_storage.size()); }
 // Phantom Psy Dog
 //////////////////////////////////////////////////////////////////////////
 CPsyDogPhantom::CPsyDogPhantom() {}
+
 CPsyDogPhantom::~CPsyDogPhantom() {}
+
 BOOL CPsyDogPhantom::net_Spawn(CSE_Abstract* dc)
 {
     if (!inherited::net_Spawn(dc))
@@ -245,7 +251,7 @@ void CPsyDogPhantom::Think()
     Fvector target;
     target.mad(Position(), Direction(), 10.f);
 
-    // нода в прямой видимости?
+    // Г­Г®Г¤Г  Гў ГЇГ°ГїГ¬Г®Г© ГўГЁГ¤ГЁГ¬Г®Г±ГІГЁ?
     control().path_builder().restrictions().add_border(Position(), target);
     u32 node = ai().level_graph().check_position_in_direction(ai_location().level_vertex_id(), Position(), target);
     control().path_builder().restrictions().remove_border();
@@ -316,6 +322,8 @@ void CPsyDogPhantom::try_to_register_to_parent()
     {
         CPsyDog* dog = smart_cast<CPsyDog*>(obj);
         VERIFY(dog);
+        if (!dog)
+            return;
 
         m_parent = dog;
         m_parent->register_phantom(this);

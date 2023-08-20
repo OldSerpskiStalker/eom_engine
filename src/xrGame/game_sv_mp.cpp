@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "game_sv_mp.h"
 #include "xrServer.h"
 #include "xrMessages.h"
@@ -192,11 +192,13 @@ void game_sv_mp::OnRoundEnd()
     {
         GameEventQueue* event_queue;
         IClient* server_client;
+
         event_clearer(GameEventQueue* eq, IClient* sc)
         {
             event_queue = eq;
             server_client = sc;
         };
+
         void operator()(IClient* client)
         {
             if (client != server_client)
@@ -222,6 +224,7 @@ struct real_sender
         P = Packet;
         flags_to_send = flags;
     }
+
     void operator()(IClient* client)
     {
         xrClientData* tmp_client = static_cast<xrClientData*>(client);
@@ -451,6 +454,7 @@ void game_sv_mp::ReconnectPlayer(ClientID const& clientID)
 bool g_bConsoleCommandsCreated = false;
 extern float g_fTimeFactor;
 #define SAVE_SCREENSHOTS_KEY "-savescreenshots"
+
 void game_sv_mp::Create(shared_str& options)
 {
     SetVotingActive(false);
@@ -662,11 +666,11 @@ void game_sv_mp::SetSkin(CSE_Abstract* E, u16 Team, u16 ID)
     //-------------------------------------------
     string256 SkinName;
     xr_strcpy(SkinName, pSettings->r_string("mp_skins_path", "skin_path"));
-    // çàãðóæåíû ëè ñêèíû äëÿ ýòîé êîììàíäû
+    // Ð·Ð°Ð³Ñ€ÑƒÐ¶ÐµÐ½Ñ‹ Ð»Ð¸ ÑÐºÐ¸Ð½Ñ‹ Ð´Ð»Ñ ÑÑ‚Ð¾Ð¹ ÐºÐ¾Ð¼Ð¼Ð°Ð½Ð´Ñ‹
 
     if (!TeamList.empty() && TeamList.size() > Team && !TeamList[Team].aSkins.empty())
     {
-        // çàãðóæåíî ëè äîñòàòî÷íî ñêèíîâ äëÿ ýòîé êîììàíäû
+        // Ð·Ð°Ð³Ñ€ÑƒÐ¶ÐµÐ½Ð¾ Ð»Ð¸ Ð´Ð¾ÑÑ‚Ð°Ñ‚Ð¾Ñ‡Ð½Ð¾ ÑÐºÐ¸Ð½Ð¾Ð² Ð´Ð»Ñ ÑÑ‚Ð¾Ð¹ ÐºÐ¾Ð¼Ð¼Ð°Ð½Ð´Ñ‹
         if (TeamList[Team].aSkins.size() > ID)
         {
             xr_strcat(SkinName, TeamList[Team].aSkins[ID].c_str());
@@ -989,12 +993,14 @@ s32 game_sv_mp::ExcludeBanTimeFromVoteStr(char const* vote_string, char* new_vot
 struct SearcherClientByName
 {
     string128 player_name;
+
     SearcherClientByName(LPCSTR name)
     {
         strncpy_s(player_name, name, sizeof(player_name) - 1);
         xr_strlwr(player_name);
         player_name[xr_strlen(name)] = 0;
     }
+
     bool operator()(IClient* client)
     {
         xrClientData* temp_client = smart_cast<xrClientData*>(client);
@@ -1125,6 +1131,7 @@ void game_sv_mp::OnVoteStart(LPCSTR VoteCommand, ClientID sender)
     {
         ClientID senderID;
         xrClientData* pStartedPlayer;
+
         void operator()(IClient* client)
         {
             xrClientData* tmp_client = static_cast<xrClientData*>(client);
@@ -1192,6 +1199,7 @@ void game_sv_mp::UpdateVote()
         u32 NumAgreed;
         u32 NumParticipated;
         u32 NumToCount;
+
         void operator()(IClient* client)
         {
             xrClientData* tmp_client = static_cast<xrClientData*>(client);
@@ -1494,6 +1502,7 @@ void game_sv_mp::SendPlayerKilledMessage(
     {
         NET_Packet* P;
         xrServer* server_for_send;
+
         void operator()(IClient* client)
         {
             xrClientData* tmp_client = static_cast<xrClientData*>(client);
@@ -1553,6 +1562,7 @@ void game_sv_mp::OnPlayerGameMenu(NET_Packet& P, ClientID sender)
     break;
     }
 }
+
 void game_sv_mp::OnPlayerSelectSpectator(NET_Packet& P, ClientID sender)
 {
     xrClientData* pClient = (xrClientData*)m_server->ID_to_client(sender);
@@ -1719,6 +1729,7 @@ void game_sv_mp::UpdatePlayersMoney()
     tmp_functor.m_owner = this;
     m_server->ForEachClientDoSender(tmp_functor);
 };
+
 /*
 bool	game_sv_mp::GetTeamItem_ByID		(WeaponDataStruct** pRes, TEAM_WPN_LIST* pWpnList, u16 ItemID)
 {
@@ -1750,6 +1761,7 @@ void game_sv_mp::Player_AddBonusMoney(game_PlayerState* ps, s32 MoneyAmount, SPE
     //-----------------------------
     ps->money_added -= MoneyAmount;
 }
+
 void game_sv_mp::Player_AddMoney(game_PlayerState* ps, s32 MoneyAmount)
 {
     if (!ps)
@@ -1773,6 +1785,7 @@ void game_sv_mp::Player_AddMoney(game_PlayerState* ps, s32 MoneyAmount)
 };
 //---------------------------------------------------------------------
 extern u32 g_sv_dwMaxClientPing;
+
 void game_sv_mp::ReadOptions(shared_str& options)
 {
     inherited::ReadOptions(options);
@@ -1797,6 +1810,7 @@ void game_sv_mp::ReadOptions(shared_str& options)
 };
 
 static bool g_bConsoleCommandsCreated_MP = false;
+
 void game_sv_mp::ConsoleCommands_Create(){};
 
 void game_sv_mp::ConsoleCommands_Clear(){};
@@ -1904,6 +1918,7 @@ void game_sv_mp::RejectGameItem(CSE_Abstract* entity)
 }
 
 #include "string_table.h"
+
 void game_sv_mp::DumpOnlineStatistic()
 {
     xrGameSpyServer* srv = smart_cast<xrGameSpyServer*>(m_server);
@@ -2042,6 +2057,7 @@ void game_sv_mp::async_statistics_collector::set_responded(ClientID clientID)
         tmp_iter->second = true;
     }
 }
+
 void game_sv_mp::AskAllToUpdateStatistics()
 {
     NET_Packet P;

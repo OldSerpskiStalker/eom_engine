@@ -96,6 +96,7 @@ bool game_sv_CaptureTheArtefact::CheckIfPlayerInBuyMenu(xrClientData const* pcli
     }
     return false;
 }
+
 void game_sv_CaptureTheArtefact::SetReadyToSpawnPlayer(xrClientData const* pclient)
 {
     R_ASSERT(pclient->ps);

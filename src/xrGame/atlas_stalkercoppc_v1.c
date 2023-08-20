@@ -443,6 +443,7 @@ int ATLAS_GET_STAT(char* statName)
 
     return 0;
 }
+
 char* ATLAS_GET_STAT_NAME(int statId)
 {
     if (statId <= 0)

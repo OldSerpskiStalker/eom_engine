@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "state_data.h"
 #include "state_move_to_point.h"
@@ -144,7 +144,7 @@ void CStateMonsterEatAbstract::setup_substates()
 
     if (current_substate == eStateEat_CorpseApproachRun)
     {
-        // Îïðåäåëèòü ïîçèöèþ áëèæàéøåé áîíû ó òðóïà
+        // ÃŽÃ¯Ã°Ã¥Ã¤Ã¥Ã«Ã¨Ã²Ã¼ Ã¯Ã®Ã§Ã¨Ã¶Ã¨Ã¾ Ã¡Ã«Ã¨Ã¦Ã Ã©Ã¸Ã¥Ã© Ã¡Ã®Ã­Ã» Ã³ Ã²Ã°Ã³Ã¯Ã 
         Fvector nearest_bone_pos;
         const CEntityAlive* corpse = object->CorpseMan.get_corpse();
         if ((corpse->m_pPhysicsShell == NULL) || (!corpse->m_pPhysicsShell->isActive()))
@@ -227,7 +227,7 @@ void CStateMonsterEatAbstract::setup_substates()
 
     if (current_substate == eStateEat_CorpseApproachWalk)
     {
-        // Îïðåäåëèòü ïîçèöèþ áëèæàéøåé áîíû ó òðóïà
+        // ÃŽÃ¯Ã°Ã¥Ã¤Ã¥Ã«Ã¨Ã²Ã¼ Ã¯Ã®Ã§Ã¨Ã¶Ã¨Ã¾ Ã¡Ã«Ã¨Ã¦Ã Ã©Ã¸Ã¥Ã© Ã¡Ã®Ã­Ã» Ã³ Ã²Ã°Ã³Ã¯Ã 
         Fvector nearest_bone_pos;
         const CEntityAlive* corpse = object->CorpseMan.get_corpse();
         if ((corpse->m_pPhysicsShell == NULL) || (!corpse->m_pPhysicsShell->isActive()))

@@ -31,12 +31,9 @@ IC Fvector CAI_Stalker::weapon_shot_effector_direction(const Fvector& current) c
     VERIFY(weapon_shot_effector().IsActive());
     Fvector result;
     weapon_shot_effector().GetDeltaAngle(result);
-
     float y, p;
     current.getHP(y, p);
-
     result.setHP(-result.y + y, -result.x + p);
-
     return (result);
 #endif // #if 1
 }

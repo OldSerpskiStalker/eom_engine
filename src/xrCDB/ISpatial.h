@@ -27,6 +27,7 @@ Requirements:
 */
 
 const float c_spatial_min = 8.f;
+
 //////////////////////////////////////////////////////////////////////////
 enum
 {
@@ -42,6 +43,7 @@ enum
 
     STYPEFLAG_INVALIDSECTOR = (1 << 16)
 };
+
 //////////////////////////////////////////////////////////////////////////
 // Comment:
 //		ordinal objects			- renderable?, collideable?, visibleforAI?
@@ -68,14 +70,20 @@ enum
 class ISpatial_NODE;
 class IRender_Sector;
 class ISpatial_DB;
+
 namespace Feel
 {
 class Sound;
 }
+
 class IRenderable;
 class IRender_Light;
+
 class XRCDB_API ISpatial
 {
+private:
+    Fvector last_sector_point;
+
 public:
     struct _spatial
     {
@@ -121,7 +129,7 @@ public:
 class ISpatial_NODE
 {
 public:
-    typedef _W64 unsigned ptrt;
+    typedef __w64 unsigned ptrt;
 
 public:
     ISpatial_NODE* parent; // parent node for "empty-members" optimization
@@ -131,6 +139,7 @@ public:
     void _init(ISpatial_NODE* _parent);
     void _remove(ISpatial* _S);
     void _insert(ISpatial* _S);
+
     BOOL _empty()
     {
         return items.empty() &&
@@ -139,6 +148,7 @@ public:
                     ptrt(children[5]) | ptrt(children[6]) | ptrt(children[7])));
     }
 };
+
 ////////////
 
 // template <class T, int granularity>

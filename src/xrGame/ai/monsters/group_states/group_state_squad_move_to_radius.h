@@ -12,7 +12,9 @@ protected:
 
 public:
     CStateGroupSquadMoveToRadiusEx(_Object* obj) : inherited(obj, &data) {}
+
     virtual ~CStateGroupSquadMoveToRadiusEx() {}
+
     virtual void initialize();
     virtual void execute();
     virtual bool check_completion();
@@ -29,7 +31,9 @@ protected:
 
 public:
     CStateGroupSquadMoveToRadius(_Object* obj) : inherited(obj, &data) {}
+
     virtual ~CStateGroupSquadMoveToRadius() {}
+
     virtual void initialize();
     virtual void execute();
     virtual bool check_completion();

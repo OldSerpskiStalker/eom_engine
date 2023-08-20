@@ -108,6 +108,7 @@ public:
     void set_pitch(float pitch, float yaw);
     const CEntityAlive* get_enemy();
     bool check_completion_no_way();
+
     enum ERatStates
     {
         aiRatDeath = 0,
@@ -123,6 +124,7 @@ public:
         aiRatEatCorpse,
         aiRatNoWay,
     };
+
     ERatStates get_state();
     float m_newPitch;
     float m_newYaw;
@@ -140,9 +142,9 @@ public:
     // end for state manager
 
 protected:
-//////////////////////////
-// STRUCTURES
-//////////////////////////
+    //////////////////////////
+    // STRUCTURES
+    //////////////////////////
 #define TIME_TO_GO 2000
 #define TIME_TO_RETURN 500
 
@@ -168,6 +170,7 @@ protected:
     {
         SNormalAnimations tNormal;
     } SRatAnimations;
+
     //////////////////////////
     // END OF STRUCTURES
     //////////////////////////
@@ -401,10 +404,10 @@ public:
     virtual bool Useful() const;
     virtual BOOL UsedAI_Locations();
     ///////////////////////////////////////////////////////////////////////
-    virtual u16 PHGetSyncItemsNumber() { return inherited ::PHGetSyncItemsNumber(); }
-    virtual CPHSynchronize* PHGetSyncItem(u16 item) { return inherited ::PHGetSyncItem(item); }
-    virtual void PHUnFreeze() { return inherited ::PHUnFreeze(); }
-    virtual void PHFreeze() { return inherited ::PHFreeze(); }
+    virtual u16 PHGetSyncItemsNumber() { return inherited::PHGetSyncItemsNumber(); }
+    virtual CPHSynchronize* PHGetSyncItem(u16 item) { return inherited::PHGetSyncItem(item); }
+    virtual void PHUnFreeze() { return inherited::PHUnFreeze(); }
+    virtual void PHFreeze() { return inherited::PHFreeze(); }
     ///////////////////////////////////////////////////////////////////////
 #ifdef DEBUG
     virtual void OnRender();
@@ -413,6 +416,7 @@ public:
     virtual float evaluate(const CItemManager* manager, const CGameObject* object) const;
     virtual void reinit();
     virtual void reload(LPCSTR section);
+
     virtual const SRotation Orientation() const { return (inherited::Orientation()); };
 
 public:

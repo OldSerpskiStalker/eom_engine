@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "monster_state_attack_melee.h"
 #include "monster_state_attack_run.h"
@@ -100,7 +100,7 @@ void CStateMonsterAttackAbstract::execute()
         select_state(eStateAttack_Attack_On_Run);
     else
     {
-        // определить тип атаки
+        // Г®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј ГІГЁГЇ Г ГІГ ГЄГЁ
         bool b_melee = false;
         if (prev_substate == eStateAttack_Melee)
         {
@@ -114,7 +114,7 @@ void CStateMonsterAttackAbstract::execute()
             b_melee = true;
         }
 
-        // установить целевое состояние
+        // ГіГ±ГІГ Г­Г®ГўГЁГІГј Г¶ГҐГ«ГҐГўГ®ГҐ Г±Г®Г±ГІГ®ГїГ­ГЁГҐ
         select_state(b_melee ? eStateAttack_Melee : eStateAttack_Run);
     }
 

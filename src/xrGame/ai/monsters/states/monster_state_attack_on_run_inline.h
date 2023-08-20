@@ -1,4 +1,4 @@
-#ifndef MONSTER_STATE_ATTACK_ON_RUN_INLINE_H
+ï»¿#ifndef MONSTER_STATE_ATTACK_ON_RUN_INLINE_H
 #define MONSTER_STATE_ATTACK_ON_RUN_INLINE_H
 
 #include "../monster_velocity_space.h"
@@ -18,10 +18,8 @@ namespace detail
 {
 namespace monsters
 {
-
 TTime const max_go_far_time = 6000;
 TTime const update_side_period = 5000;
-
 } // namespace monsters
 } // namespace detail
 
@@ -559,13 +557,13 @@ void ATTACK_ON_RUN_STATE::execute()
     object->set_state_sound(MonsterSound::eMonsterSoundAggressive);
     object->path().extrapolate_path(true);
 
-    // îáðàáîòàòü squad èíôî
+    // Ã®Ã¡Ã°Ã Ã¡Ã®Ã²Ã Ã²Ã¼ squad Ã¨Ã­Ã´Ã®
     object->path().set_use_dest_orient(false);
 
     // 	CMonsterSquad *squad	= monster_squad().get_squad(object);
     // 	if (squad && squad->SquadActive())
     // 	{
-    // 		// Ïîëó÷èòü êîìàíäó
+    // 		// ÃÃ®Ã«Ã³Ã·Ã¨Ã²Ã¼ ÃªÃ®Ã¬Ã Ã­Ã¤Ã³
     // 		SSquadCommand command;
     // 		squad->GetCommand(object, command);
     // 		if (command.type == SC_ATTACK)

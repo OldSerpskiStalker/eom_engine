@@ -16,6 +16,8 @@
 #include "../Include/xrRender/Kinematics.h"
 #include "player_hud.h"
 #include "ActorHelmet.h"
+#include "../xrEngine/xr_ioconsole.h"
+#include "../xrEngine/xr_ioc_cmd.h"
 
 CCustomOutfit::CCustomOutfit()
 {
@@ -66,6 +68,8 @@ void CCustomOutfit::Load(LPCSTR section)
 {
     inherited::Load(section);
 
+    //	helm_glass_texture = READ_IF_EXISTS(pSettings, r_string, section, "helm_glass_texture", "none");
+
     m_HitTypeProtection[ALife::eHitTypeBurn] = pSettings->r_float(section, "burn_protection");
     m_HitTypeProtection[ALife::eHitTypeStrike] = pSettings->r_float(section, "strike_protection");
     m_HitTypeProtection[ALife::eHitTypeShock] = pSettings->r_float(section, "shock_protection");
@@ -96,9 +100,12 @@ void CCustomOutfit::Load(LPCSTR section)
     m_additional_weight = pSettings->r_float(section, "additional_inventory_weight");
     m_additional_weight2 = pSettings->r_float(section, "additional_inventory_weight2");
 
+    //	cell_xy_inv	= pSettings->r_ivector2(section,"cell_xy_inv");
+
     m_fHealthRestoreSpeed = READ_IF_EXISTS(pSettings, r_float, section, "health_restore_speed", 0.0f);
     m_fRadiationRestoreSpeed = READ_IF_EXISTS(pSettings, r_float, section, "radiation_restore_speed", 0.0f);
     m_fSatietyRestoreSpeed = READ_IF_EXISTS(pSettings, r_float, section, "satiety_restore_speed", 0.0f);
+    m_fThirstRestoreSpeed = READ_IF_EXISTS(pSettings, r_float, section, "thirst_restore_speed", 0.0f);
     m_fPowerRestoreSpeed = READ_IF_EXISTS(pSettings, r_float, section, "power_restore_speed", 0.0f);
     m_fBleedingRestoreSpeed = READ_IF_EXISTS(pSettings, r_float, section, "bleeding_restore_speed", 0.0f);
 
@@ -111,6 +118,11 @@ void CCustomOutfit::Load(LPCSTR section)
 
     // Added by Axel, to enable optional condition use on any item
     m_flags.set(FUsingCondition, READ_IF_EXISTS(pSettings, r_bool, section, "use_condition", TRUE));
+
+    // Lex Addon (correct by Suhar_) 10.08.2018		(begin)
+    // Добавляем чтение параметра замкнутой системы дыхания у костюма
+    bCyclicAirBreath = READ_IF_EXISTS(pSettings, r_bool, section, "cyclic_air_breath", false);
+    // Lex Addon (correct by Suhar_) 10.08.2018		(end)
 }
 
 void CCustomOutfit::ReloadBonesProtection()
@@ -142,58 +154,94 @@ float CCustomOutfit::GetHitTypeProtection(ALife::EHitType hit_type, s16 element)
 }
 
 float CCustomOutfit::GetBoneArmor(s16 element) { return m_boneProtection->getBoneArmor(element); }
+
+// Lex Addon (correct by Suhar_) 9.07.2016		(begin)
+// Функция получения защиты кости
+float CCustomOutfit::GetBoneProtection(s16 element) { return m_boneProtection->getBoneProtection(element); }
+// Lex Addon (correct by Suhar_) 9.07.2016		(end)
+
 #pragma optimize("", off)
+
+// Lex Addon (correct by Suhar_) 18.01.2017		(begin)
+// Функция вычисления урона, учитывающая характеристики костюма
 float CCustomOutfit::HitThroughArmor(float hit_power, s16 element, float ap, bool& add_wound, ALife::EHitType hit_type)
 {
+    // Переменная нового урона
     float NewHitPower = hit_power;
+    // Устанавливаем защиту кости по которой попали
+    float ba = GetBoneArmor(element);
+    float bp = GetBoneProtection(element);
+    // Переменная состояния костюма
+    float condition = GetCondition();
+    // hit_fraction_actor с учётом состояния костюма
+    float HitFracActor = -(1 - m_boneProtection->m_fHitFracActor) * condition + 1;
+    // Переменная защиты костюма по данному типу урона
+    float protect = GetDefHitTypeProtection(hit_type);
+    // Если тип воздействия - огнестрел
     if (hit_type == ALife::eHitTypeFireWound)
     {
-        float ba = GetBoneArmor(element);
-        if (ba < 0.0f)
+        // Проверяем значение защиты. Если оно нулевое, то защита костюма не распространяется на данную кость.
+        // Пропускаем дамаг не меняя.
+        if (bp == 0)
             return NewHitPower;
-
-        float BoneArmor = ba * GetCondition();
-        if (/*!fis_zero(ba, EPS) && */ (ap > BoneArmor))
+        // Учитываем состояние брони
+        float BoneArmor = ba * condition;
+        if (ap > BoneArmor)
+        // Пуля пробила броню
         {
-            // пуля пробила бронь
-            if (!IsGameTypeSingle())
-            {
-                float hit_fraction = (ap - BoneArmor) / ap;
-                if (hit_fraction < m_boneProtection->m_fHitFracActor)
-                    hit_fraction = m_boneProtection->m_fHitFracActor;
-
-                NewHitPower *= hit_fraction;
-                NewHitPower *= m_boneProtection->getBoneProtection(element);
-            }
-
-            VERIFY(NewHitPower >= 0.0f);
+            // Учитываем степень пробития брони
+            float d_hit_power = (ap - BoneArmor) / ap;
+            // Коээфициент хита не должен быть меньше HitFracActor
+            if (d_hit_power < HitFracActor)
+                d_hit_power = HitFracActor;
+            NewHitPower *= d_hit_power;
+            // Учитываем BoneProtection, чтобы можно было нанести дополнительный хит при пробитии брони на уязвимых
+            // частях тела (типа головы)
+            NewHitPower /= bp;
         }
         else
+        // Пуля НЕ пробила броню
         {
-            // пуля НЕ пробила бронь
-            NewHitPower *= m_boneProtection->m_fHitFracActor;
-            add_wound = false; // раны нет
+            // Уменьшаем дамаг пропорционально параметру hit_fraction
+            // NewHitPower *= m_boneProtection->m_fHitFracActor;
+            // Учитываем состояние брони
+            NewHitPower *= HitFracActor;
+            // Учитываем уязвимость части тела	12.01.2017
+            NewHitPower += NewHitPower * (1 / bp - 1) * 0.05;
+            // Раны нет
+            // add_wound = false;
         }
+        // Учитываем снижение урона (если есть)
+        NewHitPower -= protect;
     }
     else
     {
-        float one = 0.1f;
-        if (hit_type == ALife::eHitTypeStrike || hit_type == ALife::eHitTypeWound ||
-            hit_type == ALife::eHitTypeWound_2 || hit_type == ALife::eHitTypeExplosion)
+        // Учёт защитных характеристик от прочих воздействий
+        // Новый алгоритм учёта защит от конкретных воздействий
+        if (protect > 0.f)
         {
-            one = 1.0f;
+            // NewHitPower -= protect;
+            // Урон разбивается на две части в отношении три к одному
+            // Учёт первой части осуществляется по традиционной схеме
+            float HitPart1 = (NewHitPower - protect) * 0.75;
+            // Фильтрация отрицательных значений
+            if (HitPart1 < 0.f)
+                HitPart1 = 0.f;
+            // Учёт второй осуществляется на основе hit_fraction_actor
+            float HitPart2 = NewHitPower * HitFracActor * 0.25;
+            // Костюмы с системой замкнутого дыхания в большей степени защищают от химических воздействий и радиации
+            if (bCyclicAirBreath && (hit_type == ALife::eHitTypeChemicalBurn || hit_type == ALife::eHitTypeRadiation))
+                HitPart2 = 0;
+            NewHitPower = HitPart1 + HitPart2;
         }
-        float protect = GetDefHitTypeProtection(hit_type);
-        NewHitPower -= protect * one;
-
-        if (NewHitPower < 0.f)
-            NewHitPower = 0.f;
     }
-    // увеличить изношенность костюма
+    if (NewHitPower < 0.f)
+        NewHitPower = 0.f;
+    // Увеличить изношенность костюма
     Hit(hit_power, hit_type);
-
     return NewHitPower;
 }
+// Lex Addon (correct by Suhar_) 18.01.2017		(end)
 #pragma optimize("", on)
 BOOL CCustomOutfit::BonePassBullet(int boneID) { return m_boneProtection->getBonePassBullet(s16(boneID)); }
 
@@ -212,9 +260,6 @@ void CCustomOutfit::OnMoveToSlot(const SInvItemPlace& prev)
                 if (pTorch && pTorch->GetNightVisionStatus())
                     pTorch->SwitchNightVision(true, false);
             }
-            PIItem pHelmet = pActor->inventory().ItemFromSlot(HELMET_SLOT);
-            if (pHelmet && !bIsHelmetAvaliable)
-                pActor->inventory().Ruck(pHelmet, false);
         }
     }
 }

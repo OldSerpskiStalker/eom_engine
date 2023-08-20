@@ -11,6 +11,7 @@
 #include "xrServer_Objects_ALife_Monsters.h"
 #include "alife_graph_registry.h"
 #include "alife_schedule_registry.h"
+
 /**
 #include "ef_storage.h"
 #include "ef_pattern.h"
@@ -18,11 +19,8 @@
 #include "alife_spawn_registry.h"
 #include "alife_time_manager.h"
 #include "relation_registry.h"
-
 using namespace ALife;
-
 #define NORMALIZE_VARIABLE(a,b,c,d) a = u32(b % c) + d, b /= c;
-
 void print_time(LPCSTR S, _TIME_ID tTimeID)
 {
     u32 Milliseconds,Seconds,Minutes,Hours,Days,Week,Months,Years;
@@ -37,7 +35,6 @@ void print_time(LPCSTR S, _TIME_ID tTimeID)
     Msg("%s year %d month %d week %d day %d time
 %d:%d:%d.%d",S,Years,Months,Week,Days,Hours,Minutes,Seconds,Milliseconds);
 }
-
 /**/
 CALifeCombatManager::CALifeCombatManager(xrServer* server, LPCSTR section) : CALifeSimulatorBase(server, section)
 {
@@ -55,7 +52,6 @@ CALifeCombatManager::CALifeCombatManager(xrServer* server, LPCSTR section) : CAL
 CALifeCombatManager::~CALifeCombatManager	()
 {
 }
-
 void CALifeCombatManager::vfFillCombatGroup(CSE_ALifeSchedulable *tpALifeSchedulable, int iGroupIndex)
 {
     EHitType				l_tHitType;
@@ -79,16 +75,13 @@ void CALifeCombatManager::vfFillCombatGroup(CSE_ALifeSchedulable *tpALifeSchedul
     }
     m_tpaCombatObjects[iGroupIndex] = tpALifeSchedulable;
 }
-
 ECombatAction CALifeCombatManager::choose_combat_action(int iCombatGroupIndex)
 {
     ai().ef_storage().alife_evaluation(true);
     if (eCombatTypeMonsterMonster != combat_type())
         if (((eCombatTypeAnomalyMonster == combat_type()) && !iCombatGroupIndex) || ((eCombatTypeMonsterAnomaly ==
-combat_type()) && iCombatGroupIndex)) return(eCombatActionAttack); else return(eCombatActionRetreat);
-
-    SCHEDULE_P_VECTOR	&Members = m_tpaCombatGroups[iCombatGroupIndex];
-    SCHEDULE_P_VECTOR	&Enemies = m_tpaCombatGroups[iCombatGroupIndex ^ 1];
+combat_type()) && iCombatGroupIndex)) return(eCombatActionAttack); else return(eCombatActionRetreat); SCHEDULE_P_VECTOR
+&Members = m_tpaCombatGroups[iCombatGroupIndex]; SCHEDULE_P_VECTOR	&Enemies = m_tpaCombatGroups[iCombatGroupIndex ^ 1];
     int i = 0, j = 0, I = (int)Members.size(), J = (int)Enemies.size();
     float	fMinProbability;
     if (!I)
@@ -131,7 +124,6 @@ combat_type()) && iCombatGroupIndex)) return(eCombatActionAttack); else return(e
     }
     return((j >= J) ? eCombatActionAttack : eCombatActionRetreat);
 }
-
 bool CALifeCombatManager::bfCheckObjectDetection(CSE_ALifeSchedulable *tpALifeSchedulable1, CSE_ALifeSchedulable
 *tpALifeSchedulable2)
 {
@@ -168,7 +160,6 @@ smart_cast<CSE_ALifeSmartZone*>(tpALifeSchedulable1);
     return												(false);
 #endif // DEBUG
 }
-
 bool CALifeCombatManager::bfCheckForInteraction(CSE_ALifeSchedulable *tpALifeSchedulable1, CSE_ALifeSchedulable
 *tpALifeSchedulable2, int &iCombatGroupIndex, bool &bMutualDetection)
 {
@@ -230,7 +221,6 @@ l_tpALifeMonsterAbstract2->m_tGraphID; print_time						("\n[LSS]",time_manager()
 
     bMutualDetection				= false;
     iCombatGroupIndex				= -1;
-
     if (bfCheckObjectDetection(tpALifeSchedulable1,tpALifeSchedulable2)) {
         iCombatGroupIndex			= 0;
 #ifdef DEBUG
@@ -248,13 +238,11 @@ l_tpALifeMonsterAbstract2->m_tGraphID; print_time						("\n[LSS]",time_manager()
         }
 #endif
     }
-
     if (eCombatTypeMonsterAnomaly == combat_type())
         m_combat_type = eCombatTypeAnomalyMonster;
     else
         if (eCombatTypeAnomalyMonster == combat_type())
             m_combat_type = eCombatTypeMonsterAnomaly;
-
     if (bfCheckObjectDetection(tpALifeSchedulable2,tpALifeSchedulable1)) {
 #ifdef DEBUG
         if (psAI_Flags.test(aiALife)) {
@@ -275,13 +263,11 @@ l_tpALifeMonsterAbstract2->m_tGraphID; print_time						("\n[LSS]",time_manager()
         }
 #endif
     }
-
     if (eCombatTypeMonsterAnomaly == combat_type())
         m_combat_type = eCombatTypeAnomalyMonster;
     else
         if (eCombatTypeAnomalyMonster == combat_type())
             m_combat_type = eCombatTypeMonsterAnomaly;
-
     if (iCombatGroupIndex < 0) {
 #ifdef DEBUG
         if (psAI_Flags.test(aiALife)) {
@@ -293,7 +279,6 @@ l_tpALifeMonsterAbstract2->m_tGraphID; print_time						("\n[LSS]",time_manager()
     else
         return						(true);
 }
-
 bool CALifeCombatManager::bfCheckIfRetreated(int iCombatGroupIndex)
 {
     ai().ef_storage().alife_evaluation(true);
@@ -305,7 +290,6 @@ m_tpaCombatGroups[iCombatGroupIndex][0]; ai().ef_storage().alife().enemy()		= m_
 ai().ef_storage().m_pfAnomalyRetreatProbability->ffGetValue() :
 ai().ef_storage().m_pfEnemyRetreatProbability->ffGetValue()));
 }
-
 void CALifeCombatManager::vfPerformAttackAction(int iCombatGroupIndex)
 {
     ai().ef_storage().alife_evaluation(true);
@@ -370,7 +354,6 @@ l_iIndex); if (m_tpaCombatGroups[iCombatGroupIndex ^ 1].empty()) return;
         }
     }
 }
-
 void CALifeCombatManager::vfFinishCombat(ECombatResult tCombatResult)
 {
     // processing weapons and dead monsters
@@ -418,7 +401,6 @@ smart_cast<CSE_ALifeMonsterAbstract*>(m_tpaCombatObjects[i]); if (l_tpALifeMonst
 #endif
         return;
     }
-
     int			l_iGroupIndex = -1;
     switch (tCombatResult) {
         case eCombatResultBothKilled	:
@@ -447,19 +429,16 @@ smart_cast<CSE_ALifeMonsterAbstract*>(m_tpaCombatObjects[i]); if (l_tpALifeMonst
     }
     m_temp_item_vector.clear();
 }
-
 ALife::ERelationType	CALifeCombatManager::relation_type	(CSE_ALifeMonsterAbstract *tpALifeMonsterAbstract1,
 CSE_ALifeMonsterAbstract *tpALifeMonsterAbstract2) const
 {
     CSE_ALifeTraderAbstract* human1 = smart_cast<CSE_ALifeTraderAbstract*>(tpALifeMonsterAbstract1);
     CSE_ALifeTraderAbstract* human2 = smart_cast<CSE_ALifeTraderAbstract*>(tpALifeMonsterAbstract2);
-
     if(human1 && human2)
     {
         ALife::ERelationType rel = RELATION_REGISTRY().GetRelationBetween(human1, human2);
         return rel;
     }
-
     if (tpALifeMonsterAbstract1->g_team() != tpALifeMonsterAbstract2->g_team())
         return(ALife::eRelationTypeEnemy);
     else

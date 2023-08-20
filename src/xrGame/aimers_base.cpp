@@ -46,7 +46,7 @@ void base::aim_at_position(
     Fvector const& bone_position, Fvector const& object_position, Fvector object_direction, Fmatrix& result)
 {
 #if 0
-	Msg									(
+	Msg(
 		"[%d][%s] bone_position[%f][%f][%f] object_position[%f][%f][%f] object_direction[%f][%f][%f]",
 		Device.dwFrame,
 		m_animated.LL_MotionDefName_dbg(m_animation_id).first,

@@ -13,12 +13,18 @@ CEliteDetector::~CEliteDetector() {}
 
 void CEliteDetector::CreateUI()
 {
-    R_ASSERT(NULL == m_ui);
+    R_ASSERT(nullptr == m_ui);
     m_ui = xr_new<CUIArtefactDetectorElite>();
     ui().construct(this);
 }
 
 CUIArtefactDetectorElite& CEliteDetector::ui() { return *((CUIArtefactDetectorElite*)m_ui); }
+
+void CEliteDetector::ResetUI()
+{
+    if (m_ui)
+        ui().Clear();
+}
 
 void CEliteDetector::UpdateAf()
 {
@@ -48,15 +54,13 @@ void CEliteDetector::UpdateAf()
     }
 }
 
-bool CEliteDetector::render_item_3d_ui_query() { return IsWorking(); }
-
 void CEliteDetector::render_item_3d_ui()
 {
     R_ASSERT(HudItemData());
-    inherited::render_item_3d_ui();
     ui().Draw();
+
     //	Restore cull mode
-    UIRender->CacheSetCullMode(IUIRender::cmCCW);
+    inherited::render_item_3d_ui();
 }
 
 void fix_ws_wnd_size(CUIWindow* w, float kx)
@@ -218,7 +222,7 @@ void CScientificDetector::Load(LPCSTR section)
     m_zones.load(section, "zone");
 }
 
-void CScientificDetector::UpfateWork()
+void CScientificDetector::UpdateWork()
 {
     ui().Clear();
 

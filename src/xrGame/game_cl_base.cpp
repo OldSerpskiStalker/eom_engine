@@ -72,10 +72,12 @@ struct not_exsiting_clients_deleter
     existing_clients_vector_t* exist_clients;
     game_PlayerState** local_player;
     ClientID* client_id;
+
     not_exsiting_clients_deleter(existing_clients_vector_t* exist, game_PlayerState** local_player, ClientID* client_id)
         : exist_clients(exist), local_player(local_player), client_id(client_id)
     {
     }
+
     // default copy constructor is right
     bool operator()(game_cl_GameState::PLAYERS_MAP::value_type& value)
     {

@@ -106,8 +106,10 @@ public:
             p_pos.set(0, 0, 0);
             fHealth = 0.f;
         }
+
         void lerp(net_update& A, net_update& B, float f);
     };
+
     xr_deque<net_update> NET;
     net_update NET_Last;
     BOOL NET_WasInterpolating; // previous update was by interpolation or by extrapolation
@@ -144,6 +146,7 @@ public:
     virtual void Die(CObject* who);
 
     virtual void HitSignal(float P, Fvector& vLocalDir, CObject* who);
+
     virtual void g_WeaponBones(int& /**L/**/, int& /**R1/**/, int& /**R2/**/){};
     virtual void shedule_Update(u32 DT);
     virtual void UpdateCL();
@@ -182,10 +185,10 @@ public:
     virtual void net_Destroy();
     virtual BOOL UsedAI_Locations();
     ///////////////////////////////////////////////////////////////////////
-    virtual u16 PHGetSyncItemsNumber() { return inherited ::PHGetSyncItemsNumber(); }
-    virtual CPHSynchronize* PHGetSyncItem(u16 item) { return inherited ::PHGetSyncItem(item); }
-    virtual void PHUnFreeze() { return inherited ::PHUnFreeze(); }
-    virtual void PHFreeze() { return inherited ::PHFreeze(); }
+    virtual u16 PHGetSyncItemsNumber() { return inherited::PHGetSyncItemsNumber(); }
+    virtual CPHSynchronize* PHGetSyncItem(u16 item) { return inherited::PHGetSyncItem(item); }
+    virtual void PHUnFreeze() { return inherited::PHUnFreeze(); }
+    virtual void PHFreeze() { return inherited::PHFreeze(); }
     ///////////////////////////////////////////////////////////////////////
 public:
     virtual void Load(LPCSTR section);
@@ -193,7 +196,9 @@ public:
     virtual void reload(LPCSTR section);
     virtual const SRotation Orientation() const;
     virtual float get_custom_pitch_speed(float def_speed) { return def_speed; }
+
     virtual bool human_being() const { return (false); }
+
     virtual void PitchCorrection();
 
     virtual void save(NET_Packet& output_packet);
@@ -292,6 +297,7 @@ protected:
     virtual void load_critical_wound_bones() {}
 
     virtual bool critical_wound_external_conditions_suitable() { return true; }
+
     virtual void critical_wounded_state_start() {}
 
     bool update_critical_wounded(const u16& bone_id, const float& power);

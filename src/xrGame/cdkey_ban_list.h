@@ -36,6 +36,7 @@ private:
         bool load(CInifile* ini, shared_str const& name_sect);
         void save(CInifile* ini, char const* name_sect);
     };
+
     void erase_expired_ban_items();
     typedef xr_vector<banned_client*> ban_list_t;
 

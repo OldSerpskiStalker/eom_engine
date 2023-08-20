@@ -12,12 +12,12 @@ public:
     CEliteDetector();
     virtual ~CEliteDetector();
     virtual void render_item_3d_ui();
-    virtual bool render_item_3d_ui_query();
     virtual LPCSTR ui_xml_tag() const { return "elite"; }
 
 protected:
     virtual void UpdateAf();
     virtual void CreateUI();
+    virtual void ResetUI();
     CUIArtefactDetectorElite& ui();
 };
 
@@ -34,6 +34,6 @@ public:
     virtual LPCSTR ui_xml_tag() const { return "scientific"; }
 
 protected:
-    virtual void UpfateWork();
+    virtual void UpdateWork();
     CZoneList m_zones;
 };

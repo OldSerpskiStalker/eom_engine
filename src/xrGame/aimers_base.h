@@ -18,7 +18,6 @@ class IKinematicsAnimated;
 
 namespace aimers
 {
-
 class base : private boost::noncopyable
 {
 public:
@@ -43,7 +42,6 @@ protected:
     MotionID m_animation_id;
     bool m_animation_start;
 }; // class position_bone_aimer
-
 } // namespace aimers
 
 #include "aimers_base_inline.h"

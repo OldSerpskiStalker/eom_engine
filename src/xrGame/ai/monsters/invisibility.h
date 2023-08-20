@@ -23,7 +23,9 @@ protected:
     virtual void frame_update();
 
     virtual void on_change_visibility(bool b_visibility) {}
+
     virtual void on_activate() {}
+
     virtual void on_deactivate() {}
 
 public:

@@ -9,7 +9,6 @@
 // this module is an implementation of file transfering ...
 namespace file_transfer
 {
-
 class server_site
 {
 public:
@@ -85,12 +84,12 @@ public:
     void stop_receive_file(ClientID const& from_client);
 
     inline bool is_transfer_active() const { return m_transfering ? true : false; };
+
     inline bool is_receiving_active(ClientID const& from_client) const
     {
         return m_receivers.find(from_client) != m_receivers.end();
     };
 };
-
 }; // namespace file_transfer
 
 #endif // #ifndef FILETRANSFER

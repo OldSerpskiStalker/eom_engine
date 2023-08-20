@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "monster_state_controlled_attack.h"
 #include "monster_state_controlled_follow.h"
@@ -21,7 +21,7 @@ void CStateMonsterControlledAbstract::execute()
     {
     case eTaskFollow: select_state(eStateControlled_Follow); break;
     case eTaskAttack: {
-        // ïðîâåðèòü âàëèäíîñòü äàííûõ àòàêè
+        // Ã¯Ã°Ã®Ã¢Ã¥Ã°Ã¨Ã²Ã¼ Ã¢Ã Ã«Ã¨Ã¤Ã­Ã®Ã±Ã²Ã¼ Ã¤Ã Ã­Ã­Ã»Ãµ Ã Ã²Ã ÃªÃ¨
         const CEntity* enemy = object->get_data().m_object;
         if (!enemy || enemy->getDestroy() || !enemy->g_Alive())
         {

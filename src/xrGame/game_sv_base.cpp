@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "LevelGameDef.h"
 #include "script_process.h"
 #include "xrServer_Objects_ALife_Monsters.h"
@@ -15,7 +15,7 @@
 #include "debug_renderer.h"
 #include "xrGameSpyServer.h"
 
-ENGINE_API bool g_dedicated_server;
+extern ENGINE_API bool g_dedicated_server;
 
 #define MAPROT_LIST_NAME "maprot_list.ltx"
 string_path MAPROT_LIST = "";
@@ -57,7 +57,6 @@ game_PlayerState* game_sv_GameState::get_id(ClientID id)
     }
     else				return C->ID;
 }
-
 LPCSTR				game_sv_GameState::get_name_it				(u32 it)
 {
     xrClientData*	C	= (xrClientData*)m_server->client_Get		(it);
@@ -109,6 +108,7 @@ game_PlayerState* game_sv_GameState::get_eid(u16 id) // if exist
     struct id_searcher
     {
         u16 id_to_search;
+
         bool operator()(IClient* client)
         {
             xrClientData* tmp_client = static_cast<xrClientData*>(client);
@@ -133,6 +133,7 @@ void* game_sv_GameState::get_client(u16 id) // if exist
     struct client_searcher
     {
         u16 binded_id;
+
         bool operator()(IClient* client)
         {
             xrClientData* tmp_client = static_cast<xrClientData*>(client);
@@ -155,6 +156,7 @@ u32 game_sv_GameState::get_alive_count(u32 team)
     {
         u32 team;
         u32 count;
+
         void operator()(IClient* client)
         {
             xrClientData* tmp_client = static_cast<xrClientData*>(client);
@@ -234,6 +236,7 @@ string64& game_sv_GameState::get_option_s(LPCSTR lst, LPCSTR name, LPCSTR def)
     }
     return ret;
 }
+
 void game_sv_GameState::signal_Syncronize() { sv_force_sync = TRUE; }
 
 // Network
@@ -252,6 +255,7 @@ struct player_exporter
         p_to_send = P;
         to_ps = to_playerstate;
     };
+
     void __stdcall count_players(IClient* client)
     {
         xrClientData* tmp_client = static_cast<xrClientData*>(client);
@@ -261,6 +265,7 @@ struct player_exporter
         }
         ++counter;
     }
+
     void __stdcall export_players(IClient* client)
     {
         xrClientData* tmp_client = static_cast<xrClientData*>(client);
@@ -348,6 +353,7 @@ void game_sv_GameState::OnPlayerConnect(ClientID /**id_who/**/) { signal_Syncron
 void game_sv_GameState::OnPlayerDisconnect(ClientID id_who, LPSTR, u16) { signal_Syncronize(); }
 
 static float rpoints_Dist[TEAM_COUNT] = {1000.f, 1000.f, 1000.f, 1000.f};
+
 void game_sv_GameState::Create(shared_str& options)
 {
     string_path fn_game;
@@ -483,6 +489,7 @@ void game_sv_GameState::ReadOptions(shared_str& options)
 };
 //-----------------------------------------------------------
 static bool g_bConsoleCommandsCreated_SV_Base = false;
+
 void game_sv_GameState::ConsoleCommands_Create(){};
 
 void game_sv_GameState::ConsoleCommands_Clear(){};
@@ -893,6 +900,7 @@ public:
         };
         return ret_val;
     }
+
     bool __stdcall PredicateForAll(GameEvent* const ge)
     {
         Msg("- Erasing [%d] event before start.", ge->type);
@@ -910,6 +918,7 @@ class EventDeleteForClientPredicate
 {
 public:
     EventDeleteForClientPredicate(ClientID const& clientId) : m_client_id(clientId) {}
+
     EventDeleteForClientPredicate(EventDeleteForClientPredicate const& copy) : m_client_id(copy.m_client_id) {}
 
     bool __stdcall Predicate(GameEvent* const ge)
@@ -924,6 +933,7 @@ public:
 
 private:
     EventDeleteForClientPredicate& operator=(EventDeleteForClientPredicate const& copy) {}
+
     ClientID const m_client_id;
 }; // class EventDeleteForClientPredicate
 
@@ -1010,7 +1020,7 @@ void game_sv_GameState::OnRoundStart()
         }
     };
     rpointsBlocked.clear();
-} // старт раунда
+} // Г±ГІГ Г°ГІ Г°Г ГіГ­Г¤Г 
 
 void game_sv_GameState::OnRoundEnd()
 {
@@ -1028,7 +1038,7 @@ void game_sv_GameState::OnRoundEnd()
     {
         m_bFastRestart = true;
     }
-} // конец раунда
+} // ГЄГ®Г­ГҐГ¶ Г°Г ГіГ­Г¤Г 
 
 void game_sv_GameState::SaveMapList()
 {
@@ -1101,9 +1111,7 @@ void game_sv_GameState::OnRender(){
     u32 TeamColors[TEAM_COUNT] = {D3DCOLOR_XRGB(255, 0, 0), D3DCOLOR_XRGB(0, 255, 0), D3DCOLOR_XRGB(0, 0, 255),
 D3DCOLOR_XRGB(255, 255, 0)};
 //	u32 TeamColorsDist[TEAM_COUNT] = {color_argb(128, 255, 0, 0), color_argb(128, 0, 255, 0), color_argb(128, 0, 0,
-255), color_argb(128, 255, 255, 0)};
-
-    if (dbg_net_Draw_Flags.test(dbg_draw_rp))
+255), color_argb(128, 255, 255, 0)}; if (dbg_net_Draw_Flags.test(dbg_draw_rp))
     {
         for (int t=0; t<TEAM_COUNT; t++)
         {
@@ -1112,10 +1120,8 @@ D3DCOLOR_XRGB(255, 255, 0)};
                 RPoint rp = rpoints[t][i];
                 V1 = V0 = rp.P;
                 V1.y +=1.0f;
-
                 T.identity();
                 Level().debug_renderer().draw_line(Fidentity, V0, V1, TeamColors[t]);
-
                 bool Blocked = false;
                 for (u32 p_it=0; p_it<get_players_count(); ++p_it)
                 {
@@ -1124,7 +1130,6 @@ D3DCOLOR_XRGB(255, 255, 0)};
                     if (PS->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD)) continue;
                     CObject* pPlayer = Level().Objects.net_Find(PS->GameID);
                     if (!pPlayer) continue;
-
                     if (rp.P.distance_to(pPlayer->Position())<=0.4f)
                     {
                         Blocked = true;
@@ -1132,7 +1137,6 @@ D3DCOLOR_XRGB(255, 255, 0)};
                     }
                 };
                 if (rp.bBlocked) continue;
-
                 float r = .3f;
                 T.identity();
                 T.scale(r, r, r);
@@ -1144,7 +1148,6 @@ D3DCOLOR_XRGB(255, 255, 0)};
                 T.scale(r, r, r);
                 T.translate_add(rp.P);
                 Level().debug_renderer().draw_ellipse(T, TeamColorsDist[t]);
-
                 r = rpoints_Dist[t];
                 T.identity();
                 T.scale(r, r, r);
@@ -1154,7 +1157,6 @@ D3DCOLOR_XRGB(255, 255, 0)};
             }
         }
     };
-
     if (dbg_net_Draw_Flags.test(dbg_draw_actor_alive))
     {
         for (u32 p_it=0; p_it<get_players_count(); ++p_it)
@@ -1164,14 +1166,12 @@ D3DCOLOR_XRGB(255, 255, 0)};
             if (PS->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD)) continue;
             CObject* pPlayer = Level().Objects.net_Find(PS->GameID);
             if (!pPlayer) continue;
-
             float r = .4f;
             T.identity();
             T.scale(r, r, r);
             T.translate_add(pPlayer->Position());
             Level().debug_renderer().draw_ellipse(T, TeamColors[PS->team]);
         };
-
     }*/
 };
 #endif

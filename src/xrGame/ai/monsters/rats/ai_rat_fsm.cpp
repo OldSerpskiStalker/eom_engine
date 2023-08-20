@@ -63,19 +63,23 @@ void CAI_Rat::Think()
             Death();
             break;
         }
-        case aiRatFreeActive: { // aiRatFreeHuntingActive
+        case aiRatFreeActive: {
+            // aiRatFreeHuntingActive
             FreeHuntingActive();
             break;
         }
-        case aiRatFreePassive: { // aiRatFreeHuntingPassive
+        case aiRatFreePassive: {
+            // aiRatFreeHuntingPassive
             FreeHuntingPassive();
             break;
         }
-        case aiRatAttackRange: { // aiRatAttackFire
+        case aiRatAttackRange: {
+            // aiRatAttackFire
             AttackFire();
             break;
         }
-        case aiRatAttackMelee: { // aiRatAttackRun
+        case aiRatAttackMelee: {
+            // aiRatAttackRun
             AttackRun();
             break;
         }

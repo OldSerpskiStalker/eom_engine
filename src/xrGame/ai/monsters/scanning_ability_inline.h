@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "ai_monster_effector.h"
 
 #define TEMPLATE_SPECIALIZATION template <typename _Object>
@@ -79,7 +79,7 @@ void CScanningAbilityAbstract::schedule_update()
     if (!scan_obj)
         return;
 
-    // проверка на активность
+    // ГЇГ°Г®ГўГҐГ°ГЄГ  Г­Г  Г ГЄГІГЁГўГ­Г®Г±ГІГј
     if (state == eStateNotActive)
     {
         if (scan_obj->Position().distance_to(object->Position()) < scan_radius)
@@ -91,11 +91,11 @@ void CScanningAbilityAbstract::schedule_update()
 
     if (state == eStateScanning)
     {
-        // обновить scan_value
+        // Г®ГЎГ­Г®ГўГЁГІГј scan_value
         float vel = get_velocity(scan_obj);
         if (vel > velocity_threshold)
         {
-            // трейсить не чаще, чем scan_trace_time_freq
+            // ГІГ°ГҐГ©Г±ГЁГІГј Г­ГҐ Г·Г Г№ГҐ, Г·ГҐГ¬ scan_trace_time_freq
             if (time_last_trace + u32(1000 / scan_trace_time_freq) < Device.dwTimeGlobal)
             {
                 time_last_trace = Device.dwTimeGlobal;
@@ -108,10 +108,10 @@ void CScanningAbilityAbstract::schedule_update()
             {
                 if (object->can_scan)
                 {
-                    // играть звук
+                    // ГЁГЈГ°Г ГІГј Г§ГўГіГЄ
                     ::Sound->play_at_pos(sound_scan, 0, scan_obj->Position());
 
-                    // постпроцесс
+                    // ГЇГ®Г±ГІГЇГ°Г®Г¶ГҐГ±Г±
                     // TODO: make this postprocess with static check (only one for all scanners)
                     Actor()->Cameras().AddPPEffector(xr_new<CMonsterEffector>(
                         m_effector_info, m_effector_time, m_effector_time_attack, m_effector_time_release));

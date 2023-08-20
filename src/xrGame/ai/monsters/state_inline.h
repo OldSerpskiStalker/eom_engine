@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #define TEMPLATE_SPECIALIZATION template <typename _Object>
 
@@ -41,10 +41,10 @@ TEMPLATE_SPECIALIZATION
 void CStateAbstract::execute()
 {
     VERIFY(object->g_Alive());
-    // ïðîâåðèòü âíåøíèå óñëîâèÿ èçìåíåíèÿ ñîñòîÿíèÿ
+    // Ã¯Ã°Ã®Ã¢Ã¥Ã°Ã¨Ã²Ã¼ Ã¢Ã­Ã¥Ã¸Ã­Ã¨Ã¥ Ã³Ã±Ã«Ã®Ã¢Ã¨Ã¿ Ã¨Ã§Ã¬Ã¥Ã­Ã¥Ã­Ã¨Ã¿ Ã±Ã®Ã±Ã²Ã®Ã¿Ã­Ã¨Ã¿
     check_force_state();
 
-    // åñëè ñîñòîÿíèå íå âûáðàíî, ïåðåâûáðàòü
+    // Ã¥Ã±Ã«Ã¨ Ã±Ã®Ã±Ã²Ã®Ã¿Ã­Ã¨Ã¥ Ã­Ã¥ Ã¢Ã»Ã¡Ã°Ã Ã­Ã®, Ã¯Ã¥Ã°Ã¥Ã¢Ã»Ã¡Ã°Ã Ã²Ã¼
     if (current_substate == u32(-1))
     {
         reselect_state();
@@ -65,14 +65,14 @@ void CStateAbstract::execute()
 #endif
     }
 
-    // âûïîëíèòü òåêóùåå ñîñòîÿíèå
+    // Ã¢Ã»Ã¯Ã®Ã«Ã­Ã¨Ã²Ã¼ Ã²Ã¥ÃªÃ³Ã¹Ã¥Ã¥ Ã±Ã®Ã±Ã²Ã®Ã¿Ã­Ã¨Ã¥
     CSState* state = get_state(current_substate);
     state->execute();
 
-    // ñîõðàíèòü òåêóùåå ñîñòîÿíèå
+    // Ã±Ã®ÃµÃ°Ã Ã­Ã¨Ã²Ã¼ Ã²Ã¥ÃªÃ³Ã¹Ã¥Ã¥ Ã±Ã®Ã±Ã²Ã®Ã¿Ã­Ã¨Ã¥
     prev_substate = current_substate;
 
-    // ïðîâåðèòü íà çàâåðøåíèå òåêóùåãî ñîñòîÿíèÿ
+    // Ã¯Ã°Ã®Ã¢Ã¥Ã°Ã¨Ã²Ã¼ Ã­Ã  Ã§Ã Ã¢Ã¥Ã°Ã¸Ã¥Ã­Ã¨Ã¥ Ã²Ã¥ÃªÃ³Ã¹Ã¥Ã£Ã® Ã±Ã®Ã±Ã²Ã®Ã¿Ã­Ã¨Ã¿
     if (state->check_completion())
     {
         state->finalize();
@@ -106,17 +106,17 @@ void CStateAbstract::select_state(u32 new_state_id)
         return;
     CSState* state;
 
-    // åñëè ïðåäûäóùåå ñîñòîÿíèå àêòèâíî, çàâåðøèòü åãî
+    // Ã¥Ã±Ã«Ã¨ Ã¯Ã°Ã¥Ã¤Ã»Ã¤Ã³Ã¹Ã¥Ã¥ Ã±Ã®Ã±Ã²Ã®Ã¿Ã­Ã¨Ã¥ Ã ÃªÃ²Ã¨Ã¢Ã­Ã®, Ã§Ã Ã¢Ã¥Ã°Ã¸Ã¨Ã²Ã¼ Ã¥Ã£Ã®
     if (current_substate != u32(-1))
     {
         state = get_state(current_substate);
         state->critical_finalize();
     }
 
-    // óñòàíîâèòü íîâîå ñîñòîÿíèå
+    // Ã³Ã±Ã²Ã Ã­Ã®Ã¢Ã¨Ã²Ã¼ Ã­Ã®Ã¢Ã®Ã¥ Ã±Ã®Ã±Ã²Ã®Ã¿Ã­Ã¨Ã¥
     state = get_state(current_substate = new_state_id);
 
-    // èíèöèàëèçèðîâàòü íîâîå ñîñòîÿíèå
+    // Ã¨Ã­Ã¨Ã¶Ã¨Ã Ã«Ã¨Ã§Ã¨Ã°Ã®Ã¢Ã Ã²Ã¼ Ã­Ã®Ã¢Ã®Ã¥ Ã±Ã®Ã±Ã²Ã®Ã¿Ã­Ã¨Ã¥
     setup_substates();
 
     state->initialize();
@@ -193,6 +193,7 @@ CStateAbstract* CStateAbstract::get_state_current()
 
     return it->second;
 }
+
 TEMPLATE_SPECIALIZATION
 EMonsterState CStateAbstract::get_state_type()
 {

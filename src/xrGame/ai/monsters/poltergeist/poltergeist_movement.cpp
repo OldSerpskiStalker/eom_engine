@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "poltergeist_movement.h"
 #include "poltergeist.h"
 #include "../../../detail_path_manager.h"
@@ -14,7 +14,7 @@ void CPoltergeisMovementManager::move_along_path(
 
     dest_position = m_monster->m_current_position;
 
-    // Если нет движения по пути
+    // Г…Г±Г«ГЁ Г­ГҐГІ Г¤ГўГЁГ¦ГҐГ­ГЁГї ГЇГ® ГЇГіГІГЁ
     if (!enabled() || path_completed() || detail().path().empty() ||
         detail().completed(m_monster->m_current_position, true) ||
         (detail().curr_travel_point_index() >= detail().path().size() - 1) || fis_zero(old_desirable_speed()))
@@ -30,19 +30,19 @@ void CPoltergeisMovementManager::move_along_path(
         return;
     }
 
-    // Вычислить пройденную дистанцию, определить целевую позицию на маршруте,
-    //			 изменить detail().curr_travel_point_index()
+    // Г‚Г»Г·ГЁГ±Г«ГЁГІГј ГЇГ°Г®Г©Г¤ГҐГ­Г­ГіГѕ Г¤ГЁГ±ГІГ Г­Г¶ГЁГѕ, Г®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј Г¶ГҐГ«ГҐГўГіГѕ ГЇГ®Г§ГЁГ¶ГЁГѕ Г­Г  Г¬Г Г°ГёГ°ГіГІГҐ,
+    //			 ГЁГ§Г¬ГҐГ­ГЁГІГј detail().curr_travel_point_index()
 
-    float desirable_speed = old_desirable_speed(); // желаемая скорость объекта
-    float dist = desirable_speed * time_delta; // пройденное расстояние в соостветствие с желаемой скоростью
+    float desirable_speed = old_desirable_speed(); // Г¦ГҐГ«Г ГҐГ¬Г Гї Г±ГЄГ®Г°Г®Г±ГІГј Г®ГЎГєГҐГЄГІГ 
+    float dist = desirable_speed * time_delta; // ГЇГ°Г®Г©Г¤ГҐГ­Г­Г®ГҐ Г°Г Г±Г±ГІГ®ГїГ­ГЁГҐ Гў Г±Г®Г®Г±ГІГўГҐГІГ±ГІГўГЁГҐ Г± Г¦ГҐГ«Г ГҐГ¬Г®Г© Г±ГЄГ®Г°Г®Г±ГІГјГѕ
     float desirable_dist = dist;
 
-    // определить целевую точку
+    // Г®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј Г¶ГҐГ«ГҐГўГіГѕ ГІГ®Г·ГЄГі
     Fvector target;
 
     u32 prev_cur_point_index = detail().curr_travel_point_index();
 
-    // обновить detail().curr_travel_point_index() в соответствие с текущей позицией
+    // Г®ГЎГ­Г®ГўГЁГІГј detail().curr_travel_point_index() Гў Г±Г®Г®ГІГўГҐГІГ±ГІГўГЁГҐ Г± ГІГҐГЄГіГ№ГҐГ© ГЇГ®Г§ГЁГ¶ГЁГҐГ©
     while (detail().curr_travel_point_index() < detail().path().size() - 2)
     {
         float pos_dist_to_cur_point =
@@ -61,11 +61,11 @@ void CPoltergeisMovementManager::move_along_path(
     }
 
     target.set(detail().path()[detail().curr_travel_point_index() + 1].position);
-    // определить направление к целевой точке
+    // Г®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј Г­Г ГЇГ°Г ГўГ«ГҐГ­ГЁГҐ ГЄ Г¶ГҐГ«ГҐГўГ®Г© ГІГ®Г·ГЄГҐ
     Fvector dir_to_target;
     dir_to_target.sub(target, dest_position);
 
-    // дистанция до целевой точки
+    // Г¤ГЁГ±ГІГ Г­Г¶ГЁГї Г¤Г® Г¶ГҐГ«ГҐГўГ®Г© ГІГ®Г·ГЄГЁ
     float dist_to_target = dir_to_target.magnitude();
 
     while (dist > dist_to_target)
@@ -97,18 +97,18 @@ void CPoltergeisMovementManager::move_along_path(
         return;
     }
 
-    // установить позицию
+    // ГіГ±ГІГ Г­Г®ГўГЁГІГј ГЇГ®Г§ГЁГ¶ГЁГѕ
     Fvector motion;
     motion.mul(dir_to_target, dist / dist_to_target);
     dest_position.add(motion);
 
-    // установить скорость
+    // ГіГ±ГІГ Г­Г®ГўГЁГІГј Г±ГЄГ®Г°Г®Г±ГІГј
     float real_motion = motion.magnitude() + desirable_dist - dist;
     float real_speed = real_motion / time_delta;
 
     m_speed = 0.5f * desirable_speed + 0.5f * real_speed;
 
-    // Обновить позицию
+    // ГЋГЎГ­Г®ГўГЁГІГј ГЇГ®Г§ГЁГ¶ГЁГѕ
     m_monster->m_current_position = dest_position;
     m_monster->Position() = CalculateRealPosition();
     dest_position = m_monster->Position();

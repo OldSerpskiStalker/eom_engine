@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "../../../../xrphysics/PhysicsShell.h"
 // #include "../../../PHInterpolation.h"
@@ -60,7 +60,7 @@ void CStateMonsterRestFunAbstract::execute()
             dir.setHP(h, p + 5 * PI / 180);
             dir.normalize();
 
-            // выполнить бросок
+            // ГўГ»ГЇГ®Г«Г­ГЁГІГј ГЎГ°Г®Г±Г®ГЄ
             for (u32 i = 0; i < target->m_pPhysicsShell->get_ElementsNumber(); i++)
             {
                 target->m_pPhysicsShell->get_ElementByStoreOrder((u16)i)->applyImpulse(dir,

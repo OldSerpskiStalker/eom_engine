@@ -5,6 +5,7 @@
 using namespace luabind;
 
 LPCSTR get_file_age_str(CLocatorAPI* fs, LPCSTR nm);
+
 CLocatorAPI* getFS() { return &FS; }
 
 LPCSTR update_path_script(CLocatorAPI* fs, LPCSTR initial, LPCSTR src)
@@ -21,7 +22,10 @@ void rescan_path_script(CLocatorAPI* fs, LPCSTR initial)
 {
     fs->get_path(initial)->m_Flags.set(FS_Path::flNeedRescan, TRUE);
 }
+
 //-Alundaio
+
+void rescan_pathes_script(CLocatorAPI* fs) { fs->rescan_pathes(); }
 
 class FS_file_list
 {
@@ -29,8 +33,10 @@ class FS_file_list
 
 public:
     FS_file_list(xr_vector<LPSTR>* p) : m_p(p) {}
+
     u32 Size() { return m_p->size(); }
     LPCSTR GetAt(u32 idx) { return m_p->at(idx); }
+
     void Free() { FS.file_list_close(m_p); };
 };
 
@@ -44,6 +50,7 @@ struct FS_item
     LPCSTR NameShort() { return name; }
     LPCSTR NameFull() { return name; }
     u32 Size() { return size; }
+
     LPCSTR Modif()
     {
         struct tm* newtime;
@@ -71,6 +78,7 @@ bool sizeSorter(const FS_item& itm1, const FS_item& itm2)
         return (itm1.size < itm2.size);
     return (itm2.size < itm1.size);
 }
+
 template <bool b>
 bool modifSorter(const FS_item& itm1, const FS_item& itm2)
 {
@@ -78,6 +86,7 @@ bool modifSorter(const FS_item& itm1, const FS_item& itm2)
         return (itm1.modif < itm2.modif);
     return (itm2.modif < itm1.modif);
 }
+
 template <bool b>
 bool nameSorter(const FS_item& itm1, const FS_item& itm2)
 {
@@ -100,6 +109,7 @@ public:
         eSortByModifUp,
         eSortByModifDown
     };
+
     FS_file_list_ex(LPCSTR path, u32 flags, LPCSTR mask);
 
     u32 Size() { return m_file_items.size(); }
@@ -227,6 +237,8 @@ void fs_registrator::script_register(lua_State* L)
             // Alundaio
             .def("rescan_path", &rescan_path_script)
             //-Alundaio
+
+            .def("rescan_pathes", &rescan_pathes_script)
 
             .def("file_delete", (void(CLocatorAPI::*)(LPCSTR, LPCSTR))(&CLocatorAPI::file_delete))
             .def("file_delete", (void(CLocatorAPI::*)(LPCSTR))(&CLocatorAPI::file_delete))

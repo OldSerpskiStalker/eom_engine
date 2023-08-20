@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #define TEMPLATE_SPECIALIZATION template <typename _Object>
 
@@ -39,7 +39,7 @@ bool CStateMonsterHitObjectAbstract::check_start_conditions()
 {
     target = 0;
 
-    // получить физ. объекты в радиусе
+    // ГЇГ®Г«ГіГ·ГЁГІГј ГґГЁГ§. Г®ГЎГєГҐГЄГІГ» Гў Г°Г Г¤ГЁГіГ±ГҐ
     m_nearest_objects.clear_not_free();
     Level().ObjectSpace.GetNearest(m_nearest_objects, object->Position(), object->Radius() - 0.5f, object());
 
@@ -52,11 +52,11 @@ bool CStateMonsterHitObjectAbstract::check_start_conditions()
         if (!obj || !obj->m_pPhysicsShell)
             continue;
 
-        // определить дистанцию до врага
+        // Г®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј Г¤ГЁГ±ГІГ Г­Г¶ГЁГѕ Г¤Г® ГўГ°Г ГЈГ 
         Fvector d;
         d.sub(obj->Position(), object->Position());
 
-        // проверка на  Field-Of-Hit
+        // ГЇГ°Г®ГўГҐГ°ГЄГ  Г­Г   Field-Of-Hit
         float my_h, my_p;
         float h, p;
 

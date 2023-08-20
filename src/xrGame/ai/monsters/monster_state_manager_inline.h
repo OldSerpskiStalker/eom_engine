@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #define TEMPLATE_SPECIALIZATION template <typename _Object>
 
@@ -8,7 +8,8 @@ TEMPLATE_SPECIALIZATION
 void CMonsterStateManagerAbstract::reinit() { inherited::reinit(); }
 
 namespace detail
-{ // helper function implemented in file alife_simulator.cpp
+{
+// helper function implemented in file alife_simulator.cpp
 bool object_exists_in_alife_registry(u32 id);
 } // namespace detail
 
@@ -32,14 +33,14 @@ void CMonsterStateManagerAbstract::update()
 TEMPLATE_SPECIALIZATION
 void CMonsterStateManagerAbstract::force_script_state(EMonsterState state)
 {
-    // óñòàíîâèòü òåêóùåå ñîñòîÿíèå
+    // Ã³Ã±Ã²Ã Ã­Ã®Ã¢Ã¨Ã²Ã¼ Ã²Ã¥ÃªÃ³Ã¹Ã¥Ã¥ Ã±Ã®Ã±Ã²Ã®Ã¿Ã­Ã¨Ã¥
     select_state(state);
 }
 
 TEMPLATE_SPECIALIZATION
 void CMonsterStateManagerAbstract::execute_script_state()
 {
-    // âûïîëíèòü òåêóùåå ñîñòîÿíèå
+    // Ã¢Ã»Ã¯Ã®Ã«Ã­Ã¨Ã²Ã¼ Ã²Ã¥ÃªÃ³Ã¹Ã¥Ã¥ Ã±Ã®Ã±Ã²Ã®Ã¿Ã­Ã¨Ã¥
     get_state_current()->execute();
 }
 

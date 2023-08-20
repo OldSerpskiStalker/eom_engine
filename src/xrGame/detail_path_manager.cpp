@@ -127,8 +127,8 @@ void CDetailPathManager::build_path(const xr_vector<u32>& level_path, u32 interm
             for (; I != E; ++I)
                 Msg("[%d] : [%f][%f]", (*I).index, (*I).linear_velocity, (*I).angular_velocity);
 
-//			for (;;)
-//				build_smooth_path(level_path,intermediate_index);
+                //			for (;;)
+                //				build_smooth_path(level_path,intermediate_index);
 #endif
         }
 
@@ -167,6 +167,7 @@ void CDetailPathManager::on_travel_point_change(const u32& previous_travel_point
 }
 
 #include "GameObject.h"
+
 u32 CDetailPathManager::location_on_path(const CGameObject* object, float distance, Fvector& result) const
 {
     VERIFY(m_restricted_object);

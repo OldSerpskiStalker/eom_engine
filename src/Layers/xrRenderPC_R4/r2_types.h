@@ -20,6 +20,9 @@
 #define r2_RT_ssao_temp "$user$ssao_temp" // temporary rt for ssao calculation
 #define r2_RT_half_depth "$user$half_depth" // temporary rt for ssao calculation
 
+#define r2_RT_sunshafts0 "$user$sun_shafts0" // first rt
+#define r2_RT_sunshafts1 "$user$sun_shafts1" // second rt
+
 #define r2_RT_generic0 "$user$generic0" // ---
 #define r2_RT_generic0_r "$user$generic0_r" // ---
 #define r2_RT_generic1 "$user$generic1" // ---
@@ -48,11 +51,14 @@
 #define r2_jitter_mipped "$user$jitter_mipped" // --- dither
 #define r2_sunmask "sunmask"
 
+#define r2_RT_smaa_edgetex "$user$smaa_edgetex"
+#define r2_RT_smaa_blendtex "$user$smaa_blendtex"
+
 #define JITTER(a) r2_jitter #a
 
 const float SMAP_near_plane = .1f;
 
-const u32 SMAP_adapt_min = 32;
+const u32 SMAP_adapt_min = 768; // 32	;
 const u32 SMAP_adapt_optimal = 768;
 const u32 SMAP_adapt_max = 1536;
 
@@ -96,9 +102,11 @@ const u32 LUMINANCE_size = 16;
 #define SE_SUN_RAIN_SMAP 5
 
 extern float ps_r2_gloss_factor;
+extern float ps_r2_gloss_min;
 IC float u_diffuse2s(float x, float y, float z)
 {
     float v = (x + y + z) / 3.f;
-    return ps_r2_gloss_factor * ((v < 1) ? powf(v, 2.f / 3.f) : v);
+    return ps_r2_gloss_min + ps_r2_gloss_factor * ((v < 1) ? powf(v, 2.f / 3.f) : v);
 }
+
 IC float u_diffuse2s(Fvector3& c) { return u_diffuse2s(c.x, c.y, c.z); }

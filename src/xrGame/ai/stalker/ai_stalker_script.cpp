@@ -185,5 +185,7 @@ void CAI_Stalker::script_register(lua_State* L)
 
                    luabind::value("sound_script", StalkerSpace::eStalkerSoundScript)],
 
-        class_<CAI_Stalker, CGameObject>("CAI_Stalker").def(constructor<>())];
+        class_<CAI_Stalker, CGameObject>("CAI_Stalker")
+            .def(constructor<>())
+            .def("conditions", &CAI_Stalker::conditions)];
 }

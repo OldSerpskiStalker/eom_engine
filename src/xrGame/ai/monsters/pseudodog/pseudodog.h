@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "../BaseMonster/base_monster.h"
 #include "../../../../xrServerEntities/script_export_space.h"
@@ -13,7 +13,7 @@ public:
 
     TTime m_time_became_angry;
 
-    TTime time_growling; // время нахождения в состоянии пугания
+    TTime time_growling; // ГўГ°ГҐГ¬Гї Г­Г ГµГ®Г¦Г¤ГҐГ­ГЁГї Гў Г±Г®Г±ГІГ®ГїГ­ГЁГЁ ГЇГіГЈГ Г­ГЁГї
 
     enum
     {

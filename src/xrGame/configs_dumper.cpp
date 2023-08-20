@@ -13,7 +13,6 @@
 
 namespace mp_anticheat
 {
-
 configs_dumper::configs_dumper()
 {
     m_state = ds_not_active;
@@ -56,6 +55,7 @@ void configs_dumper::shedule_Update(u32 dt)
 struct ExistDumpPredicate
 {
     shared_str section_name;
+
     bool operator()(IAnticheatDumpable const* dump_obj) const
     {
         if (!dump_obj)
@@ -67,6 +67,7 @@ struct ExistDumpPredicate
 }; // struct ExistDumpPredicate
 
 typedef buffer_vector<IAnticheatDumpable const*> active_objects_t;
+
 static active_objects_t::size_type get_active_objects(active_objects_t& dest)
 {
     CActorMP const* tmp_actor = smart_cast<CActorMP const*>(Level().CurrentControlEntity());
@@ -329,5 +330,4 @@ void dump_signer::feel_private_dsa_key()
     m_private_key.m_value[18] = 0x91;
     m_private_key.m_value[19] = 0x17;
 }
-
 } // namespace mp_anticheat

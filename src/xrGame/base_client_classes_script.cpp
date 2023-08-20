@@ -175,7 +175,6 @@ void IKinematicsScript::script_register		(lua_State *L)
             //			.def(constructor<>())
         ];
 }
-
 void FHierrarhyVisualScript::script_register		(lua_State *L)
 {
     module(L)

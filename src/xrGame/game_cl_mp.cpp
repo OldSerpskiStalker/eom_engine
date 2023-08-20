@@ -30,7 +30,6 @@
 #include "mainmenu.h"
 #include "WeaponKnife.h"
 #include "RegistryFuncs.h"
-#include "../xrGameSpy/xrGameSpy_MainDefs.h"
 #include "screenshot_server.h"
 #include "../xrCore/ppmd_compressor.h"
 #include "../xrCore/rt_compressor.h"
@@ -93,7 +92,7 @@ game_cl_mp::game_cl_mp()
         pBuySpawnMsgBox->AddCallback("msg_box", MESSAGE_BOX_YES_CLICKED, CUIWndCallback::void_function(this,
        &game_cl_mp::OnBuySpawn)); string1024	BuySpawnText; xr_sprintf(BuySpawnText, "You can buy a spawn for %d $.
        Press Yes to pay.", abs(m_iSpawn_Cost)); pBuySpawnMsgBox->SetText(BuySpawnText);
-    */	//-----------------------------------------------------------
+    */ //-----------------------------------------------------------
     m_reward_generator = NULL;
     m_ready_to_open_buy_menu = true;
     m_reward_manager = NULL;
@@ -647,6 +646,7 @@ void game_cl_mp::SendVoteYesMessage()
     P.w_u16(GAME_EVENT_VOTE_YES);
     Game().u_EventSend(P);
 };
+
 void game_cl_mp::SendVoteNoMessage()
 {
     if (!IsVotingEnabled() || !IsVotingActive())
@@ -658,6 +658,7 @@ void game_cl_mp::SendVoteNoMessage()
 };
 
 void game_cl_mp::OnVoteStart(NET_Packet& P) { SetVotingActive(true); };
+
 void game_cl_mp::OnVoteStop(NET_Packet& P)
 {
     SetVotingActive(false);
@@ -668,6 +669,7 @@ void game_cl_mp::OnVoteStop(NET_Packet& P)
 };
 
 void game_cl_mp::OnVoteEnd(NET_Packet& P) { SetVotingActive(false); };
+
 void game_cl_mp::OnPlayerVoted(game_PlayerState* ps)
 {
     if (!IsVotingActive())
@@ -683,6 +685,7 @@ void game_cl_mp::OnPlayerVoted(game_PlayerState* ps)
     if (CurrentGameUI())
         CurrentGameUI()->CommonMessageOut(resStr);
 }
+
 void game_cl_mp::LoadTeamData(const shared_str& TeamName)
 {
     cl_TeamStruct Team;
@@ -803,6 +806,7 @@ const ui_shader& game_cl_mp::GetBloodLossIconsShader()
     return m_BloodLossIconsShader;
     */
 }
+
 const ui_shader& game_cl_mp::GetRankIconsShader()
 {
     if (m_RankIconsShader->inited())
@@ -1004,7 +1008,7 @@ void game_cl_mp::OnPlayerKilled(NET_Packet& P)
         }
     }
     break;
-        //-----------------------------------------------------------
+    //-----------------------------------------------------------
     case KT_BLEEDING: // from bleeding
     {
         KMS.m_initiator.m_shader = GetBloodLossIconsShader();
@@ -1043,7 +1047,7 @@ void game_cl_mp::OnPlayerKilled(NET_Packet& P)
         };
     }
     break;
-        //-----------------------------------------------------------
+    //-----------------------------------------------------------
     case KT_RADIATION: // from radiation
     {
         KMS.m_initiator.m_shader = GetRadiationIconsShader();

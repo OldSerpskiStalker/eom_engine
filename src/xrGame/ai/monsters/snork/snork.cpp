@@ -176,6 +176,7 @@ float CSnork::trace(const Fvector& dir)
 }
 
 #define JUMP_DISTANCE 10.f
+
 bool CSnork::find_geometry(Fvector& dir)
 {
     // 1. trace direction
@@ -306,6 +307,7 @@ void CSnork::on_activate_control(ControlCom::EControlType type)
         // m_sound_start_threaten.play_at_pos(this, get_head_position(this));
     }
 }
+
 //////////////////////////////////////////////////////////////////////////
 
 #ifdef _DEBUG

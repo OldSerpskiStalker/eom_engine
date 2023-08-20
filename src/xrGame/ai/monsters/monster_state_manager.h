@@ -14,6 +14,7 @@ class CMonsterStateManager : public IStateManagerBase, public CState<_Object>
 
 public:
     CMonsterStateManager(_Object* obj) : inherited(obj) {}
+
     virtual void reinit();
     virtual void update();
     virtual void force_script_state(EMonsterState state);
@@ -28,7 +29,7 @@ public:
         return inherited::check_control_start_conditions(type);
     }
 
-// Lain: added
+    // Lain: added
 #ifdef DEBUG
     virtual void add_debug_info(debug::text_tree& root_s);
 #endif

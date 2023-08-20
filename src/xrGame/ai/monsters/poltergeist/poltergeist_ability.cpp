@@ -1,9 +1,10 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "poltergeist.h"
 #include "../../../../xrphysics/PhysicsShell.h"
 #include "../../../level.h"
 #include "../../../material_manager.h"
 #include "../../../level_debug.h"
+#include "inventory_item.h"
 
 CPolterSpecialAbility::CPolterSpecialAbility(CPoltergeist* polter)
 {
@@ -87,7 +88,7 @@ void CPolterSpecialAbility::on_hit(SHit* pHDS)
     {
         if (BI_NONE != pHDS->bone())
         {
-            // вычислить координаты попадания
+            // ГўГ»Г·ГЁГ±Г«ГЁГІГј ГЄГ®Г®Г°Г¤ГЁГ­Г ГІГ» ГЇГ®ГЇГ Г¤Г Г­ГЁГї
             IKinematics* V = smart_cast<IKinematics*>(m_object->Visual());
 
             Fvector start_pos = pHDS->bone_space_position();
@@ -122,7 +123,10 @@ void CPoltergeist::PhysicalImpulse(const Fvector& position)
     u32 index = Random.randI(m_nearest.size());
 
     CPhysicsShellHolder* obj = smart_cast<CPhysicsShellHolder*>(m_nearest[index]);
+    CInventoryItem* itm = smart_cast<CInventoryItem*>(obj);
     if (!obj || !obj->m_pPhysicsShell)
+        return;
+    if (itm && itm->IsQuestItem())
         return;
 
     Fvector dir;
@@ -150,13 +154,13 @@ void CPoltergeist::StrangeSounds(const Fvector& position)
         {
             if (l_rq.range < TRACE_DISTANCE)
             {
-                // Получить пару материалов
+                // ГЏГ®Г«ГіГ·ГЁГІГј ГЇГ Г°Гі Г¬Г ГІГҐГ°ГЁГ Г«Г®Гў
                 CDB::TRI* pTri = Level().ObjectSpace.GetStaticTris() + l_rq.element;
                 SGameMtlPair* mtl_pair = GMLib.GetMaterialPair(material().self_material_idx(), pTri->material);
                 if (!mtl_pair)
                     continue;
 
-                // Играть звук
+                // Г€ГЈГ°Г ГІГј Г§ГўГіГЄ
                 if (!mtl_pair->CollideSounds.empty())
                 {
                     CLONE_MTL_SOUND(m_strange_sound, mtl_pair, CollideSounds);

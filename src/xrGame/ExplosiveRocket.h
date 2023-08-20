@@ -74,5 +74,12 @@ public:
     virtual bool Useful() const;
 
 protected:
+    float m_safe_dist_to_explode;
+    shared_str real_grenade_name;
+
+public:
+    void SetRealGrenadeName(shared_str name) { real_grenade_name = name; };
+
+protected:
     virtual bool use_parent_ai_locations() const { return CAttachableItem::use_parent_ai_locations(); }
 };

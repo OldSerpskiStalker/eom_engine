@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "game_sv_base.h"
 #include "game_sv_mp_team.h"
 #include "game_base_kill_type.h"
@@ -12,6 +12,7 @@ class xrClientData;
 #define VOTE_QUOTA 0.51f
 
 #define MAX_TERMS 2
+
 struct Rank_Struct
 {
     shared_str m_sTitle;
@@ -33,7 +34,7 @@ class game_sv_mp : public game_sv_GameState
     typedef game_sv_GameState inherited;
 
 protected:
-    // список трупов для удаления
+    // СЃРїРёСЃРѕРє С‚СЂСѓРїРѕРІ РґР»СЏ СѓРґР°Р»РµРЅРёСЏ
     DEF_DEQUE(CORPSE_LIST, u16);
 
     CORPSE_LIST m_CorpseList;
@@ -114,11 +115,10 @@ public:
     virtual void Create(shared_str& options);
     virtual void OnPlayerConnect(ClientID id_who);
     virtual void OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID);
-    virtual BOOL OnTouch(u16 eid_who, u16 eid_target, BOOL bForced = FALSE)
-    {
-        return true;
-    }; // TRUE=allow ownership, FALSE=denied
+    virtual BOOL OnTouch(u16 eid_who, u16 eid_target, BOOL bForced = FALSE) { return true; };
+    // TRUE=allow ownership, FALSE=denied
     virtual void OnDetach(u16 eid_who, u16 eid_target){};
+
     virtual void OnPlayerKillPlayer(game_PlayerState* ps_killer, game_PlayerState* ps_killed, KILL_TYPE KillType,
         SPECIAL_KILL_TYPE SpecialKillType, CSE_Abstract* pWeaponA){};
     virtual void OnPlayerKilled(NET_Packet P);
@@ -130,8 +130,8 @@ public:
 
     virtual void net_Export_State(NET_Packet& P, ClientID id_to);
 
-    virtual void OnRoundStart(); // старт раунда
-    virtual void OnRoundEnd(); // round_end_reason							// конец раунда
+    virtual void OnRoundStart(); // СЃС‚Р°СЂС‚ СЂР°СѓРЅРґР°
+    virtual void OnRoundEnd(); // round_end_reason							// РєРѕРЅРµС† СЂР°СѓРЅРґР°
     virtual bool OnNextMap();
     virtual void OnPrevMap();
 
@@ -149,8 +149,11 @@ public:
     virtual void OnPlayerGameMenu(NET_Packet& P, ClientID sender);
 
     virtual void OnPlayerSelectSpectator(NET_Packet& P, ClientID sender);
+
     virtual void OnPlayerSelectTeam(NET_Packet& P, ClientID sender){};
+
     virtual void OnPlayerSelectSkin(NET_Packet& P, ClientID sender){};
+
     virtual void OnPlayerBuySpawn(ClientID sender){};
 
     virtual void OnEvent(NET_Packet& tNetPacket, u16 type, u32 time, ClientID sender);
@@ -194,6 +197,7 @@ public:
         bool all_ready() const;
         void set_responded(ClientID clientID);
     };
+
     async_statistics_collector m_async_stats;
     u32 m_async_stats_request_time;
 

@@ -81,6 +81,7 @@ void game_sv_CaptureTheArtefact::MyTeam::OnPlayerActivateArtefact(u16 eid_who)
     artefactActivated = true;
     last_activator_id = eid_who;
 }
+
 bool game_sv_CaptureTheArtefact::MyTeam::IsArtefactActivated() { return artefactActivated; }
 
 void game_sv_CaptureTheArtefact::MyTeam::DeactivateArtefact()

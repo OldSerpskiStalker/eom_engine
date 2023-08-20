@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "monster_corpse_memory.h"
 #include "BaseMonster/base_monster.h"
 #include "../../memory_manager.h"
@@ -34,7 +34,7 @@ void CMonsterCorpseMemory::update()
         }
     }
 
-    // óäàëèòü óñòàðåâøèõ âðàãîâ
+    // Ã³Ã¤Ã Ã«Ã¨Ã²Ã¼ Ã³Ã±Ã²Ã Ã°Ã¥Ã¢Ã¸Ã¨Ãµ Ã¢Ã°Ã Ã£Ã®Ã¢
     remove_non_actual();
 }
 
@@ -49,12 +49,12 @@ void CMonsterCorpseMemory::add_corpse(const CEntityAlive* corpse)
     CORPSE_MAP_IT it = m_objects.find(corpse);
     if (it != m_objects.end())
     {
-        // îáíîâèòü äàííûå î âðàãå
+        // Ã®Ã¡Ã­Ã®Ã¢Ã¨Ã²Ã¼ Ã¤Ã Ã­Ã­Ã»Ã¥ Ã® Ã¢Ã°Ã Ã£Ã¥
         it->second = corpse_info;
     }
     else
     {
-        // äîáàâèòü âðàãà â ñïèñîê îáúåêòîâ
+        // Ã¤Ã®Ã¡Ã Ã¢Ã¨Ã²Ã¼ Ã¢Ã°Ã Ã£Ã  Ã¢ Ã±Ã¯Ã¨Ã±Ã®Ãª Ã®Ã¡ÃºÃ¥ÃªÃ²Ã®Ã¢
         m_objects.insert(mk_pair(corpse, corpse_info));
     }
 }
@@ -69,12 +69,12 @@ void CMonsterCorpseMemory::remove_non_actual()
 {
     TTime cur_time = Device.dwTimeGlobal;
 
-    // óäàëèòü 'ñòàðûõ' âðàãîâ è òåõ, ðàññòîÿíèå äî êîòîðûõ > 30ì è äð.
+    // Ã³Ã¤Ã Ã«Ã¨Ã²Ã¼ 'Ã±Ã²Ã Ã°Ã»Ãµ' Ã¢Ã°Ã Ã£Ã®Ã¢ Ã¨ Ã²Ã¥Ãµ, Ã°Ã Ã±Ã±Ã²Ã®Ã¿Ã­Ã¨Ã¥ Ã¤Ã® ÃªÃ®Ã²Ã®Ã°Ã»Ãµ > 30Ã¬ Ã¨ Ã¤Ã°.
     for (CORPSE_MAP_IT it = m_objects.begin(), nit; it != m_objects.end(); it = nit)
     {
         nit = it;
         ++nit;
-        // ïðîâåðèòü óñëîâèÿ óäàëåíèÿ
+        // Ã¯Ã°Ã®Ã¢Ã¥Ã°Ã¨Ã²Ã¼ Ã³Ã±Ã«Ã®Ã¢Ã¨Ã¿ Ã³Ã¤Ã Ã«Ã¥Ã­Ã¨Ã¿
         if (!it->first || it->first->g_Alive() || it->first->getDestroy() ||
             (it->second.time + time_memory < cur_time) || (it->first->m_fFood < 1))
         {

@@ -17,10 +17,8 @@
 #include "date_time.h"
 #include "game_cl_base_weapon_usage_statistic.h"
 #include "string_table.h"
-#include "../xrGameSpy/xrGameSpy_MainDefs.h"
 #include "DemoPlay_Control.h"
 #include "account_manager_console.h"
-#include "gamespy/GameSpy_GP.h"
 
 EGameIDs ParseStringToGameType(LPCSTR str);
 LPCSTR GameTypeToString(EGameIDs gt, bool bShort);
@@ -2030,6 +2028,7 @@ public:
 
 void register_mp_console_commands()
 {
+#ifdef DEBUG
     CMD1(CCC_Restart, "g_restart");
     CMD1(CCC_RestartFast, "g_restart_fast");
     CMD1(CCC_Kill, "g_kill");
@@ -2230,4 +2229,5 @@ void register_mp_console_commands()
     CMD1(CCC_GameSpyProfile, "gs_profile");
     CMD4(CCC_Integer, "sv_write_update_bin", &g_sv_write_updates_bin, 0, 1);
     CMD4(CCC_Integer, "sv_traffic_optimization_level", (int*)&g_sv_traffic_optimization_level, 0, 7);
+#endif
 }

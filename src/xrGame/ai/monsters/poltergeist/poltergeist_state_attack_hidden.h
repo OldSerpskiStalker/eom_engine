@@ -11,6 +11,7 @@ protected:
 
 public:
     CStatePoltergeistAttackHidden(_Object* obj);
+
     virtual ~CStatePoltergeistAttackHidden() {}
 
     virtual void initialize();

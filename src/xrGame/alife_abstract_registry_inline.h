@@ -21,7 +21,7 @@ TEMPLATE_SPECIALIZATION
 void CSALifeAbstractRegistry::save(IWriter& memory_stream) { save_data(m_objects, memory_stream); }
 
 TEMPLATE_SPECIALIZATION
-void CSALifeAbstractRegistry ::load(IReader& file_stream) { load_data(m_objects, file_stream); }
+void CSALifeAbstractRegistry::load(IReader& file_stream) { load_data(m_objects, file_stream); }
 
 TEMPLATE_SPECIALIZATION
 IC const typename CSALifeAbstractRegistry::OBJECT_REGISTRY& CSALifeAbstractRegistry::objects() const

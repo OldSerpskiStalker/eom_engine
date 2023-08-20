@@ -9,6 +9,7 @@ namespace gamespy_profile
 {
 class stats_submitter;
 };
+
 namespace gamespy_gp
 {
 struct profile;
@@ -38,6 +39,7 @@ private:
             edt_best_scores_ptr,
             edt_submit_all,
         } m_data_type;
+
         gamespy_profile::enum_awards_t m_award_id;
         u32 m_awards_count;
         // gamespy_profile::all_best_scores_t*	m_best_scores_ptr;

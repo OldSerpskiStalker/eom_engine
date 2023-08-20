@@ -42,7 +42,7 @@ class CAttachableItem;
 class animation_movement_controller;
 class CBlend;
 class ai_obstacle;
-
+class CFlashlight;
 class IKinematics;
 
 template <typename _return_type>
@@ -83,6 +83,8 @@ public:
     virtual CAI_Stalker* cast_stalker() { return NULL; }
     virtual CScriptEntity* cast_script_entity() { return NULL; }
     virtual CWeapon* cast_weapon() { return NULL; }
+    virtual CMissile* cast_missile() { return NULL; }
+
     virtual CExplosive* cast_explosive() { return NULL; }
     virtual CSpaceRestrictor* cast_restrictor() { return NULL; }
     virtual CAttachableItem* cast_attachable_item() { return NULL; }
@@ -124,7 +126,9 @@ public:
 
     virtual void renderable_Render();
     virtual void OnEvent(NET_Packet& P, u16 type);
+
     virtual void Hit(SHit* pHDS){};
+
     virtual void SetHitInfo(CObject* who, CObject* weapon, s16 element, Fvector Pos, Fvector Dir){};
     virtual BOOL BonePassBullet(int boneID) { return FALSE; }
 
@@ -219,9 +223,12 @@ private:
 
 public:
     CScriptGameObject* lua_game_object() const;
+
     int clsid() const
     {
+#ifdef DEBUG
         THROW(m_script_clsid >= 0);
+#endif
         return (m_script_clsid);
     }
 

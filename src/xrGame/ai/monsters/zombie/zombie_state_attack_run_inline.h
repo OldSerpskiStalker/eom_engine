@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "../../../sound_player.h"
 
@@ -32,19 +32,19 @@ void CStateZombieAttackRunAbstract::execute()
 
     object->path().set_try_min_time(false);
 
-    // óñòàíîâêà ïàðàìåòðîâ ôóíêöèîíàëüíûõ áëîêîâ
+    // Ã³Ã±Ã²Ã Ã­Ã®Ã¢ÃªÃ  Ã¯Ã Ã°Ã Ã¬Ã¥Ã²Ã°Ã®Ã¢ Ã´Ã³Ã­ÃªÃ¶Ã¨Ã®Ã­Ã Ã«Ã¼Ã­Ã»Ãµ Ã¡Ã«Ã®ÃªÃ®Ã¢
     object->path().set_target_point(object->EnemyMan.get_enemy_position(), object->EnemyMan.get_enemy_vertex());
     object->path().set_rebuild_time(100 + u32(50.f * dist));
     object->path().set_distance_to_end(2.5f);
     object->path().set_use_covers(false);
 
     //////////////////////////////////////////////////////////////////////////
-    // îáðàáîòàòü squad-äàííûå
+    // Ã®Ã¡Ã°Ã Ã¡Ã®Ã²Ã Ã²Ã¼ squad-Ã¤Ã Ã­Ã­Ã»Ã¥
     //////////////////////////////////////////////////////////////////////////
     CMonsterSquad* squad = monster_squad().get_squad(object);
     bool squad_active = squad && squad->SquadActive();
 
-    // Ïîëó÷èòü êîìàíäó
+    // ÃÃ®Ã«Ã³Ã·Ã¨Ã²Ã¼ ÃªÃ®Ã¬Ã Ã­Ã¤Ã³
     SSquadCommand command;
     squad->GetCommand(object, command);
     if (!squad_active || (command.type != SC_ATTACK))
@@ -110,7 +110,7 @@ void CStateZombieAttackRunAbstract::choose_action()
     //
     // if ((action == ACT_RUN) && (m_time_action_change + CHANGE_ACTION_FROM_RUN > time())) return;
 
-    //// óñòàíîâêà ïàðàìåòðîâ ôóíêöèîíàëüíûõ áëîêîâ
+    //// Ã³Ã±Ã²Ã Ã­Ã®Ã¢ÃªÃ  Ã¯Ã Ã°Ã Ã¬Ã¥Ã²Ã°Ã®Ã¢ Ã´Ã³Ã­ÃªÃ¶Ã¨Ã®Ã­Ã Ã«Ã¼Ã­Ã»Ãµ Ã¡Ã«Ã®ÃªÃ®Ã¢
     // if (object->HitMemory.is_hit() && (object->conditions().GetHealth() < 0.5f))
     //	action = ACT_RUN;
     // else

@@ -529,6 +529,7 @@ BOOL game_sv_ArtefactHunt::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)
                         {
                             game_PlayerState* ps_who;
                             game_sv_mp* m_owner;
+
                             void operator()(IClient* client)
                             {
                                 xrClientData* l_pC = static_cast<xrClientData*>(client);
@@ -685,6 +686,7 @@ void game_sv_ArtefactHunt::OnArtefactOnBase(ClientID id_who)
             game_PlayerState* ps;
             TeamStruct* pTeam;
             bool m_bArtefactWasDropped;
+
             void operator()(IClient* client)
             {
                 xrClientData* l_pC = static_cast<xrClientData*>(client);
@@ -882,11 +884,13 @@ bool game_sv_ArtefactHunt::ArtefactSpawn_Allowed()
     struct all_players_ready_cond
     {
         u32 TeamAlived[2];
+
         all_players_ready_cond()
         {
             TeamAlived[0] = 0;
             TeamAlived[1] = 0;
         }
+
         void operator()(IClient* client)
         {
             xrClientData* l_pC = static_cast<xrClientData*>(client);
@@ -1078,6 +1082,7 @@ void game_sv_ArtefactHunt::RespawnAllNotAlivePlayers()
     struct not_alive_players_respawner
     {
         game_sv_ArtefactHunt* m_owner;
+
         void operator()(IClient* client)
         {
             xrClientData* l_pC = static_cast<xrClientData*>(client);
@@ -1133,11 +1138,13 @@ bool game_sv_ArtefactHunt::CheckAlivePlayersInTeam(s16 Team)
         u32 cnt_alive;
         u32 cnt_exist;
         s16 Team;
+
         alife_players_counter_in_team()
         {
             cnt_alive = 0;
             cnt_exist = 0;
         }
+
         void operator()(IClient* client)
         {
             xrClientData* l_pC = static_cast<xrClientData*>(client);
@@ -1272,6 +1279,7 @@ void game_sv_ArtefactHunt::ReplicatePlayersStateToPlayer(ClientID CID)
     {
         u8 AliveCount;
         NET_Packet tmpP;
+
         player_replicator()
         {
             AliveCount = 0;
@@ -1332,6 +1340,7 @@ void game_sv_ArtefactHunt::CheckForTeamElimination()
             game_sv_ArtefactHunt* m_owner;
             TeamStruct* pWTeam;
             u8 WinTeam;
+
             void operator()(IClient* client)
             {
                 // init
@@ -1359,6 +1368,7 @@ void game_sv_ArtefactHunt::CheckForTeamElimination()
 }
 
 extern INT g_sv_Skip_Winner_Waiting;
+
 void game_sv_ArtefactHunt::CheckForTeamWin()
 {
     u8 WinTeam = 0;
@@ -1442,6 +1452,7 @@ void game_sv_ArtefactHunt::ReadOptions(shared_str& options)
 }
 
 static bool g_bConsoleCommandsCreated_AHUNT = false;
+
 void game_sv_ArtefactHunt::ConsoleCommands_Create(){};
 
 void game_sv_ArtefactHunt::ConsoleCommands_Clear(){};
@@ -1488,6 +1499,7 @@ bool game_sv_ArtefactHunt::Player_Check_Rank(game_PlayerState* ps)
         return false;
     return true;
 }
+
 //  [7/29/2005]
 
 void game_sv_ArtefactHunt::OnPlayerHitPlayer_Case(game_PlayerState* ps_hitter, game_PlayerState* ps_hitted, SHit* pHitS)

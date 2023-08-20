@@ -4,7 +4,6 @@
 
 namespace award_system
 {
-
 best_scores_helper::best_scores_helper(game_state_accumulator* pstate) : inherited(pstate)
 {
     reset_stats();
@@ -142,5 +141,4 @@ bool best_scores_helper::OnPlayerKilled(
     ++m_kills_in_row;
     return false;
 }
-
 } // namespace award_system

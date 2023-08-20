@@ -57,7 +57,6 @@ IC const CCoverPoint* CCoverManager::best_cover(
     const Fvector& position, float radius, _evaluator_type& evaluator, const _restrictor_type& restrictor) const
 {
     START_PROFILE("Covers/best_cover")
-
     if (inertia(position, radius, evaluator, restrictor))
         return (evaluator.selected());
 

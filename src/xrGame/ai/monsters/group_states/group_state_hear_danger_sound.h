@@ -13,6 +13,7 @@ protected:
 
 public:
     CStateGroupHearDangerousSound(_Object* obj);
+
     virtual ~CStateGroupHearDangerousSound() {}
 
     virtual void initialize();

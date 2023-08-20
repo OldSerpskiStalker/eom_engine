@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "../../physicsshellholder.h"
 #include "telekinetic_object.h"
 #include "../../../xrphysics/PhysicsShell.h"
@@ -59,7 +59,7 @@ void CTelekineticObject::set_sound(const ref_sound& snd_hold, const ref_sound& s
 void CTelekineticObject::raise_update()
 {
     if (check_height() || check_raise_time_out())
-        prepare_keep(); // начать удержание предмета
+        prepare_keep(); // Г­Г Г·Г ГІГј ГіГ¤ГҐГ°Г¦Г Г­ГЁГҐ ГЇГ°ГҐГ¤Г¬ГҐГІГ 
     // else if (check_raise_time_out()) release();
     else
     {
@@ -67,16 +67,19 @@ void CTelekineticObject::raise_update()
             rotate();
     }
 }
+
 void CTelekineticObject::keep_update()
 {
     if (time_keep_elapsed())
         release();
 }
+
 void CTelekineticObject::fire_update()
 {
     if (time_fire_elapsed())
         release();
 }
+
 void CTelekineticObject::update_state()
 {
     switch (get_state())
@@ -101,6 +104,7 @@ void CTelekineticObject::switch_state(ETelekineticState new_state)
     }
     state = new_state;
 }
+
 void CTelekineticObject::raise(float step)
 {
     if (!object || !object->m_pPhysicsShell || !object->m_pPhysicsShell->isActive())
@@ -144,16 +148,16 @@ bool CTelekineticObject::time_fire_elapsed()
 
 void CTelekineticObject::keep()
 {
-    // проверить время последнего обновления
+    // ГЇГ°Г®ГўГҐГ°ГЁГІГј ГўГ°ГҐГ¬Гї ГЇГ®Г±Г«ГҐГ¤Г­ГҐГЈГ® Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГї
     // if (time_keep_updated + KEEP_IMPULSE_UPDATE > Device.dwTimeGlobal) return;
 
     if (!object || !object->m_pPhysicsShell || !object->m_pPhysicsShell->isActive())
         return;
 
-    // проверить высоту
+    // ГЇГ°Г®ГўГҐГ°ГЁГІГј ГўГ»Г±Г®ГІГі
     float cur_h = object->Position().y;
 
-    // установить dir в соответствие с текущей высотой
+    // ГіГ±ГІГ Г­Г®ГўГЁГІГј dir Гў Г±Г®Г®ГІГўГҐГІГ±ГІГўГЁГҐ Г± ГІГҐГЄГіГ№ГҐГ© ГўГ»Г±Г®ГІГ®Г©
     Fvector dir;
     if (cur_h > target_height + 0.6f)
         dir.set(0.f, -1.0f, 0.f);
@@ -171,7 +175,7 @@ void CTelekineticObject::keep()
     if (OnServer())
         (object->m_pPhysicsShell->get_ElementByStoreOrder(0))->applyGravityAccel(dir);
 
-    // установить время последнего обновления
+    // ГіГ±ГІГ Г­Г®ГўГЁГІГј ГўГ°ГҐГ¬Гї ГЇГ®Г±Г«ГҐГ¤Г­ГҐГЈГ® Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГї
     time_keep_updated = Device.dwTimeGlobal;
 
     update_hold_sound();
@@ -185,11 +189,11 @@ void CTelekineticObject::release()
     Fvector dir_inv;
     dir_inv.set(0.f, -1.0f, 0.f);
 
-    // включить гравитацию
+    // ГўГЄГ«ГѕГ·ГЁГІГј ГЈГ°Г ГўГЁГІГ Г¶ГЁГѕ
     object->m_pPhysicsShell->set_ApplyByGravity(TRUE);
     if (OnServer())
     {
-        // приложить небольшую силу для того, чтобы объект начал падать
+        // ГЇГ°ГЁГ«Г®Г¦ГЁГІГј Г­ГҐГЎГ®Г«ГјГёГіГѕ Г±ГЁГ«Гі Г¤Г«Гї ГІГ®ГЈГ®, Г·ГІГ®ГЎГ» Г®ГЎГєГҐГЄГІ Г­Г Г·Г Г« ГЇГ Г¤Г ГІГј
         object->m_pPhysicsShell->applyImpulse(dir_inv, 0.5f * object->m_pPhysicsShell->getMass());
     }
     // state = TS_None;
@@ -204,7 +208,7 @@ void CTelekineticObject::fire_t(const Fvector& target, float time)
     if (!object || !object->m_pPhysicsShell || !object->m_pPhysicsShell->isActive())
         return;
 
-    // включить гравитацию
+    // ГўГЄГ«ГѕГ·ГЁГІГј ГЈГ°Г ГўГЁГІГ Г¶ГЁГѕ
     object->m_pPhysicsShell->set_ApplyByGravity(TRUE);
 
     Fvector transference;
@@ -218,6 +222,7 @@ void CTelekineticObject::fire_t(const Fvector& target, float time)
     if (sound_hold._handle() && sound_hold._feedback())
         sound_hold.stop();
 }
+
 void CTelekineticObject::fire(const Fvector& target, float power)
 {
     // state				= TS_Fire;
@@ -227,17 +232,17 @@ void CTelekineticObject::fire(const Fvector& target, float power)
     if (!object || !object->m_pPhysicsShell || !object->m_pPhysicsShell->isActive())
         return;
 
-    // вычислить направление
+    // ГўГ»Г·ГЁГ±Г«ГЁГІГј Г­Г ГЇГ°Г ГўГ«ГҐГ­ГЁГҐ
     Fvector dir;
     dir.sub(target, object->Position());
     dir.normalize();
 
-    // включить гравитацию
+    // ГўГЄГ«ГѕГ·ГЁГІГј ГЈГ°Г ГўГЁГІГ Г¶ГЁГѕ
     object->m_pPhysicsShell->set_ApplyByGravity(TRUE);
 
     if (OnServer())
     {
-        // выполнить бросок
+        // ГўГ»ГЇГ®Г«Г­ГЁГІГј ГЎГ°Г®Г±Г®ГЄ
         for (u32 i = 0; i < object->m_pPhysicsShell->get_ElementsNumber(); i++)
             object->m_pPhysicsShell->get_ElementByStoreOrder(u16(i))->applyImpulse(
                 dir, power * 20.f * object->m_pPhysicsShell->getMass() / object->m_pPhysicsShell->Elements().size());
@@ -251,6 +256,7 @@ bool CTelekineticObject::check_height()
 
     return (object->Position().y > target_height);
 }
+
 bool CTelekineticObject::check_raise_time_out()
 {
     if (time_raise_started + RAISE_MAX_TIME < Device.dwTimeGlobal)
@@ -270,7 +276,7 @@ void CTelekineticObject::rotate()
     if (!object || !object->m_pPhysicsShell || !object->m_pPhysicsShell->isActive())
         return;
 
-    // вычислить направление
+    // ГўГ»Г·ГЁГ±Г«ГЁГІГј Г­Г ГЇГ°Г ГўГ«ГҐГ­ГЁГҐ
     Fvector dir;
     dir.random_dir();
     dir.normalize();

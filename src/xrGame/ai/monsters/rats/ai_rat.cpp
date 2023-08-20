@@ -438,11 +438,9 @@ void CAI_Rat::CreateSkeleton()
     /*
     IKinematics* M		= smart_cast<IKinematics*>(Visual());			VERIFY(M);
     m_pPhysicsShell		= P_create_Shell();
-
     //get bone instance
     int id=M->LL_BoneID("bip01_pelvis");
     CBoneInstance& instance=M->LL_GetBoneInstance				(id);
-
     //create root element
     CPhysicsElement* element=P_create_Element				();
     element->mXFORM.identity();
@@ -452,11 +450,9 @@ void CAI_Rat::CreateSkeleton()
     box.m_translate.set(0,0,0);
     box.m_halfsize.set(0.10f,0.085f,0.25f);
     element->add_Box(box);
-
     element->setDensity(200.f);
     m_pPhysicsShell->add_Element(element);
     element->SetMaterial("materials/skel1");
-
     //set shell start position
     Fmatrix m;
     m.set(mRotate);

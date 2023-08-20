@@ -158,6 +158,7 @@ CAnimatorCamEffector::CAnimatorCamEffector()
     m_objectAnimator = xr_new<CObjectAnimator>();
     m_bAbsolutePositioning = false;
     m_fov = -1.0f;
+    m_power = 1.f;
 }
 
 CAnimatorCamEffector::~CAnimatorCamEffector() { delete_data(m_objectAnimator); }
@@ -181,8 +182,16 @@ BOOL CAnimatorCamEffector::ProcessCam(SCamEffectorInfo& info)
     if (!inherited::ProcessCam(info))
         return FALSE;
 
-    const Fmatrix& m = m_objectAnimator->XFORM();
+    Fmatrix m = m_objectAnimator->XFORM();
     m_objectAnimator->Update(Device.fTimeDelta);
+
+    if (m_power != 1.f)
+    {
+        m.mul(m_power);
+        m.m[0][0] = 1.f;
+        m.m[1][1] = 1.f;
+        m.m[2][2] = 1.f;
+    }
 
     if (!m_bAbsolutePositioning)
     {
@@ -192,12 +201,10 @@ BOOL CAnimatorCamEffector::ProcessCam(SCamEffectorInfo& info)
         Mdef.k = info.d;
         Mdef.i.crossproduct(info.n, info.d);
         Mdef.c = info.p;
-        //		Msg("fr[%d] %2.3f,%2.3f,%2.3f", Device.dwFrame,m.c.x,m.c.y,m.c.z);
-        Fmatrix mr;
-        mr.mul(Mdef, m);
-        info.d = mr.k;
-        info.n = mr.j;
-        info.p = mr.c;
+        m.mulA_43(Mdef);
+        info.d = m.k;
+        info.n = m.j;
+        info.p = m.c;
     }
     else
     {
@@ -419,11 +426,13 @@ BOOL CControllerPsyHitCamEffector::ProcessCam(SCamEffectorInfo& info)
 
     return TRUE;
 }
+
 bool similar_cam_info(const SCamEffectorInfo& c1, const SCamEffectorInfo& c2)
 {
     return (c1.p.similar(c2.p, EPS_L) && c1.d.similar(c2.d, EPS_L) && c1.n.similar(c2.n, EPS_L) &&
         c1.r.similar(c2.r, EPS_L));
 }
+
 void CActorCameraManager::UpdateCamEffectors()
 {
     m_cam_info_hud = m_cam_info;

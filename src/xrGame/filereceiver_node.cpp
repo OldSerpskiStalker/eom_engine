@@ -3,7 +3,6 @@
 
 namespace file_transfer
 {
-
 filereceiver_node::filereceiver_node(shared_str const& file_name, receiving_state_callback_t const& callback)
     : m_file_name(file_name), m_data_size_to_receive(0), m_user_param(0), m_is_writer_memory(false),
       m_process_callback(callback), m_last_read_time(0)
@@ -69,5 +68,4 @@ void split_received_to_buffers(u8* data_ptr, u32 data_size, buffer_vector<const_
         tmp_reader.seek(current_pos + tmp_buffer_size);
     }
 }
-
 }; // namespace file_transfer

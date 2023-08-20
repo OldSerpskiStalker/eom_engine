@@ -15,7 +15,6 @@ class CWeapon;
 
 namespace aimers
 {
-
 class weapon : public base
 {
 public:
@@ -46,7 +45,6 @@ private:
     CWeapon const& m_weapon;
     u16 m_bones_ids[5];
 }; // class weapon
-
 } // namespace aimers
 
 #include "aimers_weapon_inline.h"

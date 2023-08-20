@@ -6,6 +6,7 @@
 #include <mmsystem.h>
 #include <objbase.h>
 #include "xrCore.h"
+#include "DateTime.hpp"
 
 #pragma comment(lib, "winmm.lib")
 
@@ -76,6 +77,16 @@ void xrCore::_initialize(LPCSTR _ApplicationName, LogCallback cb, BOOL init_fs, 
         DWORD sz_comp = sizeof(CompName);
         GetComputerName(CompName, &sz_comp);
 
+        // Date
+        Time* time = xr_new<Time>();
+        strconcat(sizeof(UserDate), UserDate, time->GetDay().c_str(), ".", time->GetMonth().c_str(), ".",
+            time->GetYear().c_str(), " ");
+
+        // Time
+        strconcat(sizeof(UserTime), UserTime, time->GetHours().c_str(), ".", time->GetMinutes().c_str(), ".",
+            time->GetSeconds().c_str());
+        xr_delete(time);
+
         // Mathematics & PSI detection
         CPU::Detect();
 
@@ -120,7 +131,8 @@ void xrCore::_initialize(LPCSTR _ApplicationName, LogCallback cb, BOOL init_fs, 
 #endif
 #endif
         FS._initialize(flags, 0, fs_fname);
-        Msg("'%s' build %d, %s\n", "xrCore", build_id, build_date);
+        Msg("Haters gonna hate");
+        Msg("Pain of Misery based on COC 1.4.22, Build ID: %d, Build date: %s\n", build_id, build_date);
         EFS._initialize();
 #ifdef DEBUG
 #ifndef _EDITOR

@@ -66,7 +66,6 @@ add_to_type_list(IRender_VisualScript)
     add_to_type_list(FHierrarhyVisualScript)
     #undef script_type_list
     #define script_type_list save_type_list(FHierrarhyVisualScript)
-
     typedef class_exporter<IKinematics>	IKinematicsScript;
     add_to_type_list(IKinematicsScript)
     #undef script_type_list

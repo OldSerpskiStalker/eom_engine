@@ -73,6 +73,7 @@ void CArtefact::Load(LPCSTR section)
     m_fHealthRestoreSpeed = pSettings->r_float(section, "health_restore_speed");
     m_fRadiationRestoreSpeed = pSettings->r_float(section, "radiation_restore_speed");
     m_fSatietyRestoreSpeed = pSettings->r_float(section, "satiety_restore_speed");
+    m_fThirstRestoreSpeed = pSettings->r_float(section, "thirst_restore_speed");
     m_fPowerRestoreSpeed = pSettings->r_float(section, "power_restore_speed");
     m_fBleedingRestoreSpeed = pSettings->r_float(section, "bleeding_restore_speed");
 
@@ -412,9 +413,9 @@ bool CArtefact::Action(u16 cmd, u32 flags)
     return inherited::Action(cmd, flags);
 }
 
-void CArtefact::OnStateSwitch(u32 S)
+void CArtefact::OnStateSwitch(u32 S, u32 oldState)
 {
-    inherited::OnStateSwitch(S);
+    inherited::OnStateSwitch(S, oldState);
     switch (S)
     {
     case eShowing: {
@@ -422,7 +423,10 @@ void CArtefact::OnStateSwitch(u32 S)
     }
     break;
     case eHiding: {
-        PlayHUDMotion("anm_hide", FALSE, this, S);
+        if (oldState != eHiding)
+        {
+            PlayHUDMotion("anm_hide", FALSE, this, S);
+        }
     }
     break;
     case eActivating: {

@@ -11,6 +11,7 @@ protected:
 
 public:
     CStatePsyDogPsyAttack(_Object* obj);
+
     virtual ~CStatePsyDogPsyAttack() {}
 
     virtual void reselect_state();

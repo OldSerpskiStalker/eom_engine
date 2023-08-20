@@ -3,7 +3,6 @@
 
 namespace file_transfer
 {
-
 u32 const data_max_chunk_size = 4096; // 4Kb on update ~	80		Kb/sec
 u32 const data_min_chunk_size = 128; //					2.5		Kb/sec
 
@@ -14,6 +13,7 @@ enum sending_status_t // state for callback
     sending_rejected_by_peer = 0x02,
     sending_complete = 0x03
 };
+
 enum receiving_status_t // state for callback
 {
     receiving_data = 0x00,
@@ -25,8 +25,10 @@ enum receiving_status_t // state for callback
 
 enum ft_command_t // command byte to M_FILE_TRANSFER message ...
 {
-    receive_data = 0x00, // means that packet contain new chunk of data
-    abort_receive = 0x01, // this command send by source site, if he aborts file receiving ..
+    receive_data = 0x00,
+    // means that packet contain new chunk of data
+    abort_receive = 0x01,
+    // this command send by source site, if he aborts file receiving ..
     receive_rejected = 0x02 // this command send by dest site, if he doesn't want file..
 };
 
@@ -38,7 +40,6 @@ typedef std::pair<u8 const*, u32 const> const_buffer_t;
 
 void make_reject_packet(NET_Packet& packet, ClientID const& client);
 void make_abort_packet(NET_Packet& packet, ClientID const& client);
-
 } // namespace file_transfer
 
 #endif // #ifndef FILETRANSFER_COMMON

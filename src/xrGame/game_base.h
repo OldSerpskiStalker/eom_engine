@@ -18,6 +18,7 @@ struct RPoint
     bool bBlocked;
     u16 BlockedByID;
     u32 BlockTime;
+
     RPoint()
     {
         P.set(.0f, 0.f, .0f);
@@ -27,6 +28,7 @@ struct RPoint
         BlockedByID = 0;
         BlockTime = 0;
     }
+
     bool operator==(const u16& ID) const { return (bBlocked && BlockedByID == ID); }
 };
 
@@ -35,12 +37,14 @@ struct Bonus_Money_Struct
     s32 Money;
     u8 Reason;
     u8 Kills;
+
     Bonus_Money_Struct(s32 M, u8 R, u8 K)
     {
         Money = M;
         Reason = R;
         Kills = K;
     }
+
     Bonus_Money_Struct()
     {
         Money = 0;
@@ -147,6 +151,7 @@ enum ETeam
     etBlueTeam = 0X01,
     etSpectatorsTeam = 0x02
 };
+
 //--------------
 
 #pragma pack(pop)
@@ -164,19 +169,24 @@ protected:
 
 protected:
     virtual void switch_Phase(u32 new_phase);
+
     virtual void OnSwitchPhase(u32 old_phase, u32 new_phase){};
 
 public:
     game_GameState();
+
     virtual ~game_GameState() {}
+
     IC EGameIDs const& Type() const { return m_type; };
     u16 Phase() const { return m_phase; };
     s32 Round() const { return m_round; };
     u32 StartTime() const { return m_start_time; };
+
     virtual void Create(shared_str& options){};
     virtual LPCSTR type_name() const { return "base game"; };
     // for scripting enhancement
     static CLASS_ID getCLASS_ID(LPCSTR game_type_name, bool bServer);
+
     virtual game_PlayerState* createPlayerState(NET_Packet* account_info)
     {
         return xr_new<game_PlayerState>(account_info);

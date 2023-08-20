@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "../states/state_data.h"
 #include "../states/state_move_to_point.h"
@@ -65,13 +65,13 @@ void CStateGroupPanicAbstract::check_force_state()
 {
     if ((current_substate == eStatePanic_FaceUnprotectedArea))
     {
-        // åñëè âèäèò âðàãà
+        // Ã¥Ã±Ã«Ã¨ Ã¢Ã¨Ã¤Ã¨Ã² Ã¢Ã°Ã Ã£Ã 
         if (object->EnemyMan.get_enemy_time_last_seen() == Device.dwTimeGlobal)
         {
             select_state(eStatePanic_Run);
             return;
         }
-        // åñëè ïîëó÷èë hit
+        // Ã¥Ã±Ã«Ã¨ Ã¯Ã®Ã«Ã³Ã·Ã¨Ã« hit
         if (object->HitMemory.get_last_hit_time() + 5000 > Device.dwTimeGlobal)
         {
             select_state(eStatePanic_Run);

@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "ai_monster_defs.h"
 #include "../../../xrServerEntities/ai_sounds.h"
@@ -40,11 +40,11 @@ typedef struct tagSoundElement
 {
     const CObject* who;
     TSoundDangerValue type;
-    Fvector position; // позиция звука, не объекта, издавшего звук
+    Fvector position; // ГЇГ®Г§ГЁГ¶ГЁГї Г§ГўГіГЄГ , Г­ГҐ Г®ГЎГєГҐГЄГІГ , ГЁГ§Г¤Г ГўГёГҐГЈГ® Г§ГўГіГЄ
     float power;
-    TTime time; // время обнаружения звука
+    TTime time; // ГўГ°ГҐГ¬Гї Г®ГЎГ­Г Г°ГіГ¦ГҐГ­ГЁГї Г§ГўГіГЄГ 
 
-    int value; // оценочное значение данного звука
+    int value; // Г®Г¶ГҐГ­Г®Г·Г­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ Г¤Г Г­Г­Г®ГЈГ® Г§ГўГіГЄГ 
 
     tagSoundElement()
     {
@@ -55,7 +55,9 @@ typedef struct tagSoundElement
         time = 0;
         value = 0;
     }
+
     bool operator<(const tagSoundElement& s) const { return (value < s.value); }
+
     IC void SetConvert(const CObject* who, int eType, const Fvector& position, float power, TTime time)
     {
         this->who = who;
@@ -64,6 +66,7 @@ typedef struct tagSoundElement
         this->power = power;
         this->time = time;
     }
+
     TSoundDangerValue ConvertSoundType(ESoundTypes stype);
 
     void CalcValue(TTime cur_time, const Fvector& cur_pos)
@@ -72,12 +75,11 @@ typedef struct tagSoundElement
             iFloor(FACTOR_DISTANCE * cur_pos.distance_to(position)) -
             FACTOR_DELTA_TIME * iFloor(float((cur_time - time) / 1000)) + FACTOR_SOUND_POWER * iFloor(power);
     }
-
 } SoundElem;
 
 class CMonsterSoundMemory
 {
-    TTime time_memory; // время хранения звуков
+    TTime time_memory; // ГўГ°ГҐГ¬Гї ГµГ°Г Г­ГҐГ­ГЁГї Г§ГўГіГЄГ®Гў
     xr_vector<SoundElem> Sounds;
 
     CBaseMonster* monster;
@@ -99,7 +101,7 @@ public:
     int GetNumSounds() { return Sounds.size(); }
     void GetFirstSound(SoundElem& s, bool& bDangerous);
 
-    void GetSound(SoundElem& s, bool& bDangerous); // возвращает самый опасный звук
+    void GetSound(SoundElem& s, bool& bDangerous); // ГўГ®Г§ГўГ°Г Г№Г ГҐГІ Г±Г Г¬Г»Г© Г®ГЇГ Г±Г­Г»Г© Г§ГўГіГЄ
     SoundElem& GetSound();
     bool get_sound_from_object(const CObject* who, SoundElem& value);
 
@@ -112,6 +114,7 @@ public:
 
     // help sounds
     bool hear_help_sound();
+
     u32 hear_help_sound_node()
     {
         VERIFY(m_help_node != u32(-1));

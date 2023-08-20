@@ -1,9 +1,11 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "poltergeist.h"
 #include "../../../PhysicsShellHolder.h"
 #include "../../../level.h"
 #include "../../../actor.h"
 #include "../../../../xrPhysics/icolisiondamageinfo.h"
+#include "inventory_item.h"
+
 CPolterTele::CPolterTele(CPoltergeist* polter) : inherited(polter), m_pmt_object_collision_damage(0.5f) {}
 
 CPolterTele::~CPolterTele() {}
@@ -109,7 +111,7 @@ void CPolterTele::update_schedule()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Выбор подходящих объектов для телекинеза
+// Г‚Г»ГЎГ®Г° ГЇГ®Г¤ГµГ®Г¤ГїГ№ГЁГµ Г®ГЎГєГҐГЄГІГ®Гў Г¤Г«Гї ГІГҐГ«ГҐГЄГЁГ­ГҐГ§Г 
 //////////////////////////////////////////////////////////////////////////
 class best_object_predicate
 {
@@ -192,11 +194,13 @@ void CPolterTele::tele_find_objects(xr_vector<CObject*>& objects, const Fvector&
     {
         CPhysicsShellHolder* obj = smart_cast<CPhysicsShellHolder*>(m_nearest[i]);
         CCustomMonster* custom_monster = smart_cast<CCustomMonster*>(m_nearest[i]);
+        CInventoryItem* itm = smart_cast<CInventoryItem*>(m_nearest[i]);
         if (!obj || !obj->PPhysicsShell() || !obj->PPhysicsShell()->isActive() || custom_monster ||
             (obj->spawn_ini() && obj->spawn_ini()->section_exist("ph_heavy")) ||
             (obj->m_pPhysicsShell->getMass() < m_pmt_object_min_mass) ||
             (obj->m_pPhysicsShell->getMass() > m_pmt_object_max_mass) || (obj == m_object) ||
-            m_object->CTelekinesis::is_active_object(obj) || !obj->m_pPhysicsShell->get_ApplyByGravity())
+            m_object->CTelekinesis::is_active_object(obj) || !obj->m_pPhysicsShell->get_ApplyByGravity() ||
+            (itm && itm->IsQuestItem()))
             continue;
 
         Fvector center;
@@ -213,13 +217,13 @@ bool CPolterTele::tele_raise_objects()
     xr_vector<CObject*> tele_objects;
     tele_objects.reserve(20);
 
-    // получить список объектов вокруг врага
+    // ГЇГ®Г«ГіГ·ГЁГІГј Г±ГЇГЁГ±Г®ГЄ Г®ГЎГєГҐГЄГІГ®Гў ГўГ®ГЄГ°ГіГЈ ГўГ°Г ГЈГ 
     tele_find_objects(tele_objects, Actor()->Position());
 
-    // получить список объектов вокруг монстра
+    // ГЇГ®Г«ГіГ·ГЁГІГј Г±ГЇГЁГ±Г®ГЄ Г®ГЎГєГҐГЄГІГ®Гў ГўГ®ГЄГ°ГіГЈ Г¬Г®Г­Г±ГІГ°Г 
     tele_find_objects(tele_objects, m_object->Position());
 
-    // получить список объектов между монстром и врагом
+    // ГЇГ®Г«ГіГ·ГЁГІГј Г±ГЇГЁГ±Г®ГЄ Г®ГЎГєГҐГЄГІГ®Гў Г¬ГҐГ¦Г¤Гі Г¬Г®Г­Г±ГІГ°Г®Г¬ ГЁ ГўГ°Г ГЈГ®Г¬
     float dist = Actor()->Position().distance_to(m_object->Position());
     Fvector dir;
     dir.sub(Actor()->Position(), m_object->Position());
@@ -229,21 +233,21 @@ bool CPolterTele::tele_raise_objects()
     pos.mad(m_object->Position(), dir, dist / 2.f);
     tele_find_objects(tele_objects, pos);
 
-    // сортировать и оставить только необходимое количество объектов
+    // Г±Г®Г°ГІГЁГ°Г®ГўГ ГІГј ГЁ Г®Г±ГІГ ГўГЁГІГј ГІГ®Г«ГјГЄГ® Г­ГҐГ®ГЎГµГ®Г¤ГЁГ¬Г®ГҐ ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г®ГЎГєГҐГЄГІГ®Гў
     std::sort(
         tele_objects.begin(), tele_objects.end(), best_object_predicate2(m_object->Position(), Actor()->Position()));
 
-    // оставить уникальные объекты
+    // Г®Г±ГІГ ГўГЁГІГј ГіГ­ГЁГЄГ Г«ГјГ­Г»ГҐ Г®ГЎГєГҐГЄГІГ»
     tele_objects.erase(std::unique(tele_objects.begin(), tele_objects.end()), tele_objects.end());
 
-    // оставить необходимое количество объектов
+    // Г®Г±ГІГ ГўГЁГІГј Г­ГҐГ®ГЎГµГ®Г¤ГЁГ¬Г®ГҐ ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г®ГЎГєГҐГЄГІГ®Гў
     // if (tele_objects.size() > m_pmt_tele_object_count) tele_objects.resize	(m_pmt_tele_object_count);
 
-    //// активировать
+    //// Г ГЄГІГЁГўГЁГ°Г®ГўГ ГІГј
     // for (u32 i=0; i<tele_objects.size(); i++) {
     //	CPhysicsShellHolder *obj = smart_cast<CPhysicsShellHolder *>(tele_objects[i]);
 
-    //	// применить телекинез на объект
+    //	// ГЇГ°ГЁГ¬ГҐГ­ГЁГІГј ГІГҐГ«ГҐГЄГЁГ­ГҐГ§ Г­Г  Г®ГЎГєГҐГЄГІ
     //	bool	rotate = false;
 
     //	CTelekinesis::activate		(obj, m_pmt_tele_raise_speed, m_pmt_tele_object_height, m_pmt_tele_time_object_keep,
@@ -254,7 +258,7 @@ bool CPolterTele::tele_raise_objects()
     {
         CPhysicsShellHolder* obj = smart_cast<CPhysicsShellHolder*>(tele_objects[0]);
 
-        // применить телекинез на объект
+        // ГЇГ°ГЁГ¬ГҐГ­ГЁГІГј ГІГҐГ«ГҐГЄГЁГ­ГҐГ§ Г­Г  Г®ГЎГєГҐГЄГІ
         bool rotate = false;
 
         CTelekineticObject* tele_obj = m_object->CTelekinesis::activate(
@@ -266,6 +270,7 @@ bool CPolterTele::tele_raise_objects()
 
     return false;
 }
+
 struct SCollisionHitCallback : public ICollisionHitCallback
 
 {
@@ -273,11 +278,13 @@ struct SCollisionHitCallback : public ICollisionHitCallback
     //;
     CPhysicsShellHolder* m_object;
     float m_pmt_object_collision_damage;
+
     SCollisionHitCallback(CPhysicsShellHolder* object, float pmt_object_collision_damage)
         : m_object(object), m_pmt_object_collision_damage(pmt_object_collision_damage)
     {
         VERIFY(object);
     }
+
     void call(IPhysicsShellHolder* obj, float min_cs, float max_cs, float& cs, float& hl, ICollisionDamageInfo* di)
     {
         if (cs > min_cs * 0.5f)

@@ -44,7 +44,7 @@ extern MagicBox3 MagicMinBox(int iQuantity, const Fvector* akPoint);
 #include "PHDebug.h"
 #endif
 
-ENGINE_API bool g_dedicated_server;
+extern ENGINE_API bool g_dedicated_server;
 
 CGameObject::CGameObject()
 {
@@ -752,6 +752,7 @@ void CGameObject::u_EventGen(NET_Packet& P, u32 type, u32 dest)
 void CGameObject::u_EventSend(NET_Packet& P, u32 dwFlags) { Level().Send(P, dwFlags); }
 
 #include "bolt.h"
+
 void CGameObject::OnH_B_Chield()
 {
     inherited::OnH_B_Chield();
@@ -941,6 +942,7 @@ LPCSTR CGameObject::visual_name(CSE_Abstract* server_entity)
     VERIFY(visual);
     return (visual->get_visual());
 }
+
 bool CGameObject::animation_movement_controlled() const
 {
     return !!animation_movement() && animation_movement()->IsActive();
@@ -982,7 +984,7 @@ void CGameObject::create_anim_mov_ctrl(CBlend* b, Fmatrix* start_pose, bool loca
         //		start_pose		= &renderable.xform;
         if (m_anim_mov_ctrl)
             destroy_anim_mov_ctrl();
-
+#ifdef DEBUG
         VERIFY2(start_pose,
             make_string("start pose hasn't been specified for animation [%s][%s]",
                 smart_cast<IKinematicsAnimated&>(*Visual()).LL_MotionDefName_dbg(b->motionID).first,
@@ -992,7 +994,7 @@ void CGameObject::create_anim_mov_ctrl(CBlend* b, Fmatrix* start_pose, bool loca
             make_string("start pose hasn't been specified for animation [%s][%s]",
                 smart_cast<IKinematicsAnimated&>(*Visual()).LL_MotionDefName_dbg(b->motionID).first,
                 smart_cast<IKinematicsAnimated&>(*Visual()).LL_MotionDefName_dbg(b->motionID).second));
-
+#endif
         VERIFY(Visual());
         IKinematics* K = Visual()->dcast_PKinematics();
         VERIFY(K);

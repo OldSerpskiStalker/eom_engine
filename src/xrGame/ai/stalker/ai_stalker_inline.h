@@ -226,28 +226,37 @@ IC u32 CAI_Stalker::auto_max_queue_interval_close() const { return (m_auto_max_q
 //	return					(m_pstl_queue_fire_dist_close);
 // }
 IC float CAI_Stalker::pstl_queue_fire_dist_med() const { return (m_pstl_queue_fire_dist_med); }
+
 IC float CAI_Stalker::pstl_queue_fire_dist_far() const { return (m_pstl_queue_fire_dist_far); }
+
 // IC	float CAI_Stalker::shtg_queue_fire_dist_close						() const
 //{
 //	return					(m_shtg_queue_fire_dist_close);
 // }
 IC float CAI_Stalker::shtg_queue_fire_dist_med() const { return (m_shtg_queue_fire_dist_med); }
+
 IC float CAI_Stalker::shtg_queue_fire_dist_far() const { return (m_shtg_queue_fire_dist_far); }
+
 // IC	float CAI_Stalker::snp_queue_fire_dist_close						() const
 //{
 //	return					(m_snp_queue_fire_dist_close);
 // }
 IC float CAI_Stalker::snp_queue_fire_dist_med() const { return (m_snp_queue_fire_dist_med); }
+
 IC float CAI_Stalker::snp_queue_fire_dist_far() const { return (m_snp_queue_fire_dist_far); }
+
 // IC	float CAI_Stalker::mchg_queue_fire_dist_close						() const
 //{
 //	return					(m_mchg_queue_fire_dist_close);
 // }
 IC float CAI_Stalker::mchg_queue_fire_dist_med() const { return (m_mchg_queue_fire_dist_med); }
+
 IC float CAI_Stalker::mchg_queue_fire_dist_far() const { return (m_mchg_queue_fire_dist_far); }
+
 // IC	float CAI_Stalker::auto_queue_fire_dist_close						() const
 //{
 //	return					(m_auto_queue_fire_dist_close);
 // }
 IC float CAI_Stalker::auto_queue_fire_dist_med() const { return (m_auto_queue_fire_dist_med); }
+
 IC float CAI_Stalker::auto_queue_fire_dist_far() const { return (m_auto_queue_fire_dist_far); }

@@ -254,7 +254,7 @@ void CGamePersistent::WeathersUpdate()
         CActor* actor = smart_cast<CActor*>(Level().CurrentViewEntity());
         BOOL bIndoor = TRUE;
         if (actor)
-            bIndoor = actor->renderable_ROS()->get_luminocity_hemi() < 0.05f;
+            bIndoor = actor->renderable_ROS()->get_luminocity_hemi() < 0.04f;
 
         int data_set = (Random.randF() < (1.f - Environment().CurrentEnv->weight)) ? 0 : 1;
 
@@ -361,6 +361,12 @@ void CGamePersistent::WeathersUpdate()
                     Environment().wind_blast_stop_time.set(
                         0.f, eff->wind_blast_direction.x, eff->wind_blast_direction.y, eff->wind_blast_direction.z);
                 }
+            }
+            else if (!ambient_particles && Device.dwTimeGlobal > ambient_effect_next_time)
+            {
+                CEnvAmbient::SEffect* eff = env_amb->get_rnd_effect();
+                if (eff)
+                    ambient_effect_next_time = Device.dwTimeGlobal + env_amb->get_rnd_effect_time();
             }
         }
         if (Device.fTimeGlobal >= ambient_effect_wind_start && Device.fTimeGlobal <= ambient_effect_wind_in_time &&
@@ -557,6 +563,7 @@ void CGamePersistent::OnFrame()
 {
     if (Device.dwPrecacheFrame == 5 && m_intro_event.empty())
     {
+        SetLoadStageTitle("");
         m_intro_event.bind(this, &CGamePersistent::game_loaded);
     }
 
@@ -858,6 +865,14 @@ void CGamePersistent::LoadTitle(bool change_tip, shared_str map_name)
         pApp->LoadTitleInt(
             CStringTable().translate("ls_header").c_str(), tmp.c_str(), CStringTable().translate(buff).c_str());
     }
+}
+
+void CGamePersistent::SetLoadStageTitle(pcstr ls_title)
+{
+    string512 buff;
+    const pcstr dots = ""; // if title is empty don't insert dots
+    sprintf_s(buff, "%s%s", CStringTable().translate(ls_title).c_str(), ls_title ? dots : "");
+    pApp->SetLoadStageTitle(buff);
 }
 
 bool CGamePersistent::CanBePaused() { return IsGameTypeSingle() || (g_pGameLevel && Level().IsDemoPlay()); }

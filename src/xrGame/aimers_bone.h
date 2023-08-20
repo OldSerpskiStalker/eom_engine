@@ -16,7 +16,6 @@
 
 namespace aimers
 {
-
 template <u32 bone_count>
 class bone : public base
 {
@@ -37,7 +36,6 @@ private:
     Fmatrix m_bones[bone_count];
     u16 m_bones_ids[bone_count];
 }; // class bone
-
 } // namespace aimers
 
 #include "aimers_bone_inline.h"

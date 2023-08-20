@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "ai_monster_defs.h"
 
 class CBaseMonster;
@@ -58,7 +58,7 @@ public:
     bool see_enemy_recently(const CEntityAlive* enemy);
     bool enemy_see_me_now();
 
-    // вернуть количество врагов
+    // ГўГҐГ°Г­ГіГІГј ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® ГўГ°Г ГЈГ®Гў
     u32 get_enemies_count();
 
     void add_enemy(const CEntityAlive*);
@@ -66,7 +66,7 @@ public:
 
     bool is_enemy(const CEntityAlive* obj);
 
-    // обновить врага в соответствии с врагом у monster
+    // Г®ГЎГ­Г®ГўГЁГІГј ГўГ°Г ГЈГ  Гў Г±Г®Г®ГІГўГҐГІГ±ГІГўГЁГЁ Г± ГўГ°Г ГЈГ®Г¬ Гі monster
     void transfer_enemy(CBaseMonster* friend_monster);
 
     u32 get_my_vertex_enemy_last_seen() { return my_vertex_enemy_last_seen; }

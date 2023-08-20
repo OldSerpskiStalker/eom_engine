@@ -133,7 +133,7 @@ void restore_actor()
     CHudItem* pHudItem = smart_cast<CHudItem*>(g_debug_actor->inventory().ActiveItem());
     if (pHudItem)
     {
-        pHudItem->OnStateSwitch(pHudItem->GetState());
+        pHudItem->OnStateSwitch(pHudItem->GetState(), pHudItem->GetState());
     }
 }
 
@@ -1254,9 +1254,9 @@ static void fill_bones(CAI_Stalker& self, Fmatrix const& transform, IKinematicsA
     for (u16 i = 0; i < MAX_PARTS; ++i)
     {
 #if 0
-		CBlend* const blend				= kinematics_animated->LL_PlayCycle(i, animation, 0, 0, 0, 1);
+		CBlend* const blend = kinematics_animated->LL_PlayCycle(i, animation, 0, 0, 0, 1);
 		if (blend)
-			blend->timeCurrent			= 0.f;//blend->timeTotal - (SAMPLE_SPF + EPS);
+			blend->timeCurrent = 0.f;//blend->timeTotal - (SAMPLE_SPF + EPS);
 #else // #if 0
         u32 const blend_count = kinematics_animated->LL_PartBlendsCount(i);
         for (u32 j = 0; j < blend_count; ++j)
@@ -1372,9 +1372,9 @@ static void draw_animation_bones(
 
 #if 0
 	Fmatrix								player_head;
-	IKinematics* actor_kinematics		= smart_cast<IKinematics*>(Actor()->Visual());
-	actor_kinematics->Bone_GetAnimPos	(player_head, actor_kinematics->LL_BoneID("bip01_head"), 1, false);
-	player_head.mulA_43					(Actor()->XFORM());
+	IKinematics* actor_kinematics = smart_cast<IKinematics*>(Actor()->Visual());
+	actor_kinematics->Bone_GetAnimPos(player_head, actor_kinematics->LL_BoneID("bip01_head"), 1, false);
+	player_head.mulA_43(Actor()->XFORM());
 	Fvector								target = player_head.c;
 #else // #if 0
     Fvector target = self.sight().aiming_position();
@@ -1578,18 +1578,18 @@ void CAI_Stalker::OnRender()
 {
 #if 0
 	IKinematicsAnimated*		kinematics = smart_cast<IKinematicsAnimated*>(Visual());
-	VERIFY						(kinematics);
-//	draw_animation_bones		(*this, XFORM(), kinematics, "loophole_2_no_look_idle_0");
+	VERIFY(kinematics);
+	//	draw_animation_bones		(*this, XFORM(), kinematics, "loophole_2_no_look_idle_0");
 
 	Fmatrix						m_start_transform;
 	animation_movement_controller const*	controller = animation_movement();
 	if (!controller)
-		m_start_transform		= XFORM();
+		m_start_transform = XFORM();
 	else
-		m_start_transform		= controller->start_transform();
+		m_start_transform = controller->start_transform();
 
-	draw_animation_bones		(*this, m_start_transform, kinematics, "loophole_3_attack_idle_0");
-//	draw_animation_bones		(*this, XFORM(), kinematics, "loophole_3_attack_in_0");
+	draw_animation_bones(*this, m_start_transform, kinematics, "loophole_3_attack_idle_0");
+	//	draw_animation_bones		(*this, XFORM(), kinematics, "loophole_3_attack_in_0");
 #else // #if 0
     if (inventory().ActiveItem())
     {
@@ -1624,24 +1624,24 @@ void CAI_Stalker::OnRender()
 #if 0
 	if (inventory().ActiveItem()) {
 		Fvector				position, direction;
-		g_fireParams		(0,position,direction);
+		g_fireParams(0, position, direction);
 
 		float				yaw, pitch, safety_fire_angle = 1.f*PI_DIV_8*.125f;
-		direction.getHP		(yaw,pitch);
+		direction.getHP(yaw, pitch);
 
-		Level().debug_renderer().draw_line(Fidentity, position, Fvector().mad(position, direction, 20.f), D3DCOLOR_XRGB(0,255,0));
+		Level().debug_renderer().draw_line(Fidentity, position, Fvector().mad(position, direction, 20.f), D3DCOLOR_XRGB(0, 255, 0));
 
-		direction.setHP		(yaw - safety_fire_angle,pitch);
-		Level().debug_renderer().draw_line(Fidentity, position, Fvector().mad(position, direction, 20.f), D3DCOLOR_XRGB(0,255,0));
+		direction.setHP(yaw - safety_fire_angle, pitch);
+		Level().debug_renderer().draw_line(Fidentity, position, Fvector().mad(position, direction, 20.f), D3DCOLOR_XRGB(0, 255, 0));
 
-		direction.setHP		(yaw + safety_fire_angle,pitch);
-		Level().debug_renderer().draw_line(Fidentity, position, Fvector().mad(position, direction, 20.f), D3DCOLOR_XRGB(0,255,0));
+		direction.setHP(yaw + safety_fire_angle, pitch);
+		Level().debug_renderer().draw_line(Fidentity, position, Fvector().mad(position, direction, 20.f), D3DCOLOR_XRGB(0, 255, 0));
 
-		direction.setHP		(yaw,pitch - safety_fire_angle);
-		Level().debug_renderer().draw_line(Fidentity, position, Fvector().mad(position, direction, 20.f), D3DCOLOR_XRGB(0,255,0));
+		direction.setHP(yaw, pitch - safety_fire_angle);
+		Level().debug_renderer().draw_line(Fidentity, position, Fvector().mad(position, direction, 20.f), D3DCOLOR_XRGB(0, 255, 0));
 
-		direction.setHP		(yaw,pitch + safety_fire_angle);
-		Level().debug_renderer().draw_line(Fidentity, position, Fvector().mad(position, direction, 20.f), D3DCOLOR_XRGB(0,255,0));
+		direction.setHP(yaw, pitch + safety_fire_angle);
+		Level().debug_renderer().draw_line(Fidentity, position, Fvector().mad(position, direction, 20.f), D3DCOLOR_XRGB(0, 255, 0));
 	}
 #endif // #if 0
 

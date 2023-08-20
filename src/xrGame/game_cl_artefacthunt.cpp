@@ -139,6 +139,7 @@ game_cl_ArtefactHunt::~game_cl_ArtefactHunt()
 }
 
 BOOL bBearerCantSprint = TRUE;
+
 void game_cl_ArtefactHunt::net_import_state(NET_Packet& P)
 {
     inherited::net_import_state(P);
@@ -325,7 +326,8 @@ void game_cl_ArtefactHunt::GetMapEntities(xr_vector<SZoneMapEntityData>& dst)
 
     CObject* pParent = pArtefact->H_Parent();
     if (!pParent)
-    { // Artefact alone
+    {
+        // Artefact alone
         D.color = color_artefact;
         D.pos = pArtefact->Position();
         dst.push_back(D);
@@ -496,6 +498,7 @@ void game_cl_ArtefactHunt::shedule_Update(u32 dt)
     };
     //-------------------------------------------
 }
+
 void game_cl_ArtefactHunt::SetScore()
 {
     game_cl_TeamDeathmatch::SetScore();
@@ -511,6 +514,7 @@ void game_cl_ArtefactHunt::SetScore()
             m_game_ui->SetFraglimit(ps->frags(), artefactsNum);
     }
 }
+
 BOOL game_cl_ArtefactHunt::CanCallBuyMenu()
 {
     if (!m_bBuyEnabled)
@@ -647,7 +651,6 @@ void game_cl_ArtefactHunt::UpdateMapLocations()
                     };
 
                     /*bool OutfitWorkDown = false;
-
                     CActor* pActor = smart_cast<CActor*>(Level().Objects.net_Find(artefactBearerID));
                     if (pActor)
                     {

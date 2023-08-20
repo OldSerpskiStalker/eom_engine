@@ -20,6 +20,7 @@ private:
         stShoot = 3,
         stCount
     };
+
     EState m_CurState;
     EState m_TgtState;
 
@@ -40,6 +41,7 @@ private:
         ref_sound sound;
         MotionID motion;
     };
+
     SStateData m_state_data[stCount];
 
 private:
@@ -81,7 +83,9 @@ public:
     virtual void UpdateCL();
 
     virtual void HitSignal(float HitAmount, Fvector& local_dir, CObject* who, s16 element) {}
+
     virtual void HitImpulse(float amount, Fvector& vWorldDir, Fvector& vLocalDir) {}
+
     virtual void Hit(SHit* pHDS);
 
     virtual BOOL IsVisibleForHUD() { return false; }

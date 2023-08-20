@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "monster_hit_memory.h"
 #include "BaseMonster/base_monster.h"
 
@@ -18,7 +18,7 @@ void CMonsterHitMemory::init_external(CBaseMonster* M, TTime mem_time)
 
 void CMonsterHitMemory::update()
 {
-    // удалить устаревшие hits
+    // ГіГ¤Г Г«ГЁГІГј ГіГ±ГІГ Г°ГҐГўГёГЁГҐ hits
     remove_non_actual();
 }
 
@@ -75,7 +75,7 @@ Fvector CMonsterHitMemory::get_last_hit_dir()
 {
     Fvector dir = monster->Direction();
 
-    // найти последний по времени хит
+    // Г­Г Г©ГІГЁ ГЇГ®Г±Г«ГҐГ¤Г­ГЁГ© ГЇГ® ГўГ°ГҐГ¬ГҐГ­ГЁ ГµГЁГІ
     SMonsterHit last_hit;
     last_hit.time = 0;
     last_hit.side = eSideFront;
@@ -86,7 +86,7 @@ Fvector CMonsterHitMemory::get_last_hit_dir()
             last_hit = m_hits[i];
     }
 
-    // если есть хит, вычислить направление
+    // ГҐГ±Г«ГЁ ГҐГ±ГІГј ГµГЁГІ, ГўГ»Г·ГЁГ±Г«ГЁГІГј Г­Г ГЇГ°Г ГўГ«ГҐГ­ГЁГҐ
     if (last_hit.time != 0)
     {
         float h, p;

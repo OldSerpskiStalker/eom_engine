@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "../../../xrEngine/feel_touch.h"
 #include "energy_holder.h"
 
@@ -8,10 +8,10 @@ class CPsyAura : public Feel::Touch, public CEnergyHolder
 {
     typedef CEnergyHolder inherited;
 
-    // владелец поля
+    // ГўГ«Г Г¤ГҐГ«ГҐГ¶ ГЇГ®Г«Гї
     CBaseMonster* m_object;
 
-    // радиус поля
+    // Г°Г Г¤ГЁГіГ± ГЇГ®Г«Гї
     float m_radius;
 
 public:
@@ -21,9 +21,10 @@ public:
     void init_external(CBaseMonster* obj) { m_object = obj; }
     virtual bool feel_touch_contact(CObject* O) { return FALSE; }
     virtual void schedule_update();
+
     virtual void process_objects_in_aura() {}
 
-    // свойства поля
+    // Г±ГўГ®Г©Г±ГІГўГ  ГЇГ®Г«Гї
     void set_radius(float R) { m_radius = R; }
     float get_radius() { return m_radius; }
 

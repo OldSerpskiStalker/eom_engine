@@ -6,7 +6,6 @@
 
 namespace award_system
 {
-
 class best_scores_helper : public reward_event_handler
 {
     typedef reward_event_handler inherited;
@@ -16,10 +15,12 @@ public:
     virtual ~best_scores_helper();
 
     virtual bool OnWeapon_Fire(u16 sender, u16 sender_weapon_id) { return false; };
+
     virtual bool OnBullet_Fire(u16 sender, u16 sender_weapon_id, const Fvector& position, const Fvector& direction)
     {
         return false;
     };
+
     virtual bool OnBullet_Hit(CObject const* hitter, CObject const* victim, CObject const* weapon, u16 const bone)
     {
         return false;
@@ -60,7 +61,6 @@ private:
     void reset_max();
     void write_max();
 }; // class best_scores_helper
-
 } // namespace award_system
 
 #endif // #ifndef BEST_SCORES_HELPER_INCLUDED

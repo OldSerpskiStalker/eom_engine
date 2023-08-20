@@ -8,6 +8,7 @@ class CStateMonsterLookActor : public CState<_Object>
 
 public:
     CStateMonsterLookActor(_Object* obj) : inherited(obj) {}
+
     virtual void execute();
     virtual void remove_links(CObject* object) { inherited::remove_links(object); }
 };
@@ -19,6 +20,7 @@ class CStateMonsterTurnAwayFromActor : public CState<_Object>
 
 public:
     CStateMonsterTurnAwayFromActor(_Object* obj) : inherited(obj) {}
+
     virtual void execute();
 };
 
@@ -29,6 +31,7 @@ class CStateMonstertTestIdle : public CState<_Object>
 
 public:
     CStateMonstertTestIdle(_Object* obj) : inherited(obj) {}
+
     virtual void execute();
 };
 

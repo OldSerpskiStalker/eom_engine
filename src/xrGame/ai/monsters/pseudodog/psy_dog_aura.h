@@ -37,6 +37,7 @@ class CPsyDogAura : public CPPEffectorCustomController<CPPEffectorPsyDogAura>
 
 public:
     CPsyDogAura(CPsyDog* dog) : m_object(dog) {}
+
     void reinit();
     void on_death();
     void update_schedule();

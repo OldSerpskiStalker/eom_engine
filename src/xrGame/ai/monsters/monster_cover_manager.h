@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 class CCoverPoint;
 class CCoverEvaluator;
@@ -14,11 +14,11 @@ public:
     ~CMonsterCoverManager();
 
     void load();
-    // найти лучший ковер относительно "position"
+    // Г­Г Г©ГІГЁ Г«ГіГ·ГёГЁГ© ГЄГ®ГўГҐГ° Г®ГІГ­Г®Г±ГЁГІГҐГ«ГјГ­Г® "position"
     const CCoverPoint* find_cover(
         const Fvector& position, float min_pos_distance, float max_pos_distance, float deviation = 0.f);
 
-    // найти лучший ковер относительно "src_pos" и "dest_pos"
+    // Г­Г Г©ГІГЁ Г«ГіГ·ГёГЁГ© ГЄГ®ГўГҐГ° Г®ГІГ­Г®Г±ГЁГІГҐГ«ГјГ­Г® "src_pos" ГЁ "dest_pos"
     const CCoverPoint* find_cover(const Fvector& src_pos, const Fvector& dest_pos, float min_pos_distance,
         float max_pos_distance, float deviation = 0.f);
 

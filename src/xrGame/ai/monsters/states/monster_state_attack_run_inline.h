@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "../ai_monster_squad.h"
 #include "../ai_monster_squad_manager.h"
@@ -17,7 +17,7 @@ void CStateMonsterAttackRunAbstract::initialize()
 TEMPLATE_SPECIALIZATION
 void CStateMonsterAttackRunAbstract::execute()
 {
-    // óñòàíîâêà ïàðàìåòðîâ ôóíêöèîíàëüíûõ áëîêîâ
+    // Ã³Ã±Ã²Ã Ã­Ã®Ã¢ÃªÃ  Ã¯Ã Ã°Ã Ã¬Ã¥Ã²Ã°Ã®Ã¢ Ã´Ã³Ã­ÃªÃ¶Ã¨Ã®Ã­Ã Ã«Ã¼Ã­Ã»Ãµ Ã¡Ã«Ã®ÃªÃ®Ã¢
     object->anim().accel_activate(eAT_Aggressive);
     object->anim().accel_set_braking(false);
 
@@ -37,13 +37,13 @@ void CStateMonsterAttackRunAbstract::execute()
     object->set_state_sound(MonsterSound::eMonsterSoundAggressive);
     object->path().extrapolate_path(true);
 
-    // îáðàáîòàòü squad èíôî
+    // Ã®Ã¡Ã°Ã Ã¡Ã®Ã²Ã Ã²Ã¼ squad Ã¨Ã­Ã´Ã®
     object->path().set_use_dest_orient(false);
 
     CMonsterSquad* squad = monster_squad().get_squad(object);
     if (squad && squad->SquadActive())
     {
-        // Ïîëó÷èòü êîìàíäó
+        // ÃÃ®Ã«Ã³Ã·Ã¨Ã²Ã¼ ÃªÃ®Ã¬Ã Ã­Ã¤Ã³
         SSquadCommand command;
         squad->GetCommand(object, command);
 

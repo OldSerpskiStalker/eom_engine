@@ -31,6 +31,7 @@ void CStateGroupPanicRunAbstract::execute()
 
     object->path().set_generic_parameters();
 }
+
 TEMPLATE_SPECIALIZATION
 bool CStateGroupPanicRunAbstract::check_completion()
 {

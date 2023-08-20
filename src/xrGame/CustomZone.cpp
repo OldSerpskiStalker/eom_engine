@@ -17,9 +17,10 @@
 #include "zone_effector.h"
 #include "breakableobject.h"
 #include "GamePersistent.h"
+#include "../../script_game_object.h"
 
 #define WIND_RADIUS (4 * Radius()) // расстояние до актера, когда появляется ветер
-#define FASTMODE_DISTANCE (50.f) // distance to camera from sphere, when zone switches to fast update sequence
+#define FASTMODE_DISTANCE (100.f) // distance to camera from sphere, when zone switches to fast update sequence
 
 CCustomZone::CCustomZone(void)
 {
@@ -34,6 +35,7 @@ CCustomZone::CCustomZone(void)
     m_pLight = NULL;
     m_pIdleLight = NULL;
     m_pIdleLAnim = NULL;
+    m_pBlowLAnim = NULL;
 
     m_StateTime.resize(eZoneStateMax);
     for (int i = 0; i < eZoneStateMax; i++)
@@ -259,7 +261,9 @@ void CCustomZone::Load(LPCSTR section)
         m_fLightRange = pSettings->r_float(section, "light_range");
         m_fLightTime = pSettings->r_float(section, "light_time");
         m_fLightTimeLeft = 0;
-
+        LPCSTR light_anim = (READ_IF_EXISTS(pSettings, r_string, section, "blowout_light_anim", (0)));
+        if (light_anim)
+            m_pBlowLAnim = LALib.FindItem(light_anim);
         m_fLightHeight = pSettings->r_float(section, "light_height");
     }
 
@@ -271,7 +275,12 @@ void CCustomZone::Load(LPCSTR section)
         LPCSTR light_anim = pSettings->r_string(section, "idle_light_anim");
         m_pIdleLAnim = LALib.FindItem(light_anim);
         m_fIdleLightHeight = pSettings->r_float(section, "idle_light_height");
+
         m_zone_flags.set(eIdleLightVolumetric, pSettings->r_bool(section, "idle_light_volumetric"));
+        volumetric_distance = READ_IF_EXISTS(pSettings, r_float, section, "idle_light_volumetric_distance", .5f);
+        volumetric_intensity = READ_IF_EXISTS(pSettings, r_float, section, "idle_light_volumetric_intensity", .5f);
+        volumetric_quality = READ_IF_EXISTS(pSettings, r_float, section, "idle_light_volumetric_quality", .5f);
+
         m_zone_flags.set(eIdleLightShadow, pSettings->r_bool(section, "idle_light_shadow"));
         m_zone_flags.set(eIdleLightR1, pSettings->r_bool(section, "idle_light_r1"));
     }
@@ -311,9 +320,8 @@ BOOL CCustomZone::net_Spawn(CSE_Abstract* DC)
     m_zone_flags.set(eUseOnOffTime, (m_TimeToDisable != 0) && (m_TimeToEnable != 0));
 
     // добавить источники света
-    bool br1 = (0 == psDeviceFlags.test(rsR2 | rsR3 | rsR4)); // Alundaio: rsR4 flag
-
-    bool render_ver_allowed = !br1 || (br1 && m_zone_flags.test(eIdleLightR1));
+    const bool br1 = (strstr(Core.Params, "-rstatic"));
+    const bool render_ver_allowed = !br1 || (br1 && m_zone_flags.test(eIdleLightR1));
 
     if (m_zone_flags.test(eIdleLight) && render_ver_allowed)
     {
@@ -322,8 +330,10 @@ BOOL CCustomZone::net_Spawn(CSE_Abstract* DC)
 
         if (m_zone_flags.test(eIdleLightVolumetric))
         {
-            // m_pIdleLight->set_type				(IRender_Light::SPOT);
             m_pIdleLight->set_volumetric(true);
+            m_pIdleLight->set_volumetric_distance(volumetric_distance);
+            m_pIdleLight->set_volumetric_intensity(volumetric_intensity);
+            m_pIdleLight->set_volumetric_quality(volumetric_quality);
         }
     }
     else
@@ -411,6 +421,7 @@ bool CCustomZone::BlowoutState()
     }
     return false;
 }
+
 bool CCustomZone::AccumulateState()
 {
     if (m_iStateTime >= m_StateTime[eZoneStateAccumulate])
@@ -424,6 +435,7 @@ bool CCustomZone::AccumulateState()
     }
     return false;
 }
+
 void CCustomZone::UpdateWorkload(u32 dt)
 {
     m_iPreviousStateTime = m_iStateTime;
@@ -450,7 +462,7 @@ void CCustomZone::UpdateWorkload(u32 dt)
 
     if (Level().CurrentEntity())
     {
-        Fvector P = Device.vCameraPosition;
+        Fvector P = Level().CurrentControlEntity()->Position();
         P.y -= 0.9f;
         float radius = 1.0f;
         CalcDistanceTo(P, m_fDistanceToCurEntity, radius);
@@ -529,9 +541,8 @@ void CCustomZone::shedule_Update(u32 dt)
         inherited::shedule_Update(dt);
 
         // check "fast-mode" border
-        float cam_distance = Device.vCameraPosition.distance_to(P) - s.R;
-
-        if (cam_distance > FASTMODE_DISTANCE && !m_zone_flags.test(eAlwaysFastmode))
+        float act_distance = Level().CurrentControlEntity()->Position().distance_to(P) - s.R;
+        if (act_distance > FASTMODE_DISTANCE && !m_zone_flags.test(eAlwaysFastmode))
             o_switch_2_slow();
         else
             o_switch_2_fast();
@@ -648,8 +659,17 @@ float CCustomZone::Power(float dist, float nearest_shape_radius)
     return m_fMaxPower * RelativePower(dist, nearest_shape_radius);
 }
 
+void CCustomZone::ChangeIdleParticles(LPCSTR name, bool bIdleLight)
+{
+    StopIdleParticles(true);
+    m_sIdleParticles = name;
+    PlayIdleParticles(bIdleLight);
+}
+
 void CCustomZone::PlayIdleParticles(bool bIdleLight)
 {
+    if (!m_zone_flags.test(eFastMode))
+        return;
     m_idle_sound.play_at_pos(0, Position(), true);
 
     if (*m_sIdleParticles)
@@ -683,6 +703,8 @@ void CCustomZone::StopIdleParticles(bool bIdleLight)
 
 void CCustomZone::StartIdleLight()
 {
+    if (!m_zone_flags.test(eFastMode))
+        return;
     if (m_pIdleLight)
     {
         m_pIdleLight->set_range(m_fIdleLightRange);
@@ -692,6 +714,7 @@ void CCustomZone::StartIdleLight()
         m_pIdleLight->set_active(true);
     }
 }
+
 void CCustomZone::StopIdleLight()
 {
     if (m_pIdleLight)
@@ -700,6 +723,8 @@ void CCustomZone::StopIdleLight()
 
 void CCustomZone::UpdateIdleLight()
 {
+    if (!m_zone_flags.test(eFastMode))
+        return;
     if (!m_pIdleLight || !m_pIdleLight->get_active())
         return;
 
@@ -723,6 +748,8 @@ void CCustomZone::PlayBlowoutParticles()
 {
     if (!m_sBlowoutParticles)
         return;
+    if (!m_zone_flags.test(eFastMode))
+        return;
 
     CParticlesObject* pParticles;
     pParticles = CParticlesObject::Create(*m_sBlowoutParticles, TRUE);
@@ -732,6 +759,8 @@ void CCustomZone::PlayBlowoutParticles()
 
 void CCustomZone::PlayHitParticles(CGameObject* pObject)
 {
+    if (!m_zone_flags.test(eFastMode))
+        return;
     m_hit_sound.play_at_pos(0, pObject->Position());
 
     shared_str particle_str = NULL;
@@ -760,9 +789,13 @@ void CCustomZone::PlayHitParticles(CGameObject* pObject)
         }
     }
 }
+
 #include "bolt.h"
+
 void CCustomZone::PlayEntranceParticles(CGameObject* pObject)
 {
+    if (!m_zone_flags.test(eFastMode))
+        return;
     m_entrance_sound.play_at_pos(0, pObject->Position());
 
     LPCSTR particle_str = NULL;
@@ -819,6 +852,8 @@ void CCustomZone::PlayEntranceParticles(CGameObject* pObject)
 
 void CCustomZone::PlayBoltEntranceParticles()
 {
+    if (!m_zone_flags.test(eFastMode))
+        return;
     CCF_Shape* Sh = (CCF_Shape*)CFORM();
     const Fmatrix& XF = XFORM();
     Fmatrix PXF;
@@ -874,6 +909,8 @@ void CCustomZone::PlayBoltEntranceParticles()
 
 void CCustomZone::PlayBulletParticles(Fvector& pos)
 {
+    if (!m_zone_flags.test(eFastMode))
+        return;
     m_entrance_sound.play_at_pos(0, pos);
 
     if (!m_sEntranceParticlesSmall)
@@ -963,6 +1000,8 @@ void CCustomZone::Hit(SHit* pHDS)
 
 void CCustomZone::StartBlowoutLight()
 {
+    if (!m_zone_flags.test(eFastMode))
+        return;
     if (!m_pLight || m_fLightTime <= 0.f)
         return;
 
@@ -985,6 +1024,8 @@ void CCustomZone::StopBlowoutLight()
 
 void CCustomZone::UpdateBlowoutLight()
 {
+    if (!m_zone_flags.test(eFastMode))
+        return;
     if (m_fLightTimeLeft > (float)Device.dwTimeGlobal)
     {
         float time_k = m_fLightTimeLeft - (float)Device.dwTimeGlobal;
@@ -995,8 +1036,20 @@ void CCustomZone::UpdateBlowoutLight()
         float scale = time_k / (m_fLightTime * 1000.0f);
         scale = powf(scale + EPS_L, 0.15f);
         float r = m_fLightRange * scale;
+
+        if (m_pBlowLAnim)
+        {
+            int frame = 0;
+            u32 clr = m_pBlowLAnim->CalculateBGR(Device.fTimeGlobal, frame);
+            Fcolor fclr;
+            fclr.set(
+                (float)color_get_B(clr) / 255.f, (float)color_get_G(clr) / 255.f, (float)color_get_R(clr) / 255.f, 1.f);
+            m_pLight->set_color(fclr);
+        }
+        else
+            m_pLight->set_color(m_LightColor.r * scale, m_LightColor.g * scale, m_LightColor.b * scale);
+
         VERIFY(_valid(r));
-        m_pLight->set_color(m_LightColor.r * scale, m_LightColor.g * scale, m_LightColor.b * scale);
         m_pLight->set_range(r);
 
         Fvector pos = Position();
@@ -1027,6 +1080,8 @@ void CCustomZone::AffectObjects()
 
 void CCustomZone::UpdateBlowout()
 {
+    if (!m_zone_flags.test(eFastMode))
+        return;
     if (m_dwBlowoutParticlesTime >= (u32)m_iPreviousStateTime && m_dwBlowoutParticlesTime < (u32)m_iStateTime)
         PlayBlowoutParticles();
 
@@ -1079,6 +1134,13 @@ void CCustomZone::OnMove()
         if (m_pIdleLight && m_pIdleLight->get_active())
             m_pIdleLight->set_position(Position());
     }
+}
+
+void CCustomZone::MoveScript(Fvector pos)
+{
+    XFORM().translate_over(pos);
+
+    OnMove();
 }
 
 void CCustomZone::OnEvent(NET_Packet& P, u16 type)
@@ -1283,6 +1345,8 @@ void CCustomZone::exit_Zone(SZoneObjectInfo& io)
 
 void CCustomZone::PlayAccumParticles()
 {
+    if (!m_zone_flags.test(eFastMode))
+        return;
     if (m_sAccumParticles.size())
     {
         CParticlesObject* pParticles;
@@ -1297,6 +1361,8 @@ void CCustomZone::PlayAccumParticles()
 
 void CCustomZone::PlayAwakingParticles()
 {
+    if (!m_zone_flags.test(eFastMode))
+        return;
     if (m_sAwakingParticles.size())
     {
         CParticlesObject* pParticles;
@@ -1464,6 +1530,7 @@ void CCustomZone::o_switch_2_fast()
         return;
     m_zone_flags.set(eFastMode, TRUE);
     StartIdleLight();
+    PlayIdleParticles(true);
     processing_activate();
 }
 
@@ -1476,6 +1543,7 @@ void CCustomZone::o_switch_2_slow()
     {
         StopIdleLight();
     }
+    StopIdleParticles(true);
     processing_deactivate();
 }
 

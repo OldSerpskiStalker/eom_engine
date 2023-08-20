@@ -13,7 +13,6 @@
 
 namespace debug
 {
-
 #ifdef DEBUG
 namespace detail
 {
@@ -38,7 +37,6 @@ class make_final
 {
 };
 #endif // DEBUG
-
 } // namespace debug
 
 #endif // DEBUG_MAKE_FINAL_HPP_INCLUDED

@@ -31,6 +31,7 @@ void game_cl_mp::AddSoundMessage(LPCSTR sound_name, u32 const sound_priority, u3
 struct sound_ptr_search_predicate
 {
     sound_ptr_search_predicate(u32 const id) : m_search_id(id) {}
+
     bool operator()(SND_Message const* left) const
     {
         if (left->SoundID == m_search_id)
@@ -38,6 +39,7 @@ struct sound_ptr_search_predicate
 
         return false;
     }
+
     u32 m_search_id;
 }; // struct sound_ptr_search_predicate
 

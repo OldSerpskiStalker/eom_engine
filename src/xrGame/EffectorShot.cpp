@@ -60,7 +60,7 @@ void CWeaponShotEffector::Shot2(float angle)
     m_angle_vert +=
         angle * (m_cam_recoil.DispersionFrac + m_Random.randF(-1.0f, 1.0f) * (1.0f - m_cam_recoil.DispersionFrac));
 
-    clamp(m_angle_vert, -m_cam_recoil.MaxAngleVert, m_cam_recoil.MaxAngleVert);
+    clamp(m_angle_vert, 0.f, m_cam_recoil.MaxAngleVert);
     if (fis_zero(m_angle_vert - m_cam_recoil.MaxAngleVert))
     {
         m_angle_vert *= m_Random.randF(0.96f, 1.04f);

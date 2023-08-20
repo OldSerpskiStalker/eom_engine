@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #pragma hdrstop
 
 #include "fs_internal.h"
@@ -21,7 +21,7 @@ bool item_pred(const CInifile::Item& x, LPCSTR val)
 }
 
 //------------------------------------------------------------------------------
-// Òåëî ôóíêöèé Inifile
+// Ã’Ã¥Ã«Ã® Ã´Ã³Ã­ÃªÃ¶Ã¨Ã© Inifile
 //------------------------------------------------------------------------------
 XRCORE_API BOOL _parse(LPSTR dest, LPCSTR src)
 {
@@ -83,6 +83,7 @@ XRCORE_API void _decorate(LPSTR dest, LPCSTR src)
     }
     *dest = 0;
 }
+
 //------------------------------------------------------------------------------
 
 BOOL CInifile::Sect::line_exist(LPCSTR L, LPCSTR* val)
@@ -96,6 +97,7 @@ BOOL CInifile::Sect::line_exist(LPCSTR L, LPCSTR* val)
     }
     return FALSE;
 }
+
 //------------------------------------------------------------------------------
 
 CInifile::CInifile(IReader* F, LPCSTR path
@@ -260,20 +262,32 @@ void CInifile::Load(IReader* F, LPCSTR path
                 strconcat(sizeof(fn), fn, path, inc_name);
                 _splitpath(fn, inc_path, folder, 0, 0);
                 xr_strcat(inc_path, sizeof(inc_path), folder);
-#ifndef _EDITOR
-                if (!allow_include_func || allow_include_func(fn))
-#endif
+
+                const auto loadFile = [&](const string_path _fn, const string_path name) {
+                    if (!allow_include_func || allow_include_func(_fn))
+                    {
+                        IReader* I = FS.r_open(_fn);
+                        R_ASSERT3(I, "Can't find include file:", name);
+                        Load(I, inc_path, allow_include_func);
+                        FS.r_close(I);
+                    }
+                };
+
+                if (strstr(inc_name, "*.ltx"))
                 {
-                    IReader* I = FS.r_open(fn);
-                    R_ASSERT3(I, "Can't find include file:", inc_name);
-                    Load(I, inc_path
-#ifndef _EDITOR
-                        ,
-                        allow_include_func
-#endif
-                    );
-                    FS.r_close(I);
+                    FS_FileSet fset;
+                    FS.file_list(fset, inc_path, FS_ListFiles, inc_name);
+
+                    for (FS_FileSet::iterator it = fset.begin(); it != fset.end(); it++)
+                    {
+                        LPCSTR _name = it->name.c_str();
+                        string_path _fn;
+                        strconcat(sizeof(_fn), _fn, inc_path, _name);
+                        loadFile(_fn, _name);
+                    }
                 }
+                else
+                    loadFile(fn, inc_name);
             }
         }
         else if (str[0] && (str[0] == '[')) // new section ?
@@ -494,6 +508,10 @@ BOOL CInifile::section_exist(const shared_str& S) const { return section_exist(*
 //--------------------------------------------------------------------------------------
 CInifile::Sect& CInifile::r_section(LPCSTR S) const
 {
+    R_ASSERT(S && strlen(S),
+        "Empty section (null\\'') passed into CInifile::r_section(). See info above ^, check your configs and 'call "
+        "stack'."); //--#SM+#--
+
     char section[256];
     xr_strcpy(section, sizeof(section), S);
     strlwr(section);
@@ -519,6 +537,11 @@ CInifile::Sect& CInifile::r_section(LPCSTR S) const
 
 LPCSTR CInifile::r_string(LPCSTR S, LPCSTR L) const
 {
+    if (!S || !L || !strlen(S) || !strlen(L)) //--#SM+#-- [fix for one of "xrDebug - Invalid handler" error log]
+    {
+        Msg("!![ERROR] CInifile::r_string: S = [%s], L = [%s]", S, L);
+    }
+
     Sect const& I = r_section(S);
     SectCIt A = std::lower_bound(I.Data.begin(), I.Data.end(), L, item_pred);
     if (A != I.Data.end() && xr_strcmp(*A->first, L) == 0)
@@ -769,18 +792,21 @@ void CInifile::w_string(LPCSTR S, LPCSTR L, LPCSTR V, LPCSTR comment)
         data.Data.insert(it, I);
     }
 }
+
 void CInifile::w_u8(LPCSTR S, LPCSTR L, u8 V, LPCSTR comment)
 {
     string128 temp;
     xr_sprintf(temp, sizeof(temp), "%d", V);
     w_string(S, L, temp, comment);
 }
+
 void CInifile::w_u16(LPCSTR S, LPCSTR L, u16 V, LPCSTR comment)
 {
     string128 temp;
     xr_sprintf(temp, sizeof(temp), "%d", V);
     w_string(S, L, temp, comment);
 }
+
 void CInifile::w_u32(LPCSTR S, LPCSTR L, u32 V, LPCSTR comment)
 {
     string128 temp;
@@ -816,24 +842,28 @@ void CInifile::w_s8(LPCSTR S, LPCSTR L, s8 V, LPCSTR comment)
     xr_sprintf(temp, sizeof(temp), "%d", V);
     w_string(S, L, temp, comment);
 }
+
 void CInifile::w_s16(LPCSTR S, LPCSTR L, s16 V, LPCSTR comment)
 {
     string128 temp;
     xr_sprintf(temp, sizeof(temp), "%d", V);
     w_string(S, L, temp, comment);
 }
+
 void CInifile::w_s32(LPCSTR S, LPCSTR L, s32 V, LPCSTR comment)
 {
     string128 temp;
     xr_sprintf(temp, sizeof(temp), "%d", V);
     w_string(S, L, temp, comment);
 }
+
 void CInifile::w_float(LPCSTR S, LPCSTR L, float V, LPCSTR comment)
 {
     string128 temp;
     xr_sprintf(temp, sizeof(temp), "%f", V);
     w_string(S, L, temp, comment);
 }
+
 void CInifile::w_fcolor(LPCSTR S, LPCSTR L, const Fcolor& V, LPCSTR comment)
 {
     string128 temp;
@@ -868,6 +898,7 @@ void CInifile::w_ivector4(LPCSTR S, LPCSTR L, const Ivector4& V, LPCSTR comment)
     xr_sprintf(temp, sizeof(temp), "%d,%d,%d,%d", V.x, V.y, V.z, V.w);
     w_string(S, L, temp, comment);
 }
+
 void CInifile::w_fvector2(LPCSTR S, LPCSTR L, const Fvector2& V, LPCSTR comment)
 {
     string128 temp;

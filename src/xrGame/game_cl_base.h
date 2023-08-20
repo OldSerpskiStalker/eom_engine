@@ -14,6 +14,7 @@ struct SZoneMapEntityData
 {
     Fvector pos;
     u32 color;
+
     SZoneMapEntityData()
     {
         pos.set(.0f, .0f, .0f);
@@ -66,6 +67,7 @@ public:
     virtual ~game_cl_GameState();
     LPCSTR type_name() const { return *m_game_type_name; };
     void set_type_name(LPCSTR s);
+
     virtual void Init(){};
     virtual void net_import_state(NET_Packet& P);
     virtual void net_import_update(NET_Packet& P);
@@ -84,7 +86,9 @@ public:
     ClientID GetClientIDByOrderID(u32 id);
     u32 GetPlayersCount() const { return players.size(); };
     virtual CUIGameCustom* createGameUI() { return NULL; };
+
     virtual void SetGameUI(CUIGameCustom*){};
+
     virtual void GetMapEntities(xr_vector<SZoneMapEntityData>& dst){};
 
     virtual void shedule_Update(u32 dt);
@@ -93,18 +97,27 @@ public:
     void u_EventSend(NET_Packet& P);
 
     virtual void ChatSay(LPCSTR phrase, bool bAll){};
+
     virtual void OnChatMessage(NET_Packet* P){};
+
     virtual void OnWarnMessage(NET_Packet* P){};
+
     virtual void OnRadminMessage(u16 type, NET_Packet* P){};
 
     virtual bool IsVotingEnabled() { return m_u16VotingEnabled != 0; };
     virtual bool IsVotingEnabled(u16 flag) { return (m_u16VotingEnabled & flag) != 0; };
     virtual bool IsVotingActive() { return false; };
+
     virtual void SetVotingActive(bool Active){};
+
     virtual void SendStartVoteMessage(LPCSTR args){};
+
     virtual void SendVoteYesMessage(){};
+
     virtual void SendVoteNoMessage(){};
+
     virtual void OnVoteStart(NET_Packet& P){};
+
     virtual void OnVoteStop(NET_Packet& P){};
 
     virtual void OnRender(){};
@@ -114,10 +127,13 @@ public:
     virtual bool PlayerCanSprint(CActor* pActor) { return true; };
 
     virtual void OnSpawn(CObject* pObj){};
+
     virtual void OnDestroy(CObject* pObj){};
 
     virtual void OnPlayerFlagsChanged(game_PlayerState* ps){};
+
     virtual void OnNewPlayerConnected(ClientID const& newClient){};
+
     virtual void OnPlayerVoted(game_PlayerState* ps){};
     virtual void SendPickUpEvent(u16 ID_who, u16 ID_what);
 

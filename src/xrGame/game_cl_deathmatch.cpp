@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "game_cl_deathmatch.h"
 #include "xrMessages.h"
 #include "UIGameDM.h"
@@ -797,6 +797,7 @@ bool game_cl_Deathmatch::OnKeyboardRelease(int key)
 }
 
 #define MAX_VOTE_PARAMS 5
+
 void game_cl_Deathmatch::OnVoteStart(NET_Packet& P)
 {
     CStringTable st;
@@ -967,13 +968,13 @@ void game_cl_Deathmatch::PlayParticleEffect(LPCSTR EffName, Fvector& pos)
 {
     if (!EffName)
         return;
-    // вычислить позицию и направленность партикла
+    // РІС‹С‡РёСЃР»РёС‚СЊ РїРѕР·РёС†РёСЋ Рё РЅР°РїСЂР°РІР»РµРЅРЅРѕСЃС‚СЊ РїР°СЂС‚РёРєР»Р°
     Fmatrix M;
     M.translate(pos);
 
     //	CParticlesPlayer::MakeXFORM(pObj,0,Fvector().set(0.f,1.f,0.f),Fvector().set(0.f,0.f,0.f),pos);
 
-    // установить particles
+    // СѓСЃС‚Р°РЅРѕРІРёС‚СЊ particles
     CParticlesObject* ps = NULL;
 
     ps = CParticlesObject::Create(EffName, TRUE);
@@ -1204,6 +1205,7 @@ void game_cl_Deathmatch::SendPickUpEvent(u16 ID_who, u16 ID_what)
 const shared_str game_cl_Deathmatch::GetTeamMenu(s16 team) { return TEAM0_MENU; }
 
 #define SELF_LOCATION "mp_self_location"
+
 void game_cl_Deathmatch::UpdateMapLocations()
 {
     inherited::UpdateMapLocations();

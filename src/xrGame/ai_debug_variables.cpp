@@ -2,7 +2,6 @@
 
 namespace ai_dbg
 {
-
 struct var
 {
     enum type_t
@@ -93,5 +92,4 @@ void show_var(const char* name)
         Msg("%s = \"%s\"", (*it).first.c_str(), v.str);
     }
 }
-
 } // namespace ai_dbg

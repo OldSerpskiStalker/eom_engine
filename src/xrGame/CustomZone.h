@@ -2,6 +2,7 @@
 
 #include "space_restrictor.h"
 #include "../xrEngine/feel_touch.h"
+#include "script_export_space.h"
 
 class CActor;
 class CLAItem;
@@ -18,6 +19,7 @@ struct SZoneObjectInfo
           small_object(false), nonalive_object(false)
     {
     }
+
     CGameObject* object;
     bool small_object;
     bool nonalive_object;
@@ -70,6 +72,9 @@ public:
     float GetMaxPower() { return m_fMaxPower; }
     void SetMaxPower(float p) { m_fMaxPower = p; }
 
+    float GetEffectiveRadius() { return m_fEffectiveRadius; }
+    void SetEffectiveRadius(float p) { m_fEffectiveRadius = p; }
+
     // вычисление силы хита в зависимости от расстояния до центра зоны
     // относительный размер силы (от 0 до 1)
     float RelativePower(float dist, float nearest_shape_radius);
@@ -81,10 +86,14 @@ public:
     // различные состояния в которых может находиться зона
     typedef enum
     {
-        eZoneStateIdle = 0, // состояние зоны, когда внутри нее нет активных объектов
-        eZoneStateAwaking, // пробуждение зоны (объект попал в зону)
-        eZoneStateBlowout, // выброс
-        eZoneStateAccumulate, // накапливание энергии, после выброса
+        eZoneStateIdle = 0,
+        // состояние зоны, когда внутри нее нет активных объектов
+        eZoneStateAwaking,
+        // пробуждение зоны (объект попал в зону)
+        eZoneStateBlowout,
+        // выброс
+        eZoneStateAccumulate,
+        // накапливание энергии, после выброса
         eZoneStateDisabled,
         eZoneStateMax
     } EZoneState;
@@ -113,6 +122,7 @@ protected:
         eBoltEntranceParticles = (1 << 16),
         eUseSecondaryHit = (1 << 17),
     };
+
     u32 m_owner_id;
     u32 m_ttl;
     Flags32 m_zone_flags;
@@ -143,6 +153,10 @@ protected:
     u32 m_TimeShift;
     u32 m_StartTime;
 
+    float volumetric_distance;
+    float volumetric_intensity;
+    float volumetric_quality;
+
     // массив с временами, сколько каждое состояние должно
     // длиться (если 0, то мгновенно -1 - бесконечность,
     //-2 - вообще не должно вызываться)
@@ -170,6 +184,8 @@ public:
     bool IsEnabled() { return m_eZoneState != eZoneStateDisabled; };
     void ZoneEnable();
     void ZoneDisable();
+    void ChangeIdleParticles(LPCSTR name, bool bIdleLight);
+    void MoveScript(Fvector pos);
     EZoneState ZoneState() { return m_eZoneState; }
 
 protected:
@@ -248,6 +264,7 @@ protected:
     float m_fIdleLightRange;
     float m_fIdleLightHeight;
     CLAItem* m_pIdleLAnim;
+    CLAItem* m_pBlowLAnim;
 
     void StartIdleLight();
     void StopIdleLight();
@@ -318,4 +335,10 @@ public:
     // Lain: adde
 private:
     virtual bool light_in_slow_mode() { return true; }
+
+    DECLARE_SCRIPT_REGISTER_FUNCTION
 };
+
+add_to_type_list(CCustomZone)
+#undef script_type_list
+#define script_type_list save_type_list(CCustomZone)

@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
+п»ї////////////////////////////////////////////////////////////////////////////
 //	Module 		: ai_trader.h
 //	Created 	: 16.04.2003
 //  Modified 	: 16.04.2003
@@ -56,7 +56,9 @@ public:
 
     virtual void Die(CObject* who);
     virtual void Think();
+
     virtual void HitSignal(float /**P/**/, Fvector& /**local_dir/**/, CObject* /**who/**/, s16 /**element/**/){};
+
     virtual void HitImpulse(float /**P/**/, Fvector& /**vWorldDir/**/, Fvector& /**vLocalDir/**/){};
     virtual void Hit(SHit* pHDS) { inherited::Hit(pHDS); }
     virtual void UpdateCL();
@@ -73,10 +75,10 @@ public:
     virtual BOOL UsedAI_Locations();
 
     ///////////////////////////////////////////////////////////////////////
-    virtual u16 PHGetSyncItemsNumber() { return inherited ::PHGetSyncItemsNumber(); }
-    virtual CPHSynchronize* PHGetSyncItem(u16 item) { return inherited ::PHGetSyncItem(item); }
-    virtual void PHUnFreeze() { return inherited ::PHUnFreeze(); }
-    virtual void PHFreeze() { return inherited ::PHFreeze(); }
+    virtual u16 PHGetSyncItemsNumber() { return inherited::PHGetSyncItemsNumber(); }
+    virtual CPHSynchronize* PHGetSyncItem(u16 item) { return inherited::PHGetSyncItem(item); }
+    virtual void PHUnFreeze() { return inherited::PHUnFreeze(); }
+    virtual void PHFreeze() { return inherited::PHFreeze(); }
     ///////////////////////////////////////////////////////////////////////
 
     virtual void reinit();
@@ -89,7 +91,7 @@ public:
     void OnStartTrade();
     void OnStopTrade();
 
-    // игровое имя
+    // ГЁГЈГ°Г®ГўГ®ГҐ ГЁГ¬Гї
     virtual LPCSTR Name() const { return CInventoryOwner::Name(); }
 
     virtual bool can_attach(const CInventoryItem* inventory_item) const;
@@ -101,11 +103,11 @@ public:
     virtual ALife::ERelationType tfGetRelationType(const CEntityAlive* tpEntityAlive) const;
 
     //////////////////////////////////////////////////////////////////////////
-    // генерируемые задания
+    // ГЈГҐГ­ГҐГ°ГЁГ°ГіГҐГ¬Г»ГҐ Г§Г Г¤Г Г­ГЁГї
 public:
-    // проверяет список артефактов в заказах
+    // ГЇГ°Г®ГўГҐГ°ГїГҐГІ Г±ГЇГЁГ±Г®ГЄ Г Г°ГІГҐГґГ ГЄГІГ®Гў Гў Г§Г ГЄГ Г§Г Гµ
     virtual u32 ArtefactPrice(CArtefact* pArtefact);
-    // продажа артефакта, с последуещим изменением списка заказов  (true - если артефакт был в списке)
+    // ГЇГ°Г®Г¤Г Г¦Г  Г Г°ГІГҐГґГ ГЄГІГ , Г± ГЇГ®Г±Г«ГҐГ¤ГіГҐГ№ГЁГ¬ ГЁГ§Г¬ГҐГ­ГҐГ­ГЁГҐГ¬ Г±ГЇГЁГ±ГЄГ  Г§Г ГЄГ Г§Г®Гў  (true - ГҐГ±Г«ГЁ Г Г°ГІГҐГґГ ГЄГІ ГЎГ»Г« Гў Г±ГЇГЁГ±ГЄГҐ)
     virtual bool BuyArtefact(CArtefact* pArtefact);
 
 public:
@@ -120,6 +122,7 @@ public:
         VERIFY(m_sound_player);
         return (*m_sound_player);
     }
+
     virtual bool unlimited_ammo() { return false; };
     virtual bool natural_weapon() const { return false; }
     virtual bool natural_detector() const { return false; }
@@ -135,6 +138,7 @@ public:
     CTraderAnimation& animation() { return (*AnimMan); }
     DECLARE_SCRIPT_REGISTER_FUNCTION
 };
+
 add_to_type_list(CAI_Trader)
 #undef script_type_list
 #define script_type_list save_type_list(CAI_Trader)

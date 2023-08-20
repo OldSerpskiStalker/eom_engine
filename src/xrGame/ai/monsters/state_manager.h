@@ -24,7 +24,7 @@ public:
 
     virtual bool check_control_start_conditions(ControlCom::EControlType type) = 0;
 
-// Lain: added
+    // Lain: added
 #ifdef DEBUG
     virtual void add_debug_info(debug::text_tree& root_s) {}
 #endif

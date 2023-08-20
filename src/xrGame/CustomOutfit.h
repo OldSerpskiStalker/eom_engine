@@ -1,6 +1,7 @@
 #pragma once
 
 #include "inventory_item_object.h"
+#include "script_export_space.h"
 
 struct SBoneProtections;
 
@@ -24,6 +25,7 @@ public:
     float GetHitTypeProtection(ALife::EHitType hit_type, s16 element);
     float GetDefHitTypeProtection(ALife::EHitType hit_type);
     float GetBoneArmor(s16 element);
+    float GetBoneProtection(s16 element);
 
     float HitThroughArmor(float hit_power, s16 element, float ap, bool& add_wound, ALife::EHitType hit_type);
 
@@ -46,10 +48,12 @@ public:
     float m_fPowerLoss;
     float m_additional_weight;
     float m_additional_weight2;
+    //	Ivector2						cell_xy_inv;
 
     float m_fHealthRestoreSpeed;
     float m_fRadiationRestoreSpeed;
     float m_fSatietyRestoreSpeed;
+    float m_fThirstRestoreSpeed;
     float m_fPowerRestoreSpeed;
     float m_fBleedingRestoreSpeed;
 
@@ -57,6 +61,8 @@ public:
     shared_str m_NightVisionSect;
 
     bool bIsHelmetAvaliable;
+    bool bCyclicAirBreath;
+    //	shared_str              helm_glass_texture;
 
     virtual u32 ef_equipment_type() const;
     virtual BOOL BonePassBullet(int boneID);
@@ -72,4 +78,10 @@ public:
 
 protected:
     virtual bool install_upgrade_impl(LPCSTR section, bool test);
+
+    DECLARE_SCRIPT_REGISTER_FUNCTION
 };
+
+add_to_type_list(CCustomOutfit)
+#undef script_type_list
+#define script_type_list save_type_list(CCustomOutfit)

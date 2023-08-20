@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
+п»ї////////////////////////////////////////////////////////////////////////////
 //	Module 		: alife_registry_container_composition.h
 //	Created 	: 01.07.2004
 //  Modified 	: 01.07.2004
@@ -29,37 +29,37 @@
 template <typename _index_type, typename _data_type>
 class CALifeAbstractRegistry;
 
-// для всех персонажей, те порции информации, которые они помнят
+// Г¤Г«Гї ГўГ±ГҐГµ ГЇГҐГ°Г±Г®Г­Г Г¦ГҐГ©, ГІГҐ ГЇГ®Г°Г¶ГЁГЁ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГЁ, ГЄГ®ГІГ®Г°Г»ГҐ Г®Г­ГЁ ГЇГ®Г¬Г­ГїГІ
 typedef CALifeAbstractRegistry<u16, KNOWN_INFO_VECTOR> CInfoPortionRegistry;
 add_to_registry_type_list(CInfoPortionRegistry)
 #define info_portions define_constant(CInfoPortionRegistry)
 #define registry_type_list save_registry_type_list(CInfoPortionRegistry)
 
-    // для всех персонажей, отношения с другими персонажами
+    // Г¤Г«Гї ГўГ±ГҐГµ ГЇГҐГ°Г±Г®Г­Г Г¦ГҐГ©, Г®ГІГ­Г®ГёГҐГ­ГЁГї Г± Г¤Г°ГіГЈГЁГ¬ГЁ ГЇГҐГ°Г±Г®Г­Г Г¦Г Г¬ГЁ
     typedef CALifeAbstractRegistry<u16, RELATION_DATA> CRelationRegistry;
 add_to_registry_type_list(CRelationRegistry)
 #define character_relations define_constant(CRelationRegistry)
 #define registry_type_list save_registry_type_list(CRelationRegistry)
 
-    ////для актеров, список персонажей с которыми были разговоры
+    ////Г¤Г«Гї Г ГЄГІГҐГ°Г®Гў, Г±ГЇГЁГ±Г®ГЄ ГЇГҐГ°Г±Г®Г­Г Г¦ГҐГ© Г± ГЄГ®ГІГ®Г°Г»Г¬ГЁ ГЎГ»Г«ГЁ Г°Г Г§ГЈГ®ГўГ®Г°Г»
     // typedef CALifeAbstractRegistry<u16, TALK_CONTACT_VECTOR > CKnownContactsRegistry;
     // add_to_registry_type_list(CKnownContactsRegistry)
     // #define known_contacts define_constant(CKnownContactsRegistry)
     // #define registry_type_list save_registry_type_list(CKnownContactsRegistry)
     //
-    ////список статей энциклопедии, которые знает актер
+    ////Г±ГЇГЁГ±Г®ГЄ Г±ГІГ ГІГҐГ© ГЅГ­Г¶ГЁГЄГ«Г®ГЇГҐГ¤ГЁГЁ, ГЄГ®ГІГ®Г°Г»ГҐ Г§Г­Г ГҐГІ Г ГЄГІГҐГ°
     // typedef CALifeAbstractRegistry<u16, ARTICLE_VECTOR > CEncyclopediaRegistry;
     // add_to_registry_type_list(CEncyclopediaRegistry)
     // #define encyclopedia_articles define_constant(CEncyclopediaRegistry)
     // #define registry_type_list save_registry_type_list(CEncyclopediaRegistry)
 
-    // список новостей полученных актером, состоит из новостей симуляции и сюжетных (скриптованых) новостей
+    // Г±ГЇГЁГ±Г®ГЄ Г­Г®ГўГ®Г±ГІГҐГ© ГЇГ®Г«ГіГ·ГҐГ­Г­Г»Гµ Г ГЄГІГҐГ°Г®Г¬, Г±Г®Г±ГІГ®ГЁГІ ГЁГ§ Г­Г®ГўГ®Г±ГІГҐГ© Г±ГЁГ¬ГіГ«ГїГ¶ГЁГЁ ГЁ Г±ГѕГ¦ГҐГІГ­Г»Гµ (Г±ГЄГ°ГЁГЇГІГ®ГўГ Г­Г»Гµ) Г­Г®ГўГ®Г±ГІГҐГ©
     typedef CALifeAbstractRegistry<u16, GAME_NEWS_VECTOR> CGameNewsRegistry;
 add_to_registry_type_list(CGameNewsRegistry)
 #define game_news define_constant(CGameNewsRegistry)
 #define registry_type_list save_registry_type_list(CGameNewsRegistry)
 
-    // список описаний персонажей, которые уже задействованы в игре
+    // Г±ГЇГЁГ±Г®ГЄ Г®ГЇГЁГ±Г Г­ГЁГ© ГЇГҐГ°Г±Г®Г­Г Г¦ГҐГ©, ГЄГ®ГІГ®Г°Г»ГҐ ГіГ¦ГҐ Г§Г Г¤ГҐГ©Г±ГІГўГ®ГўГ Г­Г» Гў ГЁГЈГ°ГҐ
     typedef CALifeAbstractRegistry<shared_str, int> CSpecificCharacterRegistry;
 add_to_registry_type_list(CSpecificCharacterRegistry)
 #define specific_characters define_constant(CSpecificCharacterRegistry)

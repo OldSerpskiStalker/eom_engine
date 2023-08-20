@@ -1,5 +1,4 @@
 #pragma once
-
 #include "inventory_item_object.h"
 
 struct SBoneProtections;
@@ -30,6 +29,10 @@ public:
     float GetDefHitTypeProtection(ALife::EHitType hit_type);
     float GetHitTypeProtection(ALife::EHitType hit_type, s16 element);
     float GetBoneArmor(s16 element);
+    // Lex Addon (correct by Suhar_) 9.07.2016		(begin)
+    // Функция получения защиты кости
+    float GetBoneProtection(s16 element);
+    // Lex Addon (correct by Suhar_) 9.07.2016		(end)
 
     float HitThroughArmor(float hit_power, s16 element, float ap, bool& add_wound, ALife::EHitType hit_type);
 
@@ -39,6 +42,8 @@ public:
     float m_fSatietyRestoreSpeed;
     float m_fPowerRestoreSpeed;
     float m_fBleedingRestoreSpeed;
+    shared_str glass_texture;
+    bool m_bHasGlass;
 
     float m_fShowNearestEnemiesDistance;
 

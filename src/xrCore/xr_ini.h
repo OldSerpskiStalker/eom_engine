@@ -1,4 +1,4 @@
-#ifndef xr_iniH
+ï»¿#ifndef xr_iniH
 #define xr_iniH
 
 #include "fastdelegate.h"
@@ -24,9 +24,11 @@ public:
               // #endif
               {};
     };
+
     typedef xr_vector<Item> Items;
     typedef Items::const_iterator SectCIt;
     typedef Items::iterator SectIt_;
+
     struct XRCORE_API Sect
     {
         shared_str Name;
@@ -34,6 +36,7 @@ public:
 
         BOOL line_exist(LPCSTR L, LPCSTR* val = 0);
     };
+
     typedef xr_vector<Sect*> Root;
     typedef Root::iterator RootIt;
     typedef Root::const_iterator RootCIt;
@@ -43,6 +46,7 @@ public:
 #endif
     static CInifile* Create(LPCSTR szFileName, BOOL ReadOnly = TRUE);
     static void Destroy(CInifile*);
+
     static IC BOOL IsBOOL(LPCSTR B)
     {
         return (
@@ -66,6 +70,7 @@ public:
         eReadOnly = (1 << 1),
         eOverrideNames = (1 << 2),
     };
+
     Flags8 m_flags;
     CInifile(IReader* F, LPCSTR path = 0
 #ifndef _EDITOR
@@ -103,10 +108,10 @@ public:
 
     CLASS_ID r_clsid(LPCSTR S, LPCSTR L) const;
     CLASS_ID r_clsid(const shared_str& S, LPCSTR L) const { return r_clsid(*S, L); }
-    LPCSTR r_string(LPCSTR S, LPCSTR L) const; // îñòàâëÿåò êàâû÷êè
-    LPCSTR r_string(const shared_str& S, LPCSTR L) const { return r_string(*S, L); } // îñòàâëÿåò êàâû÷êè
-    shared_str r_string_wb(LPCSTR S, LPCSTR L) const; // óáèðàåò êàâû÷êè
-    shared_str r_string_wb(const shared_str& S, LPCSTR L) const { return r_string_wb(*S, L); } // óáèðàåò êàâû÷êè
+    LPCSTR r_string(LPCSTR S, LPCSTR L) const; // Ã®Ã±Ã²Ã Ã¢Ã«Ã¿Ã¥Ã² ÃªÃ Ã¢Ã»Ã·ÃªÃ¨
+    LPCSTR r_string(const shared_str& S, LPCSTR L) const { return r_string(*S, L); } // Ã®Ã±Ã²Ã Ã¢Ã«Ã¿Ã¥Ã² ÃªÃ Ã¢Ã»Ã·ÃªÃ¨
+    shared_str r_string_wb(LPCSTR S, LPCSTR L) const; // Ã³Ã¡Ã¨Ã°Ã Ã¥Ã² ÃªÃ Ã¢Ã»Ã·ÃªÃ¨
+    shared_str r_string_wb(const shared_str& S, LPCSTR L) const { return r_string_wb(*S, L); } // Ã³Ã¡Ã¨Ã°Ã Ã¥Ã² ÃªÃ Ã¢Ã»Ã·ÃªÃ¨
     u8 r_u8(LPCSTR S, LPCSTR L) const;
     u8 r_u8(const shared_str& S, LPCSTR L) const { return r_u8(*S, L); }
     u16 r_u16(LPCSTR S, LPCSTR L) const;

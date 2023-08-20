@@ -16,10 +16,12 @@ class CPatternFunction : public CBaseFunction
 {
 private:
     typedef CBaseFunction inherited;
+
     enum
     {
         EFC_VERSION = 1
     };
+
     typedef struct tagSEFHeader
     {
         u32 dwBuilderVersion;

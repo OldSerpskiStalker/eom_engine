@@ -18,6 +18,7 @@ class statistic_sync_quard : private boost::noncopyable
 
 public:
     statistic_sync_quard(xrCriticalSection& mutex) : m_mutex(mutex) { m_mutex.Enter(); }
+
     ~statistic_sync_quard() { m_mutex.Leave(); }
 };
 
@@ -32,6 +33,7 @@ BulletData::BulletData(shared_str FName, shared_str WName, SBullet* pBullet)
 };
 
 u32 const HitData::net_packet_size = (3 * 2 * sizeof(float) + 1 + 2 + 1 + 1);
+
 void HitData::net_save(NET_Packet* P, victims_table const& vt, bone_table const& bt)
 {
     P->w_vec3(Pos0);
@@ -42,6 +44,7 @@ void HitData::net_save(NET_Packet* P, victims_table const& vt, bone_table const&
     P->w_u8(Deadly ? 1 : 0);
     P->w_u8(count);
 };
+
 void HitData::net_load(NET_Packet* P, victims_table const& vt, bone_table const& bt)
 {
     P->r_vec3(Pos0);
@@ -73,6 +76,7 @@ Weapon_Statistic::Weapon_Statistic(LPCSTR Name)
 Weapon_Statistic::~Weapon_Statistic(){};
 
 u32 const Weapon_Statistic::net_packet_size = 5 * sizeof(u32);
+
 void Weapon_Statistic::net_save(NET_Packet* P, victims_table const& vt, bone_table const& bt)
 {
     class CompleteFilter
@@ -86,6 +90,7 @@ void Weapon_Statistic::net_save(NET_Packet* P, victims_table const& vt, bone_tab
     public:
         CompleteFilter(u32& hits_count_result, NET_Packet* P, victims_table const& vt, bone_table const& bt)
             : complete_hits_count(hits_count_result), packet_to_write(P), vtable(vt), btable(bt){};
+
         bool operator()(HitData& hit)
         {
             if (hit.Completed)
@@ -139,6 +144,7 @@ void Weapon_Statistic::net_load(NET_Packet* P, victims_table const& vt, bone_tab
 };
 
 u32 const victims_table::header_count_size = sizeof(u8);
+
 u8 victims_table::get_id_by_name(shared_str const& player_name) const
 {
     u8 index = 0;
@@ -154,7 +160,7 @@ u8 victims_table::get_id_by_name(shared_str const& player_name) const
 shared_str victims_table::get_name_by_id(u8 id) const
 {
     size_t name_index = static_cast<size_t>(id);
-    if (name_index > m_data.size())
+    if (name_index >= m_data.size())
         return shared_str();
     return m_data[name_index];
 }
@@ -203,6 +209,7 @@ class bone_id_searcher
 
 public:
     bone_id_searcher(s16 const& id_to_search) : id(id_to_search) {}
+
     bool operator()(bone_table::bone_table_t::value_type const& item)
     {
         if (item.second == id)
@@ -228,6 +235,7 @@ bool bone_table::add_bone(shared_str const& bone_name, s16 bone_id)
 
     public:
         bone_name_searcher(shared_str const& name_to_search) : name(name_to_search) {}
+
         bool operator()(bone_table::bone_table_t::value_type const& item)
         {
             if (item.first == name)

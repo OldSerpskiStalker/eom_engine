@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #define TEMPLATE_SPECIALIZATION template <typename _Object>
 
 #define CStateMonsterEatingAbstract CStateMonsterEating<_Object>
@@ -31,7 +31,7 @@ void CStateMonsterEatingAbstract::execute()
     object->set_action(ACT_EAT);
     object->set_state_sound(MonsterSound::eMonsterSoundEat);
 
-    // ñúåñòü ÷àñòü
+    // Ã±ÃºÃ¥Ã±Ã²Ã¼ Ã·Ã Ã±Ã²Ã¼
     if (time_last_eat + u32(1000 / object->db().m_fEatFreq) < Device.dwTimeGlobal)
     {
         object->ChangeSatiety(object->db().m_fEatSlice);

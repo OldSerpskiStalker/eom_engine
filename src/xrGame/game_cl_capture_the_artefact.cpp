@@ -86,6 +86,7 @@ game_cl_CaptureTheArtefact::game_cl_CaptureTheArtefact()
 
     LoadSndMessages();
 }
+
 game_cl_CaptureTheArtefact::~game_cl_CaptureTheArtefact() {}
 
 void game_cl_CaptureTheArtefact::SetGameUI(CUIGameCustom* already_created_ui)
@@ -96,6 +97,7 @@ void game_cl_CaptureTheArtefact::SetGameUI(CUIGameCustom* already_created_ui)
     m_captions_manager.Init(this, m_game_ui);
     m_game_ui->UpdateTeamPanels();
 }
+
 void game_cl_CaptureTheArtefact::Init()
 {
     inherited::Init();
@@ -437,6 +439,7 @@ void game_cl_CaptureTheArtefact::PlayCapturedTheArtefact(game_PlayerState const*
         }
     }
 }
+
 void game_cl_CaptureTheArtefact::PlayReturnedTheArtefact(game_PlayerState const* returnerer)
 {
     if (!local_player || !returnerer)
@@ -672,6 +675,7 @@ const shared_str& game_cl_CaptureTheArtefact::GetLocalPlayerTeamSection() const
     cl_TeamStruct const* pTeamSect = &(TeamList[local_player->team]);
     return pTeamSect->caSection;
 }
+
 ETeam game_cl_CaptureTheArtefact::GetLocalPlayerTeam() const
 {
     VERIFY(local_player);
@@ -1220,6 +1224,7 @@ void game_cl_CaptureTheArtefact::PlayRankChangedSnd()
 }
 
 #define MAX_VOTE_PARAMS 5
+
 void game_cl_CaptureTheArtefact::OnVoteStart(NET_Packet& P)
 {
     inherited::OnVoteStart(P);
@@ -1383,6 +1388,7 @@ void game_cl_CaptureTheArtefact::OnVoteStop(NET_Packet& P)
         m_game_ui->SetVoteTimeResultMsg(NULL);
     }
 }
+
 void game_cl_CaptureTheArtefact::OnVoteEnd(NET_Packet& P)
 {
     inherited::OnVoteEnd(P);
@@ -1400,6 +1406,7 @@ void game_cl_CaptureTheArtefact::OnTeamMenuBack()
         m_game_ui->ShowServerInfo();
     }
 }
+
 void game_cl_CaptureTheArtefact::OnTeamMenu_Cancel()
 {
     if (m_bTeamSelected)
@@ -1520,6 +1527,7 @@ float game_cl_CaptureTheArtefact::GetBaseRadius() const
     R_ASSERT2(haveGotUpdate, "synchronization problem: not received client update, while try to get values");
     return m_baseRadius;
 }
+
 u16 game_cl_CaptureTheArtefact::GetGreenArtefactID() const
 {
     R_ASSERT2(haveGotUpdate, "synchronization problem: not received client update, while try to get values");
@@ -1539,6 +1547,7 @@ bool game_cl_CaptureTheArtefact::IsEnemy(game_PlayerState* ps)
 }
 
 #define PLAYER_NAME_COLOR 0xff40ff40
+
 void game_cl_CaptureTheArtefact::OnRender()
 {
     game_PlayerState* lookat_player = Game().lookat_player();

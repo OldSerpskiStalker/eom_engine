@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
+ï»¿////////////////////////////////////////////////////////////////////////////
 //	Module 		: alife_object.cpp
 //	Created 	: 27.10.2005
 //  Modified 	: 27.10.2005
@@ -174,7 +174,7 @@ void CSE_ALifeObject::spawn_supplies(LPCSTR ini_string)
                     if (randF(1.f) < p)
                     {
                         CSE_Abstract* E = alife().spawn_item(N, o_Position, m_tNodeID, m_tGraphID, ID);
-                        // ïîäñîåäèíèòü àääîíû ê îðóæèþ, åñëè âêëþ÷åíû ñîîòâåòñòâóþùèå ôëàæêè
+                        // Ã¯Ã®Ã¤Ã±Ã®Ã¥Ã¤Ã¨Ã­Ã¨Ã²Ã¼ Ã Ã¤Ã¤Ã®Ã­Ã» Ãª Ã®Ã°Ã³Ã¦Ã¨Ã¾, Ã¥Ã±Ã«Ã¨ Ã¢ÃªÃ«Ã¾Ã·Ã¥Ã­Ã» Ã±Ã®Ã®Ã²Ã¢Ã¥Ã²Ã±Ã²Ã¢Ã³Ã¾Ã¹Ã¨Ã¥ Ã´Ã«Ã Ã¦ÃªÃ¨
                         CSE_ALifeItemWeapon* W = smart_cast<CSE_ALifeItemWeapon*>(E);
                         if (W)
                         {

@@ -319,8 +319,8 @@ bool CAI_Stalker::bfAssignAnimation(CScriptEntityAction* tpEntityAction)
     if (xr_strlen(tpEntityAction->m_tAnimationAction.m_caAnimationToPlay))
     {
 #ifdef _DEBUG
-//		Msg				("%6d Assigning animation :
-//%s",Device.dwTimeGlobal,*tpEntityAction->m_tAnimationAction.m_caAnimationToPlay);
+        //		Msg				("%6d Assigning animation :
+        //%s",Device.dwTimeGlobal,*tpEntityAction->m_tAnimationAction.m_caAnimationToPlay);
 #endif
         animation().torso().reset();
         animation().legs().reset();

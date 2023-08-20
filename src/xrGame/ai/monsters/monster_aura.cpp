@@ -3,6 +3,7 @@
 #include "basemonster/base_monster.h"
 #include "../../Actor.h"
 #include "../../ActorEffector.h"
+
 // #include "../../HudSound.h"
 
 namespace detail
@@ -16,7 +17,6 @@ static pcstr const s_max_distance_string = "_max_distance";
 static pcstr const s_sound_string = "_sound";
 static pcstr const s_detect_sound_string = "_detect_sound";
 static pcstr const s_enable_for_dead_string = "_enable_for_dead";
-
 } // namespace detail
 
 monster_aura::monster_aura(CBaseMonster* const object, pcstr const name)

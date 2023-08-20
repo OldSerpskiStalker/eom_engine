@@ -46,6 +46,7 @@ class DLL_PureWrapper : public heritage<base, luabind_base>::result
 {
 public:
     IC DLL_PureWrapper(){};
+
     virtual ~DLL_PureWrapper(){};
 
     virtual DLL_Pure* _construct() { return (call_member<DLL_Pure*>(this, "_construct")); }
@@ -65,12 +66,10 @@ public:
     {
         call_member<void>(this,"spatial_register");
     }
-
     static	void			spatial_register_static		(base *self)
     {
         self->base::spatial_register();
     }
-
     virtual	void			spatial_unregister			()
     {
         call_member<void>(this,"spatial_unregister");
@@ -80,22 +79,18 @@ public:
     {
         self->base::spatial_unregister();
     }
-
     virtual	void			spatial_move				()
     {
         call_member<void>(this,"spatial_move");
     }
-
     static	void			spatial_move_static			(base *self)
     {
         self->base::spatial_move();
     }
-
     virtual	Fvector			spatial_sector_point		()
     {
         return	(call_member<Fvector>(this,"spatial_sector_point"));
     }
-
     static	Fvector			spatial_sector_point_static	(base *self)
     {
         return	(self->base::spatial_sector_point());
@@ -105,33 +100,27 @@ public:
     {
         return	(call_member<CObject*>(this,"dcast_CObject"));
     }
-
     static	CObject*		dcast_CObject_static		(base *self)
     {
         return	(self->base::dcast_CObject());
     }
-
     virtual	Feel::Sound*	dcast_FeelSound				()
     {
         return	(call_member<Feel::Sound*>(this,"dcast_FeelSound"));
     }
-
     static	Feel::Sound*	dcast_FeelSound_static		(base *self)
     {
         return	(self->base::dcast_FeelSound());
     }
-
     virtual	IRenderable*	dcast_Renderable			()
     {
         return	(call_member<IRenderable*>(this,"dcast_Renderable"));
     }
-
     static	IRenderable*	dcast_Renderable_static		(base *self)
     {
         return	(self->base::dcast_Renderable());
     }
 };
-
 typedef ISpatialWrapper<ISpatial,luabind::wrap_base> CISpatialWrapper;
 */
 
@@ -140,6 +129,7 @@ class ISheduledWrapper : public heritage<base, luabind_base>::result
 {
 public:
     IC ISheduledWrapper(){};
+
     virtual ~ISheduledWrapper(){};
 
     virtual float shedule_Scale()
@@ -174,6 +164,7 @@ class IRenderableWrapper : public heritage<base, luabind_base>::result
 {
 public:
     IC IRenderableWrapper(){};
+
     virtual ~IRenderableWrapper(){};
 
     /*
@@ -257,7 +248,9 @@ class CGameObjectWrapper : public CGameObjectIRenderable
 {
 public:
     IC CGameObjectWrapper(){};
+
     virtual ~CGameObjectWrapper(){};
+
     virtual bool use(CGameObject* who_use) { return call<bool>("use", who_use); }
 
     static bool use_static(CGameObject* self, CGameObject* who_use) { return self->CGameObject::use(who_use); }
@@ -282,6 +275,7 @@ class CEntityWrapper : public CEntity, public luabind::wrap_base
 {
 public:
     IC CEntityWrapper() {}
+
     virtual ~CEntityWrapper() {}
 
     virtual void HitSignal(float P, Fvector& local_dir, CObject* who, s16 element)

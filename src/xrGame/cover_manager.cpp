@@ -202,6 +202,7 @@ public:
         VERIFY(rhs);
         return (lhs->object().cName()._get() < rhs->object().cName()._get());
     }
+
     IC bool operator()(Cover* cover, shared_str const& id)
     {
         VERIFY(cover);

@@ -62,7 +62,7 @@ void CALifeSwitchManager::add_online(CSE_ALifeDynamicObject* object, bool update
     object->s_flags.and (u16(-1) ^ M_SPAWN_UPDATE);
 
     // Alundaio: Knowing last object to spawn can be very useful to debugging
-    if (strstr(Core.Params, "-dbg"))
+    if (strstr(Core.Params, "-dbg_spwn"))
         Msg("[LSS] Spawning object [%s][%s][%d]", object->name_replace(), *object->s_name, object->ID);
 
     // Alundaio: Workaround for crash with corpses that end up outside AI map
@@ -190,12 +190,12 @@ void CALifeSwitchManager::try_switch_online(CSE_ALifeDynamicObject* I)
 #endif
         return;
     }
-
+#ifdef DEBUG
     VERIFY2((ai().game_graph().vertex(I->m_tGraphID)->level_id() != ai().level_graph().level_id()) ||
             !Level().Objects.net_Find(I->ID) || Level().Objects.dump_all_objects(),
         make_string("frame [%d] time [%d] object [%s] with id [%d] is offline, but is on the level", Device.dwFrame,
             Device.dwTimeGlobal, I->name_replace(), I->ID));
-
+#endif
     I->try_switch_online();
 
     if (!I->m_bOnline && !I->keep_saved_data_anyway())

@@ -41,16 +41,20 @@ private:
         void DeactivateArtefact();
         CSE_ActorMP* GetArtefactOwner() const;
     };
+
     typedef std::pair<ETeam, MyTeam> TeamPair;
+
     // For balancing team players count
     struct MinPlayersFunctor : public std::binary_function<TeamPair, TeamPair, bool>
     {
         bool operator()(const TeamPair& left, const TeamPair& right) const;
     };
+
     struct SearchArtefactIdFunctor : public std::binary_function<TeamPair, u16, bool>
     {
         bool operator()(const TeamPair& tr, u16 artefactId) const;
     };
+
     struct SearchOwnerIdFunctor : public std::binary_function<TeamPair, u16, bool>
     {
         bool operator()(const TeamPair& tr, u16 actorId) const;
@@ -70,8 +74,8 @@ private:
     typedef std::pair<u16, u8> TGIDCPair; // GameIDCountPair
     typedef xr_multimap<xr_string, TGIDCPair> TMultiMap;
 
-    typedef xr_map<ClientID, int>
-        TGameIDToBoughtFlag; // this map shows what player already bought items when he was dead...
+    typedef xr_map<ClientID, int> TGameIDToBoughtFlag;
+    // this map shows what player already bought items when he was dead...
 
     TAnomaliesVector m_AnomaliesPermanent;
     TAnomalySet m_AnomalySet;
@@ -131,16 +135,18 @@ private:
 
     enum buyMenuPlayerState
     {
-        buyMenuPlayerClosesBuyMenu = 0, // this value set in OnCloseBuyMenu
-        buyMenuPlayerOpensBuyMenu = 1, // this value set in OnPlayerOpenBuyMenu
+        buyMenuPlayerClosesBuyMenu = 0,
+        // this value set in OnCloseBuyMenu
+        buyMenuPlayerOpensBuyMenu = 1,
+        // this value set in OnPlayerOpenBuyMenu
         buyMenuPlayerReadyToSpawn = 2 // this value set in RespawnDeadPlayers
     };
 
     typedef associative_vector<xrClientData const*, buyMenuPlayerState> TBuyMenuPlayerStates;
     TBuyMenuPlayerStates m_buyMenuPlayerStates;
     virtual void OnPlayerOpenBuyMenu(xrClientData const* pclient); // this method invokes only if player dead
-    virtual void OnPlayerCloseBuyMenu(
-        xrClientData const* pclient); // if client state buyMenuPlayerReadyToSpawn respawn player
+    virtual void OnPlayerCloseBuyMenu(xrClientData const* pclient);
+    // if client state buyMenuPlayerReadyToSpawn respawn player
     void OnCloseBuyMenuFromAll(); // just clears buy menu player states associative vector
     bool CheckIfPlayerInBuyMenu(xrClientData const* pclient);
     void SetReadyToSpawnPlayer(xrClientData const* pclient);

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 // #include "../../../PHCharacter.h"
 #include "../../../../xrphysics/IPHCapture.h"
@@ -51,7 +51,7 @@ void CStateMonsterDragAbstract::execute()
     if (m_failed)
         return;
 
-    // Óñòàíîâèòü ïàðàìåòðû äâèæåíèÿ
+    // Ã“Ã±Ã²Ã Ã­Ã®Ã¢Ã¨Ã²Ã¼ Ã¯Ã Ã°Ã Ã¬Ã¥Ã²Ã°Ã» Ã¤Ã¢Ã¨Ã¦Ã¥Ã­Ã¨Ã¿
     object->set_action(ACT_DRAG);
     object->anim().SetSpecParams(ASP_MOVE_BKWD);
 
@@ -73,7 +73,7 @@ void CStateMonsterDragAbstract::finalize()
 {
     inherited::finalize();
 
-    // áðîñèòü òðóï
+    // Ã¡Ã°Ã®Ã±Ã¨Ã²Ã¼ Ã²Ã°Ã³Ã¯
     if (object->character_physics_support()->movement()->PHCapture())
         object->character_physics_support()->movement()->PHReleaseObject();
 }
@@ -83,7 +83,7 @@ void CStateMonsterDragAbstract::critical_finalize()
 {
     inherited::critical_finalize();
 
-    // áðîñèòü òðóï
+    // Ã¡Ã°Ã®Ã±Ã¨Ã²Ã¼ Ã²Ã°Ã³Ã¯
     if (object->character_physics_support()->movement()->PHCapture())
         object->character_physics_support()->movement()->PHReleaseObject();
 }
@@ -102,12 +102,14 @@ bool CStateMonsterDragAbstract::check_completion()
     }
 
     if (m_cover_vertex_id != u32(-1))
-    { // valid vertex so wait path end
+    {
+        // valid vertex so wait path end
         if (object->Position().distance_to(m_cover_position) < 2.f)
             return true;
     }
     else
-    { // invalid vertex so check distanced that passed
+    {
+        // invalid vertex so check distanced that passed
         if (m_corpse_start_position.distance_to(object->Position()) > 20.f)
             return true;
     }

@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "../BaseMonster/base_monster.h"
 #include "../controlled_entity.h"
 #include "../../../../xrServerEntities/script_export_space.h"
@@ -20,8 +20,8 @@ private:
     } step_effector;
 
     SAttackEffector m_threaten_effector;
-    ref_sound m_sound_threaten_hit; // звук, который играется в голове у актера
-    ref_sound m_sound_start_threaten; // звук, который играется в голове у актера
+    ref_sound m_sound_threaten_hit; // Г§ГўГіГЄ, ГЄГ®ГІГ®Г°Г»Г© ГЁГЈГ°Г ГҐГІГ±Гї Гў ГЈГ®Г«Г®ГўГҐ Гі Г ГЄГІГҐГ°Г 
+    ref_sound m_sound_start_threaten; // Г§ГўГіГЄ, ГЄГ®ГІГ®Г°Г»Г© ГЁГЈГ°Г ГҐГІГ±Гї Гў ГЈГ®Г«Г®ГўГҐ Гі Г ГЄГІГҐГ°Г 
 
     u32 m_time_next_threaten;
 

@@ -7,6 +7,7 @@ class CStateGroupPanicRun : public CState<_Object>
 
 public:
     CStateGroupPanicRun(_Object* obj) : inherited(obj) {}
+
     virtual ~CStateGroupPanicRun() {}
 
     virtual void initialize();

@@ -11,6 +11,7 @@ GameEventQueue::GameEventQueue()
     for (int i = 0; i < 16; i++)
         unused.push_back(xr_new<GameEvent>());
 }
+
 GameEventQueue::~GameEventQueue()
 {
     cs.Enter();
@@ -23,6 +24,7 @@ GameEventQueue::~GameEventQueue()
 }
 
 static u32 LastTimeCreate = 0;
+
 GameEvent* GameEventQueue::Create()
 {
     GameEvent* ge = 0;
@@ -33,7 +35,7 @@ GameEvent* GameEventQueue::Create()
         ge = ready.back();
         //---------------------------------------------
 #ifdef _DEBUG
-//		Msg ("* GameEventQueue::Create - ready %d, unused %d", ready.size(), unused.size());
+        //		Msg ("* GameEventQueue::Create - ready %d, unused %d", ready.size(), unused.size());
 #endif
         LastTimeCreate = GetTickCount();
         //---------------------------------------------
@@ -73,7 +75,7 @@ GameEvent* GameEventQueue::Create(NET_Packet& P, u16 type, u32 time, ClientID cl
         ge = ready.back();
         //---------------------------------------------
 #ifdef _DEBUG
-//		Msg ("* GameEventQueue::Create - ready %d, unused %d", ready.size(), unused.size());
+        //		Msg ("* GameEventQueue::Create - ready %d, unused %d", ready.size(), unused.size());
 #endif
         LastTimeCreate = GetTickCount();
         //---------------------------------------------
@@ -92,6 +94,7 @@ GameEvent* GameEventQueue::Create(NET_Packet& P, u16 type, u32 time, ClientID cl
     cs.Leave();
     return ge;
 }
+
 GameEvent* GameEventQueue::Retreive()
 {
     GameEvent* ge = 0;
@@ -108,7 +111,7 @@ GameEvent* GameEventQueue::Retreive()
             xr_delete(unused.back());
             unused.pop_back();
 #ifdef _DEBUG
-//			Msg ("GameEventQueue::Retreive - ready %d, unused %d", ready.size(), unused.size());
+            //			Msg ("GameEventQueue::Retreive - ready %d, unused %d", ready.size(), unused.size());
 #endif
         }
     }
@@ -128,7 +131,7 @@ void GameEventQueue::Release()
     {
         xr_delete(ready.front());
 #ifdef _DEBUG
-//		Msg ("GameEventQueue::Release - ready %d, unused %d", ready.size(), unused.size());
+        //		Msg ("GameEventQueue::Release - ready %d, unused %d", ready.size(), unused.size());
 #endif
     }
     else
@@ -178,7 +181,7 @@ u32 GameEventQueue::EraseEvents(event_predicate to_del)
         {
             xr_delete(*need_to_erase);
 #ifdef _DEBUG
-//			Msg ("GameEventQueue::EraseEvents - ready %d, unused %d", ready.size(), unused.size());
+            //			Msg ("GameEventQueue::EraseEvents - ready %d, unused %d", ready.size(), unused.size());
 #endif
         }
         else

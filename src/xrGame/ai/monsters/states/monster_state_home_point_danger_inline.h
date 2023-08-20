@@ -169,6 +169,7 @@ void CStateMonsterDangerMoveToHomePointAbstract::setup_substates()
         return;
     }
 }
+
 TEMPLATE_SPECIALIZATION
 Fvector& CStateMonsterDangerMoveToHomePointAbstract::get_most_danger_pos()
 {

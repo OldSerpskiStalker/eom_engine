@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 
 #include "game_cl_base.h"
 #include "ui_defs.h"
@@ -26,6 +26,7 @@ struct SND_Message
     u32 SoundID;
     u32 LastStarted;
     bool operator==(u32 ID) { return SoundID == ID; }
+
     void Load(u32 const ID, u32 const prior, LPCSTR name)
     {
         SoundID = ID;
@@ -33,6 +34,7 @@ struct SND_Message
         pSound.create(name, st_Effect, sg_SourceType);
         LastStarted = 0;
     }
+
     ~SND_Message()
     {
         SoundID = 0;
@@ -43,7 +45,7 @@ struct SND_Message
 
 struct cl_TeamStruct
 {
-    shared_str caSection; // ËÏˇ ÒÂÍˆËË ÍÓÏÏ‡Ì‰˚
+    shared_str caSection; // –∏–º—è —Å–µ–∫—Ü–∏–∏ –∫–æ–º–º–∞–Ω–¥—ã
     //-----------------------------------
     ui_shader IndicatorShader;
     ui_shader InvincibleShader;
@@ -88,6 +90,7 @@ struct Bonus_Struct
     ui_shader IconShader;
     // ref_shader	IconShader;
     xr_vector<Frect> IconRects;
+
     Bonus_Struct()
     {
         BonusTypeName = "";
@@ -97,6 +100,7 @@ struct Bonus_Struct
         // IconShader = NULL;
         IconRects.clear();
     }
+
     ~Bonus_Struct()
     {
         // if (IconShader)
@@ -215,22 +219,35 @@ public:
     virtual void OnPlayerChangeName(NET_Packet& P);
     virtual void OnPlayerVoted(game_PlayerState* ps);
     virtual void OnSpectatorSelect();
+
     virtual void OnSkinMenuBack(){};
+
     virtual void OnTeamMenuBack(){};
+
     virtual void OnTeamMenu_Cancel(){};
+
     virtual void OnMapInfoAccept(){};
+
     virtual void OnSkinMenu_Ok(){};
+
     virtual void OnSkinMenu_Cancel(){};
+
     virtual void OnBuySpawnMenu_Ok(){};
+
     virtual void OnSellItemsFromRuck(){};
 
     virtual void OnTeamSelect(int Result){};
+
     virtual void OnBuyMenu_Ok(){};
+
     virtual void OnBuyMenu_Cancel(){};
 
     virtual void OnGameMenuRespond(NET_Packet& P);
+
     virtual void OnGameMenuRespond_Spectator(NET_Packet& P){};
+
     virtual void OnGameMenuRespond_ChangeTeam(NET_Packet& P){};
+
     virtual void OnGameMenuRespond_ChangeSkin(NET_Packet& P){};
     virtual void OnGameRoundStarted();
 
@@ -238,7 +255,9 @@ public:
     virtual void net_import_update(NET_Packet& P);
     virtual void net_import_state(NET_Packet& P);
     virtual void OnRankChanged(u8 OldRank);
+
     virtual void OnTeamChanged(){};
+
     virtual void OnMoneyChanged(){};
     virtual void OnEventMoneyChanged(NET_Packet& P);
 
@@ -296,12 +315,14 @@ public:
         u32 m_max_size;
         game_cl_mp* m_owner;
         CMemoryWriter m_writer;
+
         fr_callback_binder() : m_frnode(NULL), m_active(false){};
         void __stdcall receiving_file_callback(
             file_transfer::receiving_status_t status, u32 bytes_received, u32 data_size);
         void __stdcall receiving_serverinfo_callback(
             file_transfer::receiving_status_t status, u32 bytes_received, u32 data_size);
     };
+
     struct detected_cheater_t
     {
         shared_str m_file_name;
@@ -333,6 +354,6 @@ public:
     //-------------------------------------------------------------------------------------------------
     static void generate_file_name(string_path& file_name, LPCSTR file_suffix, SYSTEMTIME const& date_time);
     static LPCSTR make_file_name(LPCSTR session_id, string_path& dest);
-//-------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------
 #include "game_cl_mp_messages_menu.h"
 };

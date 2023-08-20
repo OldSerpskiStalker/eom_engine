@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "game_cl_teamdeathmatch.h"
 #include "xrMessages.h"
 #include "level.h"
@@ -50,6 +50,7 @@ game_cl_TeamDeathmatch::game_cl_TeamDeathmatch()
 
     LoadSndMessages();
 }
+
 void game_cl_TeamDeathmatch::Init()
 {
     //	pInventoryMenu	= xr_new<CUIInventoryWnd>();
@@ -107,6 +108,7 @@ void game_cl_TeamDeathmatch::net_import_state(NET_Packet& P)
             m_reward_generator->OnRoundEnd();
     }
 }
+
 void game_cl_TeamDeathmatch::TranslateGameMessage(u32 msg, NET_Packet& P)
 {
     CStringTable st;

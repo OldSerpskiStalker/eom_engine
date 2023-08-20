@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
+п»ї////////////////////////////////////////////////////////////////////////////
 //	Module 		: alife_registry_wrappers.h
 //	Created 	: 20.10.2004
 //  Modified 	: 20.10.2004
@@ -13,16 +13,16 @@
 
 // typedef CALifeRegistryWrapper<CInfoPortionRegistry> KNOWN_INFO_REGISTRY;
 
-// реестр контактов общения с другими персонажами
+//Г°ГҐГҐГ±ГІГ° ГЄГ®Г­ГІГ ГЄГІГ®Гў Г®ГЎГ№ГҐГ­ГЁГї Г± Г¤Г°ГіГЈГЁГ¬ГЁ ГЇГҐГ°Г±Г®Г­Г Г¦Г Г¬ГЁ
 // typedef CALifeRegistryWrapper<CKnownContactsRegistry> KNOWN_CONTACTS_REGISTRY;
 
-// реестр статей энциклопедии, о которых знает актер
+//Г°ГҐГҐГ±ГІГ° Г±ГІГ ГІГҐГ© ГЅГ­Г¶ГЁГЄГ«Г®ГЇГҐГ¤ГЁГЁ, Г® ГЄГ®ГІГ®Г°Г»Гµ Г§Г­Г ГҐГІ Г ГЄГІГҐГ°
 // typedef CALifeRegistryWrapper<CEncyclopediaRegistry> ENCYCLOPEDIA_REGISTRY;
 
-// реестр заданий, полученных актером
+//Г°ГҐГҐГ±ГІГ° Г§Г Г¤Г Г­ГЁГ©, ГЇГ®Г«ГіГ·ГҐГ­Г­Г»Гµ Г ГЄГІГҐГ°Г®Г¬
 // typedef CALifeRegistryWrapper<CGameTaskRegistry> GAME_TASK_REGISTRY;
 
-// реестр новостей, полученных актером
+//Г°ГҐГҐГ±ГІГ° Г­Г®ГўГ®Г±ГІГҐГ©, ГЇГ®Г«ГіГ·ГҐГ­Г­Г»Гµ Г ГЄГІГҐГ°Г®Г¬
 // typedef CALifeRegistryWrapper<CGameNewsRegistry> GAME_NEWS_REGISTRY;
 
 template <typename T>
@@ -48,15 +48,19 @@ public:
 class CGameNewsRegistryWrapper : public CALifeRegistryWrapperObject<CALifeRegistryWrapper<CGameNewsRegistry>>
 {
 };
+
 class CInfoPortionWrapper : public CALifeRegistryWrapperObject<CALifeRegistryWrapper<CInfoPortionRegistry>>
 {
 };
+
 class CRelationRegistryWrapper : public CALifeRegistryWrapperObject<CALifeRegistryWrapper<CRelationRegistry>>
 {
 };
+
 class CMapLocationWrapper : public CALifeRegistryWrapperObject<CALifeRegistryWrapper<CMapLocationRegistry>>
 {
 };
+
 class CGameTaskWrapper : public CALifeRegistryWrapperObject<CALifeRegistryWrapper<CGameTaskRegistry>>
 {
 };

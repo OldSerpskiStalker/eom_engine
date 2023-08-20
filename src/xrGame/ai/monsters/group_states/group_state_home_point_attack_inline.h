@@ -12,13 +12,10 @@
 
 namespace detail
 {
-
 namespace dog
 {
 const float scare_distance2enemy = 20.f; // distance on which dog can be scared of enemy
-
 } // namespace dog
-
 } // namespace detail
 
 //////////////////////////////////////////////////////////////////////////

@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
+п»ї////////////////////////////////////////////////////////////////////////////
 //	Module 		: ai_stalker.cpp
 //	Created 	: 25.02.2003
 //  Modified 	: 25.02.2003
@@ -112,7 +112,7 @@ void CAI_Stalker::reinit()
     animation().reinit();
     //	movement().reinit				();
 
-    // загрузка спецевической звуковой схемы для сталкера согласно m_SpecificCharacter
+    // Г§Г ГЈГ°ГіГ§ГЄГ  Г±ГЇГҐГ¶ГҐГўГЁГ·ГҐГ±ГЄГ®Г© Г§ГўГіГЄГ®ГўГ®Г© Г±ГµГҐГ¬Г» Г¤Г«Гї Г±ГІГ Г«ГЄГҐГ°Г  Г±Г®ГЈГ«Г Г±Г­Г® m_SpecificCharacter
     sound().sound_prefix(SpecificCharacter().sound_voice_prefix());
 
 #ifdef DEBUG_MEMORY_MANAGER
@@ -597,7 +597,7 @@ void CAI_Stalker::Die(CObject* who)
 
     inherited::Die(who);
 
-    // запретить использование слотов в инвенторе
+    // Г§Г ГЇГ°ГҐГІГЁГІГј ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ Г­ГЁГҐ Г±Г«Г®ГІГ®Гў Гў ГЁГ­ГўГҐГ­ГІГ®Г°ГҐ
     inventory().SetSlotsUseful(false);
 
     if (inventory().GetActiveSlot() == NO_ACTIVE_SLOT)
@@ -700,7 +700,7 @@ BOOL CAI_Stalker::net_Spawn(CSE_Abstract* DC)
     if (!g_Alive())
         sound().set_sound_mask(u32(eStalkerSoundMaskDie));
 
-    // загрузить иммунитеты из модельки сталкера
+    // Г§Г ГЈГ°ГіГ§ГЁГІГј ГЁГ¬Г¬ГіГ­ГЁГІГҐГІГ» ГЁГ§ Г¬Г®Г¤ГҐГ«ГјГЄГЁ Г±ГІГ Г«ГЄГҐГ°Г 
     IKinematics* pKinematics = smart_cast<IKinematics*>(Visual());
     VERIFY(pKinematics);
     CInifile* ini = pKinematics->LL_UserData();
@@ -719,7 +719,7 @@ BOOL CAI_Stalker::net_Spawn(CSE_Abstract* DC)
         }
     }
 
-    // вычислить иммунета в зависимости от ранга
+    // ГўГ»Г·ГЁГ±Г«ГЁГІГј ГЁГ¬Г¬ГіГ­ГҐГІГ  Гў Г§Г ГўГЁГ±ГЁГ¬Г®Г±ГІГЁ Г®ГІ Г°Г Г­ГЈГ 
     static float novice_rank_immunity = pSettings->r_float("ranks_properties", "immunities_novice_k");
     static float expirienced_rank_immunity = pSettings->r_float("ranks_properties", "immunities_experienced_k");
 
@@ -1033,7 +1033,7 @@ void CAI_Stalker::UpdateCL()
     STOP_PROFILE
 }
 
-void CAI_Stalker ::PHHit(SHit& H) { m_pPhysics_support->in_Hit(H, false); }
+void CAI_Stalker::PHHit(SHit& H) { m_pPhysics_support->in_Hit(H, false); }
 
 CPHDestroyable* CAI_Stalker::ph_destroyable() { return smart_cast<CPHDestroyable*>(character_physics_support()); }
 
@@ -1041,6 +1041,9 @@ CPHDestroyable* CAI_Stalker::ph_destroyable() { return smart_cast<CPHDestroyable
 
 void CAI_Stalker::shedule_Update(u32 DT)
 {
+    // Optimization update
+    //	if (Device.dwFrame % 2) return;
+
     START_PROFILE("stalker")
     START_PROFILE("stalker/schedule_update")
     VERIFY2(getEnabled() || PPhysicsShell(), *cName());
@@ -1073,7 +1076,7 @@ void CAI_Stalker::shedule_Update(u32 DT)
         agent_manager().update();
 #endif // USE_SCHEDULER_IN_AGENT_MANAGER
 
-//		bool			check = !!memory().enemy().selected();
+        //		bool			check = !!memory().enemy().selected();
 #if 0 // def DEBUG
 		memory().visual().check_visibles();
 #endif
@@ -1087,7 +1090,6 @@ void CAI_Stalker::shedule_Update(u32 DT)
         }
 
         START_PROFILE("stalker/schedule_update/memory")
-
         START_PROFILE("stalker/schedule_update/memory/process")
         process_enemies();
         STOP_PROFILE
@@ -1203,25 +1205,25 @@ void CAI_Stalker::Think()
     //	try {
     //		try {
     brain().update(update_delta);
-//		}
+    //		}
 #ifdef DEBUG
-//		catch (luabind::cast_failed &message) {
-//			Msg						("! Expression \"%s\" from luabind::object to
-//%s",message.what(),message.info()->name()); throw;
-//		}
+    //		catch (luabind::cast_failed &message) {
+    //			Msg						("! Expression \"%s\" from luabind::object to
+    //%s",message.what(),message.info()->name()); throw;
+    //		}
 #endif
-//		catch (std::exception &message) {
-//			Msg						("! Expression \"%s\"",message.what());
-//			throw;
-//		}
-//		catch (...) {
-//			Msg						("! unknown exception occured");
-//			throw;
-//		}
-//	}
-//	catch(...) {
+    //		catch (std::exception &message) {
+    //			Msg						("! Expression \"%s\"",message.what());
+    //			throw;
+    //		}
+    //		catch (...) {
+    //			Msg						("! unknown exception occured");
+    //			throw;
+    //		}
+    //	}
+    //	catch(...) {
 #ifdef DEBUG
-//		Msg						("! Last action being executed : %s",brain().current_action().m_action_name);
+    //		Msg						("! Last action being executed : %s",brain().current_action().m_action_name);
 #endif
     //		brain().setup			(this);
     //		brain().update			(update_delta);
@@ -1234,24 +1236,24 @@ void CAI_Stalker::Think()
 
     //	try {
     movement().update(update_delta);
-//	}
+    //	}
 #if 0 // def DEBUG
 	catch (luabind::cast_failed &message) {
-		Msg						("! Expression \"%s\" from luabind::object to %s",message.what(),message.info()->name());
-		movement().initialize	();
-		movement().update		(update_delta);
+		Msg("! Expression \"%s\" from luabind::object to %s", message.what(), message.info()->name());
+		movement().initialize();
+		movement().update(update_delta);
 		throw;
 	}
 	catch (std::exception &message) {
-		Msg						("! Expression \"%s\"",message.what());
-		movement().initialize	();
-		movement().update		(update_delta);
+		Msg("! Expression \"%s\"", message.what());
+		movement().initialize();
+		movement().update(update_delta);
 		throw;
 	}
 	catch (...) {
-		Msg						("! unknown exception occured");
-		movement().initialize	();
-		movement().update		(update_delta);
+		Msg("! unknown exception occured");
+		movement().initialize();
+		movement().update(update_delta);
 		throw;
 	}
 #endif // DEBUG
@@ -1484,17 +1486,33 @@ void CAI_Stalker::ResetBoneProtections(LPCSTR imm_sect, LPCSTR bone_sect)
     CInifile* ini = pKinematics->LL_UserData();
     if (ini)
     {
-        if (imm_sect || ini->section_exist("immunities"))
+        if (imm_sect || (ini->section_exist("immunities") && ini->line_exist("immunities", "immunities_sect")))
         {
             imm_sect = imm_sect ? imm_sect : ini->r_string("immunities", "immunities_sect");
             conditions().LoadImmunities(imm_sect, pSettings);
         }
 
-        if (bone_sect || ini->line_exist("bone_protection", "bones_protection_sect"))
+        if (bone_sect ||
+            (ini->section_exist("bone_protection") && ini->line_exist("bone_protection", "bones_protection_sect")))
         {
-            // m_boneHitProtection = xr_new<SBoneProtections>();
-            bone_sect = ini->r_string("bone_protection", "bones_protection_sect");
+            bone_sect = bone_sect ? bone_sect : ini->r_string("bone_protection", "bones_protection_sect");
             m_boneHitProtection->reload(bone_sect, pKinematics);
         }
     }
 }
+
+void CAI_Stalker::ChangeVisual(shared_str NewVisual)
+{
+    if (!NewVisual.size())
+        return;
+    if (cNameVisual().size())
+    {
+        if (cNameVisual() == NewVisual)
+            return;
+    }
+
+    cNameVisual_set(NewVisual);
+
+    Visual()->dcast_PKinematics()->CalculateBones_Invalidate();
+    Visual()->dcast_PKinematics()->CalculateBones(TRUE);
+};

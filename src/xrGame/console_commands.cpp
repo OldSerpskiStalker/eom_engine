@@ -46,9 +46,6 @@
 #include "character_hit_animations_params.h"
 #include "inventory_upgrade_manager.h"
 
-#include "GameSpy/GameSpy_Full.h"
-#include "GameSpy/GameSpy_Patching.h"
-
 #include "ai_debug_variables.h"
 #include "../xrphysics/console_vars.h"
 #ifdef DEBUG
@@ -72,7 +69,7 @@ extern u64 g_qwStartGameTime;
 extern u64 g_qwEStartGameTime;
 
 ENGINE_API
-extern float psHUD_FOV;
+extern float psHUD_FOV_def; //--#SM+#-- Команда для смены FOV теперь меняет это [it's now used in hud_fov]
 extern float psSqueezeVelocity;
 extern int psLUA_GCSTEP;
 
@@ -1725,7 +1722,7 @@ public:
 
         //		GameSpyPatching.CheckForPatch(InformOfNoPatch);
 
-        MainMenu()->GetGS()->GetGameSpyPatching()->CheckForPatch(InformOfNoPatch);
+        // MainMenu()->GetGS()->GetGameSpyPatching()->CheckForPatch(InformOfNoPatch);
     }
 };
 
@@ -1816,21 +1813,15 @@ void CCC_RegisterCommands()
     CMD1(CCC_ALifeObjectsPerUpdate, "al_objects_per_update"); // set process time
 
     CMD3(CCC_Mask, "hud_weapon", &psHUD_Flags, HUD_WEAPON);
-    CMD3(CCC_Mask, "hud_info", &psHUD_Flags, HUD_INFO);
     CMD3(CCC_Mask, "hud_draw", &psHUD_Flags, HUD_DRAW);
 
     // hud
-    psHUD_Flags.set(HUD_CROSSHAIR, true);
     psHUD_Flags.set(HUD_WEAPON, true);
     psHUD_Flags.set(HUD_DRAW, true);
-    psHUD_Flags.set(HUD_INFO, true);
-
-    CMD3(CCC_Mask, "hud_crosshair", &psHUD_Flags, HUD_CROSSHAIR);
-    CMD3(CCC_Mask, "hud_crosshair_dist", &psHUD_Flags, HUD_CROSSHAIR_DIST);
 
     // #ifdef DEBUG
-    CMD4(CCC_Float, "hud_fov", &psHUD_FOV, 0.1f, 1.0f);
-    CMD4(CCC_Float, "fov", &g_fov, 5.0f, 180.0f);
+    CMD4(CCC_Float, "hud_fov", &psHUD_FOV_def, 0.1f, 1.0f);
+    CMD4(CCC_Float, "fov", &g_fov, 5.0f, 120.0f);
     // #endif // DEBUG
 
     // Demo
@@ -1957,19 +1948,19 @@ void CCC_RegisterCommands()
     CMD1(CCC_PHIterations, "ph_iterations");
 
 #ifdef DEBUG
-    CMD1(CCC_PHGravity, "ph_gravity");
+    //	CMD1(CCC_PHGravity, "ph_gravity");
     CMD4(CCC_FloatBlock, "ph_timefactor", &phTimefactor, 0.000001f, 1000.f);
     CMD4(CCC_FloatBlock, "ph_break_common_factor", &ph_console::phBreakCommonFactor, 0.f, 1000000000.f);
     CMD4(CCC_FloatBlock, "ph_rigid_break_weapon_factor", &ph_console::phRigidBreakWeaponFactor, 0.f, 1000000000.f);
     CMD4(CCC_Integer, "ph_tri_clear_disable_count", &ph_console::ph_tri_clear_disable_count, 0, 255);
     CMD4(CCC_FloatBlock, "ph_tri_query_ex_aabb_rate", &ph_console::ph_tri_query_ex_aabb_rate, 1.01f, 3.f);
     CMD3(CCC_Mask, "g_no_clip", &psActorFlags, AF_NO_CLIP);
-    CMD1(CCC_JumpToLevel, "jump_to_level");
-    CMD3(CCC_Mask, "g_god", &psActorFlags, AF_GODMODE);
-    CMD3(CCC_Mask, "g_unlimitedammo", &psActorFlags, AF_UNLIMITEDAMMO);
-    CMD1(CCC_Script, "run_script");
-    CMD1(CCC_ScriptCommand, "run_string");
-    CMD1(CCC_TimeFactor, "time_factor");
+//	CMD1(CCC_JumpToLevel, "jump_to_level");
+//	CMD3(CCC_Mask, "g_god", &psActorFlags, AF_GODMODE);
+//	CMD3(CCC_Mask, "g_unlimitedammo", &psActorFlags, AF_UNLIMITEDAMMO);
+//	CMD1(CCC_Script, "run_script");
+//	CMD1(CCC_ScriptCommand, "run_string");
+//	CMD1(CCC_TimeFactor, "time_factor");
 #endif // DEBUG
 
     /* AVO: changing restriction to -dbg key instead of DEBUG */
@@ -1982,13 +1973,16 @@ void CCC_RegisterCommands()
         CMD3(CCC_Mask, "g_unlimitedammo", &psActorFlags, AF_UNLIMITEDAMMO);
         CMD1(CCC_Script, "run_script");
         CMD1(CCC_ScriptCommand, "run_string");
-        CMD1(CCC_TimeFactor, "time_factor");
         // CMD3(CCC_Mask, "g_no_clip", &psActorFlags, AF_NO_CLIP);
         CMD1(CCC_PHGravity, "ph_gravity");
+        //		CMD4(CCC_FloatBlock, "ph_timefactor", &phTimefactor, 0.000001f, 1000.f);
+        CMD1(CCC_DbgVar, "dbg_var");
     }
 #endif // MASTER_GOLD
     // #endif // MASTER_GOLD
     /* AVO: end */
+
+    CMD1(CCC_TimeFactor, "time_factor");
 
     CMD3(CCC_Mask, "g_use_tracers", &psActorFlags, AF_USE_TRACERS);
     CMD3(CCC_Mask, "g_autopickup", &psActorFlags, AF_AUTOPICKUP);
@@ -2132,7 +2126,7 @@ void CCC_RegisterCommands()
     CMD3(CCC_Mask, "dbg_track_obj_blends_state", &dbg_track_obj_flags, dbg_track_obj_blends_state);
     CMD3(CCC_Mask, "dbg_track_obj_blends_dump", &dbg_track_obj_flags, dbg_track_obj_blends_dump);
 
-    CMD1(CCC_DbgVar, "dbg_var");
+    //	CMD1(CCC_DbgVar, "dbg_var");
 
     extern float dbg_text_height_scale;
     CMD4(CCC_FloatBlock, "dbg_text_height_scale", &dbg_text_height_scale, 0.2f, 5.f);
@@ -2147,14 +2141,14 @@ void CCC_RegisterCommands()
     CMD1(CCC_DumpCreatures, "dump_creatures");
 
 #endif
-
-    CMD3(CCC_Mask, "cl_dynamiccrosshair", &psHUD_Flags, HUD_CROSSHAIR_DYNAMIC);
     CMD1(CCC_MainMenu, "main_menu");
 
 #ifndef MASTER_GOLD
     CMD1(CCC_StartTimeSingle, "start_time_single");
-    CMD4(CCC_TimeFactorSingle, "time_factor_single", &g_fTimeFactor, 0.f, 1000.0f);
+//	CMD4(CCC_TimeFactorSingle, "time_factor_single", &g_fTimeFactor, 0.f, 1000.0f);
 #endif // MASTER_GOLD
+
+    CMD4(CCC_TimeFactorSingle, "time_factor_single", &g_fTimeFactor, 0.f, 1000.0f);
 
     g_uCommonFlags.zero();
     g_uCommonFlags.set(flAiUseTorchDynamicLights, TRUE);

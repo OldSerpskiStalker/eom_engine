@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "poltergeist.h"
 #include "../../../../xrServerEntities/xrmessages.h"
 #include "../../../ai_object_location.h"
@@ -172,15 +172,15 @@ void CPolterFlame::update_schedule()
 
                             NET_Packet P;
                             SHit HS;
-                            HS.GenHeader(GE_HIT, elem->target_object->ID()); //					u_EventGen		(P,GE_HIT,
-                                                                             //element->target_object->ID());
+                            HS.GenHeader(GE_HIT, elem->target_object->ID());
+                            //					u_EventGen		(P,GE_HIT, element->target_object->ID());
                             HS.whoID = (m_object->ID()); //					P.w_u16			(ID());
                             HS.weaponID = (m_object->ID()); //					P.w_u16			(ID());
                             HS.dir = (elem->target_dir); //					P.w_dir			(element->target_dir);
                             HS.power = (hit_value); //					P.w_float		(m_flame_hit_value);
                             HS.boneID = (BI_NONE); //					P.w_s16			(BI_NONE);
-                            HS.p_in_bone_space = (Fvector().set(
-                                0.f, 0.f, 0.f)); //					P.w_vec3		(Fvector().set(0.f,0.f,0.f));
+                            HS.p_in_bone_space = (Fvector().set(0.f, 0.f, 0.f));
+                            //					P.w_vec3		(Fvector().set(0.f,0.f,0.f));
                             HS.impulse = (0.f); //					P.w_float		(0.f);
                             HS.hit_type =
                                 (ALife::eHitTypeBurn); //					P.w_u16			(u16(ALife::eHitTypeBurn));
@@ -200,7 +200,7 @@ void CPolterFlame::update_schedule()
 
     // remove all flames in state stop
 
-    // óäàëèòü âñå ýëåìåíòû, âûïîëíåíèå êîòîðûõ çàêîí÷åíî
+    // Ã³Ã¤Ã Ã«Ã¨Ã²Ã¼ Ã¢Ã±Ã¥ Ã½Ã«Ã¥Ã¬Ã¥Ã­Ã²Ã», Ã¢Ã»Ã¯Ã®Ã«Ã­Ã¥Ã­Ã¨Ã¥ ÃªÃ®Ã²Ã®Ã°Ã»Ãµ Ã§Ã ÃªÃ®Ã­Ã·Ã¥Ã­Ã®
     m_flames.erase(std::remove_if(m_flames.begin(), m_flames.end(), remove_predicate()), m_flames.end());
 
     bool const detected = m_object->get_current_detection_level() >= m_object->get_detection_success_level();
@@ -229,7 +229,7 @@ void CPolterFlame::on_destroy()
     FLAME_ELEMS_IT I = m_flames.begin();
     FLAME_ELEMS_IT E = m_flames.end();
 
-    // Ïðîéòè ïî âñåì îáúåêòàì è ïðîâåðèòü íà õèò âðàãà
+    // ÃÃ°Ã®Ã©Ã²Ã¨ Ã¯Ã® Ã¢Ã±Ã¥Ã¬ Ã®Ã¡ÃºÃ¥ÃªÃ²Ã Ã¬ Ã¨ Ã¯Ã°Ã®Ã¢Ã¥Ã°Ã¨Ã²Ã¼ Ã­Ã  ÃµÃ¨Ã² Ã¢Ã°Ã Ã£Ã 
     for (; I != E; ++I)
     {
         if ((*I)->sound._feedback())

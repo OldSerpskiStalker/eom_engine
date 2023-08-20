@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "../../xrEngine/igame_persistent.h"
 #include "../../xrEngine/irenderable.h"
+#include "../../xrEngine/CustomHUD.h"
 #include "../xrRender/FBasicVisual.h"
 
 #include "r4_R_sun_support.h"
@@ -331,7 +332,7 @@ D3DXVECTOR2 BuildTSMProjectionMatrix_caster_depth_bounds(D3DXMATRIX& lightSpaceB
 void CRender::render_sun()
 {
     PIX_EVENT(render_sun);
-    light* fuckingsun = (light*)Lights.sun_adapted._get();
+    light* fuckingsun = (light*)Lights.sun._get();
     D3DXMATRIX m_LightViewProj;
 
     // calculate view-frustum bounds in world space
@@ -775,6 +776,8 @@ void CRender::render_sun()
             RCache.set_xform_view(Fidentity);
             RCache.set_xform_project(fuckingsun->X.D.combine);
             r_dsgraph_render_graph(0);
+            if (ps_r2_ls_flags.test(R2FLAG_SUN_DETAILS))
+                Details->Render();
             fuckingsun->X.D.transluent = FALSE;
             if (bSpecial)
             {
@@ -812,7 +815,7 @@ void CRender::render_sun()
 
 void CRender::render_sun_near()
 {
-    light* fuckingsun = (light*)Lights.sun_adapted._get();
+    light* fuckingsun = (light*)Lights.sun._get();
     D3DXMATRIX m_LightViewProj;
 
     // calculate view-frustum bounds in world space
@@ -1102,7 +1105,7 @@ void CRender::render_sun_cascades()
 
 void CRender::render_sun_cascade(u32 cascade_ind)
 {
-    light* fuckingsun = (light*)Lights.sun_adapted._get();
+    light* fuckingsun = (light*)Lights.sun._get();
 
     // calculate view-frustum bounds in world space
     Fmatrix ex_project, ex_full, ex_full_inverse;

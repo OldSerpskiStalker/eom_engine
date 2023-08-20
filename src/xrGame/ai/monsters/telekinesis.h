@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "telekinetic_object.h"
 #include "../../../xrphysics/PHUpdateObject.h"
@@ -17,11 +17,11 @@ public:
 
     // allocates relevant TelekineticObject
 
-    // активировать объект
+    // Г ГЄГІГЁГўГЁГ°Г®ГўГ ГІГј Г®ГЎГєГҐГЄГІ
     virtual CTelekineticObject* activate(
         CPhysicsShellHolder* obj, float strength, float height, u32 max_time_keep, bool rot = true);
 
-    // деактивировать все объекты
+    // Г¤ГҐГ ГЄГІГЁГўГЁГ°Г®ГўГ ГІГј ГўГ±ГҐ Г®ГЎГєГҐГЄГІГ»
     void deactivate();
 
     // clear objects (does not call release, but call switch to TS_None)
@@ -29,32 +29,32 @@ public:
     // clear
     virtual void clear();
     virtual void clear_notrelevant();
-    // деактивировать объект
+    // Г¤ГҐГ ГЄГІГЁГўГЁГ°Г®ГўГ ГІГј Г®ГЎГєГҐГЄГІ
     void deactivate(CPhysicsShellHolder* obj);
     void remove_object(TELE_OBJECTS_IT it);
     void remove_object(CPhysicsShellHolder* obj);
-    // бросить все объекты в позицию 'target'
+    // ГЎГ°Г®Г±ГЁГІГј ГўГ±ГҐ Г®ГЎГєГҐГЄГІГ» Гў ГЇГ®Г§ГЁГ¶ГЁГѕ 'target'
     void fire_all(const Fvector& target);
 
-    // бросить объект 'obj' в позицию 'target' с учетом коэф силы
+    // ГЎГ°Г®Г±ГЁГІГј Г®ГЎГєГҐГЄГІ 'obj' Гў ГЇГ®Г§ГЁГ¶ГЁГѕ 'target' Г± ГіГ·ГҐГІГ®Г¬ ГЄГ®ГЅГґ Г±ГЁГ«Г»
     void fire(CPhysicsShellHolder* obj, const Fvector& target, float power);
 
-    // бросить объект 'obj' в позицию 'target' с учетом коэф силы
+    // ГЎГ°Г®Г±ГЁГІГј Г®ГЎГєГҐГЄГІ 'obj' Гў ГЇГ®Г§ГЁГ¶ГЁГѕ 'target' Г± ГіГ·ГҐГІГ®Г¬ ГЄГ®ГЅГґ Г±ГЁГ«Г»
     void fire_t(CPhysicsShellHolder* obj, const Fvector& target, float time);
 
-    // вернуть активность телекинеза
+    // ГўГҐГ°Г­ГіГІГј Г ГЄГІГЁГўГ­Г®Г±ГІГј ГІГҐГ«ГҐГЄГЁГ­ГҐГ§Г 
     bool is_active() { return active; }
 
-    // вернуть активность объекта
+    // ГўГҐГ°Г­ГіГІГј Г ГЄГІГЁГўГ­Г®Г±ГІГј Г®ГЎГєГҐГЄГІГ 
     bool is_active_object(CPhysicsShellHolder* obj);
 
-    // вернуть количество контролируемых объектов (в состоянии TS_Raise & TS_Keep)
+    // ГўГҐГ°Г­ГіГІГј ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® ГЄГ®Г­ГІГ°Г®Г«ГЁГ°ГіГҐГ¬Г»Гµ Г®ГЎГєГҐГЄГІГ®Гў (Гў Г±Г®Г±ГІГ®ГїГ­ГЁГЁ TS_Raise & TS_Keep)
     u32 get_objects_count();
 
-    // вернуть количество контролируемых объектов (всех)
+    // ГўГҐГ°Г­ГіГІГј ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® ГЄГ®Г­ГІГ°Г®Г«ГЁГ°ГіГҐГ¬Г»Гµ Г®ГЎГєГҐГЄГІГ®Гў (ГўГ±ГҐГµ)
     u32 get_objects_total_count() { return objects.size(); }
 
-    // вернуть объект по индексу в массиве
+    // ГўГҐГ°Г­ГіГІГј Г®ГЎГєГҐГЄГІ ГЇГ® ГЁГ­Г¤ГҐГЄГ±Гі Гў Г¬Г Г±Г±ГЁГўГҐ
     // a	copy of the object!
     CTelekineticObject get_object_by_index(u32 index)
     {
@@ -62,17 +62,17 @@ public:
         return *objects[index];
     }
 
-    // обновить состоняие на shedule_Update
+    // Г®ГЎГ­Г®ГўГЁГІГј Г±Г®Г±ГІГ®Г­ГїГЁГҐ Г­Г  shedule_Update
     void schedule_update();
 
-    // объект был удален - удалить все связи на объект
+    // Г®ГЎГєГҐГЄГІ ГЎГ»Г« ГіГ¤Г Г«ГҐГ­ - ГіГ¤Г Г«ГЁГІГј ГўГ±ГҐ Г±ГўГїГ§ГЁ Г­Г  Г®ГЎГєГҐГЄГІ
     void remove_links(CObject* O);
 
 protected:
     virtual CTelekineticObject* alloc_tele_object() { return xr_new<CTelekineticObject>(); }
 
 private:
-    // обновление на шагах физики
+    // Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГҐ Г­Г  ГёГ ГЈГ Гµ ГґГЁГ§ГЁГЄГЁ
     virtual void PhDataUpdate(float step);
     virtual void PhTune(float step);
 };

@@ -1,4 +1,4 @@
-// CustomMonster.cpp: implementation of the CCustomMonster class.
+п»ї// CustomMonster.cpp: implementation of the CCustomMonster class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -174,7 +174,6 @@ void CCustomMonster::Load(LPCSTR section)
     gf					= pSettings->r_float	(section,"ph_friction_ground");
     wf					= pSettings->r_float	(section,"ph_friction_wall"	);
     m_PhysicMovementControl->SetFriction	(af,wf,gf);
-
     // BOX activate
     m_PhysicMovementControl->ActivateBox	(0);
     */
@@ -385,7 +384,7 @@ void CCustomMonster::shedule_Update(u32 DT)
             //////////////////////////////////////
             // Fvector C; float R;
             //////////////////////////////////////
-            // С Олеся - ПИВО!!!! (Диме :-))))
+            // Г‘ ГЋГ«ГҐГ±Гї - ГЏГ€Г‚ГЋ!!!! (Г„ГЁГ¬ГҐ :-))))
             // m_PhysicMovementControl->GetBoundingSphere	(C,R);
             //////////////////////////////////////
             // Center(C);
@@ -751,8 +750,11 @@ BOOL CCustomMonster::net_Spawn(CSE_Abstract* DC)
             u32 level_vertex_id;
             level_vertex_id = movement().restrictions().accessible_nearest(
                 ai().level_graph().vertex_position(ai_location().level_vertex_id()), dest_position);
-            movement().set_level_dest_vertex(level_vertex_id);
-            movement().detail().set_dest_position(dest_position);
+            if (level_vertex_id != (u32)-1 && movement().restrictions().accessible(level_vertex_id))
+            {
+                movement().set_level_dest_vertex(level_vertex_id);
+                movement().detail().set_dest_position(dest_position);
+            }
         }
     }
 
@@ -834,12 +836,12 @@ void CCustomMonster::PitchCorrection()
     Fvector position_on_plane;
     P.project(position_on_plane, Position());
 
-    // находим проекцию точки, лежащей на векторе текущего направления
+    // Г­Г ГµГ®Г¤ГЁГ¬ ГЇГ°Г®ГҐГЄГ¶ГЁГѕ ГІГ®Г·ГЄГЁ, Г«ГҐГ¦Г Г№ГҐГ© Г­Г  ГўГҐГЄГІГ®Г°ГҐ ГІГҐГЄГіГ№ГҐГЈГ® Г­Г ГЇГ°Г ГўГ«ГҐГ­ГЁГї
     Fvector dir_point, proj_point;
     dir_point.mad(position_on_plane, Direction(), 1.f);
     P.project(proj_point, dir_point);
 
-    // получаем искомый вектор направления
+    // ГЇГ®Г«ГіГ·Г ГҐГ¬ ГЁГ±ГЄГ®Г¬Г»Г© ГўГҐГЄГІГ®Г° Г­Г ГЇГ°Г ГўГ«ГҐГ­ГЁГї
     Fvector target_dir;
     target_dir.sub(proj_point, position_on_plane);
 
@@ -1036,7 +1038,7 @@ bool CCustomMonster::update_critical_wounded(const u16& bone_id, const float& po
     clamp(m_critical_wound_accumulator, 0.f, m_critical_wound_threshold);
 
 #if 0 // def _DEBUG
-	Msg								(
+	Msg(
 		"%6d [%s] update_critical_wounded: %f[%f] (%f,%f) [%f]",
 		Device.dwTimeGlobal,
 		*cName(),
@@ -1116,7 +1118,7 @@ void CCustomMonster::OnRender()
                 P2.y += 0.1f;
                 if (!fis_zero(P1.distance_to_sqr(P2), EPS_L))
                     Level().debug_renderer().draw_line(Fidentity, P1, P2, color0);
-                if ((path.size() - 1) == I) // песледний box?
+                if ((path.size() - 1) == I) // ГЇГҐГ±Г«ГҐГ¤Г­ГЁГ© box?
                     Level().debug_renderer().draw_aabb(P1, radius0, radius0, radius0, color1);
                 else
                     Level().debug_renderer().draw_aabb(P1, radius0, radius0, radius0, color2);
@@ -1186,42 +1188,42 @@ void CCustomMonster::OnRender()
         smart_cast<IKinematics*>(Visual())->DebugRender(XFORM());
 
 #if 0
-	DBG().get_text_tree().clear			();
-	debug::text_tree& text_tree		=	DBG().get_text_tree().find_or_add("ActorView");
+	DBG().get_text_tree().clear();
+	debug::text_tree& text_tree = DBG().get_text_tree().find_or_add("ActorView");
 
 	Fvector collide_position;
 	collide::rq_results	temp_rq_results;
-	Fvector sizes			=	{ 0.2f, 0.2f, 0.2f };
+	Fvector sizes = { 0.2f, 0.2f, 0.2f };
 
-	for ( u32 i=0; i<2; ++i )
+	for (u32 i = 0; i < 2; ++i)
 	{
-		Fvector start		=	{ -8.7, 1.6, -4.67 };
-		Fvector end			=	{ -9.45, 1.3, -0.24 };
+		Fvector start = { -8.7, 1.6, -4.67 };
+		Fvector end = { -9.45, 1.3, -0.24 };
 
-		bool use_p2			=	false;
-		ai_dbg::get_var			("p2", use_p2);
+		bool use_p2 = false;
+		ai_dbg::get_var("p2", use_p2);
 
-		if ( use_p2 ^ i )
+		if (use_p2 ^ i)
 		{
-			start.x			+=	-1.f;
-			end.x			+=	-1.f;
+			start.x += -1.f;
+			end.x += -1.f;
 		}
 
-		Fvector velocity	=	end - start;
-		float const jump_time	=	0.3f;
-		TransferenceToThrowVel	(velocity,jump_time,physics_world()->Gravity());
+		Fvector velocity = end - start;
+		float const jump_time = 0.3f;
+		TransferenceToThrowVel(velocity, jump_time, physics_world()->Gravity());
 
-		bool const result	=	trajectory_intersects_geometry	(jump_time, 
-																 start,
-																 end,
-																 velocity,
-																 collide_position,
-																 this,
-																 NULL,
-																 temp_rq_results,
-																 & m_jump_picks,
-																 & m_jump_collide_tris,
-																 sizes);
+		bool const result = trajectory_intersects_geometry(jump_time,
+			start,
+			end,
+			velocity,
+			collide_position,
+			this,
+			NULL,
+			temp_rq_results,
+			&m_jump_picks,
+			&m_jump_collide_tris,
+			sizes);
 
 		text_tree.add_line(i ? "box1" : "box2", result);
 	}

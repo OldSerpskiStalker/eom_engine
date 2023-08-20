@@ -79,12 +79,14 @@ public:
 
 public:
     NET_Packet() : inistream(NULL), w_allow(true) {}
+
     // writing - main
     IC void write_start()
     {
         B.count = 0;
         INI_W(move_begin());
     }
+
     IC void w_begin(u16 type)
     {
         B.count = 0;
@@ -97,6 +99,7 @@ public:
         W_guard(bool* b) : guarded(b) { *b = true; }
         ~W_guard() { *guarded = false; }
     };
+
     IC void w(const void* p, u32 count)
     {
         R_ASSERT(inistream == NULL || w_allow);
@@ -106,7 +109,8 @@ public:
         B.count += count;
         VERIFY(B.count < NET_PacketSizeLimit);
     }
-    IC void w_seek(u32 pos, const void* p, u32 count);
+
+    void w_seek(u32 pos, const void* p, u32 count);
     IC u32 w_tell() { return B.count; }
 
     // writing - utilities
@@ -183,12 +187,14 @@ public:
         float q = (a - min) / (max - min);
         w_u16(u16(iFloor(q * 65535.f + 0.5f)));
     }
+
     IC void w_float_q8(float a, float min, float max)
     {
         VERIFY(a >= min && a <= max);
         float q = (a - min) / (max - min);
         w_u8(u8(iFloor(q * 255.f + 0.5f)));
     }
+
     IC void w_angle16(float a) { w_float_q16(angle_normalize(a), 0, PI_MUL_2); }
     IC void w_angle8(float a) { w_float_q8(angle_normalize(a), 0, PI_MUL_2); }
     IC void w_dir(const Fvector& D) { w_u16(pvCompress(D)); }
@@ -208,12 +214,14 @@ public:
         w_dir(C);
         w_float(mag);
     }
+
     IC void w_stringZ(LPCSTR S)
     {
         W_guard g(&w_allow);
         w(S, (u32)xr_strlen(S) + 1);
         INI_W(w_stringZ(S));
     }
+
     IC void w_stringZ(const shared_str& p)
     {
         W_guard g(&w_allow);
@@ -229,6 +237,7 @@ public:
 
         INI_W(w_stringZ(p.c_str()));
     }
+
     IC void w_matrix(Fmatrix& M)
     {
         w_vec3(M.i);
@@ -285,6 +294,7 @@ public:
         r_pos += count;
         VERIFY(r_pos <= B.count);
     }
+
     BOOL r_eof();
     u32 r_elapsed();
     void r_advance(u32 size);

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "monster_cover_manager.h"
 #include "BaseMonster/base_monster.h"
 #include "../../cover_evaluators.h"
@@ -53,6 +53,7 @@ public:
     CCoverPredicate();
     // called from cover_manager for every cover (for suitable cover)
     bool operator()(const CCoverPoint* cover) const { return true; }
+
     // must return a value that is transfered to cover evaluator
     float weight(const CCoverPoint* cover) const { return 1.f; }
 
@@ -150,6 +151,7 @@ void CCoverEvaluator::evaluate_smart_cover(smart_cover::cover const* smart_cover
 //=============================================================================
 
 CMonsterCoverManager::CMonsterCoverManager(CBaseMonster* monster) : m_object(monster) { m_ce_best = 0; }
+
 CMonsterCoverManager::~CMonsterCoverManager() { xr_delete(m_ce_best); }
 
 void CMonsterCoverManager::load()
@@ -166,7 +168,7 @@ const CCoverPoint* CMonsterCoverManager::find_cover(
     return point;
 }
 
-// найти лучший ковер относительно "position"
+// Г­Г Г©ГІГЁ Г«ГіГ·ГёГЁГ© ГЄГ®ГўГҐГ° Г®ГІГ­Г®Г±ГЁГІГҐГ«ГјГ­Г® "position"
 const CCoverPoint* CMonsterCoverManager::find_cover(
     const Fvector& src_pos, const Fvector& dest_pos, float min_pos_distance, float max_pos_distance, float deviation)
 {
@@ -230,4 +232,5 @@ void CMonsterCoverManager::less_cover_direction(Fvector& dir)
     angle = angle_normalize(angle_from + angle_difference(angle_from, angle_to) / 2);
     dir.setHP(angle, 0.f);
 }
+
 //////////////////////////////////////////////////////////////////////////

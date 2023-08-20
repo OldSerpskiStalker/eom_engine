@@ -139,6 +139,7 @@ void CAI_Rat::activate_state_free_recoil()
 
     sound().play(eRatSoundVoice, 45 * 1000, 15 * 1000);
 }
+
 void CAI_Rat::activate_state_home()
 {
     m_tSpawnPosition.set(m_home_position);

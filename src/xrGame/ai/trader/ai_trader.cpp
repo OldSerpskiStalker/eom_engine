@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
+п»ї////////////////////////////////////////////////////////////////////////////
 //	Module 		: ai_trader.cpp
 //	Created 	: 13.05.2002
 //  Modified 	: 13.05.2002
@@ -118,7 +118,7 @@ BOOL CAI_Trader::net_Spawn(CSE_Abstract* DC)
     CSE_ALifeTrader* l_tpTrader = smart_cast<CSE_ALifeTrader*>(e);
     R_ASSERT(l_tpTrader);
 
-    // проспавнить PDA у InventoryOwner
+    // ГЇГ°Г®Г±ГЇГ ГўГ­ГЁГІГј PDA Гі InventoryOwner
     if (!CInventoryOwner::net_Spawn(DC))
         return (FALSE);
 
@@ -130,7 +130,7 @@ BOOL CAI_Trader::net_Spawn(CSE_Abstract* DC)
 
     set_money(l_tpTrader->m_dwMoney, false);
 
-    // Установка callback на кости
+    // Г“Г±ГІГ Г­Г®ГўГЄГ  callback Г­Г  ГЄГ®Г±ГІГЁ
     CBoneInstance* bone_head = &smart_cast<IKinematics*>(Visual())->LL_GetBoneInstance(
         smart_cast<IKinematics*>(Visual())->LL_BoneID("bip01_head"));
     bone_head->set_callback(bctCustom, BoneCallback, this);
@@ -318,16 +318,17 @@ void CAI_Trader::save(NET_Packet& output_packet)
     inherited::save(output_packet);
     CInventoryOwner::save(output_packet);
 }
+
 void CAI_Trader::load(IReader& input_packet)
 {
     inherited::load(input_packet);
     CInventoryOwner::load(input_packet);
 }
 
-// проверяет список артефактов в заказах
+// ГЇГ°Г®ГўГҐГ°ГїГҐГІ Г±ГЇГЁГ±Г®ГЄ Г Г°ГІГҐГґГ ГЄГІГ®Гў Гў Г§Г ГЄГ Г§Г Гµ
 u32 CAI_Trader::ArtefactPrice(CArtefact* pArtefact) { return pArtefact->Cost(); }
 
-// продажа артефакта, с последуещим изменением списка заказов (true - если артефакт был в списке)
+// ГЇГ°Г®Г¤Г Г¦Г  Г Г°ГІГҐГґГ ГЄГІГ , Г± ГЇГ®Г±Г«ГҐГ¤ГіГҐГ№ГЁГ¬ ГЁГ§Г¬ГҐГ­ГҐГ­ГЁГҐГ¬ Г±ГЇГЁГ±ГЄГ  Г§Г ГЄГ Г§Г®Гў (true - ГҐГ±Г«ГЁ Г Г°ГІГҐГґГ ГЄГІ ГЎГ»Г« Гў Г±ГЇГЁГ±ГЄГҐ)
 bool CAI_Trader::BuyArtefact(CArtefact* pArtefact)
 {
     VERIFY(pArtefact);

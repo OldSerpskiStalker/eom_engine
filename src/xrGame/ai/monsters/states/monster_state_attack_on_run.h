@@ -31,6 +31,7 @@ private:
         go_far,
         go_prepare
     };
+
     phaze m_phaze;
     Fvector m_go_far_start_point;
     TTime m_phaze_chosen_time;

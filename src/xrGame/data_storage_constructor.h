@@ -12,6 +12,7 @@ template <typename T>
 class CEmptyClassTemplate
 {
 };
+
 template <typename T1, typename T2>
 class CEmptyClassTemplate2
 {

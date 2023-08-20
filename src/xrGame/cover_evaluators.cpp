@@ -251,7 +251,7 @@ void CCoverEvaluatorBest::evaluate_smart_cover(smart_cover::cover const* smart_c
     m_best_value = value / weight;
     m_selected = smart_cover;
     m_loophole = best_loophole;
-//	Msg								("Loophole is NULL CCoverEvaluatorBest::evaluate_cover");
+    //	Msg								("Loophole is NULL CCoverEvaluatorBest::evaluate_cover");
 #endif // #if 1
 }
 

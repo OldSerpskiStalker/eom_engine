@@ -98,8 +98,13 @@ void xrDebug::gather_info(const char* expression, const char* description, const
     for (int i = 0; i < 2; ++i)
     {
         if (!i)
-            buffer += xr_sprintf(
-                buffer, assertion_size - u32(buffer - buffer_base), "%sFATAL ERROR%s%s", endline, endline, endline);
+
+            buffer += xr_sprintf(buffer, assertion_size - u32(buffer - buffer_base),
+                "%sЛоги отправляйте сюда -> vk.com/painofmisery", endline);
+        buffer += xr_sprintf(buffer, assertion_size - u32(buffer - buffer_base),
+            "%sТакже не забудьте приложить последний mdump файл если таковой имеется%s", endline, endline);
+        buffer += xr_sprintf(
+            buffer, assertion_size - u32(buffer - buffer_base), "%sFATAL ERROR:%s%s", endline, endline, endline);
         buffer += xr_sprintf(
             buffer, assertion_size - u32(buffer - buffer_base), "%sExpression    : %s%s", prefix, expression, endline);
         buffer += xr_sprintf(
@@ -714,7 +719,7 @@ LONG WINAPI UnhandledFilter(_EXCEPTION_POINTERS* pExceptionInfo)
     format_message(error_message, sizeof(error_message));
 
     CONTEXT save = *pExceptionInfo->ContextRecord;
-    //    BuildStackTrace(pExceptionInfo);
+    // BuildStackTrace(pExceptionInfo);
     *pExceptionInfo->ContextRecord = save;
 
     if (shared_str_initialized)
@@ -725,7 +730,7 @@ LONG WINAPI UnhandledFilter(_EXCEPTION_POINTERS* pExceptionInfo)
         os_clipboard::copy_to_clipboard("stack trace:\r\n\r\n");
     }
 
-    //    string4096 buffer;
+    string4096 buffer;
     //    for (int i = 0; i < g_stackTraceCount; ++i)
     //    {
     //        if (shared_str_initialized)
@@ -756,6 +761,8 @@ LONG WINAPI UnhandledFilter(_EXCEPTION_POINTERS* pExceptionInfo)
         Msg("at address 0x%p", pExceptionInfo->ExceptionRecord->ExceptionAddress);
     }
     // return EXCEPTION_CONTINUE_EXECUTION;
+
+    save_mini_dump(pExceptionInfo);
 
     ShowCursor(true);
     ShowWindow(GetActiveWindow(), SW_FORCEMINIMIZE);
@@ -872,7 +879,7 @@ void xrDebug::_initialize(const bool& dedicated)
 #else
 typedef int(__cdecl* _PNH)(size_t);
 _CRTIMP int __cdecl _set_new_mode(int);
-_CRTIMP _PNH __cdecl _set_new_handler(_PNH);
+//_CRTIMP _PNH __cdecl _set_new_handler(_PNH);
 
 #ifdef LEGACY_CODE
 #ifndef USE_BUG_TRAP

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "monster_enemy_manager.h"
 #include "BaseMonster/base_monster.h"
 #include "../ai_monsters_misc.h"
@@ -28,6 +28,7 @@ CMonsterEnemyManager::CMonsterEnemyManager()
 }
 
 CMonsterEnemyManager::~CMonsterEnemyManager() {}
+
 void CMonsterEnemyManager::init_external(CBaseMonster* M) { monster = M; }
 
 void CMonsterEnemyManager::update()
@@ -38,7 +39,7 @@ void CMonsterEnemyManager::update()
     }
     if (forced)
     {
-        // ïğîâåğèòü âàëèäíîñòü force-îáúåêòà
+        // Ã¯Ã°Ã®Ã¢Ã¥Ã°Ã¨Ã²Ã¼ Ã¢Ã Ã«Ã¨Ã¤Ã­Ã®Ã±Ã²Ã¼ force-Ã®Ã¡ÃºÃ¥ÃªÃ²Ã 
         if (!enemy || enemy->getDestroy() || !enemy->g_Alive())
         {
             enemy = 0;
@@ -70,7 +71,7 @@ void CMonsterEnemyManager::update()
         return;
     }
 
-    // îáíîâèòü èíôîğìàöèş î âğàãå â ñîîòâåòñòâèè ñî çâóêîâîé èíôîğìàöèåé
+    // Ã®Ã¡Ã­Ã®Ã¢Ã¨Ã²Ã¼ Ã¨Ã­Ã´Ã®Ã°Ã¬Ã Ã¶Ã¨Ã¾ Ã® Ã¢Ã°Ã Ã£Ã¥ Ã¢ Ã±Ã®Ã®Ã²Ã¢Ã¥Ã²Ã±Ã²Ã¢Ã¨Ã¨ Ã±Ã® Ã§Ã¢Ã³ÃªÃ®Ã¢Ã®Ã© Ã¨Ã­Ã´Ã®Ã°Ã¬Ã Ã¶Ã¨Ã¥Ã©
     if (monster->SoundMemory.IsRememberSound())
     {
         SoundElem sound_elem;
@@ -85,10 +86,10 @@ void CMonsterEnemyManager::update()
         }
     }
 
-    // ïğîâåğèòü âèäèìîñòü
+    // Ã¯Ã°Ã®Ã¢Ã¥Ã°Ã¨Ã²Ã¼ Ã¢Ã¨Ã¤Ã¨Ã¬Ã®Ã±Ã²Ã¼
     enemy_see_me = is_faced(enemy, monster);
 
-    // îáíîâèòü îïàñíîñòü âğàãà
+    // Ã®Ã¡Ã­Ã®Ã¢Ã¨Ã²Ã¼ Ã®Ã¯Ã Ã±Ã­Ã®Ã±Ã²Ã¼ Ã¢Ã°Ã Ã£Ã 
     danger_type = eNone;
 
     switch (dwfChooseAction(0, monster->panic_threshold(), 0.f, 0.f, 0.f, monster->g_Team(), monster->g_Squad(),
@@ -101,7 +102,7 @@ void CMonsterEnemyManager::update()
     case 0: danger_type = eWeak; break;
     }
 
-    // îáíîâèòü ôëàãè
+    // Ã®Ã¡Ã­Ã®Ã¢Ã¨Ã²Ã¼ Ã´Ã«Ã Ã£Ã¨
     flags.zero();
 
     if ((prev_enemy == enemy) && (time_last_seen != Device.dwTimeGlobal))
@@ -141,7 +142,7 @@ void CMonsterEnemyManager::update()
     else
         flags.or (FLAG_ENEMY_STATS_NOT_READY);
 
-    // ñîõğàíèòü òåêóùåãî âğàãà
+    // Ã±Ã®ÃµÃ°Ã Ã­Ã¨Ã²Ã¼ Ã²Ã¥ÃªÃ³Ã¹Ã¥Ã£Ã® Ã¢Ã°Ã Ã£Ã 
     prev_enemy = enemy;
     prev_enemy_position = position;
 
@@ -283,7 +284,7 @@ const Fvector& CMonsterEnemyManager::get_enemy_position() { return position; }
 
 void CMonsterEnemyManager::transfer_enemy(CBaseMonster* friend_monster)
 {
-    // åñëè ó friend_monster íåò âğàãà
+    // Ã¥Ã±Ã«Ã¨ Ã³ friend_monster Ã­Ã¥Ã² Ã¢Ã°Ã Ã£Ã 
     if (!friend_monster->EnemyMan.get_enemy())
         return;
 

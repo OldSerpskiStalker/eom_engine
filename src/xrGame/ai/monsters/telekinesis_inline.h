@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 template <typename _Object>
 CTelekinesis<_Object>::CTelekinesis()
@@ -29,25 +29,25 @@ void CTelekinesis<_Object>::Activate()
 
     active = true;
 
-    // получить список объектов
+    // ГЇГ®Г«ГіГ·ГЁГІГј Г±ГЇГЁГ±Г®ГЄ Г®ГЎГєГҐГЄГІГ®Гў
     m_nearest.clear_not_free();
     Level().ObjectSpace.GetNearest(m_nearest, control_object->Position(), 10.f);
     // xr_vector<CObject*> &m_nearest		= Level().ObjectSpace.q_nearest;
 
-    // все объекты внести в список
+    // ГўГ±ГҐ Г®ГЎГєГҐГЄГІГ» ГўГ­ГҐГ±ГІГЁ Гў Г±ГЇГЁГ±Г®ГЄ
     for (u32 i = 0; i < m_nearest.size(); i++)
     {
         CGameObject* obj = smart_cast<CGameObject*>(m_nearest[i]);
         if (!obj || !obj->m_pPhysicsShell)
             continue;
 
-        // отключить гравитацию
+        // Г®ГІГЄГ«ГѕГ·ГЁГІГј ГЈГ°Г ГўГЁГІГ Г¶ГЁГѕ
         obj->m_pPhysicsShell->set_ApplyByGravity(FALSE);
 
         CTelekineticObject tele_object;
 
         tele_object.init(obj, height);
-        // добавить объект
+        // Г¤Г®ГЎГ ГўГЁГІГј Г®ГЎГєГҐГЄГІ
         objects.push_back(tele_object);
     }
 
@@ -90,7 +90,7 @@ void CTelekinesis<_Object>::UpdateSched()
     if (!active)
         return;
 
-    // обновить состояние объектов
+    // Г®ГЎГ­Г®ГўГЁГІГј Г±Г®Г±ГІГ®ГїГ­ГЁГҐ Г®ГЎГєГҐГЄГІГ®Гў
     for (u32 i = 0; i < objects.size(); i++)
     {
         CTelekineticObject* cur_obj = &objects[i];
@@ -98,14 +98,14 @@ void CTelekinesis<_Object>::UpdateSched()
         {
         case TS_Raise:
             if (cur_obj->check_height())
-                cur_obj->prepare_keep(); // начать удержание предмета
+                cur_obj->prepare_keep(); // Г­Г Г·Г ГІГј ГіГ¤ГҐГ°Г¦Г Г­ГЁГҐ ГЇГ°ГҐГ¤Г¬ГҐГІГ 
             break;
         case TS_Keep:
             if (cur_obj->time_keep_elapsed())
             {
                 cur_obj->release();
 
-                // удалить объект из массива
+                // ГіГ¤Г Г«ГЁГІГј Г®ГЎГєГҐГЄГІ ГЁГ§ Г¬Г Г±Г±ГЁГўГ 
                 if (objects.size() > 1)
                 {
                     if (i != (objects.size() - 1))

@@ -104,6 +104,7 @@ void CMonsterHome::setup(LPCSTR path_name, float min_radius, float max_radius, b
 
     m_aggressive = aggressive;
 }
+
 void CMonsterHome::setup(u32 lv_ID, float min_radius, float max_radius, bool aggressive, float middle_radius)
 {
     m_path = 0;
@@ -268,7 +269,6 @@ u32 CMonsterHome::get_place_in_max_home_to_direction(Fvector to_direction)
         m_dest_direction.x = m_home_point.x + m_res_dist * m_dest_direction.x;
         m_dest_direction.y = m_home_point.y + m_res_dist * m_dest_direction.y;
         m_dest_direction.z = m_home_point.z + m_res_dist * m_dest_direction.z;
-
     } while (!ai().level_graph().valid_vertex_position(m_dest_direction) && i <= 10);
 
     if (ai().level_graph().valid_vertex_position(m_dest_direction))

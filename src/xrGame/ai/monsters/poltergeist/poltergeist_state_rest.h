@@ -10,6 +10,7 @@ protected:
 
 public:
     CPoltergeistStateRest(_Object* obj) : inherited(obj) {}
+
     virtual void execute();
 };
 

@@ -25,8 +25,11 @@ bool disk_file_reader::make_data_packet(NET_Packet& packet, u32 chunk_size)
 };
 
 bool disk_file_reader::is_first_packet() { return !m_reader->tell(); }
+
 u32 disk_file_reader::size() { return m_reader->length(); }
+
 u32 disk_file_reader::tell() { return m_reader->tell(); }
+
 bool disk_file_reader::opened() const { return (m_reader != NULL); }
 
 // memory reader
@@ -34,6 +37,7 @@ memory_reader::memory_reader(u8* data_ptr, u32 data_size)
 {
     m_reader = xr_new<IReader>(static_cast<void*>(data_ptr), static_cast<int>(data_size));
 }
+
 memory_reader::~memory_reader() { xr_delete(m_reader); }
 
 bool memory_reader::make_data_packet(NET_Packet& packet, u32 chunk_size)
@@ -51,7 +55,9 @@ bool memory_reader::make_data_packet(NET_Packet& packet, u32 chunk_size)
 }
 
 bool memory_reader::is_first_packet() { return !m_reader->tell(); }
+
 u32 memory_reader::size() { return m_reader->length(); }
+
 u32 memory_reader::tell() { return m_reader->tell(); }
 
 bool memory_reader::opened() const { return (m_reader != NULL); }
@@ -143,8 +149,11 @@ bool buffers_vector_reader::is_first_packet()
     VERIFY(opened());
     return (m_current_buf_offs == 0) && (m_complete_buffers_size == 0);
 }
+
 u32 buffers_vector_reader::size() { return m_sum_size; }
+
 u32 buffers_vector_reader::tell() { return m_complete_buffers_size + m_current_buf_offs; }
+
 bool buffers_vector_reader::opened() const { return !m_buffers.empty(); }
 
 // memory_writer reader
@@ -178,8 +187,11 @@ bool memory_writer_reader::make_data_packet(NET_Packet& packet, u32 chunk_size)
 }
 
 bool memory_writer_reader::is_first_packet() { return !m_writer_pointer; }
+
 u32 memory_writer_reader::size() { return m_writer_max_size; }
+
 u32 memory_writer_reader::tell() { return m_writer_pointer; }
+
 bool memory_writer_reader::opened() const { return (m_writer_as_src != NULL); }
 
 filetransfer_node::filetransfer_node(

@@ -24,7 +24,9 @@ public:
         float real_angular_velocity;
 
         STravelParams() {}
+
         STravelParams(float l, float a) : linear_velocity(l), angular_velocity(a), real_angular_velocity(a) {}
+
         STravelParams(float l, float a, float ra) : linear_velocity(l), angular_velocity(a), real_angular_velocity(ra)
         {
         }
@@ -35,6 +37,7 @@ public:
         u32 index;
 
         STravelParamsIndex() {}
+
         STravelParamsIndex(float l, float a, u32 i) : STravelParams(l, a), index(i) {}
     };
 
@@ -86,12 +89,14 @@ private:
         eDirectionTypeFN = u32(1),
         eDirectionTypeSP = u32(0),
         eDirectionTypeSN = u32(2),
-        eDirectionTypePP = eDirectionTypeFP | eDirectionTypeSP, // both linear velocities are positive
-        eDirectionTypeNN = eDirectionTypeFN | eDirectionTypeSN, // both linear velocities are negative
-        eDirectionTypePN =
-            eDirectionTypeFP | eDirectionTypeSN, // the first linear velocity is positive, the second one - negative
-        eDirectionTypeNP =
-            eDirectionTypeFN | eDirectionTypeSP, // the first linear velocity is negative, the second one - positive
+        eDirectionTypePP = eDirectionTypeFP | eDirectionTypeSP,
+        // both linear velocities are positive
+        eDirectionTypeNN = eDirectionTypeFN | eDirectionTypeSN,
+        // both linear velocities are negative
+        eDirectionTypePN = eDirectionTypeFP | eDirectionTypeSN,
+        // the first linear velocity is positive, the second one - negative
+        eDirectionTypeNP = eDirectionTypeFN | eDirectionTypeSP,
+        // the first linear velocity is negative, the second one - positive
     };
 
 private:

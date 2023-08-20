@@ -39,7 +39,6 @@ public:
 
     u32 SetWarmupTime(u32 current_warmup_time, u32 current_time);
     void SetTimeLimit(u32 time_limit, u32 current_time);
-
 }; // end class CTAGameClCaptionsManager
 
 #endif // GAME_CL_CTA_CAPTIONS_MANAGER

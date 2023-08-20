@@ -6,7 +6,6 @@
 
 namespace mp_anticheat
 {
-
 extern char const* cd_info_secion;
 extern char const* cd_player_name_key;
 extern char const* cd_player_digest_key;
@@ -81,10 +80,10 @@ private:
     void timer_end();
 #else
     inline void timer_begin(LPCSTR comment) {}
+
     inline void timer_end() {}
 #endif
 }; // class configs_dumper
-
 } // namespace mp_anticheat
 
 #endif

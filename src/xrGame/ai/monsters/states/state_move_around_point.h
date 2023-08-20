@@ -12,6 +12,7 @@ class CStateMonsterMoveAroundPoint : public CState<_Object>
 
 public:
     CStateMonsterMoveAroundPoint(_Object* obj) : inherited(obj, &data) {}
+
     virtual ~CStateMonsterMoveAroundPoint() {}
 
     virtual void initialize();

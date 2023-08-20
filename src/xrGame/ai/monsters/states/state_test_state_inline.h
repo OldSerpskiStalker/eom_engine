@@ -63,6 +63,7 @@ CStateMonsterTestCoverAbstract::CStateMonsterTestCover(_Object* obj) : inherited
     add_state(eStateAttack_HideInCover, xr_new<CStateMonsterMoveToPointEx<_Object>>(obj));
     add_state(eStateAttack_CampInCover, xr_new<CStateMonsterCustomAction<_Object>>(obj));
 }
+
 TEMPLATE_SPECIALIZATION
 void CStateMonsterTestCoverAbstract::initialize()
 {
@@ -85,6 +86,7 @@ void CStateMonsterTestCoverAbstract::check_force_state()
         if (object->ai_location().level_vertex_id() != m_last_node)
             current_substate = u32(-1);
 }
+
 TEMPLATE_SPECIALIZATION
 void CStateMonsterTestCoverAbstract::reselect_state()
 {

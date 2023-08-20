@@ -24,6 +24,7 @@ int g_sv_tdm_iTeamKillLimit = 3;
 int g_sv_tdm_bTeamKillPunishment = TRUE;
 //-------------------------------------------------------
 BOOL game_sv_TeamDeathmatch::isFriendlyFireEnabled() { return (int(g_sv_tdm_fFriendlyFireModifier * 100.0f) > 0); };
+
 float game_sv_TeamDeathmatch::GetFriendlyFire()
 {
     return (int(g_sv_tdm_fFriendlyFireModifier * 100.0f) > 0) ? g_sv_tdm_fFriendlyFireModifier : 0.0f;
@@ -63,11 +64,13 @@ u8 game_sv_TeamDeathmatch::AutoTeam()
     struct TeamPlayersCalculator
     {
         u32 m_teams[2];
+
         TeamPlayersCalculator()
         {
             m_teams[0] = 0;
             m_teams[1] = 0;
         }
+
         void operator()(IClient* client)
         {
             xrClientData* l_pC = static_cast<xrClientData*>(client);
@@ -95,6 +98,7 @@ u32 game_sv_TeamDeathmatch::GetPlayersCountInTeams(u8 team)
     {
         u8 team;
         u32 count;
+
         void operator()(IClient* client)
         {
             xrClientData* tmp_client = static_cast<xrClientData*>(client);
@@ -123,11 +127,13 @@ struct lowest_player_functor // for autoteam balance
     s16 lowest_score;
     s16 MaxTeam;
     xrClientData* lowest_player;
+
     lowest_player_functor()
     {
         lowest_score = 32767;
         lowest_player = NULL;
     }
+
     void operator()(IClient* client)
     {
         xrClientData* l_pC = static_cast<xrClientData*>(client);
@@ -159,11 +165,13 @@ void game_sv_TeamDeathmatch::AutoBalanceTeams()
     struct team_counter_functor
     {
         u8 l_teams[2];
+
         team_counter_functor()
         {
             l_teams[0] = 0;
             l_teams[1] = 0;
         }
+
         void operator()(IClient* client)
         {
             xrClientData* l_pC = static_cast<xrClientData*>(client);
@@ -540,7 +548,9 @@ void game_sv_TeamDeathmatch::Update()
     break;
     };
 }
+
 extern INT g_sv_Skip_Winner_Waiting;
+
 bool game_sv_TeamDeathmatch::HasChampion() { return (GetTeamScore(0) != GetTeamScore(1) || g_sv_Skip_Winner_Waiting); }
 
 void game_sv_TeamDeathmatch::OnTimelimitExceed()
@@ -552,6 +562,7 @@ void game_sv_TeamDeathmatch::OnTimelimitExceed()
 
     OnDelayedRoundEnd(eRoundEnd_TimeLimit); //"TIME_limit"
 }
+
 void game_sv_TeamDeathmatch::OnFraglimitExceed()
 {
     u8 winning_team = (GetTeamScore(0) < GetTeamScore(1)) ? 1 : 0;
@@ -561,6 +572,7 @@ void game_sv_TeamDeathmatch::OnFraglimitExceed()
 
     OnDelayedRoundEnd(eRoundEnd_FragLimit); //"FRAG_limit"
 }
+
 //-----------------------------------------------
 void game_sv_TeamDeathmatch::ReadOptions(shared_str& options)
 {
@@ -576,6 +588,7 @@ void game_sv_TeamDeathmatch::ReadOptions(shared_str& options)
 }
 
 static bool g_bConsoleCommandsCreated_TDM = false;
+
 void game_sv_TeamDeathmatch::ConsoleCommands_Create(){};
 
 void game_sv_TeamDeathmatch::ConsoleCommands_Clear() { inherited::ConsoleCommands_Clear(); };

@@ -20,7 +20,7 @@
 void CSE_ALifeDynamicObject::on_spawn()
 {
 #ifdef DEBUG
-//	Msg			("[LSS] spawning object [%d][%d][%s][%s]",ID,ID_Parent,name(),name_replace());
+    //	Msg			("[LSS] spawning object [%d][%d][%s][%s]",ID,ID_Parent,name(),name_replace());
 #endif
 }
 
@@ -87,6 +87,9 @@ void CSE_ALifeDynamicObject::add_offline(
 
 bool CSE_ALifeDynamicObject::synchronize_location()
 {
+    if (!ai().level_graph().valid_vertex_id(m_tNodeID))
+        return false;
+
     if (!ai().level_graph().valid_vertex_position(o_Position) ||
         ai().level_graph().inside(ai().level_graph().vertex(m_tNodeID), o_Position))
         return (true);

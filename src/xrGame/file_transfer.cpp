@@ -10,13 +10,13 @@
 
 namespace file_transfer
 {
-
 void make_reject_packet(NET_Packet& packet, ClientID const& client)
 {
     packet.w_begin(M_FILE_TRANSFER);
     packet.w_u8(static_cast<u8>(receive_rejected));
     packet.w_u32(client.value());
 }
+
 void make_abort_packet(NET_Packet& packet, ClientID const& client)
 {
     packet.w_begin(M_FILE_TRANSFER);
@@ -42,8 +42,8 @@ server_site::~server_site()
     }
 }
 
-void server_site::stop_transfer_sessions(
-    buffer_vector<dst_src_pair_t> const& tsessions) // notifies sending_rejected_by_peer
+void server_site::stop_transfer_sessions(buffer_vector<dst_src_pair_t> const& tsessions)
+// notifies sending_rejected_by_peer
 {
     for (buffer_vector<dst_src_pair_t>::const_iterator i = tsessions.begin(), ie = tsessions.end(); i != ie; ++i)
     {
@@ -224,6 +224,7 @@ void server_site::start_transfer_file(u8* data_ptr, u32 const data_size, ClientI
         xr_new<filetransfer_node>(data_ptr, data_size, data_max_chunk_size, tstate_callback, user_param);
     m_transfers.insert(std::make_pair(std::make_pair(to_client, from_client), ftnode));
 }
+
 void server_site::start_transfer_file(buffer_vector<mutable_buffer_t>& vector_of_buffers, ClientID const& to_client,
     ClientID const& from_client, sending_state_callback_t& tstate_callback, u32 const user_param)
 {
@@ -317,6 +318,7 @@ bool server_site::is_transfer_active(ClientID const& to_client, ClientID const& 
         return false;
     return true;
 }
+
 bool server_site::is_receiving_active(ClientID const& from_client) const
 {
     receiving_sessions_t::const_iterator temp_iter = m_receivers.find(from_client);
@@ -378,6 +380,7 @@ void client_site::update_transfer()
         }
     }
 }
+
 void client_site::on_message(NET_Packet* packet)
 {
     ft_command_t command = static_cast<ft_command_t>(packet->r_u8());
@@ -447,6 +450,7 @@ void client_site::start_transfer_file(shared_str const& file_name, sending_state
         stop_transfer_file();
     }
 }
+
 void client_site::start_transfer_file(
     u8* data, u32 size, sending_state_callback_t& tstate_callback, u32 size_to_allocate)
 {
@@ -603,5 +607,4 @@ void client_site::dbg_update_statgraph()
     }
 }
 #endif
-
 } // namespace file_transfer

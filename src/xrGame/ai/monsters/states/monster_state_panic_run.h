@@ -7,6 +7,7 @@ class CStateMonsterPanicRun : public CState<_Object>
 
 public:
     CStateMonsterPanicRun(_Object* obj) : inherited(obj) {}
+
     virtual ~CStateMonsterPanicRun() {}
 
     virtual void initialize();

@@ -30,12 +30,15 @@ struct victims_table
     static u32 const header_count_size;
     typedef buffer_vector<shared_str> victims_table_t;
     victims_table_t& m_data;
+
     victims_table(victims_table_t& storage) : m_data(storage){};
+
     victims_table& operator=(victims_table const& other)
     {
         m_data = other.m_data;
         return *this;
     }
+
     u8 get_id_by_name(shared_str const& player_name) const;
     shared_str get_name_by_id(u8 id) const;
     bool add_name(shared_str const& player_name);
@@ -43,17 +46,21 @@ struct victims_table
     void net_save(NET_Packet* P);
     void net_load(NET_Packet* P);
 };
+
 struct bone_table
 {
     static u32 const header_count_size;
     typedef buffer_vector<std::pair<shared_str, s16>> bone_table_t;
     bone_table_t& m_data;
+
     bone_table(bone_table_t& storage) : m_data(storage){};
+
     bone_table& operator=(bone_table const& other)
     {
         m_data = other.m_data;
         return *this;
     }
+
     shared_str get_name_by_id(s16 id) const;
     bool add_bone(shared_str const& bone_name, s16 bone_id);
 
@@ -90,6 +97,7 @@ struct HitData
 DEF_VECTOR(HITS_VEC, HitData);
 
 #define MAX_BASKET 34
+
 struct Weapon_Statistic
 {
     static u32 const net_packet_size;
@@ -117,11 +125,13 @@ struct Weapon_Statistic
     void net_load(NET_Packet* P, victims_table const& vt, bone_table const& bt);
 
     bool FindHit(u32 BulletID, HITS_VEC_it& Hit_it);
+
     bool operator==(LPCSTR name)
     {
         int res = xr_strcmp(WName.c_str(), name);
         return res == 0;
     }
+
     //-----------------------------------------------------------
     void Write(FILE* pFile);
     void WriteLtx(CInifile& ini, LPCSTR sect);
@@ -165,6 +175,7 @@ struct Player_Statistic
         int res = xr_strcmp(PName.c_str(), name);
         return res == 0;
     }
+
     //-----------------------------------------------------------
     void Write(FILE* pFile);
     void WriteLtx(CInifile& ini, LPCSTR sect);
@@ -181,7 +192,9 @@ struct Bullet_Check_Request
     s16 BoneID;
     bool Result;
     bool Processed;
+
     Bullet_Check_Request() : BulletID(0), BoneID(0), Result(false), Processed(false){};
+
     Bullet_Check_Request(u32 ID, s16 BID) : BulletID(ID), BoneID(BID), Result(false), Processed(false){};
 };
 
@@ -197,6 +210,7 @@ struct Bullet_Check_Array
 
     bool operator==(u32 ID) { return ID == SenderID; }
     bool operator!=(u32 ID) { return ID != SenderID; }
+
     Bullet_Check_Array(u32 ID) : SenderID(ID)
     {
         Requests.clear();

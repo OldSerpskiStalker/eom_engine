@@ -14,7 +14,6 @@
 
 namespace debug
 {
-
 //-----------------------------------------------
 // text_tree output
 //-----------------------------------------------
@@ -77,7 +76,6 @@ struct texttree_log_helper
 {
     void operator()(const char* s, int num_siblings) { Msg(s); }
 };
-
 } // namespace detail
 
 void draw_text_tree(text_tree& tree,
@@ -188,5 +186,4 @@ void text_tree::prepare(int current_indent, int indent, Columns& columns)
         }
     }
 }
-
 } // namespace debug

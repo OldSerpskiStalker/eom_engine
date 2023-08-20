@@ -27,12 +27,14 @@ class CHM_Static
             x = _x;
             z = _z;
         }
+
         IC void clear()
         {
             for (u32 i = 0; i < dhm_precision; ++i)
                 for (u32 j = 0; j < dhm_precision; ++j)
                     data[i][j] = flt_min;
         }
+
         Slot()
         {
             clear();
@@ -40,6 +42,7 @@ class CHM_Static
             bReady = TRUE;
         }
     };
+
     struct Poly
     {
         Fvector v[3];

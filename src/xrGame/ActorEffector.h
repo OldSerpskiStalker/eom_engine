@@ -20,6 +20,7 @@ protected:
 
 public:
     CActorCameraManager() : inherited(false) {}
+
     virtual ~CActorCameraManager() {}
 
     IC void hud_camera_Matrix(Fmatrix& M)
@@ -44,6 +45,7 @@ protected:
 
 public:
     CEffectorController() : m_ce(NULL), m_pe(NULL) {}
+
     virtual ~CEffectorController();
 
     void SetPP(CEffectorPP* p) { m_pe = p; }
@@ -67,12 +69,15 @@ protected:
 public:
     bool m_bAbsolutePositioning;
     float m_fov;
+    float m_power;
 
     CAnimatorCamEffector();
     virtual ~CAnimatorCamEffector();
     void Start(LPCSTR fn);
     virtual BOOL ProcessCam(SCamEffectorInfo& info);
     void SetCyclic(bool b) { m_bCyclic = b; }
+    void SetPower(float p) { m_power = p; }
+    float GetPower() { return m_power; }
     virtual BOOL Valid();
     float GetAnimatorLength() { return fLifeTime; };
 
@@ -112,11 +117,13 @@ protected:
 
 public:
     CAnimatorCamLerpEffectorConst();
+
     void SetFactor(float v)
     {
         m_factor = v;
         clamp(m_factor, 0.0f, 1.0f);
     }
+
     float xr_stdcall GetFactor() { return m_factor; }
 };
 
@@ -176,4 +183,5 @@ public:
         float base_fov, float dest_fov);
     virtual BOOL ProcessCam(SCamEffectorInfo& info);
 };
+
 //////////////////////////////////////////////////////////////////////////

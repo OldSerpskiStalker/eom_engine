@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
+ï»¿////////////////////////////////////////////////////////////////////////////
 //	Module 		: ai_rat_templates.cpp
 //	Created 	: 23.07.2002
 //  Modified 	: 07.11.2002
@@ -237,13 +237,15 @@ Fvector CAI_Rat::calc_position()
     if (!m_bStraightForward)
     {
         if (tOffset.y > 1.0)
-        { // We're too low
+        {
+            // We're too low
             m_tHPB.y += fAT;
             if (m_tHPB.y > 0.8f)
                 m_tHPB.y = 0.8f;
         }
         else if (tOffset.y < -1.0)
-        { // We're too high
+        {
+            // We're too high
             m_tHPB.y -= fAT;
             if (m_tHPB.y < -0.8f)
                 m_tHPB.y = -0.8f;
@@ -299,12 +301,12 @@ Fvector CAI_Rat::calc_position()
     Fvector position_on_plane;
     P.project(position_on_plane, Position());
 
-    // íàõîäèì ïðîåêöèþ òî÷êè, ëåæàùåé íà âåêòîðå òåêóùåãî íàïðàâëåíèÿ
+    // Ã­Ã ÃµÃ®Ã¤Ã¨Ã¬ Ã¯Ã°Ã®Ã¥ÃªÃ¶Ã¨Ã¾ Ã²Ã®Ã·ÃªÃ¨, Ã«Ã¥Ã¦Ã Ã¹Ã¥Ã© Ã­Ã  Ã¢Ã¥ÃªÃ²Ã®Ã°Ã¥ Ã²Ã¥ÃªÃ³Ã¹Ã¥Ã£Ã® Ã­Ã Ã¯Ã°Ã Ã¢Ã«Ã¥Ã­Ã¨Ã¿
     Fvector dir_point, proj_point;
     dir_point.mad(position_on_plane, Direction(), 1.f);
     P.project(proj_point, dir_point);
 
-    // ïîëó÷àåì èñêîìûé âåêòîð íàïðàâëåíèÿ
+    // Ã¯Ã®Ã«Ã³Ã·Ã Ã¥Ã¬ Ã¨Ã±ÃªÃ®Ã¬Ã»Ã© Ã¢Ã¥ÃªÃ²Ã®Ã° Ã­Ã Ã¯Ã°Ã Ã¢Ã«Ã¥Ã­Ã¨Ã¿
     Fvector target_dir;
     target_dir.sub(proj_point, position_on_plane);
 

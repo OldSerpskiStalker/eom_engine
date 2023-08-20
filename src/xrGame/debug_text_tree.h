@@ -11,7 +11,6 @@
 
 namespace debug
 {
-
 class text_tree
 {
 public: // START INTERFACE
@@ -82,7 +81,6 @@ void draw_text_tree(text_tree& tree,
 void log_text_tree(text_tree& tree);
 
 #include "debug_text_tree_inline.h"
-
 } // namespace debug
 
 IC xr_string __cdecl make_xrstr(LPCSTR format, ...)

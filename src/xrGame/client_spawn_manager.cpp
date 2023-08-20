@@ -13,6 +13,7 @@
 #include "level.h"
 #include "gameobject.h"
 #include "script_game_object.h"
+#include "alife_object_registry.h"
 
 CClientSpawnManager::~CClientSpawnManager() { VERIFY(m_registry.empty()); }
 

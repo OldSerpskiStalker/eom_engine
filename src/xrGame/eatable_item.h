@@ -6,6 +6,7 @@
 #pragma once
 
 #include "inventory_item.h"
+#include "script_export_space.h"
 
 class CPhysicItem;
 class CEntityAlive;
@@ -51,4 +52,10 @@ public:
             m_iRemainingUses = value;
     };
     virtual float Weight() const;
+
+    DECLARE_SCRIPT_REGISTER_FUNCTION
 };
+
+add_to_type_list(CEatableItem)
+#undef script_type_list
+#define script_type_list save_type_list(CEatableItem)

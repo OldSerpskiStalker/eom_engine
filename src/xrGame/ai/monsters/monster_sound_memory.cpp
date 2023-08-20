@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "monster_sound_memory.h"
 #include "BaseMonster/base_monster.h"
 
@@ -42,6 +42,7 @@ CMonsterSoundMemory::CMonsterSoundMemory()
     m_time_help_sound = 0;
     m_help_node = u32(-1);
 }
+
 CMonsterSoundMemory::~CMonsterSoundMemory() {}
 
 void CMonsterSoundMemory::init_external(CBaseMonster* M, TTime mem_time)
@@ -59,7 +60,7 @@ void CMonsterSoundMemory::HearSound(const SoundElem& s)
     if ((s.type == MONSTER_WALKING) && !s.who)
         return;
 
-    // поиск в массиве звука
+    // ГЇГ®ГЁГ±ГЄ Гў Г¬Г Г±Г±ГЁГўГҐ Г§ГўГіГЄГ 
     xr_vector<SoundElem>::iterator it;
 
     bool b_sound_replaced = false;
@@ -103,7 +104,7 @@ void CMonsterSoundMemory::GetSound(SoundElem& s, bool& bDangerous)
 {
     VERIFY(!Sounds.empty());
 
-    // возврат самого опасного
+    // ГўГ®Г§ГўГ°Г ГІ Г±Г Г¬Г®ГЈГ® Г®ГЇГ Г±Г­Г®ГЈГ®
     s = GetSound();
 
     if (s.type > WEAPON_EMPTY_CLICKING)
@@ -128,15 +129,15 @@ struct pred_remove_nonactual_sounds
 
     bool operator()(const SoundElem& x)
     {
-        // удалить звуки от объектов, перешедших в оффлайн
+        // ГіГ¤Г Г«ГЁГІГј Г§ГўГіГЄГЁ Г®ГІ Г®ГЎГєГҐГЄГІГ®Гў, ГЇГҐГ°ГҐГёГҐГ¤ГёГЁГµ Гў Г®ГґГґГ«Г Г©Г­
         if (x.who && x.who->getDestroy())
             return true;
 
-        // удалить 'старые' звуки
+        // ГіГ¤Г Г«ГЁГІГј 'Г±ГІГ Г°Г»ГҐ' Г§ГўГіГЄГЁ
         if (x.time < new_time)
             return true;
 
-        // удалить звуки от неживых объектов
+        // ГіГ¤Г Г«ГЁГІГј Г§ГўГіГЄГЁ Г®ГІ Г­ГҐГ¦ГЁГўГ»Гµ Г®ГЎГєГҐГЄГІГ®Гў
         if (x.who)
         {
             const CEntityAlive* pE = smart_cast<const CEntityAlive*>(x.who);
@@ -150,12 +151,12 @@ struct pred_remove_nonactual_sounds
 
 void CMonsterSoundMemory::UpdateHearing()
 {
-    // удаление устаревших звуков
+    // ГіГ¤Г Г«ГҐГ­ГЁГҐ ГіГ±ГІГ Г°ГҐГўГёГЁГµ Г§ГўГіГЄГ®Гў
     Sounds.erase(
         std::remove_if(Sounds.begin(), Sounds.end(), pred_remove_nonactual_sounds(Device.dwTimeGlobal - time_memory)),
         Sounds.end());
 
-    // пересчитать value
+    // ГЇГҐГ°ГҐГ±Г·ГЁГІГ ГІГј value
     for (xr_vector<SoundElem>::iterator I = Sounds.begin(); I != Sounds.end(); ++I)
         I->CalcValue(Device.dwTimeGlobal, monster->Position());
 
@@ -201,7 +202,7 @@ struct pred_remove_relcase
 
 void CMonsterSoundMemory::remove_links(CObject* O)
 {
-    // удаление устаревших звуков
+    // ГіГ¤Г Г«ГҐГ­ГЁГҐ ГіГ±ГІГ Г°ГҐГўГёГЁГµ Г§ГўГіГЄГ®Гў
     Sounds.erase(std::remove_if(Sounds.begin(), Sounds.end(), pred_remove_relcase(O)), Sounds.end());
 }
 

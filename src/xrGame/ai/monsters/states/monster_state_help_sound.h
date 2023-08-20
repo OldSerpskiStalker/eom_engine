@@ -11,6 +11,7 @@ protected:
 
 public:
     CStateMonsterHearHelpSound(_Object* obj);
+
     virtual ~CStateMonsterHearHelpSound() {}
 
     virtual void reselect_state();

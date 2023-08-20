@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "game_sv_capture_the_artefact.h"
 #include "xrserver_objects_alife_monsters.h"
 #include "level.h"
@@ -63,6 +63,7 @@ u32 game_sv_CaptureTheArtefact::Get_ActivatedArtefactRet() { return g_sv_cta_act
 u32 game_sv_CaptureTheArtefact::Get_PlayerScoresDelayTime_msec() { return g_sv_cta_PlayerScoresDelayTime * 1000; };
 
 BOOL game_sv_CaptureTheArtefact::isFriendlyFireEnabled() { return (int(g_sv_tdm_fFriendlyFireModifier * 100.0f) > 0); };
+
 float game_sv_CaptureTheArtefact::GetFriendlyFire()
 {
     return (int(g_sv_tdm_fFriendlyFireModifier * 100.0f) > 0) ? g_sv_tdm_fFriendlyFireModifier : 0.0f;
@@ -71,6 +72,7 @@ int game_sv_CaptureTheArtefact::Get_TeamKillLimit() { return g_sv_tdm_iTeamKillL
 BOOL game_sv_CaptureTheArtefact::Get_TeamKillPunishment() { return g_sv_tdm_bTeamKillPunishment; };
 BOOL game_sv_CaptureTheArtefact::Get_FriendlyIndicators() { return g_sv_tdm_bFriendlyIndicators; };
 BOOL game_sv_CaptureTheArtefact::Get_FriendlyNames() { return g_sv_tdm_bFriendlyNames; };
+
 int game_sv_CaptureTheArtefact::Get_ReinforcementTime_msec()
 {
     return g_sv_ah_iReinforcementTime ? g_sv_ah_iReinforcementTime * 1000 : 1000;
@@ -139,8 +141,8 @@ void game_sv_CaptureTheArtefact::Update()
         break;
     case GAME_PHASE_PENDING:
         CheckStatisticsReady();
-        if (!roundStarted &&
-            Level().m_bGameConfigStarted) ////in case of starting server stage (net_start 1..6) we can't do restart ....
+        if (!roundStarted && Level().m_bGameConfigStarted)
+        ////in case of starting server stage (net_start 1..6) we can't do restart ....
         {
             if (CheckForAllPlayersReady())
             {
@@ -229,7 +231,9 @@ void game_sv_CaptureTheArtefact::SM_SwitchOnNextActivePlayer()
     {
         xrClientData* PossiblePlayers[MAX_PLAYERS_COUNT];
         u32 PPlayersCount;
+
         next_active_player_switcher() { PPlayersCount = 0; }
+
         void operator()(IClient* client)
         {
             xrClientData* l_pC = static_cast<xrClientData*>(client);
@@ -330,6 +334,7 @@ void game_sv_CaptureTheArtefact::net_Export_State(NET_Packet& P, ClientID id_to)
     P.w_u8(u8(m_bInWarmUp));
     P.w_s16(static_cast<s16>(GetTimeLimit()));
 }
+
 void game_sv_CaptureTheArtefact::net_Export_Update(NET_Packet& P, ClientID id_to, ClientID id)
 {
     inherited::net_Export_Update(P, id_to, id);
@@ -355,6 +360,7 @@ BOOL game_sv_CaptureTheArtefact::CheckForAllPlayersReady()
     {
         ClientID serverID;
         u32 ready;
+
         void operator()(IClient* client)
         {
             xrClientData* l_pC = static_cast<xrClientData*>(client);
@@ -417,6 +423,7 @@ void game_sv_CaptureTheArtefact::OnPlayerConnect(ClientID id_who)
 
     SetPlayersDefItems				(ps_who);*/
 }
+
 void game_sv_CaptureTheArtefact::OnPlayerConnectFinished(ClientID id_who)
 {
     inherited::OnPlayerConnectFinished(id_who);
@@ -611,6 +618,7 @@ void game_sv_CaptureTheArtefact::OnRoundStart()
     struct spectator_spawner
     {
         game_sv_CaptureTheArtefact* m_owner;
+
         void operator()(IClient* client)
         {
             // init
@@ -698,6 +706,7 @@ void game_sv_CaptureTheArtefact::BalanceTeams()
             l_teams[0] = 0;
             l_teams[1] = 0;
         }
+
         void operator()(IClient* client)
         {
             xrClientData* l_pC = static_cast<xrClientData*>(client);
@@ -744,6 +753,7 @@ void game_sv_CaptureTheArtefact::BalanceTeams()
             xrClientData* LowestPlayer;
             s16 LowestScore;
             s16 MaxTeam;
+
             lowest_player_searcher()
             {
                 LowestPlayer = NULL;
@@ -805,6 +815,7 @@ void game_sv_CaptureTheArtefact::OnRoundEnd()
     {
         game_sv_CaptureTheArtefact* m_owner;
         xrServer* m_server;
+
         void operator()(IClient* client)
         {
             xrClientData* l_pC = static_cast<xrClientData*>(client);
@@ -844,6 +855,7 @@ void game_sv_CaptureTheArtefact::OnPlayerSelectSkin(NET_Packet& P, ClientID send
     Px.w_s8(l_pC->ps->skin);
     m_server->SendTo(sender, Px, net_flags(TRUE, TRUE));
 }
+
 void game_sv_CaptureTheArtefact::OnPlayerSelectTeam(NET_Packet& P, ClientID sender)
 {
     xrClientData* l_pC = m_server->ID_to_client(sender);
@@ -862,6 +874,7 @@ void game_sv_CaptureTheArtefact::OnPlayerSelectTeam(NET_Packet& P, ClientID send
     if (prev_team != selectedTeam)
         KillPlayer(l_pC->ID, l_pC->ps->GameID);
 }
+
 void game_sv_CaptureTheArtefact::OnPlayerChangeTeam(game_PlayerState* playerState, s8 team)
 {
     VERIFY2(playerState, "game_PlayerState is NULL");
@@ -900,6 +913,7 @@ void game_sv_CaptureTheArtefact::OnPlayerChangeSkin(ClientID id_who, s8 skin)
     KillPlayer(id_who, ps_who->GameID);
     signal_Syncronize();
 }
+
 void game_sv_CaptureTheArtefact::OnPlayerSelectSpectator(NET_Packet& P, ClientID sender)
 {
     inherited::OnPlayerSelectSpectator(P, sender);
@@ -1219,19 +1233,19 @@ void game_sv_CaptureTheArtefact::LoadSkinsForTeam(const shared_str& caSection, T
     string256 SkinSingleName;
     string4096 Skins;
 
-    // Поле strSectionName должно содержать имя секции
+    // РџРѕР»Рµ strSectionName РґРѕР»Р¶РЅРѕ СЃРѕРґРµСЂР¶Р°С‚СЊ РёРјСЏ СЃРµРєС†РёРё
     VERIFY(xr_strcmp(caSection, ""));
 
     pTeamSkins->clear();
 
-    // Имя поля
+    // РРјСЏ РїРѕР»СЏ
     if (!pSettings->line_exist(caSection, "skins"))
         return;
 
-    // Читаем данные этого поля
+    // Р§РёС‚Р°РµРј РґР°РЅРЅС‹Рµ СЌС‚РѕРіРѕ РїРѕР»СЏ
     xr_strcpy(Skins, pSettings->r_string(caSection, "skins"));
     u32 count = _GetItemCount(Skins);
-    // теперь для каждое имя оружия, разделенные запятыми, заносим в массив
+    // С‚РµРїРµСЂСЊ РґР»СЏ РєР°Р¶РґРѕРµ РёРјСЏ РѕСЂСѓР¶РёСЏ, СЂР°Р·РґРµР»РµРЅРЅС‹Рµ Р·Р°РїСЏС‚С‹РјРё, Р·Р°РЅРѕСЃРёРј РІ РјР°СЃСЃРёРІ
     for (u32 i = 0; i < count; ++i)
     {
         _GetItem(Skins, i, SkinSingleName);
@@ -1244,19 +1258,19 @@ void game_sv_CaptureTheArtefact::LoadDefItemsForTeam(const shared_str& caSection
     string256 ItemName;
     string4096 DefItems;
 
-    // Поле strSectionName должно содержать имя секции
+    // РџРѕР»Рµ strSectionName РґРѕР»Р¶РЅРѕ СЃРѕРґРµСЂР¶Р°С‚СЊ РёРјСЏ СЃРµРєС†РёРё
     VERIFY(xr_strcmp(caSection, ""));
 
     pDefItems->clear();
 
-    // Имя поля
+    // РРјСЏ РїРѕР»СЏ
     if (!pSettings->line_exist(caSection, "default_items"))
         return;
 
-    // Читаем данные этого поля
+    // Р§РёС‚Р°РµРј РґР°РЅРЅС‹Рµ СЌС‚РѕРіРѕ РїРѕР»СЏ
     xr_strcpy(DefItems, pSettings->r_string(caSection, "default_items"));
     u32 count = _GetItemCount(DefItems);
-    // теперь для каждое имя оружия, разделенные запятыми, заносим в массив
+    // С‚РµРїРµСЂСЊ РґР»СЏ РєР°Р¶РґРѕРµ РёРјСЏ РѕСЂСѓР¶РёСЏ, СЂР°Р·РґРµР»РµРЅРЅС‹Рµ Р·Р°РїСЏС‚С‹РјРё, Р·Р°РЅРѕСЃРёРј РІ РјР°СЃСЃРёРІ
     for (u32 i = 0; i < count; ++i)
     {
         _GetItem(DefItems, i, ItemName);
@@ -1360,6 +1374,7 @@ bool game_sv_CaptureTheArtefact::OnKillResult(KILL_RES KillResult, game_PlayerSt
                 {
                     game_PlayerState* pKiller;
                     IClient* ServerClient;
+
                     bool operator()(IClient* client)
                     {
                         xrClientData* pCL = static_cast<xrClientData*>(client);
@@ -1976,8 +1991,8 @@ void game_sv_CaptureTheArtefact::MoveArtefactToPoint(CSE_ALifeItemArtefact* arte
     MovePacket.w_u8(1);
     MovePacket.w_u16(artefact->ID);
     MovePacket.w_vec3(toPoint.P);
-    m_server->SendBroadcast(BroadcastCID, MovePacket,
-        net_flags(TRUE, TRUE)); // and to all clients, because it will freeze and will not send updates...
+    m_server->SendBroadcast(BroadcastCID, MovePacket, net_flags(TRUE, TRUE));
+    // and to all clients, because it will freeze and will not send updates...
 }
 
 void game_sv_CaptureTheArtefact::MoveLifeActors()
@@ -1992,11 +2007,13 @@ void game_sv_CaptureTheArtefact::MoveLifeActors()
     {
         NET_Packet tempPacket;
         u8 lifeActors;
+
         players_teleporter()
         {
             tempPacket.write_start();
             lifeActors = 0;
         }
+
         void operator()(IClient* client)
         {
             xrClientData* l_pC = static_cast<xrClientData*>(client);
@@ -2053,11 +2070,13 @@ void game_sv_CaptureTheArtefact::RespawnClient(xrClientData const* pclient)
         signal_Syncronize();
     }
 }
+
 void game_sv_CaptureTheArtefact::RespawnDeadPlayers()
 {
     struct deadplayers_respawner
     {
         game_sv_CaptureTheArtefact* m_owner;
+
         void operator()(IClient* client)
         {
             xrClientData* l_pC = static_cast<xrClientData*>(client);

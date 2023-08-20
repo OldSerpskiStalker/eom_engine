@@ -2,7 +2,6 @@
 //	Modified by Axel DominatoR
 //	Last updated: 13/08/2015
 ////////////////////////////////////////////////////////////////////////////
-
 #include "stdafx.h"
 #include "ActorHelmet.h"
 #include "Actor.h"
@@ -10,6 +9,8 @@
 #include "Torch.h"
 #include "BoneProtections.h"
 #include "../Include/xrRender/Kinematics.h"
+#include "../xrEngine/xr_ioconsole.h"
+#include "../xrEngine/xr_ioc_cmd.h"
 // #include "CustomOutfit.h"
 
 CHelmet::CHelmet()
@@ -52,6 +53,7 @@ void CHelmet::Load(LPCSTR section)
     m_fPowerRestoreSpeed = READ_IF_EXISTS(pSettings, r_float, section, "power_restore_speed", 0.0f);
     m_fBleedingRestoreSpeed = READ_IF_EXISTS(pSettings, r_float, section, "bleeding_restore_speed", 0.0f);
     m_fPowerLoss = READ_IF_EXISTS(pSettings, r_float, section, "power_loss", 1.0f);
+    glass_texture = pSettings->r_string(section, "glass_texture");
     clamp(m_fPowerLoss, 0.0f, 1.0f);
 
     m_BonesProtectionSect = READ_IF_EXISTS(pSettings, r_string, section, "bones_koeff_protection", "");
@@ -59,6 +61,9 @@ void CHelmet::Load(LPCSTR section)
 
     // Added by Axel, to enable optional condition use on any item
     m_flags.set(FUsingCondition, READ_IF_EXISTS(pSettings, r_bool, section, "use_condition", TRUE));
+
+    // Added by FozeSt: if we have some piece of glass on our helmet, then we can render rain drops
+    m_bHasGlass = !!READ_IF_EXISTS(pSettings, r_bool, section, "has_glass", FALSE);
 }
 
 void CHelmet::ReloadBonesProtection()
@@ -150,6 +155,11 @@ float CHelmet::GetHitTypeProtection(ALife::EHitType hit_type, s16 element)
 
 float CHelmet::GetBoneArmor(s16 element) { return m_boneProtection->getBoneArmor(element); }
 
+// Lex Addon (correct by Suhar_) 9.07.2016		(begin)
+// Функция получения защиты кости
+float CHelmet::GetBoneProtection(s16 element) { return m_boneProtection->getBoneProtection(element); }
+// Lex Addon (correct by Suhar_) 9.07.2016		(end)
+
 bool CHelmet::install_upgrade_impl(LPCSTR section, bool test)
 {
     bool result = inherited::install_upgrade_impl(section, test);
@@ -216,54 +226,52 @@ void CHelmet::AddBonesProtection(LPCSTR bones_section)
         m_boneProtection->add(bones_section, smart_cast<IKinematics*>(parent->Visual()));
 }
 
+// Lex Addon (correct by Suhar_) 18.01.2017		(begin)
+// Функция вычисления урона, учитывающая характеристики шлема
+// Использован тот же принцип, что и в CustomOutfit.cpp
 float CHelmet::HitThroughArmor(float hit_power, s16 element, float ap, bool& add_wound, ALife::EHitType hit_type)
 {
     float NewHitPower = hit_power;
+    float ba = GetBoneArmor(element);
+    float bp = GetBoneProtection(element);
+    float condition = GetCondition();
+    float HitFracActor = -(1 - m_boneProtection->m_fHitFracActor) * condition + 1;
+    float protect = GetDefHitTypeProtection(hit_type);
     if (hit_type == ALife::eHitTypeFireWound)
     {
-        float ba = GetBoneArmor(element);
-        if (ba < 0.0f)
+        if (bp == 0)
             return NewHitPower;
-
-        float BoneArmor = ba * GetCondition();
-        if (/*!fis_zero(ba, EPS) && */ (ap > BoneArmor))
+        float BoneArmor = ba * condition;
+        if (ap > BoneArmor)
         {
-            // пул€ пробила бронь
-            if (!IsGameTypeSingle())
-            {
-                float hit_fraction = (ap - BoneArmor) / ap;
-                if (hit_fraction < m_boneProtection->m_fHitFracActor)
-                    hit_fraction = m_boneProtection->m_fHitFracActor;
-
-                NewHitPower *= hit_fraction;
-                NewHitPower *= m_boneProtection->getBoneProtection(element);
-            }
-
-            VERIFY(NewHitPower >= 0.0f);
+            float d_hit_power = (ap - BoneArmor) / ap;
+            if (d_hit_power < HitFracActor)
+                d_hit_power = HitFracActor;
+            NewHitPower *= d_hit_power;
+            NewHitPower /= bp;
         }
         else
         {
-            // пул€ Ќ≈ пробила бронь
-            NewHitPower *= m_boneProtection->m_fHitFracActor;
-            add_wound = false; // раны нет
+            NewHitPower *= HitFracActor;
+            NewHitPower += NewHitPower * (1 / bp - 1) * 0.05;
+            // add_wound = false;
         }
+        NewHitPower -= protect;
     }
     else
     {
-        float one = 0.1f;
-        if (hit_type == ALife::eHitTypeStrike || hit_type == ALife::eHitTypeWound ||
-            hit_type == ALife::eHitTypeWound_2 || hit_type == ALife::eHitTypeExplosion)
+        if (protect > 0.f)
         {
-            one = 1.0f;
+            float HitPart1 = (NewHitPower - protect) * 0.75;
+            if (HitPart1 < 0.f)
+                HitPart1 = 0.f;
+            float HitPart2 = NewHitPower * HitFracActor * 0.25;
+            NewHitPower = HitPart1 + HitPart2;
         }
-        float protect = GetDefHitTypeProtection(hit_type);
-        NewHitPower -= protect * one;
-
-        if (NewHitPower < 0.f)
-            NewHitPower = 0.f;
     }
-    // увеличить изношенность шлема
+    if (NewHitPower < 0.f)
+        NewHitPower = 0.f;
     Hit(hit_power, hit_type);
-
     return NewHitPower;
 }
+// Lex Addon (correct by Suhar_) 18.01.2017		(end)

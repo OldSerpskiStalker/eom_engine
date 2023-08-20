@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "pseudodog.h"
 #include "../../../../xrServerEntities/script_export_space.h"
 
@@ -11,7 +11,7 @@ class CPsyDog : public CAI_PseudoDog
     friend class CPsyDogPhantom;
     friend class CPsyDogAura;
 
-    // эффектор у актера при нахождении в поле
+    // ГЅГґГґГҐГЄГІГ®Г° Гі Г ГЄГІГҐГ°Г  ГЇГ°ГЁ Г­Г ГµГ®Г¦Г¤ГҐГ­ГЁГЁ Гў ГЇГ®Г«ГҐ
     CPsyDogAura* m_aura;
 
     // enemy transfered from phantom

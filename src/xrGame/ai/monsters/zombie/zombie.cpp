@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "zombie.h"
 #include "zombie_state_manager.h"
 #include "../../../profiler.h"
@@ -112,16 +112,16 @@ void CZombie::BoneCallback(CBoneInstance* B)
 
 void CZombie::vfAssignBones()
 {
-    // Установка callback на кости
+    // Г“Г±ГІГ Г­Г®ГўГЄГ  callback Г­Г  ГЄГ®Г±ГІГЁ
     bone_spine = &smart_cast<IKinematics*>(Visual())->LL_GetBoneInstance(
         smart_cast<IKinematics*>(Visual())->LL_BoneID("bip01_spine"));
     bone_head = &smart_cast<IKinematics*>(Visual())->LL_GetBoneInstance(
         smart_cast<IKinematics*>(Visual())->LL_BoneID("bip01_head"));
-    // if(!PPhysicsShell())//нельзя ставить колбеки, если создан физ шел - у него стоят свои колбеки!!!
+    // if(!PPhysicsShell())//Г­ГҐГ«ГјГ§Гї Г±ГІГ ГўГЁГІГј ГЄГ®Г«ГЎГҐГЄГЁ, ГҐГ±Г«ГЁ Г±Г®Г§Г¤Г Г­ ГґГЁГ§ ГёГҐГ« - Гі Г­ГҐГЈГ® Г±ГІГ®ГїГІ Г±ГўГ®ГЁ ГЄГ®Г«ГЎГҐГЄГЁ!!!
     //{
     // bone_spine->set_callback(BoneCallback,this);
     // bone_head->set_callback(BoneCallback,this);
-    //}
+    // }
 
     // Bones settings
     Bones.Reset();

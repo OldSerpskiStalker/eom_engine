@@ -57,6 +57,7 @@ void CPhantom::Load(LPCSTR section)
     if (snd_name && snd_name[0])
         m_state_data[stShoot].sound.create(snd_name, st_Effect, sg_SourceType);
 }
+
 BOOL CPhantom::net_Spawn(CSE_Abstract* DC)
 {
     CSE_ALifeCreaturePhantom* OBJ = smart_cast<CSE_ALifeCreaturePhantom*>(DC);
@@ -117,6 +118,7 @@ BOOL CPhantom::net_Spawn(CSE_Abstract* DC)
 
     return TRUE;
 }
+
 void CPhantom::net_Destroy()
 {
     inherited::net_Destroy();
@@ -139,6 +141,7 @@ void CPhantom::animation_end_callback(CBlend* B)
     case stShoot: phantom->SwitchToState(stIdle); break;
     }
 }
+
 //---------------------------------------------------------------------
 void CPhantom::SwitchToState_internal(EState new_state)
 {
@@ -241,7 +244,9 @@ void CPhantom::OnFlyState()
         }
     }
 }
+
 void CPhantom::OnDeadState() { UpdateFlyMedia(); }
+
 void CPhantom::UpdateFlyMedia()
 {
     if (!m_enemy)
@@ -260,6 +265,7 @@ void CPhantom::UpdateFlyMedia()
     if (m_state_data[stFly].sound._feedback())
         m_state_data[stFly].sound.set_position(xform.c);
 }
+
 //---------------------------------------------------------------------
 
 void CPhantom::shedule_Update(u32 DT)
@@ -281,6 +287,7 @@ void CPhantom::UpdateCL()
     if (m_TgtState != m_CurState)
         SwitchToState_internal(m_TgtState);
 }
+
 //---------------------------------------------------------------------
 // void CPhantom::Hit	(float P, Fvector &dir, CObject* who, s16 element,Fvector p_in_object_space, float impulse,
 // ALife::EHitType hit_type)
@@ -295,6 +302,7 @@ void CPhantom::Hit(SHit* pHDS)
         inherited::Hit(pHDS);
     }
 }
+
 //---------------------------------------------------------------------
 Fmatrix CPhantom::XFORM_center()
 {
@@ -354,10 +362,12 @@ void CPhantom::save(NET_Packet& output_packet)
 {
     // output_packet.w_s32	(s32(m_CurState));
 }
+
 void CPhantom::load(IReader& input_packet)
 {
     // SwitchToState	(EState(input_packet.r_s32()));
 }
+
 void CPhantom::net_Export(NET_Packet& P) // export to server
 {
     // export

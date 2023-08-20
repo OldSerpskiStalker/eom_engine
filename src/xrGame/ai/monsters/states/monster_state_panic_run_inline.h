@@ -25,6 +25,7 @@ void CStateMonsterPanicRunAbstract::execute()
     object->path().set_retreat_from_point(object->EnemyMan.get_enemy_position());
     object->path().set_generic_parameters();
 }
+
 TEMPLATE_SPECIALIZATION
 bool CStateMonsterPanicRunAbstract::check_completion()
 {

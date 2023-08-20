@@ -3,6 +3,7 @@
 #include "game_cl_mp.h"
 #include "UIGameCTA.h"
 #include "game_cl_capture_the_artefact_captions_manager.h"
+
 /// This class describes the client part of "Capture The Artefact" game mode.
 class game_cl_CaptureTheArtefact : public game_cl_mp
 {

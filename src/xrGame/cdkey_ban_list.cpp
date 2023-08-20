@@ -3,6 +3,7 @@
 #include "object_broker.h"
 
 cdkey_ban_list::cdkey_ban_list() {}
+
 cdkey_ban_list::~cdkey_ban_list()
 {
     save();
@@ -31,6 +32,7 @@ void cdkey_ban_list::load()
     }
     erase_expired_ban_items();
 }
+
 void cdkey_ban_list::save()
 {
     string_path banlist_file;
@@ -278,6 +280,7 @@ void cdkey_ban_list::erase_expired_ban_items()
     struct expire_searcher_predicate
     {
         time_t current_time;
+
         bool operator()(banned_client* bclient)
         {
             if (bclient->ban_end_time < current_time)

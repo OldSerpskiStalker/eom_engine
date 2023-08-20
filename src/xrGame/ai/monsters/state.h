@@ -32,6 +32,7 @@ public:
     virtual bool check_start_conditions() { return true; }
 
     virtual void reselect_state() {}
+
     virtual void check_force_state() {}
 
     CSState* get_state(u32 state_id);
@@ -43,7 +44,7 @@ public:
 
     virtual bool check_control_start_conditions(ControlCom::EControlType type);
 
-// Lain: added
+    // Lain: added
 #ifdef DEBUG
     virtual void add_debug_info(debug::text_tree& root_s);
 #endif
@@ -76,11 +77,14 @@ private:
 template <typename _Object>
 class CStateMove : public CState<_Object>
 {
+protected:
     typedef CState<_Object> inherited;
 
 public:
     CStateMove(_Object* obj, void* data = 0) : inherited(obj, data) {}
+
     virtual ~CStateMove() {}
+
     virtual void initialize()
     {
         inherited::initialize();

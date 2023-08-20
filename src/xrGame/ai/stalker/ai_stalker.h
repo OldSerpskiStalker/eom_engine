@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
+п»ї////////////////////////////////////////////////////////////////////////////
 //	Module 		: ai_stalker.h
 //	Created 	: 25.02.2003
 //  Modified 	: 25.02.2003
@@ -202,6 +202,9 @@ public:
     virtual void PHHit(SHit& H);
     virtual bool feel_vision_isRelevant(CObject* who);
     virtual float Radius() const;
+
+    virtual void ChangeVisual(shared_str NewVisual);
+
 #ifdef DEBUG
     virtual void OnHUDDraw(CCustomHUD* hud);
     virtual void OnRender();
@@ -232,10 +235,10 @@ public:
     virtual bool bfAssignAnimation(CScriptEntityAction* tpEntityAction);
 
     // physics
-    virtual u16 PHGetSyncItemsNumber() { return inherited ::PHGetSyncItemsNumber(); }
-    virtual CPHSynchronize* PHGetSyncItem(u16 item) { return inherited ::PHGetSyncItem(item); }
-    virtual void PHUnFreeze() { return inherited ::PHUnFreeze(); }
-    virtual void PHFreeze() { return inherited ::PHFreeze(); }
+    virtual u16 PHGetSyncItemsNumber() { return inherited::PHGetSyncItemsNumber(); }
+    virtual CPHSynchronize* PHGetSyncItem(u16 item) { return inherited::PHGetSyncItem(item); }
+    virtual void PHUnFreeze() { return inherited::PHUnFreeze(); }
+    virtual void PHFreeze() { return inherited::PHFreeze(); }
 
     // miscellanious functions
     void DropItemSendMessage(CObject* O);
@@ -296,8 +299,8 @@ public:
     virtual bool feel_touch_contact(CObject* O);
     virtual bool feel_touch_on_contact(CObject* O);
 
-    // флаги, какие действия совершал актер по отношению к сталкеру
-    //(помог, атаковал и т.д.)
+    // ГґГ«Г ГЈГЁ, ГЄГ ГЄГЁГҐ Г¤ГҐГ©Г±ГІГўГЁГї Г±Г®ГўГҐГ°ГёГ Г« Г ГЄГІГҐГ° ГЇГ® Г®ГІГ­Г®ГёГҐГ­ГЁГѕ ГЄ Г±ГІГ Г«ГЄГҐГ°Гі
+    //(ГЇГ®Г¬Г®ГЈ, Г ГІГ ГЄГ®ГўГ Г« ГЁ ГІ.Г¤.)
     Flags32 m_actor_relation_flags;
 
     // ALife
@@ -821,6 +824,7 @@ private:
 public:
     DECLARE_SCRIPT_REGISTER_FUNCTION
 };
+
 add_to_type_list(CAI_Stalker)
 #undef script_type_list
 #define script_type_list save_type_list(CAI_Stalker)

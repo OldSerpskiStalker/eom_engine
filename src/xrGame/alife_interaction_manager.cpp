@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
+ï»¿////////////////////////////////////////////////////////////////////////////
 //	Module 		: alife_communication_manager.cpp
 //	Created 	: 03.09.2003
 //  Modified 	: 14.05.2004
@@ -8,13 +8,12 @@
 
 #include "stdafx.h"
 #include "alife_interaction_manager.h"
+
 /**
 #include "xrServer_Objects_ALife_Monsters.h"
 #include "alife_graph_registry.h"
 #include "alife_time_manager.h"
-
 using namespace ALife;
-
 /**/
 CALifeInteractionManager::CALifeInteractionManager(xrServer* server, LPCSTR section)
     : CALifeCombatManager(server, section), CALifeCommunicationManager(server, section),
@@ -31,12 +30,10 @@ CALifeInteractionManager::CALifeInteractionManager(xrServer* server, LPCSTR sect
 CALifeInteractionManager::~CALifeInteractionManager()
 {
 }
-
 void CALifeInteractionManager::check_for_interaction(CSE_ALifeSchedulable *tpALifeSchedulable)
 {
     if (!tpALifeSchedulable->bfActive())
         return;
-
     CSE_ALifeDynamicObject		*l_tpALifeDynamicObject = smart_cast<CSE_ALifeDynamicObject*>(tpALifeSchedulable);
     R_ASSERT2					(l_tpALifeDynamicObject,"Unknown schedulable object class");
     GameGraph::_GRAPH_ID		l_tGraphID = l_tpALifeDynamicObject->m_tGraphID;
@@ -47,7 +44,6 @@ void CALifeInteractionManager::check_for_interaction(CSE_ALifeSchedulable *tpALi
     for ( ; I != E; ++I)
         check_for_interaction	(tpALifeSchedulable,(*I).vertex_id());
 }
-
 class CCheckForInteractionPredicate {
 public:
     CALifeInteractionManager	*	manager;
@@ -57,7 +53,6 @@ public:
     mutable bool					l_bMutualDetection;
     mutable CSE_ALifeHumanAbstract	*l_tpALifeHumanAbstract;
     mutable CSE_ALifeMonsterAbstract*l_tpALifeMonsterAbstract;
-
     IC	CCheckForInteractionPredicate(CALifeInteractionManager *manager, CSE_ALifeSchedulable *tpALifeSchedulable,
 GameGraph::_GRAPH_ID tGraphID) : manager(manager), tpALifeSchedulable(tpALifeSchedulable), tGraphID(tGraphID)
     {
@@ -65,32 +60,24 @@ GameGraph::_GRAPH_ID tGraphID) : manager(manager), tpALifeSchedulable(tpALifeSch
         l_tpALifeMonsterAbstract= smart_cast<CSE_ALifeMonsterAbstract*>(tpALifeSchedulable);
         manager->vfFillCombatGroup	(tpALifeSchedulable,0);
     }
-
     IC	bool operator()	(CALifeGraphRegistry::OBJECT_REGISTRY::_iterator &I, u64 counter, bool) const
     {
         if (counter == (*I).second->m_switch_counter)
             return				(false);
         return					(!manager->m_tpaCombatGroups[0].empty());
     }
-
     IC	void operator()	(CALifeGraphRegistry::OBJECT_REGISTRY::_iterator &I, u64 counter) const
     {
         (*I).second->m_switch_counter = counter;
-
         VERIFY					(!manager->m_tpaCombatGroups[0].empty());
-
         if ((*I).first == tpALifeSchedulable->base()->ID)
             return;
-
         CSE_ALifeSchedulable	*l_tpALifeSchedulable = smart_cast<CSE_ALifeSchedulable*>((*I).second);
         if (!l_tpALifeSchedulable)
             return;
-
         if (!manager->bfCheckForInteraction(tpALifeSchedulable,l_tpALifeSchedulable,l_iGroupIndex,l_bMutualDetection))
             return;
-
         manager->vfFillCombatGroup		(l_tpALifeSchedulable,1);
-
         switch (manager->m_tpaCombatObjects[l_iGroupIndex]->tfGetActionType(manager->m_tpaCombatObjects[l_iGroupIndex ^
 1],l_iGroupIndex,l_bMutualDetection)) { case eMeetActionTypeAttack : { #ifdef DEBUG if (psAI_Flags.test(aiALife)) {
                     Msg("[LSS] %s started combat versus
@@ -110,7 +97,6 @@ GameGraph::_GRAPH_ID tGraphID) : manager(manager), tpALifeSchedulable(tpALifeSch
                         }
 #endif
                         manager->vfPerformAttackAction(l_iGroupIndex);
-
                         l_bDoNotContinue = false;
                     }
                     else {
@@ -143,9 +129,7 @@ GameGraph::_GRAPH_ID tGraphID) : manager(manager), tpALifeSchedulable(tpALifeSch
                         }
 #endif
                     }
-
                     l_iGroupIndex		^= 1;
-
                     if (manager->m_tpaCombatGroups[l_iGroupIndex].empty()) {
 #ifdef DEBUG
                         if (psAI_Flags.test(aiALife)) {
@@ -166,10 +150,10 @@ GameGraph::_GRAPH_ID tGraphID) : manager(manager), tpALifeSchedulable(tpALifeSch
                 break;
             }
             case eMeetActionTypeInteract : {
-                R_ASSERT2				(l_tpALifeHumanAbstract,"Non-human objects ñannot communicate with each other");
+                R_ASSERT2				(l_tpALifeHumanAbstract,"Non-human objects Ã±annot communicate with each other");
                 CSE_ALifeHumanAbstract	*l_tpALifeHumanAbstract2 =
 smart_cast<CSE_ALifeHumanAbstract*>(l_tpALifeSchedulable);
-                R_ASSERT2				(l_tpALifeHumanAbstract2,"Non-human objects ñannot communicate with each
+                R_ASSERT2				(l_tpALifeHumanAbstract2,"Non-human objects Ã±annot communicate with each
 other"); #ifdef DEBUG if (psAI_Flags.test(aiALife)) { Msg					("[LSS] %s interacted with
 %s",manager->m_tpaCombatObjects[l_iGroupIndex]->base()->name_replace(),manager->m_tpaCombatObjects[l_iGroupIndex ^
 1]->base()->name_replace());
@@ -198,7 +182,6 @@ combat",manager->m_tpaCombatObjects[l_iGroupIndex]->base()->name_replace());
         }
     }
 };
-
 void CALifeInteractionManager::check_for_interaction(CSE_ALifeSchedulable *tpALifeSchedulable, GameGraph::_GRAPH_ID
 tGraphID)
 {

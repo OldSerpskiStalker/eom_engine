@@ -179,6 +179,7 @@ void game_sv_Deathmatch::OnRoundEnd()
         struct spectator_spawner
         {
             game_sv_mp* m_owner;
+
             void operator()(IClient* client)
             {
                 xrClientData* l_pC = static_cast<xrClientData*>(client);
@@ -374,11 +375,13 @@ game_PlayerState* game_sv_Deathmatch::GetWinningPlayer()
     {
         s16 MaxFrags;
         game_PlayerState* res;
+
         winner_searcher()
         {
             res = NULL;
             MaxFrags = -10000;
         }
+
         void operator()(IClient* client)
         {
             xrClientData* l_pC = static_cast<xrClientData*>(client);
@@ -415,6 +418,7 @@ void game_sv_Deathmatch::OnTimelimitExceed()
     OnPlayerScores();
     // OnRoundEnd();
 }
+
 void game_sv_Deathmatch::OnFraglimitExceed()
 {
     OnDelayedRoundEnd(eRoundEnd_FragLimit);
@@ -423,6 +427,7 @@ void game_sv_Deathmatch::OnFraglimitExceed()
 }
 
 #include "UIGameDM.h"
+
 void game_sv_Deathmatch::Update()
 {
     inherited::Update();
@@ -572,6 +577,7 @@ void game_sv_Deathmatch::SM_SwitchOnNextActivePlayer()
     {
         xrClientData* PossiblePlayers[MAX_PLAYERS_COUNT];
         u32 PPlayersCount;
+
         next_active_player_switcher() { PPlayersCount = 0; }
 
         void operator()(IClient* client)
@@ -611,7 +617,7 @@ void game_sv_Deathmatch::SM_SwitchOnNextActivePlayer()
     SM_SwitchOnPlayer(pNewObject);
 };
 
-#include "WeaponHUD.h"
+// #include "WeaponHUD.h"
 
 void game_sv_Deathmatch::net_Relcase(CObject* O)
 {
@@ -662,6 +668,7 @@ BOOL game_sv_Deathmatch::AllPlayers_Ready()
     {
         u32 ready;
         ClientID serverClientID;
+
         ready_counter() { ready = 0; }
 
         void operator()(IClient* client)
@@ -1366,6 +1373,7 @@ void game_sv_Deathmatch::OnTeamScore(u32 Team, bool Minor)
         TeamStruct* pTeam;
         u32 Team;
         bool Minor;
+
         void operator()(IClient* client)
         {
             xrClientData* l_pC = static_cast<xrClientData*>(client);
@@ -1713,8 +1721,8 @@ BOOL game_sv_Deathmatch::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)
                 // destroy the BAG
                 NET_Packet P;
                 u_EventGen(P, GE_DESTROY, e_what->ID);
-                m_server->OnMessageSync(
-                    P, m_server->GetServerClient()->ID); // m_server->OnMessage(P, m_server->GetServerClient()->ID);
+                m_server->OnMessageSync(P, m_server->GetServerClient()->ID);
+                // m_server->OnMessage(P, m_server->GetServerClient()->ID);
                 //-------------------------------
 
                 game_PlayerState* pKiller = get_eid(eid_who);
@@ -1870,6 +1878,7 @@ void game_sv_Deathmatch::check_InvinciblePlayers()
     struct invinvible_controller
     {
         game_sv_Deathmatch* m_owner;
+
         void operator()(IClient* client)
         {
             xrClientData* l_pC = static_cast<xrClientData*>(client);
@@ -1913,6 +1922,7 @@ void game_sv_Deathmatch::RespawnPlayer(ClientID id_who, bool NoSpectator)
 }
 
 INT G_DELAYED_ROUND_TIME = 7;
+
 void game_sv_Deathmatch::OnDelayedRoundEnd(ERoundEnd_Result reason)
 {
     DumpRoundStatisticsAsync();
@@ -1935,6 +1945,7 @@ void game_sv_Deathmatch::check_ForceRespawn()
     struct respawn_checker
     {
         game_sv_Deathmatch* m_owner;
+
         void operator()(IClient* client)
         {
             xrClientData* l_pC = static_cast<xrClientData*>(client);
@@ -1963,6 +1974,7 @@ void game_sv_Deathmatch::check_ForceRespawn()
 };
 
 INT g_sv_Skip_Winner_Waiting = 0;
+
 bool game_sv_Deathmatch::HasChampion()
 {
     struct champion_searcher
@@ -1970,6 +1982,7 @@ bool game_sv_Deathmatch::HasChampion()
         s16 MaxFragsMin;
         s16 MaxFragsCurr;
         u32 champions_count;
+
         champion_searcher()
         {
             MaxFragsMin = -100;
@@ -2181,6 +2194,7 @@ void game_sv_Deathmatch::ReadOptions(shared_str& options)
 };
 
 static bool g_bConsoleCommandsCreated_DM = false;
+
 void game_sv_Deathmatch::ConsoleCommands_Create(){};
 
 void game_sv_Deathmatch::ConsoleCommands_Clear(){};

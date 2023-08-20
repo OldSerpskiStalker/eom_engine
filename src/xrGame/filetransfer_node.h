@@ -6,11 +6,11 @@
 
 namespace file_transfer
 {
-
 class file_reader : private boost::noncopyable
 {
 public:
     file_reader(){};
+
     virtual ~file_reader(){};
 
     virtual bool make_data_packet(NET_Packet& packet, u32 chunk_size) = 0;
@@ -122,7 +122,6 @@ public:
     // inline	IReader*			get_reader		() { return m_reader; };
     inline u32 const get_chunk_size() const { return m_chunk_size; };
 }; // class filetransfer_node
-
 } // namespace file_transfer
 
 #endif // #ifndef FILETRANSFER_NODE

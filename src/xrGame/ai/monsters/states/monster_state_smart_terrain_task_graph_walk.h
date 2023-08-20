@@ -10,6 +10,7 @@ class CStateMonsterSmartTerrainTaskGraphWalk : public CStateMove<_Object>
 
 public:
     CStateMonsterSmartTerrainTaskGraphWalk(_Object* obj) : inherited(obj) {}
+
     virtual void initialize();
     virtual void execute();
     virtual bool check_start_conditions();

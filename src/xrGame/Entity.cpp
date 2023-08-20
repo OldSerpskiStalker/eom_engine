@@ -17,6 +17,7 @@
 #include "ai_space.h"
 #include "alife_simulator.h"
 #include "alife_time_manager.h"
+#include "memory_space.h"
 
 #define BODY_REMOVE_TIME 600000
 
@@ -284,13 +285,14 @@ void CEntity::KillEntity(u16 whoID, BOOL bypass_actor_check /*AVO: added for act
         }
 #endif
     }
-    /*else
-    {
-        if (m_killer_id != ALife::_OBJECT_ID(-1))
-            return;
-    } //*/
+    else
+        /*    {
+                if (m_killer_id != ALife::_OBJECT_ID(-1))
+                    return;
+            }
+        */
 
-    m_killer_id = whoID;
+        m_killer_id = whoID;
 
     set_death_time();
 

@@ -46,7 +46,6 @@ private:
     Fvector m_predicted_enemy_velocity;
     TTime m_last_prediction_time;
     Fvector m_last_update_enemy_pos;
-
 }; // class position_prediction
 
 #endif // #ifndef POSITION_PREDICTION_H_INCLUDED
