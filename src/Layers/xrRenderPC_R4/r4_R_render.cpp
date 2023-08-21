@@ -240,7 +240,7 @@ void CRender::Render()
 
     // Configure
     RImplementation.o.distortion = FALSE; // disable distorion
-    Fcolor sun_color = ((light*)Lights.sun_adapted._get())->color;
+    Fcolor sun_color = ((light*)Lights.sun._get())->color;
     BOOL bSUN = ps_r2_ls_flags.test(R2FLAG_SUN) && (u_diffuse2s(sun_color.r, sun_color.g, sun_color.b) > EPS);
     if (o.sunstatic)
         bSUN = FALSE;
@@ -286,24 +286,21 @@ void CRender::Render()
     //*******
     // Sync point
     Device.Statistic->RenderDUMP_Wait_S.Begin();
-    if (1)
+    /*if (1)
     {
-        CTimer T;
-        T.Start();
-        BOOL result = FALSE;
-        HRESULT hr = S_FALSE;
-        // while	((hr=q_sync_point[q_sync_count]->GetData	(&result,sizeof(result),D3DGETDATA_FLUSH))==S_FALSE) {
-        while ((hr = GetData(q_sync_point[q_sync_count], &result, sizeof(result))) == S_FALSE)
+        CTimer	T;							T.Start	();
+        BOOL	result						= FALSE;
+        HRESULT	hr							= S_FALSE;
+        //while	((hr=q_sync_point[q_sync_count]->GetData	(&result,sizeof(result),D3DGETDATA_FLUSH))==S_FALSE) {
+        while	((hr=GetData (q_sync_point[q_sync_count], &result,sizeof(result)))==S_FALSE)
         {
-            if (!SwitchToThread())
-                Sleep(ps_r2_wait_sleep);
-            if (T.GetElapsed_ms() > 500)
-            {
-                result = FALSE;
+            if (!SwitchToThread())			Sleep(ps_r2_wait_sleep);
+            if (T.GetElapsed_ms() > 500)	{
+                result	= FALSE;
                 break;
             }
         }
-    }
+    }*/
     Device.Statistic->RenderDUMP_Wait_S.End();
     q_sync_count = (q_sync_count + 1) % HW.Caps.iGPUNum;
     // CHK_DX										(q_sync_point[q_sync_count]->Issue(D3DISSUE_END));
@@ -520,6 +517,7 @@ void CRender::Render()
         RCache.set_CullMode(CULL_CCW);
         RCache.set_ColorWriteEnable();
         RImplementation.r_dsgraph_render_emissive();
+        RImplementation.r_dsgraph_render_hud_emissive();
     }
 
     // Lighting, non dependant on OCCQ
@@ -562,6 +560,7 @@ void CRender::render_forward()
         r_dsgraph_render_graph(1); // normal level, secondary priority
         PortalTraverser.fade_render(); // faded-portals
         r_dsgraph_render_sorted(); // strict-sorted geoms
+        r_dsgraph_render_hud_sorted(); // hud sorted
         g_pGamePersistent->Environment().RenderLast(); // rain/thunder-bolts
     }
 

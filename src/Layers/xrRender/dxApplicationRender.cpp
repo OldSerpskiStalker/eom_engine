@@ -11,8 +11,8 @@ void dxApplicationRender::Copy(IApplicationRender& _in) { *this = *(dxApplicatio
 void dxApplicationRender::LoadBegin()
 {
     ll_hGeom.create(FVF::F_TL, RCache.Vertex.Buffer(), RCache.QuadIB);
-    sh_progress.create("hud\\default", "ui\\ui_actor_loadgame_screen");
-    hLevelLogo_Add.create("hud\\default", "ui\\ui_actor_widescreen_sidepanels.dds");
+    sh_progress.create("hud\\default", "ui\\ui_load");
+    hLevelLogo_Add.create("hud\\default", "ui\\ui_ingame2_back_add2_w.tga");
 
     ll_hGeom2.create(FVF::F_TL, RCache.Vertex.Buffer(), NULL);
 }
@@ -85,22 +85,80 @@ void dxApplicationRender::load_draw_internal(CApplication& owner)
     else
         back_offset.set(0.0f, 0.0f);
 
-    // progress bar
-
-    back_tex_size.set(506, 4);
-    back_size.set(506, 4);
+    back_tex_size.set(1024, 768);
+    back_size.set(1024, 768);
     if (b_ws)
         back_size.x *= ws_k; // ws
 
-    back_tex_coords.lt.set(0, 772);
+    back_tex_coords.lt.set(0, 0);
     back_tex_coords.rb.add(back_tex_coords.lt, back_tex_size);
 
-    back_coords.lt.set(260, 599);
+    back_coords.lt.set(offs, offs);
+    back_coords.lt.add(back_offset);
+    back_coords.rb.add(back_coords.lt, back_size);
+
+    back_coords.lt.mul(k);
+    back_coords.rb.mul(k);
+    draw_face(sh_progress, back_coords, back_tex_coords, tsz);
+
+    if (b_ws) // draw additional frames (left&right)
+    {
+        // left
+        back_size.set(ws_w * ws_k, 768.0f);
+
+        if (b_16x9)
+        {
+            back_tex_coords.lt.set(682, 0);
+            back_tex_coords.rb.set(850, 768);
+        }
+        else
+        {
+            back_tex_coords.lt.set(748, 0);
+            back_tex_coords.rb.set(850, 768);
+        }
+        back_coords.lt.set(offs, offs);
+        back_coords.rb.add(back_coords.lt, back_size);
+        back_coords.lt.mul(k);
+        back_coords.rb.mul(k);
+
+        draw_face(hLevelLogo_Add, back_coords, back_tex_coords, tsz);
+
+        // right
+        if (b_16x9)
+        {
+            back_tex_coords.lt.set(850, 0);
+            back_tex_coords.rb.set(1018, 768);
+        }
+        else
+        {
+            back_tex_coords.lt.set(850, 0);
+            back_tex_coords.rb.set(952, 768);
+        }
+
+        back_coords.lt.set(1024.0f - back_size.x + offs, offs);
+        back_coords.rb.add(back_coords.lt, back_size);
+        back_coords.lt.mul(k);
+        back_coords.rb.mul(k);
+
+        draw_face(hLevelLogo_Add, back_coords, back_tex_coords, tsz);
+    }
+    // progress bar
+
+    back_tex_size.set(268, 37);
+    back_size.set(268, 37);
+    if (b_ws)
+        back_size.x *= ws_k; // ws
+
+    back_tex_coords.lt.set(0, 768);
+    back_tex_coords.rb.add(back_tex_coords.lt, back_tex_size);
+
+    back_coords.lt.set(379, 726);
     if (b_ws)
         back_coords.lt.x *= ws_k;
     back_coords.lt.add(back_offset);
 
     back_coords.rb.add(back_coords.lt, back_size);
+    //
     back_coords.lt.mul(k);
     back_coords.rb.mul(k);
 
@@ -136,87 +194,19 @@ void dxApplicationRender::load_draw_internal(CApplication& owner)
     RCache.set_Geometry(ll_hGeom2);
     RCache.Render(D3DPT_TRIANGLESTRIP, Offset, 2 * v_cnt);
 
-    // background picture
-
-    back_tex_size.set(1024, 768);
-    back_size.set(1024, 768);
-    if (b_ws)
-        back_size.x *= ws_k; // ws
-
-    back_tex_coords.lt.set(0, 0);
-    back_tex_coords.rb.add(back_tex_coords.lt, back_tex_size);
-
-    back_coords.lt.set(offs, offs);
-    back_coords.lt.add(back_offset);
-    back_coords.rb.add(back_coords.lt, back_size);
-
-    back_coords.lt.mul(k);
-    back_coords.rb.mul(k);
-    draw_face(sh_progress, back_coords, back_tex_coords, tsz);
-
-    if (b_ws) // draw additional frames (left&right)
-    {
-        // left
-        back_size.set(ws_w * ws_k, 768.0f);
-
-        if (b_16x9)
-        {
-            back_tex_coords.lt.set(0, 0);
-            back_tex_coords.rb.set(128, 768);
-        }
-        else
-        {
-            back_tex_coords.lt.set(0, 0);
-            back_tex_coords.rb.set(128, 768);
-        }
-        back_coords.lt.set(offs, offs);
-        back_coords.rb.add(back_coords.lt, back_size);
-        back_coords.lt.mul(k);
-        back_coords.rb.mul(k);
-
-        draw_face(hLevelLogo_Add, back_coords, back_tex_coords, tsz);
-
-        // right
-        if (b_16x9)
-        {
-            back_tex_coords.lt.set(128, 0);
-            back_tex_coords.rb.set(256, 768);
-        }
-        else
-        {
-            back_tex_coords.lt.set(128, 0);
-            back_tex_coords.rb.set(256, 768);
-        }
-
-        back_coords.lt.set(1024.0f - back_size.x + offs, offs);
-        back_coords.rb.add(back_coords.lt, back_size);
-        back_coords.lt.mul(k);
-        back_coords.rb.mul(k);
-
-        draw_face(hLevelLogo_Add, back_coords, back_tex_coords, tsz);
-    }
-
     // Draw title
     VERIFY(owner.pFontSystem);
     owner.pFontSystem->Clear();
-    owner.pFontSystem->SetColor(color_rgba(103, 103, 103, 255));
+    owner.pFontSystem->SetColor(color_rgba(157, 140, 120, 255));
     owner.pFontSystem->SetAligment(CGameFont::alCenter);
-    back_size.set(_w / 2, 622.0f * k.y);
-    owner.pFontSystem->OutSet(back_size.x, back_size.y);
-    owner.pFontSystem->OutNext(owner.ls_header);
-    owner.pFontSystem->OutNext("");
-    owner.pFontSystem->OutNext(owner.ls_tip_number);
-
-    float fTargetWidth = 600.0f * k.x * (b_ws ? 0.8f : 1.0f);
-    draw_multiline_text(owner.pFontSystem, fTargetWidth, owner.ls_tip);
-
-    owner.pFontSystem->OnRender();
+    owner.pFontSystem->OutI(0.f, 0.815f, owner.ls_title);
+    owner.pFontSystem->CGameFont::OnRender();
 
     // draw level-specific screenshot
     if (hLevelLogo)
     {
         Frect r;
-        r.lt.set(0, 173);
+        r.lt.set(257, 369);
 
         if (b_ws)
             r.lt.x *= ws_k;
@@ -224,7 +214,7 @@ void dxApplicationRender::load_draw_internal(CApplication& owner)
 
         r.lt.x += offs;
         r.lt.y += offs;
-        back_size.set(1024, 399);
+        back_size.set(512, 256);
 
         if (b_ws)
             back_size.x *= ws_k; // ws 0.625
@@ -234,7 +224,7 @@ void dxApplicationRender::load_draw_internal(CApplication& owner)
         r.rb.mul(k);
         Frect logo_tex_coords;
         logo_tex_coords.lt.set(0, 0);
-        logo_tex_coords.rb.set(1.0f, 0.77926f);
+        logo_tex_coords.rb.set(1, 1);
 
         draw_face(hLevelLogo, r, logo_tex_coords, Fvector2().set(1, 1));
     }
@@ -269,7 +259,10 @@ void dxApplicationRender::draw_face(ref_shader& sh, Frect& coords, Frect& tex_co
 
 u32 calc_progress_color(u32 idx, u32 total, int stage, int max_stage)
 {
-    float kk = (float(stage + 1) / float(max_stage)) * (total);
+    if (idx > (total / 2))
+        idx = total - idx;
+
+    float kk = (float(stage + 1) / float(max_stage)) * (total / 2.0f);
     float f = 1 / (exp((float(idx) - kk) * 0.5f) + 1.0f);
 
     return color_argb_f(f, 1.0f, 1.0f, 1.0f);

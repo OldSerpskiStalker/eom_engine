@@ -166,9 +166,6 @@
     <Filter Include="Interfase implementations\UI\UISequenceVideoItem">
       <UniqueIdentifier>{8e609091-9c4e-4b0f-991b-6ea121fadf76}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Interfase implementations\MSAARender">
-      <UniqueIdentifier>{763f97a9-f305-4cc2-995d-a1adad48351c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="dx9 to dx10 Utils">
       <UniqueIdentifier>{4c505c0d-891a-4fa4-a5e0-920bd864322e}</UniqueIdentifier>
     </Filter>
@@ -327,15 +324,6 @@
     <ClInclude Include="..\xrRender\Blender_Particle.h">
       <Filter>Shading templates</Filter>
     </ClInclude>
-    <ClInclude Include="blender_ssao.h">
-      <Filter>Shading templates</Filter>
-    </ClInclude>
-    <ClInclude Include="dx11HDAOCSBlender.h">
-      <Filter>Shading templates</Filter>
-    </ClInclude>
-    <ClInclude Include="dx11MinMaxSMBlender.h">
-      <Filter>Shading templates</Filter>
-    </ClInclude>
     <ClInclude Include="..\xrRender\uber_deffer.h">
       <Filter>Shading templates</Filter>
     </ClInclude>
@@ -400,9 +388,6 @@
       <Filter>Visibility\HOM Occlusion</Filter>
     </ClInclude>
     <ClInclude Include="r4_rendertarget.h">
-      <Filter>Core_Target</Filter>
-    </ClInclude>
-    <ClInclude Include="r4_rendertarget_wallmarks.h">
       <Filter>Core_Target</Filter>
     </ClInclude>
     <ClInclude Include="..\xrRender\ColorMapManager.h">
@@ -687,9 +672,6 @@
     <ClInclude Include="..\..\Include\xrRender\UISequenceVideoItem.h">
       <Filter>Interfase implementations\UI\UISequenceVideoItem</Filter>
     </ClInclude>
-    <ClInclude Include="..\xrRenderDX10\MSAA\dx10MSAABlender.h">
-      <Filter>Interfase implementations\MSAARender</Filter>
-    </ClInclude>
     <ClInclude Include="..\xrRenderDX10\dx10BufferUtils.h">
       <Filter>dx9 to dx10 Utils</Filter>
     </ClInclude>
@@ -741,6 +723,20 @@
     <ClInclude Include="..\xrRender\Debug\dxPixEventWrapper.h">
       <Filter>Debug</Filter>
     </ClInclude>
+    <ClInclude Include="blender_fxaa.h" />
+    <ClInclude Include="blender_rain_drops.h" />
+    <ClInclude Include="blender_ss_sunshafts.h" />
+    <ClInclude Include="blender_ssao.h" />
+    <ClInclude Include="dx11HDAOCSBlender.h" />
+    <ClInclude Include="blender_zoom.h" />
+    <ClInclude Include="blender_hit_effect.h" />
+    <ClInclude Include="blender_bleed_effect.h" />
+    <ClInclude Include="dx11MinMaxSMBlender.h" />
+    <ClInclude Include="..\xrRenderDX10\MSAA\dx10MSAABlender.h" />
+    <ClInclude Include="blender_smaa.h" />
+    <ClInclude Include="blender_health_effect.h" />
+    <ClInclude Include="blender_radiation_effect.h" />
+    <ClInclude Include="blender_stamina_effect.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -923,15 +919,6 @@
     <ClCompile Include="..\xrRender\Blender_Particle.cpp">
       <Filter>Shading templates</Filter>
     </ClCompile>
-    <ClCompile Include="blender_ssao.cpp">
-      <Filter>Shading templates</Filter>
-    </ClCompile>
-    <ClCompile Include="dx11HDAOCSBlender.cpp">
-      <Filter>Shading templates</Filter>
-    </ClCompile>
-    <ClCompile Include="dx11MinMaxSMBlender.cpp">
-      <Filter>Shading templates</Filter>
-    </ClCompile>
     <ClCompile Include="..\xrRender\uber_deffer.cpp">
       <Filter>Shading templates</Filter>
     </ClCompile>
@@ -1025,9 +1012,6 @@
     <ClCompile Include="r4_rendertarget_accum_spot_geom.cpp">
       <Filter>Core_Target</Filter>
     </ClCompile>
-    <ClCompile Include="r4_rendertarget_create_minmaxSM.cpp">
-      <Filter>Core_Target</Filter>
-    </ClCompile>
     <ClCompile Include="r4_rendertarget_draw_rain.cpp">
       <Filter>Core_Target</Filter>
     </ClCompile>
@@ -1037,9 +1021,6 @@
     <ClCompile Include="r4_rendertarget_enable_scissor.cpp">
       <Filter>Core_Target</Filter>
     </ClCompile>
-    <ClCompile Include="r4_rendertarget_mark_msaa_edges.cpp">
-      <Filter>Core_Target</Filter>
-    </ClCompile>
     <ClCompile Include="r4_rendertarget_phase_accumulator.cpp">
       <Filter>Core_Target</Filter>
     </ClCompile>
@@ -1047,9 +1028,6 @@
       <Filter>Core_Target</Filter>
     </ClCompile>
     <ClCompile Include="r4_rendertarget_phase_combine.cpp">
-      <Filter>Core_Target</Filter>
-    </ClCompile>
-    <ClCompile Include="r4_rendertarget_phase_hdao.cpp">
       <Filter>Core_Target</Filter>
     </ClCompile>
     <ClCompile Include="r4_rendertarget_phase_luminance.cpp">
@@ -1071,9 +1049,6 @@
       <Filter>Core_Target</Filter>
     </ClCompile>
     <ClCompile Include="r4_rendertarget_phase_smap_S.cpp">
-      <Filter>Core_Target</Filter>
-    </ClCompile>
-    <ClCompile Include="r4_rendertarget_phase_ssao.cpp">
       <Filter>Core_Target</Filter>
     </ClCompile>
     <ClCompile Include="..\xrRender\ColorMapManager.cpp">
@@ -1295,9 +1270,6 @@
     <ClCompile Include="..\xrRender\dxUISequenceVideoItem.cpp">
       <Filter>Interfase implementations\UI\UISequenceVideoItem</Filter>
     </ClCompile>
-    <ClCompile Include="..\xrRenderDX10\MSAA\dx10MSAABlender.cpp">
-      <Filter>Interfase implementations\MSAARender</Filter>
-    </ClCompile>
     <ClCompile Include="..\xrRenderDX10\dx10BufferUtils.cpp">
       <Filter>dx9 to dx10 Utils</Filter>
     </ClCompile>
@@ -1346,5 +1318,33 @@
     <ClCompile Include="..\xrRender\Debug\dxPixEventWrapper.cpp">
       <Filter>Debug</Filter>
     </ClCompile>
+    <ClCompile Include="blender_fxaa.cpp" />
+    <ClCompile Include="blender_ss_sunshafts.cpp" />
+    <ClCompile Include="r4_rendertarget_phase_ss_sunshafts.cpp" />
+    <ClCompile Include="blender_rain_drops.cpp" />
+    <ClCompile Include="r4_rendertarget_phase_rain_drops.cpp" />
+    <ClCompile Include="r4_rendertarget_phase_FXAA.cpp" />
+    <ClCompile Include="blender_ssao.cpp" />
+    <ClCompile Include="dx11HDAOCSBlender.cpp" />
+    <ClCompile Include="r4_rendertarget_phase_hdao.cpp" />
+    <ClCompile Include="r4_rendertarget_phase_ssao.cpp" />
+    <ClCompile Include="blender_zoom.cpp" />
+    <ClCompile Include="r4_rendertarget_phase_zoom.cpp" />
+    <ClCompile Include="blender_hit_effect.cpp" />
+    <ClCompile Include="r4_rendertarget_phase_hit_effect.cpp" />
+    <ClCompile Include="blender_bleed_effect.cpp" />
+    <ClCompile Include="r4_rendertarget_phase_bleed_effect.cpp" />
+    <ClCompile Include="r4_rendertarget_create_minmaxSM.cpp" />
+    <ClCompile Include="r4_rendertarget_mark_msaa_edges.cpp" />
+    <ClCompile Include="dx11MinMaxSMBlender.cpp" />
+    <ClCompile Include="..\xrRenderDX10\MSAA\dx10MSAABlender.cpp" />
+    <ClCompile Include="blender_smaa.cpp" />
+    <ClCompile Include="r4_rendertarget_phase_smaa.cpp" />
+    <ClCompile Include="blender_health_effect.cpp" />
+    <ClCompile Include="blender_radiation_effect.cpp" />
+    <ClCompile Include="blender_stamina_effect.cpp" />
+    <ClCompile Include="r4_rendertarget_phase_health_effect.cpp" />
+    <ClCompile Include="r4_rendertarget_phase_radiation_effect.cpp" />
+    <ClCompile Include="r4_rendertarget_phase_stamina_effect.cpp" />
   </ItemGroup>
 </Project>

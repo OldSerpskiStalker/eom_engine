@@ -43,7 +43,8 @@ void light::vis_prepare()
     //	TODO: DX10: Remove this pessimization
     // skiptest	= true;
 
-    if (skiptest || Device.vCameraPosition.distance_to(spatial.sphere.P) <= (spatial.sphere.R * 1.01f + safe_area))
+    float k = (flags.type == IRender_Light::OMNIPART && flags.bShadow) ? 10.01f : 1.01f;
+    if (skiptest || Device.vCameraPosition.distance_to(spatial.sphere.P) <= (spatial.sphere.R * k + safe_area))
     { // small error
         vis.visible = true;
         vis.pending = false;

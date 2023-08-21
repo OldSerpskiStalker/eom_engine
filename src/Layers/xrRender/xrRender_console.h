@@ -6,11 +6,13 @@
 // Alundaio
 extern ECORE_API BOOL ps_clear_models_on_unload;
 extern ECORE_API BOOL ps_use_precompiled_shaders;
-extern ECORE_API BOOL ps_grass_shadow;
 //-Alundaio
 
 extern ECORE_API u32 ps_r_sun_shafts; //=	0;
 extern ECORE_API xr_token qsun_shafts_token[];
+
+extern ECORE_API u32 ps_r2_smapsize;
+extern ECORE_API xr_token qsmapsize_token[];
 
 extern ECORE_API u32 ps_r_ssao; //	=	0;
 extern ECORE_API xr_token qssao_token[];
@@ -20,6 +22,12 @@ extern ECORE_API xr_token qssao_mode_token[];
 
 extern ECORE_API u32 ps_r_sun_quality; //	=	0;
 extern ECORE_API xr_token qsun_quality_token[];
+
+extern ECORE_API u32 ps_smaa_quality;
+extern ECORE_API xr_token smaa_quality_token[];
+
+extern ECORE_API u32 ps_r4_lut_palette;
+extern ECORE_API xr_token qlut_palette_token[];
 
 extern ECORE_API u32 ps_r3_msaa; //	=	0;
 extern ECORE_API xr_token qmsaa_token[];
@@ -55,11 +63,18 @@ extern ECORE_API float ps_r__ssaDISCARD;
 extern ECORE_API float ps_r__ssaDONTSORT;
 extern ECORE_API float ps_r__ssaHZBvsTEX;
 extern ECORE_API int ps_r__tf_Anisotropic;
+extern ECORE_API float ps_r__tf_Mipbias;
+
+enum
+{
+    RFLAG_NO_RAM_TEXTURES = (1 << 0),
+};
+
+extern ECORE_API Flags32 ps_r__common_flags;
 
 // R1
 extern ECORE_API float ps_r1_ssaLOD_A;
 extern ECORE_API float ps_r1_ssaLOD_B;
-extern ECORE_API float ps_r1_tf_Mipbias;
 extern ECORE_API float ps_r1_lmodel_lerp;
 extern ECORE_API float ps_r1_dlights_clip;
 extern ECORE_API float ps_r1_pps_u;
@@ -71,6 +86,7 @@ extern ECORE_API Flags32 ps_r1_flags; // r1-only
 
 extern ECORE_API float ps_r1_fog_luminance; // 1.f r1-only
 extern ECORE_API int ps_r1_SoftwareSkinning; // r1-only
+extern ECORE_API int ps_r2_fxaa;
 
 enum
 {
@@ -80,11 +96,11 @@ enum
 // R2
 extern ECORE_API float ps_r2_ssaLOD_A;
 extern ECORE_API float ps_r2_ssaLOD_B;
-extern ECORE_API float ps_r2_tf_Mipbias;
 
 // R2-specific
 extern ECORE_API Flags32 ps_r2_ls_flags; // r2-only
 extern ECORE_API Flags32 ps_r2_ls_flags_ext;
+extern Flags32 ps_r2_pp_flags;
 extern ECORE_API float ps_r2_df_parallax_h; // r2-only
 extern ECORE_API float ps_r2_df_parallax_range; // r2-only
 extern ECORE_API float ps_r2_gmaterial; // r2-only
@@ -133,12 +149,25 @@ extern ECORE_API int ps_r2_wait_sleep;
 
 //	x - min (0), y - focus (1.4), z - max (100)
 extern ECORE_API Fvector3 ps_r2_dof;
+extern ECORE_API Fvector3 ps_r2_blur_params;
 extern ECORE_API float ps_r2_dof_sky; //	distance to sky
 extern ECORE_API float ps_r2_dof_kernel_size; //	7.0f
 
 extern ECORE_API float ps_r3_dyn_wet_surf_near; // 10.0f
 extern ECORE_API float ps_r3_dyn_wet_surf_far; // 30.0f
 extern ECORE_API int ps_r3_dyn_wet_surf_sm_res; // 256
+
+extern ECORE_API float ps_r2_ss_sunshafts_length;
+extern ECORE_API float ps_r2_ss_sunshafts_radius;
+
+extern u32 ps_sunshafts_mode;
+enum
+{
+    R2SS_VOLUMETRIC,
+    R2SS_SCREEN_SPACE,
+    R2SS_COMBINE,
+};
+// extern ECORE_API	xr_token	sunshafts_mode_token[];
 
 enum
 {
@@ -170,7 +199,6 @@ enum
     R2FLAG_SOFT_PARTICLES = (1 << 20), //	Igor: need restart
     R2FLAG_VOLUMETRIC_LIGHTS = (1 << 21),
     R2FLAG_STEEP_PARALLAX = (1 << 22),
-    R2FLAG_DOF = (1 << 23),
 
     R1FLAG_DETAIL_TEXTURES = (1 << 24),
 
@@ -201,17 +229,10 @@ enum
     R2FLAGEXT_SUN_OLD = (1 << 9),
 };
 
-// Swartz: actor shadow
-extern ECORE_API Flags32 ps_actor_shadow_flags;
-
-enum
-{
-    RFLAG_ACTOR_SHADOW = (1 << 0),
-};
-//-Swartz
+extern bool actor_torch_enabled;
+extern bool is_torch_processed;
 
 extern void xrRender_initconsole();
 extern BOOL xrRender_test_hw();
-extern void xrRender_apply_tf();
 
 #endif

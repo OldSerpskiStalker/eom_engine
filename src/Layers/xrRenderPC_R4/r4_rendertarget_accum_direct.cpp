@@ -40,7 +40,7 @@ void CRenderTarget::accum_direct(u32 sub_phase)
 
     //	TODO: DX10: Remove half pixe offset
     // *** assume accumulator setted up ***
-    light* fuckingsun = (light*)RImplementation.Lights.sun_adapted._get();
+    light* fuckingsun = (light*)RImplementation.Lights.sun._get();
 
     // Common calc for quad-rendering
     u32 Offset;
@@ -199,10 +199,10 @@ void CRenderTarget::accum_direct(u32 sub_phase)
             Fmatrix m_xform;
             Fvector direction = fuckingsun->direction;
             float w_dir = g_pGamePersistent->Environment().CurrentEnv->wind_direction;
-            // float	w_speed				= g_pGamePersistent->Environment().CurrentEnv->wind_velocity	;
+            float w_speed = g_pGamePersistent->Environment().CurrentEnv->clouds_velocity_0;
             Fvector normal;
             normal.setHP(w_dir, 0);
-            w_shift += 0.003f * Device.fTimeDelta;
+            w_shift += w_speed * Device.fTimeDelta;
             Fvector position;
             position.set(0, 0, 0);
             m_xform.build_camera_dir(position, direction, normal);
@@ -354,7 +354,7 @@ void CRenderTarget::accum_direct_cascade(u32 sub_phase, Fmatrix& xform, Fmatrix&
 
     //	TODO: DX10: Remove half pixe offset
     // *** assume accumulator setted up ***
-    light* fuckingsun = (light*)RImplementation.Lights.sun_adapted._get();
+    light* fuckingsun = (light*)RImplementation.Lights.sun._get();
 
     // Common calc for quad-rendering
     u32 Offset;
@@ -514,10 +514,10 @@ void CRenderTarget::accum_direct_cascade(u32 sub_phase, Fmatrix& xform, Fmatrix&
             Fmatrix m_xform;
             Fvector direction = fuckingsun->direction;
             float w_dir = g_pGamePersistent->Environment().CurrentEnv->wind_direction;
-            // float	w_speed				= g_pGamePersistent->Environment().CurrentEnv->wind_velocity	;
+            float w_speed = g_pGamePersistent->Environment().CurrentEnv->clouds_velocity_0;
             Fvector normal;
             normal.setHP(w_dir, 0);
-            w_shift += 0.003f * Device.fTimeDelta;
+            w_shift += w_speed * Device.fTimeDelta;
             Fvector position;
             position.set(0, 0, 0);
             m_xform.build_camera_dir(position, direction, normal);
@@ -597,6 +597,10 @@ void CRenderTarget::accum_direct_cascade(u32 sub_phase, Fmatrix& xform, Fmatrix&
 
             RCache.set_c("view_shadow_proj", view_projlightspace);
         }
+
+        Fmatrix ProjectioMatrix;
+        ProjectioMatrix.set(Device.mProject);
+        RCache.set_c("dx_matrix_Projection", ProjectioMatrix);
 
         // nv-DBT
         float zMin, zMax;
@@ -818,7 +822,7 @@ void CRenderTarget::accum_direct_f(u32 sub_phase)
         u_setrt(rt_Generic_0_r, NULL, NULL, RImplementation.Target->rt_MSAADepth->pZRT);
 
     // *** assume accumulator setted up ***
-    light* fuckingsun = (light*)RImplementation.Lights.sun_adapted._get();
+    light* fuckingsun = (light*)RImplementation.Lights.sun._get();
 
     // Common calc for quad-rendering
     u32 Offset;
@@ -1041,7 +1045,7 @@ void CRenderTarget::accum_direct_lum()
     phase_accumulator();
 
     // *** assume accumulator setted up ***
-    light* fuckingsun = (light*)RImplementation.Lights.sun_adapted._get();
+    light* fuckingsun = (light*)RImplementation.Lights.sun._get();
 
     // Common calc for quad-rendering
     u32 Offset;
@@ -1189,6 +1193,9 @@ void CRenderTarget::accum_direct_volumetric(u32 sub_phase, const u32 Offset, con
     if (!need_to_render_sunshafts())
         return;
 
+    //	if ((ps_sunshafts_mode != R2SS_VOLUMETRIC) || (ps_sunshafts_mode != R2SS_COMBINE))
+    //		return;
+
     //	Test. draw only for near part
     //	if (sub_phase!=SE_SUN_N/EAR) return;
     //	if (sub_phase!=SE_SUN_FAR) return;
@@ -1244,7 +1251,7 @@ void CRenderTarget::accum_direct_volumetric(u32 sub_phase, const u32 Offset, con
     // Perform lighting
     {
         // *** assume accumulator setted up ***
-        light* fuckingsun = (light*)RImplementation.Lights.sun_adapted._get();
+        light* fuckingsun = (light*)RImplementation.Lights.sun._get();
 
         // Common constants (light-related)
         Fvector L_clr;
@@ -1269,6 +1276,10 @@ void CRenderTarget::accum_direct_volumetric(u32 sub_phase, const u32 Offset, con
 
         RCache.set_c("m_texgen", m_Texgen);
         //		RCache.set_c				("m_sunmask",			m_clouds_shadow);
+
+        Fmatrix ProjectioMatrix;
+        ProjectioMatrix.set(Device.mProject);
+        RCache.set_c("dx_matrix_Projection", ProjectioMatrix);
 
         // nv-DBT
         float zMin, zMax;

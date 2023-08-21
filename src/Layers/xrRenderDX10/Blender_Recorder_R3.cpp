@@ -137,6 +137,14 @@ u32 CBlender_Compile::r_dx10Sampler(LPCSTR ResourceName)
         i_dx10Filter(stage, D3DTEXF_LINEAR, D3DTEXF_NONE, D3DTEXF_LINEAR);
     }
 
+    //	Use D3DTADDRESS_CLAMP,	D3DTEXF_LINEAR,			D3DTEXF_NONE,	D3DTEXF_LINEAR
+    if (0 == xr_strcmp(ResourceName, "smp_rtlinear_test"))
+    {
+        i_dx10Address(stage, D3DTADDRESS_BORDER);
+        RS.SetSAMP(stage, D3DSAMP_BORDERCOLOR, 0x00000000);
+        i_dx10Filter(stage, D3DTEXF_LINEAR, D3DTEXF_NONE, D3DTEXF_LINEAR);
+    }
+
     //	Use	D3DTADDRESS_WRAP,	D3DTEXF_LINEAR,			D3DTEXF_LINEAR,	D3DTEXF_LINEAR
     if (0 == xr_strcmp(ResourceName, "smp_linear"))
     {
