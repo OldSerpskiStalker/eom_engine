@@ -373,10 +373,10 @@ struct p_bumped
 //	Defer flat
 struct	v2p_flat
 {
-#if defined(USE_R2_STATIC_SUN) && !defined(USE_LM_HEMI)
+#if ((defined(USE_R2_STATIC_SUN) && !defined(USE_LM_HEMI)) || defined(USE_GRASS_WAVE))
 	float4	tcdh	: TEXCOORD0;	// Texture coordinates,         w=sun_occlusion
 #else
-	float2	tcdh	: TEXCOORD0;	// Texture coordinates
+	float4	tcdh	: TEXCOORD0;	// Texture coordinates
 #endif
 	float4	position: TEXCOORD1;	// position + hemi
 	float3	N		: TEXCOORD2;	// Eye-space normal        (for lighting)
@@ -391,10 +391,10 @@ struct	v2p_flat
 
 struct	p_flat
 {
-#if defined(USE_R2_STATIC_SUN) && !defined(USE_LM_HEMI)
+#if ((defined(USE_R2_STATIC_SUN) && !defined(USE_LM_HEMI)) || defined(USE_GRASS_WAVE))
 	float4	tcdh	: TEXCOORD0;	// Texture coordinates,         w=sun_occlusion
 #else
-	float2	tcdh	: TEXCOORD0;	// Texture coordinates
+	float4	tcdh	: TEXCOORD0;	// Texture coordinates
 #endif
 	float4	position: TEXCOORD1;	// position + hemi
 	float3	N		: TEXCOORD2;	// Eye-space normal        (for lighting)
@@ -464,6 +464,18 @@ struct        v_detail
 {
         float4      pos                : POSITION;                // (float,float,float,1)
         int4        misc        : TEXCOORD0;        // (u(Q),v(Q),frac,matrix-id)
+};
+
+struct p_screen
+{
+        float4          hpos 	: SV_Position;
+        float2          tc0		: TEXCOORD0;        // Texture coordinates         (for sampling maps)
+};
+
+struct	v2p_screen
+{
+	float2 tc0 : TEXCOORD0;
+	float4 HPos : POSITIONT;	// Clip-space position 	(for rasterization)
 };
 
 #endif	//	common_iostructs_h_included

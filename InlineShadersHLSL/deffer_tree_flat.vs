@@ -43,6 +43,9 @@ v2p_flat main (v_tree I)
 	float 	suno 	= I.Nh.w * c_sun.x + c_sun.y	;
 	o.tcdh.w		= suno;					// (,,,dir-occlusion)
 #endif
+#ifdef USE_GRASS_WAVE
+	o.tcdh.z = 1.f;
+#endif
 
 	#ifdef USE_TDETAIL
 	o.tcdbump	= o.tcdh*dt_params;					// dt tc

@@ -1,0 +1,33 @@
+#include "common.h"
+
+uniform float4 bleed_effect;
+Texture2D s_blood; //base texture
+Texture2D s_bloodnrm; // normal map blood
+
+float4 main(p_screen I) : SV_Target
+{
+	float2 uv = I.tc0;
+
+	float _EdgeSharpness = 1.;
+	float _DisplAmount = 0.1f;
+
+	float4 blendColor = s_blood.Sample(smp_rtlinear, uv);
+	
+	blendColor.a = blendColor.a + (clamp(bleed_effect.x,0.0f,0.58f) * 2 - 1);
+	blendColor.a = saturate(blendColor.a * _EdgeSharpness - (_EdgeSharpness - 1) * 0.5);
+		
+	//Distortion:
+	float2 bump = s_bloodnrm.Sample(smp_rtlinear, uv);
+	float2 offset = (bump.xy-(127.0h/255.0h))*def_distort;  // fix newtral offset
+	bump = ((bump * 2) - 1) * _DisplAmount;
+	float4 mainColor = s_image.Sample(smp_rtlinear, uv+bump*blendColor.a);
+		
+	float4 overlayColor = blendColor;
+	overlayColor.rgb = mainColor.rgb*(blendColor.rgb+0.5)*1.2; //overlay
+		
+	blendColor = lerp(blendColor,overlayColor,0.3);
+		
+	mainColor.rgb *= 1-blendColor.a*0.5; //inner-shadow border
+
+	return lerp(mainColor, blendColor, blendColor.a);
+}

@@ -1,0 +1,128 @@
+#include "common.h"
+
+//Author: FozeSt, based on Dynamic Shaders 2.0 CTP + Patch 1 by Meltac
+//2020
+
+//UNIFORMS
+uniform float4 zoom_params;
+uniform float4 screen_res;
+
+//SCOPE SETTINGS
+#define NV_ZOOM float(1.5)					// Additional zoom/magnification when using scope. Lowers resolution. A good balanced value is 1.5. Comment this value out if you don't want additional scope zoom.
+#define NV_BIAS float(0.25)					// Zoom bias applied towards periphery of zoomed scope. Set 0 for no bias.
+#define NV_RADIUS float(0.25)				// Radius of the night vision effect (1.0 = entire screen, use 0.5 for vanilla, 0.21 for gnomus scopes)
+#define NV_SCREENRATIO float(0.5625)		// Screen Ratio; 0.75 for 4:3 or 0.625 for 16:10 // для 16:9 надо использовать 0.5625
+											// формула этой хуйни высота/ширина
+
+static const float pi = 3.14159265;
+
+float GaussianWeight( float x, float mean, float deviation )
+{
+	float c = deviation;
+	float a = c * sqrt( 2.0 * pi );
+	float b = x - mean;
+	float v = a * exp( -( ( b * b ) / ( 2.0*c*c ) ) );
+	return v / a;
+}
+
+static const int samples = 6;
+static const float fSamples = float( samples * samples * 2 * 2 );
+
+float3 truegaussian(float2 uvv)
+{
+    float blurscale = 1.0 / 20;
+    
+	float2 uv = uvv;
+    
+    float3 thissample = float3( 0.0,0.0,0.0 );
+    for( int x = -samples; x < samples; x++ )
+    {
+    	for( int y = -samples; y < samples; y++ )
+        {
+            float2 subSampleOffset = ( float2( float( x ), float( y ) ) / float( samples ) ) 
+                / ( screen_res.xy * blurscale );
+            
+            float fx = float( x ); float fy = float( y );
+            float gaussianLength = sqrt( fx*fx + fy*fy ) / sqrt( fSamples * 0.5 );
+            float3 chromab = lerp( float3( 1.0, 1.0, 1.0 ), float3( 1.0, 0.5, 0.0 ), fx );
+            chromab += lerp( float3( 1.0, 1.0, 1.0 ), float3( 0.0, 0.5, 1.0 ), fy );
+            chromab *= 0.5;
+            float sampleWeight = GaussianWeight( gaussianLength, 0.0, 0.3 );
+            
+            float3 subsample = pow( s_image.SampleLevel( smp_rtlinear, uv + subSampleOffset,0,0).rgb, float3( 1.0,1.0,1.0 ) );
+    		thissample += saturate( subsample ) * sampleWeight;
+        }
+    }
+    thissample /= fSamples;
+    thissample *= 3.7;
+    
+	return float3(pow(thissample,float3( 1.0,1.0,1.0 )));
+}
+
+//ZOOM SHADER
+
+float  zoom(float input, float factor, float offset) { return (input-0.5f+offset) / factor+0.5f-offset; }
+float2 zoom2(float2 input, float factor, float2 offsetXY) { return float2(zoom(input.x, factor, offsetXY.x), zoom(input.y, factor, offsetXY.y)); }
+
+//SCOPE SHADER
+
+float4 nv( v2p_aa_AA In, float4 color) //ZOOM AND DOF
+{
+  float4 finalColor;
+  
+  float px=In.Tex0.x-0.5f;
+  float py=(In.Tex0.y-0.5f) * NV_SCREENRATIO;	// correction for 4:3 / 16:10 ratio
+  float center_dist = sqrt(pow(px, 2) + pow(py, 2));	// absolute distance from screen center	
+  
+  if (zoom_params.x && center_dist < NV_RADIUS)
+  {
+		float2 center	= In.Tex0;	// discard new sample
+			
+		float2 offset_chrom = distance(center, float2( .5f, .5f ))*float2(0.004, 0.004);
+		// Use magnification
+		float bias = saturate(center_dist/NV_RADIUS);
+		float zoom = NV_ZOOM+bias*NV_BIAS; // effective zoom level for current pixel
+		float2 newpos = center;
+		
+		newpos = center = zoom2(center, zoom, 0);
+		float3 imagge 	= s_image.Sample(smp_rtlinear,newpos).rgb;
+		float4 bloom 	= s_bloom.Sample( smp_rtlinear, newpos);
+		
+		imagge.r = s_image.Sample(smp_rtlinear,newpos+offset_chrom).r;
+		imagge.g = s_image.Sample(smp_rtlinear,newpos).g;
+		imagge.b = s_image.Sample(smp_rtlinear,newpos-offset_chrom).b;	
+		
+		finalColor = combine_bloom(imagge,bloom);
+   }
+   else
+   {
+		float2 center	= In.Tex0;	// discard new sample
+		float3 imagge 	= s_image.Sample(smp_rtlinear, center).rgb;
+		float4 bloom 	= s_bloom.Sample(smp_rtlinear, center);
+		
+		imagge = truegaussian(center);	
+		
+		finalColor = combine_bloom(imagge,bloom);
+   }  
+ 
+  return finalColor;
+}
+
+//MAIN SHADER
+
+float4 main(v2p_aa_AA I) : SV_Target
+{
+	float2 center	= I.Tex0;	// discard new sample
+	float3 img 		= s_image.Sample(smp_rtlinear, center);
+	float4 bloom 	= s_bloom.Sample( smp_rtlinear, center);
+
+	float4 final = combine_bloom(img,bloom);
+	
+	if (zoom_params.y == 0)
+		return final;
+	
+	if (zoom_params.x)
+		final = nv(I, final);
+
+	return final;
+}

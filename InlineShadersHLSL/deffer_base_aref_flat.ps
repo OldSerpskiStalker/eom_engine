@@ -9,7 +9,7 @@
 
 float4 	main	( p_flat I ) : SV_Target
 {
-	float4 D 	= tbase	 	(I.tcdh);
+	float4 D 	= s_base.Sample (smp_linear, I.tcdh); //tbase (I.tcdh);
 	D.w = (D.w-def_aref*0.5f)/(1-def_aref*0.5f);
 	return D;
 }
@@ -31,7 +31,8 @@ f_deffer 	main	( p_flat I )
   float4 D 	= tbase	 	(I.tcdh);
 
 #if	!( defined(MSAA_ALPHATEST_DX10_1_ATOC) || defined(MSAA_ALPHATEST_DX10_0_ATOC) )
-	clip					(D.w-def_aref);
+	//clip					(D.w-def_aref);
+	clip((D.w-def_aref*0.5f)/(1-def_aref*0.5f));
 #endif	//	!( defined(MSAA_ALPHATEST_DX10_1_ATOC) || defined(MSAA_ALPHATEST_DX10_1_ATOC) )
 #ifdef 	MSAA_ALPHATEST_DX10_1_ATOC
 	float alpha = (D.w-def_aref*0.5f)/(1-def_aref*0.5f);
@@ -84,6 +85,10 @@ f_deffer 	main	( p_flat I )
 # ifdef USE_R2_STATIC_SUN
 		 	ms	= I.tcdh.w		;
 # endif
+#endif
+
+#ifdef USE_GRASS_WAVE
+	D *= I.tcdh.z;
 #endif
 
   // 2. Standart output

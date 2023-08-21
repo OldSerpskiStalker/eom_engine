@@ -16,7 +16,7 @@ struct        v_vert
 struct   vf
 {
 	float2	tbase	: TEXCOORD0;	// base
-	float2	tnorm0	: TEXCOORD1;	// nm0
+	float4	tnorm0	: TEXCOORD1;	// nm0
 	float2	tnorm1	: TEXCOORD2;	// nm1
 	float3	M1		: TEXCOORD3;
 	float3	M2		: TEXCOORD4;
@@ -49,8 +49,8 @@ vf main (v_vert v)
 
         o.v2point        = P-eye_position        ;
         o.tbase                = unpack_tc_base        (v.uv,v.T.w,v.B.w);                // copy tc
-        o.tnorm0        = watermove_tc                 (o.tbase*W_DISTORT_BASE_TILE_0, P.xz, W_DISTORT_AMP_0);
-        o.tnorm1        = watermove_tc                 (o.tbase*W_DISTORT_BASE_TILE_1, P.xz, W_DISTORT_AMP_1);
+	o.tnorm0.xy = watermove_tc(o.tbase*W_DISTORT_BASE_TILE_0, P.xz, W_DISTORT_AMP_0);
+	o.tnorm0.zw = watermove_tc(o.tbase*W_DISTORT_BASE_TILE_1, P.xz, W_DISTORT_AMP_1);
 
 
         // Calculate the 3x3 transform from tangent space to eye-space

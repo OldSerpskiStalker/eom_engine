@@ -17,25 +17,24 @@ void tonemap( out float4 low, out float4 high, float3 rgb, float scale)
 	rgb		=	rgb*scale;
 
 	const float fWhiteIntensity = 1.7;
-
 	const float fWhiteIntensitySQR = fWhiteIntensity*fWhiteIntensity;
 
-//	low		=	(rgb/(rgb + 1)).xyzz;
 	low		=	( (rgb*(1+rgb/fWhiteIntensitySQR)) / (rgb+1) ).xyzz;
-
 	high	=	rgb.xyzz/def_hdr;	// 8x dynamic range
+}
 
-/*
-	rgb		=	rgb*scale;
+float3 compute_colored_ao(float ao, float3 albedo)
+{ //https://www.activision.com/cdn/research/s2016_pbs_activision_occlusion.pptx
+    float3 a = 2.0404 * albedo - 0.3324;
+    float3 b = -4.7951 * albedo + 0.6417;
+    float3 c = 2.7552 * albedo + 0.6903;
 
-	low		=	rgb.xyzz;
-	high	=	low/def_hdr;	// 8x dynamic range
-*/
+    return max(ao, ((ao * a + b) * ao + c) * ao);
 }
 
 float4 combine_bloom( float3  low, float4 high)	
 {
-        return float4( low + high*high.a, 1.h );
+        return float4(low+high.rgb*high.a,1.h);
 }
 
 float calc_fogging( float4 w_pos )      
@@ -55,13 +54,14 @@ float3 calc_sun_r1( float3 norm_w )
 
 float3 calc_model_hemi_r1( float3 norm_w )    
 {
- return max(0,norm_w.y)*L_hemi_color;
+ return max(0,norm_w.y)*L_hemi_color.rgb;
 }
 
 float3 calc_model_lq_lighting( float3 norm_w )    
 {
-	return L_material.x*calc_model_hemi_r1(norm_w) + L_ambient + L_material.y*calc_sun_r1(norm_w);
+	return L_material.x*calc_model_hemi_r1(norm_w) + L_ambient.rgb + L_material.y*calc_sun_r1(norm_w);
 }
+
 
 float3 	unpack_normal( float3 v )	{ return 2*v-1; }
 float3 	unpack_bx2( float3 v )	{ return 2*v-1; }
@@ -92,7 +92,7 @@ float   get_sun( float4 lmh)
 
 float3	v_hemi(float3 n)
 {
-	return L_hemi_color*(.5f + .5f*n.y);                   
+	return L_hemi_color.rgb * (.5f + .5f*n.y);                   
 }
 
 float3	v_sun(float3 n)                        	

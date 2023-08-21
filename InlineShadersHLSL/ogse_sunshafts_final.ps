@@ -1,0 +1,40 @@
+#include "common.h"
+#include "ogse_config.h"
+#include "ogse_functions.h"
+
+uniform float4 c_sunshafts;		// x - exposure, y - density
+Texture2D s_sun_shafts; // current sunshafts texture
+uniform float4 screen_res;
+
+float3 blendSoftLight(float3 a, float3 b)
+{
+	float3 c = 2 * a * b * ( 1 + a * (  1 - b ) );
+	float3 a_sqrt = sqrt( a );
+	float3 d = ( a  +  b * (a_sqrt - a )) * 2 - a_sqrt;
+	return( b < 0.5 )? c : d;
+};
+
+float4 main(v2p_ssss I) : SV_Target
+{
+	// dist to the sun
+	float sun_dist = FARPLANE / (sqrt(1 - L_sun_dir_w.y * L_sun_dir_w.y));
+	// sun pos
+	float3 sun_pos_world = sun_dist*L_sun_dir_w + eye_position;
+	float4 sun_pos_projected = mul(m_VP, float4(sun_pos_world, 1));
+	float4 sun_pos_screen = proj_to_screen(sun_pos_projected) / sun_pos_projected.w;
+	// sun-pixel vector
+	float2 sun_vec_screen = normalize(sun_pos_screen.xy - I.tc0.xy);
+	// smooth shafts
+	float4 cSunShafts = s_sun_shafts.Sample(smp_rtlinear, I.tc0.xy);
+#ifdef SUN_SHAFTS_QUALITY
+#if SUN_SHAFTS_QUALITY > 1
+	cSunShafts *= 0.5;
+	cSunShafts += s_sun_shafts.Sample(smp_rtlinear, I.tc0.xy + sun_vec_screen.yx * screen_res.zw) * 0.25h;
+	cSunShafts += s_sun_shafts.Sample(smp_rtlinear, I.tc0.xy - sun_vec_screen.yx * screen_res.zw) * 0.25h;
+#endif
+#endif
+	float3 img = s_image.Sample(smp_rtlinear, I.tc0.xy).xyz;
+	
+	float3 Color =  img + cSunShafts.xyz * L_sun_color.xyz * ( 1 - img ) * SS_INTENSITY * c_sunshafts.x;
+	return float4(Color.x, Color.y, Color.z, 1.0);
+}

@@ -13,12 +13,16 @@
 
 #define	LUMINANCE_VECTOR	float3(0.3f, 0.38f, 0.22f)
 
+#define USE_GRASS_WAVE              // вкл/выкл волны по траве
+#define GRASS_WAVE_FREQ float(0.9)  // частота появления волн
+#define GRASS_WAVE_POWER float(2.0) // яркость волн
+
+//#define USE_SUNMASK // вкл/выкл тени от облаков
+
 //////////////////////////////////////////////////////////////////////////////////////////
 #ifndef SMAP_size
 #define SMAP_size        1024
 #endif
-#define PARALLAX_H 0.02
-#define parallax float2(PARALLAX_H, -PARALLAX_H/2)
 //////////////////////////////////////////////////////////////////////////////////////////
 
 #endif	//	common_defines_h_included

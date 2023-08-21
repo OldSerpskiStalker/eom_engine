@@ -3,9 +3,6 @@ local tex_nmap                = "water\\water_normal"
 local tex_dist                = "water\\water_dudv"
 local tex_env0                = "$user$sky0"         -- "sky\\sky_8_cube"
 local tex_env1                = "$user$sky1"         -- "sky\\sky_8_cube"
-
---local tex_leaves              = "decal\\decal_listja"
---local tex_leaves              = "decal\\decal_listja_vetki"
 local tex_leaves              = "water\\water_foam"
 
 function normal                (shader, t_base, t_second, t_detail)
@@ -15,11 +12,6 @@ function normal                (shader, t_base, t_second, t_detail)
 			:zb			(true,false)
 			:distort	(true)
 			:fog		(true)
---  shader:sampler        ("s_base")       :texture  (tex_base)
---  shader:sampler        ("s_nmap")       :texture  (tex_nmap)
---  shader:sampler        ("s_env0")       :texture  (tex_env0)   : clamp()
---  shader:sampler        ("s_env1")       :texture  (tex_env1)   : clamp()
---  shader:sampler        ("s_position")       :texture  ("$user$position")
 
 	shader:dx10texture	("s_base",		tex_base)
 	shader:dx10texture	("s_nmap",		tex_nmap)
@@ -43,10 +35,6 @@ function l_special        (shader, t_base, t_second, t_detail)
 			:distort        (true)
 
 	shader: dx10color_write_enable( true, true, true, false)
-
---  shader:sampler        ("s_base")       :texture  (tex_base)
---  shader:sampler        ("s_distort")    :texture  (tex_dist)
---  shader:sampler        ("s_position")       :texture  ("$user$position")
 
 	shader:dx10texture	("s_base",		tex_base)
 	shader:dx10texture	("s_distort",	tex_dist)
