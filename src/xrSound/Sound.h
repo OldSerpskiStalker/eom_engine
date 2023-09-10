@@ -39,6 +39,8 @@ XRSOUND_API extern float psSoundOcclusionScale;
 XRSOUND_API extern Flags32 psSoundFlags;
 XRSOUND_API extern int psSoundTargets;
 XRSOUND_API extern int psSoundCacheSizeMB;
+XRSOUND_API extern u32 psSoundPrecacheAll;
+XRSOUND_API extern u32 psSoundCreateAllSources;
 XRSOUND_API extern xr_token* snd_devices_token;
 XRSOUND_API extern u32 snd_device_id;
 
@@ -268,7 +270,7 @@ typedef void __stdcall sound_event(ref_sound_data_ptr S, float range);
 /// definition (Sound Manager Interface)
 class XRSOUND_API CSound_manager_interface
 {
-    virtual void _initialize(int stage) = 0;
+    virtual void _initialize() = 0;
     virtual void _clear() = 0;
 
 protected:
@@ -279,7 +281,7 @@ protected:
 public:
     virtual ~CSound_manager_interface() {}
 
-    static void _create(int stage);
+    static void _create();
     static void _destroy();
 
     virtual void _restart() = 0;

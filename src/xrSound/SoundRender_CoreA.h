@@ -60,7 +60,7 @@ public:
     CSoundRender_CoreA();
     virtual ~CSoundRender_CoreA();
 
-    virtual void _initialize(int stage);
+    virtual void _initialize();
     virtual void _clear();
     virtual void _restart();
 

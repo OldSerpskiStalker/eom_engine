@@ -10,7 +10,7 @@
 #include <eax/eax.h>
 #pragma warning(pop)
 
-int psSoundTargets = 32;
+int psSoundTargets = 256;
 Flags32 psSoundFlags = {ss_Hardware | ss_EAX};
 float psSoundOcclusionScale = 0.5f;
 float psSoundCull = 0.01f;
@@ -20,7 +20,9 @@ float psSoundVEffects = 1.0f;
 float psSoundVFactor = 1.0f;
 
 float psSoundVMusic = 1.f;
-int psSoundCacheSizeMB = 32;
+int psSoundCacheSizeMB = 128;
+u32 psSoundCreateAllSources = 0;
+u32 psSoundPrecacheAll = 0;
 
 CSoundRender_Core* SoundRender = 0;
 CSound_manager_interface* Sound = 0;
@@ -59,7 +61,7 @@ CSoundRender_Core::~CSoundRender_Core()
 #endif
 }
 
-void CSoundRender_Core::_initialize(int stage)
+void CSoundRender_Core::_initialize()
 {
     Log("* sound: EAX 2.0 extension:", bEAX ? "present" : "absent");
     Log("* sound: EAX 2.0 deferred:", bDeferredEAX ? "present" : "absent");
@@ -75,6 +77,9 @@ void CSoundRender_Core::_initialize(int stage)
     cache.initialize(psSoundCacheSizeMB * 1024, cache_bytes_per_line);
 
     bReady = TRUE;
+
+    if (strstr(Core.Params, "-crtallsrc"))
+        i_create_all_sources();
 }
 
 extern xr_vector<u8> g_target_temp_data;
@@ -85,8 +90,10 @@ void CSoundRender_Core::_clear()
     env_unload();
 
     // remove sources
-    for (u32 sit = 0; sit < s_sources.size(); sit++)
-        xr_delete(s_sources[sit]);
+    for (auto& kv : s_sources)
+    {
+        xr_delete(kv.second);
+    }
     s_sources.clear();
 
     // remove emmiters
