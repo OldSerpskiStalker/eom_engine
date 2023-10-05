@@ -10,7 +10,6 @@
 
 namespace smart_cover
 {
-
 IC shared_str const& loophole::id() const { return (m_id); }
 
 IC float const& loophole::fov() const { return (m_fov); }
@@ -43,7 +42,6 @@ IC bool loophole::is_action_available(shared_str const& action_id) const
 IC bool const& loophole::exitable() const { return (m_exitable); }
 
 IC void loophole::exitable(bool value) { m_exitable = value; }
-
 } // namespace smart_cover
 
 #endif // SMART_COVER_LOOPHOLE_INLINE_H_INCLUDED

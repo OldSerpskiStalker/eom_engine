@@ -13,10 +13,8 @@
 
 namespace smart_cover
 {
-
 namespace transitions
 {
-
 class animation_action : private debug::make_final<animation_action>, private boost::noncopyable
 {
 private:
@@ -34,9 +32,7 @@ public:
     IC MonsterSpace::EBodyState const& body_state() const;
     IC MonsterSpace::EMovementType const& movement_type() const;
 };
-
 } // namespace transitions
-
 } // namespace smart_cover
 
 #include "smart_cover_transition_animation_inline.hpp"

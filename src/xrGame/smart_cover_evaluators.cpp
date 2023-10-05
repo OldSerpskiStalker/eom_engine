@@ -29,9 +29,7 @@
 
 namespace smart_cover
 {
-
 shared_str transform_vertex(shared_str const& vertex_id, bool const& in);
-
 };
 
 using namespace StalkerDecisionSpace;

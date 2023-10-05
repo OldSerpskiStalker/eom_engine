@@ -17,13 +17,11 @@ typedef CWrapperAbstract2<CAI_Stalker, CPropertyEvaluator> CStalkerPropertyEvalu
 
 namespace smart_cover
 {
-
 class animation_planner;
 class target_selector;
 
 namespace evaluators
 {
-
 //////////////////////////////////////////////////////////////////////////
 // in_cover_evaluator
 //////////////////////////////////////////////////////////////////////////
@@ -225,9 +223,7 @@ public:
     lookout_time_interval_passed_evaluator(animation_planner* object, LPCSTR evaluator_name, u32 const& time_interval);
     virtual _value_type evaluate();
 };
-
 } // namespace evaluators
-
 } // namespace smart_cover
 
 #endif // SMART_COVER_EVALUATORS_H_INCLUDED

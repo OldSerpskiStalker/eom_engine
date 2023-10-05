@@ -17,7 +17,6 @@
 
 namespace smart_cover
 {
-
 class action : private debug::make_final<action>, private boost::noncopyable
 {
 private:
@@ -47,7 +46,6 @@ public:
 private:
     void add_animation(LPCSTR animation_type, luabind::object const& table);
 };
-
 } // namespace smart_cover
 
 #include "smart_cover_action_inline.h"

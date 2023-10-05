@@ -12,7 +12,6 @@ public:
     virtual ~CSimpleDetector();
 
 protected:
-    //.	virtual void 	UpdateZones					();
     virtual void UpdateAf();
     virtual void CreateUI();
     CUIArtefactDetectorSimple& ui();

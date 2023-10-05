@@ -10,7 +10,6 @@
 
 namespace smart_cover
 {
-
 IC u32 const& animation_planner::time_object_hit() const { return (m_time_object_hit); }
 
 IC u32 const& animation_planner::loophole_value() const { return (m_loophole_value); }
@@ -62,7 +61,6 @@ IC void animation_planner::last_idle_time(u32 const& value) { m_last_idle_time =
 IC u32 const& animation_planner::last_lookout_time() const { return (m_last_lookout_time); }
 
 IC void animation_planner::last_lookout_time(u32 const& value) { m_last_lookout_time = value; }
-
 } // namespace smart_cover
 
 #endif // SMART_COVER_ANIMATION_PLANNER_INLINE_H_INCLUDED

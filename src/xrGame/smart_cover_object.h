@@ -54,7 +54,6 @@ public:
 public:
     DECLARE_SCRIPT_REGISTER_FUNCTION
 };
-
 } // namespace smart_cover
 
 typedef smart_cover::object smart_cover__object;

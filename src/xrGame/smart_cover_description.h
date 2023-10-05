@@ -15,7 +15,6 @@
 
 namespace smart_cover
 {
-
 class loophole;
 class object;
 
@@ -53,7 +52,6 @@ private:
     void process_loopholes();
     void load_actions(luabind::object const& table, ActionsList& result);
 };
-
 } // namespace smart_cover
 
 #include "smart_cover_description_inline.h"

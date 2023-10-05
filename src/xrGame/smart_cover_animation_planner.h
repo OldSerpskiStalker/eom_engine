@@ -20,7 +20,6 @@ class CPropertyStorage;
 
 namespace smart_cover
 {
-
 class cover;
 class target_selector;
 
@@ -86,7 +85,6 @@ public:
     IC void last_lookout_time(u32 const& value);
     virtual LPCSTR object_name() const;
 };
-
 } // namespace smart_cover
 
 #include "smart_cover_animation_planner_inline.h"

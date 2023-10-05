@@ -17,7 +17,6 @@
 
 namespace smart_cover
 {
-
 class object;
 
 class loophole : private debug::make_final<loophole>, private boost::noncopyable
@@ -76,7 +75,6 @@ private:
     void add_action(LPCSTR type, luabind::object const& table);
     void fill_transitions(luabind::object const& transitions_table);
 };
-
 } // namespace smart_cover
 
 #include "smart_cover_loophole_inline.h"

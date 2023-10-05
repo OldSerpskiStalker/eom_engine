@@ -93,7 +93,7 @@ animation_action const& action::animation(MonsterSpace::EBodyState const& target
     }
 
 #if 0 // for testing
-	VERIFY2						(
+	VERIFY2(
 		found != m_animations.end(),
 		make_string("There is no animation which can transfer bot to body_state [%i]", target_body_state)
 	);

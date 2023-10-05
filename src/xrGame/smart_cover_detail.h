@@ -13,10 +13,8 @@
 
 namespace smart_cover
 {
-
 namespace detail
 {
-
 typedef RestrictionSpace::CTimeIntrusiveBase intrusive_base_time;
 
 float parse_float(luabind::object const& table, LPCSTR identifier, float const& min_threshold = flt_min,
@@ -26,9 +24,7 @@ void parse_table(luabind::object const& table, LPCSTR identifier, luabind::objec
 bool parse_bool(luabind::object const& table, LPCSTR identifier);
 int parse_int(luabind::object const& table, LPCSTR identifier);
 Fvector parse_fvector(luabind::object const& table, LPCSTR identifier);
-
 }; // namespace detail
-
 } // namespace smart_cover
 
 #endif // SMART_COVER_DETAIL_H_INCLUDED

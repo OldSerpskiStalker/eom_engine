@@ -15,7 +15,6 @@
 
 namespace smart_cover
 {
-
 class animation_planner;
 
 class default_behaviour_planner : public CActionPlannerAction<animation_planner>,
@@ -45,7 +44,6 @@ private:
     u32 m_idle_time;
     u32 m_lookout_time;
 };
-
 } // namespace smart_cover
 
 #include "smart_cover_default_behaviour_planner_inline.hpp"

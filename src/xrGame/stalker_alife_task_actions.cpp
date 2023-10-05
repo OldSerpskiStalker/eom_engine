@@ -83,7 +83,7 @@ void CStalkerActionSolveZonePuzzle::initialize()
     object().movement().set_movement_type(eMovementTypeStand);
     object().movement().set_mental_state(eMentalStateDanger);
     object().sight().setup(CSightAction(g_actor, true));
-//		object().sight().setup						(CSightAction(SightManager::eSightTypeCurrentDirection));
+    //		object().sight().setup						(CSightAction(SightManager::eSightTypeCurrentDirection));
 #else
     //		object().movement().set_mental_state		(eMentalStateDanger);
     object().movement().set_mental_state(eMentalStateFree);
@@ -131,8 +131,7 @@ void CStalkerActionSolveZonePuzzle::execute()
     //		object().throw_target					(g_actor->Position(), g_actor);
     //		if (object().throw_enabled()) {
     //			object().CObjectHandler::set_goal
-    //(eObjectActionFire1,object().inventory().ItemFromSlot(GRENADE_SLOT));
-    //			return;
+    //(eObjectActionFire1,object().inventory().ItemFromSlot(GRENADE_SLOT)); 			return;
     //		}
     //
     //		object().CObjectHandler::set_goal

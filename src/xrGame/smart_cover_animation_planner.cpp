@@ -43,7 +43,7 @@ void animation_planner::setup(CAI_Stalker* object, CPropertyStorage* storage)
 {
     inherited::setup(object);
 #ifdef DEBUG
-//	inherited::m_use_log	= true;
+    //	inherited::m_use_log	= true;
 #endif // DEBUG
 
     add_evaluators();

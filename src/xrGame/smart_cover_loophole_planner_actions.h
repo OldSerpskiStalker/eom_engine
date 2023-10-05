@@ -23,7 +23,6 @@ enum EWorldProperties;
 
 namespace smart_cover
 {
-
 class animation_planner;
 
 class loophole_action_base : public action_base
@@ -198,7 +197,6 @@ public:
     virtual void initialize();
     virtual void finalize();
 }; // class lookout_2_idle_transition
-
 } // namespace smart_cover
 
 #include "smart_cover_loophole_planner_actions_inline.h"

@@ -16,7 +16,6 @@
 
 namespace smart_cover
 {
-
 class animation_planner;
 
 class target_selector : public CActionPlannerAction<animation_planner>,
@@ -44,7 +43,6 @@ public:
     void callback(callback_type const& callback);
     IC callback_type const& callback() const;
 };
-
 } // namespace smart_cover
 
 #include "smart_cover_planner_target_selector_inline.h"

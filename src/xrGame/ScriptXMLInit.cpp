@@ -8,7 +8,7 @@
 #include "ui\UIComboBox.h"
 #include "ui\UITabControl.h"
 #include "ui\UIFrameWindow.h"
-#include "ui\UILabel.h"
+// #include "ui\UILabel.h"
 #include "ui\ServerList.h"
 #include "ui\UIMapList.h"
 #include "ui\UIKeyBinding.h"

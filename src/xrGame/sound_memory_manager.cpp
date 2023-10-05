@@ -310,7 +310,6 @@ struct CRemoveOfflinePredicate
 void CSoundMemoryManager::update()
 {
     START_PROFILE("Memory Manager/sounds::update")
-
     clear_delayed_objects();
 
     VERIFY(m_sounds);

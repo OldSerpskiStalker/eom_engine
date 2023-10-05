@@ -19,7 +19,6 @@ namespace smart_cover
 {
 namespace transitions
 {
-
 class animation_action;
 
 class action : private debug::make_final<action>, private boost::noncopyable
@@ -43,7 +42,6 @@ public:
 private:
     void load_animations(luabind::object const& table);
 };
-
 } // namespace transitions
 } // namespace smart_cover
 

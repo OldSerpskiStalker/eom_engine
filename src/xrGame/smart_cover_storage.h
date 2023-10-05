@@ -13,7 +13,6 @@
 
 namespace smart_cover
 {
-
 class storage : private debug::make_final<storage>, private boost::noncopyable
 {
 public:
@@ -28,7 +27,6 @@ public:
     DescriptionPtr description(shared_str const& table_id);
     void collect_garbage();
 };
-
 } // namespace smart_cover
 
 #endif // SMART_COVER_STORAGE_H_INCLUDED

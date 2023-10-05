@@ -21,7 +21,6 @@ class CBlend;
 
 namespace smart_cover
 {
-
 class action_base;
 class wait_after_exit;
 
@@ -55,7 +54,6 @@ public:
     IC CPropertyStorage* property_storage();
     IC animation_planner& planner();
 };
-
 } // namespace smart_cover
 
 #include "smart_cover_animation_selector_inline.h"

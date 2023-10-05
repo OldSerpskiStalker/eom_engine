@@ -16,7 +16,6 @@
 
 namespace smart_cover
 {
-
 class storage;
 
 struct loophole_data
@@ -85,7 +84,6 @@ private:
     void check_loopholes_connectivity() const;
 #endif // DEBUG
 };
-
 } // namespace smart_cover
 
 #include "smart_cover_inline.h"

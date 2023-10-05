@@ -17,7 +17,6 @@ class CAI_Stalker;
 
 namespace smart_cover
 {
-
 class animation_planner;
 
 ////////////////////////////////////////////////////////////////////////////
@@ -94,7 +93,6 @@ public:
     virtual void select_animation(shared_str& result);
     virtual void on_animation_end();
 };
-
 } // namespace smart_cover
 
 #include "smart_cover_planner_actions_inline.h"

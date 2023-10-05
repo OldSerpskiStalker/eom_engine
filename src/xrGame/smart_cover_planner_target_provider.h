@@ -16,7 +16,6 @@
 
 namespace smart_cover
 {
-
 class target_provider : public CActionBase<animation_planner>, private boost::noncopyable
 {
 private:
@@ -83,7 +82,6 @@ private:
     StalkerDecisionSpace::EWorldProperties m_world_property;
     u32 m_loophole_value;
 };
-
 } // namespace smart_cover
 
 #endif // SMART_COVER_PLANNER_TARGET_PROVIDER_H_INCLUDED
