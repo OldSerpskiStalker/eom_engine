@@ -30,7 +30,8 @@ void CUIGameTDM::SetClGame(game_cl_GameState* g)
 void CUIGameTDM::Init(int stage)
 {
     if (stage == 0)
-    { // shared
+    {
+        // shared
         m_pUITeamSelectWnd = xr_new<CUISpawnWnd>();
         m_team1_icon = xr_new<CUIStatic>();
         m_team2_icon = xr_new<CUIStatic>();
@@ -45,7 +46,8 @@ void CUIGameTDM::Init(int stage)
         CUIXmlInit::InitTextWnd(*MsgConfig, "mp_tdm_buy", 0, m_buy_msg_caption);
     }
     if (stage == 1)
-    { // unique
+    {
+        // unique
         m_pTeamPanels->Init(TEAM_PANELS_TDM_XML_NAME, "team_panels_wnd");
 
         CUIXml uiXml, xml2;
@@ -62,7 +64,8 @@ void CUIGameTDM::Init(int stage)
         m_pRankIndicator->InitFromXml(uiXml);
     }
     if (stage == 2)
-    { // after
+    {
+        // after
         inherited::Init(stage);
         Window->AttachChild(m_team1_score);
         Window->AttachChild(m_team2_score);

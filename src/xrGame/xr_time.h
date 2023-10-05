@@ -8,7 +8,9 @@ class xrTime
 
 public:
     xrTime() : m_time(0) {}
+
     xrTime(const xrTime& other) : m_time(other.m_time) {}
+
     xrTime(ALife::_TIME_ID t) : m_time(t) {}
 
     bool operator<(const xrTime& other) const { return m_time < other.m_time; }

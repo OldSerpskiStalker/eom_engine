@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "UIGameCTA.h"
 
 #include <dinput.h>
@@ -135,6 +135,7 @@ bool CUIGameCTA::IsTeamPanelsShown()
     VERIFY(teamPanels);
     return m_team_panels_shown; // teamPanels->IsShown();
 }
+
 void CUIGameCTA::ShowTeamPanels(bool bShow)
 {
     if (bShow)
@@ -190,6 +191,7 @@ void CUIGameCTA::SetClGame(game_cl_GameState* g)
 void CUIGameCTA::AddPlayer(ClientID const& clientId) { teamPanels->AddPlayer(clientId); }
 
 void CUIGameCTA::RemovePlayer(ClientID const& clientId) { teamPanels->RemovePlayer(clientId); }
+
 void CUIGameCTA::UpdatePlayer(ClientID const& clientId) { teamPanels->UpdatePlayer(clientId); }
 
 bool CUIGameCTA::IsTeamSelectShown()
@@ -197,6 +199,7 @@ bool CUIGameCTA::IsTeamSelectShown()
     VERIFY(m_pUITeamSelectWnd);
     return m_pUITeamSelectWnd->IsShown();
 }
+
 void CUIGameCTA::ShowTeamSelectMenu()
 {
     if (Level().IsDemoPlay())
@@ -286,6 +289,7 @@ void CUIGameCTA::ShowBuyMenu()
         m_game->OnBuyMenuOpen();
     }
 }
+
 /*
 void CUIGameCTA::BuyMenuItemIDInserter(u16 const & itemID)
 {
@@ -714,6 +718,7 @@ void CUIGameCTA::SetSpectatorMsgCaption(LPCSTR str) { m_spectator_caption->SetTe
 void CUIGameCTA::SetSpectrModeMsgCaption(LPCSTR str) { m_spectrmode_caption->SetTextST(str); }
 
 void CUIGameCTA::SetWarmUpCaption(LPCSTR str) { m_warm_up_caption->SetTextST(str); }
+
 void CUIGameCTA::SetTimeMsgCaption(LPCSTR str) { m_time_caption->SetTextST(str); }
 
 void CUIGameCTA::SetDemoPlayCaption(LPCSTR str) { m_demo_play_caption->SetTextST(str); }
@@ -866,10 +871,10 @@ void CUIGameCTA::LoadTeamDefaultPresetItems(const shared_str& caSection)
 
     string256 ItemName;
     string4096 DefItems;
-    // Читаем данные этого поля
+    // Г—ГЁГІГ ГҐГ¬ Г¤Г Г­Г­Г»ГҐ ГЅГІГ®ГЈГ® ГЇГ®Г«Гї
     xr_strcpy(DefItems, pSettings->r_string(caSection, "default_items"));
     u32 count = _GetItemCount(DefItems);
-    // теперь для каждое имя оружия, разделенные запятыми, заносим в массив
+    // ГІГҐГЇГҐГ°Гј Г¤Г«Гї ГЄГ Г¦Г¤Г®ГҐ ГЁГ¬Гї Г®Г°ГіГ¦ГЁГї, Г°Г Г§Г¤ГҐГ«ГҐГ­Г­Г»ГҐ Г§Г ГЇГїГІГ»Г¬ГЁ, Г§Г Г­Г®Г±ГЁГ¬ Гў Г¬Г Г±Г±ГЁГў
     for (u32 i = 0; i < count; ++i)
     {
         _GetItem(DefItems, i, ItemName);

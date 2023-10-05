@@ -115,16 +115,19 @@ protected:
 
     shared_str m_sort_func;
     xr_vector<int> m_tmp_srv_lst;
+
     struct SrvItem
     {
         CUIListItemServer* m_ui_item;
         bool m_busy;
+
         SrvItem(float h)
         {
             m_ui_item = xr_new<CUIListItemServer>(h);
             m_busy = true;
         }
     };
+
     CUIListItemServer* GetFreeItem();
     void DestroySrvItems();
     void ClearSrvItems();

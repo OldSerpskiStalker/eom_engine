@@ -20,12 +20,14 @@ CUIGameAHunt::CUIGameAHunt() : m_game(NULL), m_pBuySpawnMsgBox(NULL) {}
 void CUIGameAHunt::Init(int stage)
 {
     if (stage == 0)
-    { // shared
+    {
+        // shared
         inherited::Init(stage);
         m_buy_msg_caption = UIHelper::CreateTextWnd(*MsgConfig, "mp_ah_buy", Window);
     }
     if (stage == 1)
-    { // unique
+    {
+        // unique
         m_pTeamPanels->Init(TEAM_PANELS_AHUNT_XML_NAME, "team_panels_wnd");
 
         CUIXml uiXml;
@@ -47,7 +49,8 @@ void CUIGameAHunt::Init(int stage)
         m_pRankIndicator->InitFromXml(uiXml);
     }
     if (stage == 2)
-    { // after
+    {
+        // after
         inherited::Init(stage);
         Window->AttachChild(m_pReinforcementInidcator);
     }

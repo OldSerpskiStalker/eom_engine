@@ -3,6 +3,7 @@
 #include "ParticlesObject.h"
 #include "GamePersistent.h"
 #include "../xrEngine/LightAnimLibrary.h"
+
 /*
 CZoneCampfire* g_zone = NULL;
 void turn_zone()
@@ -64,24 +65,19 @@ void CZoneCampfire::GoDisabledState()
 }
 
 #define OVL_TIME 3000
+
 void CZoneCampfire::turn_on_script()
 {
-    if (psDeviceFlags.test(rsR2 | rsR3 | rsR4))
-    {
-        m_turn_time = Device.dwTimeGlobal + OVL_TIME;
-        m_turned_on = true;
-        GoEnabledState();
-    }
+    m_turn_time = Device.dwTimeGlobal + OVL_TIME;
+    m_turned_on = true;
+    GoEnabledState();
 }
 
 void CZoneCampfire::turn_off_script()
 {
-    if (psDeviceFlags.test(rsR2 | rsR3 | rsR4))
-    {
-        m_turn_time = Device.dwTimeGlobal + OVL_TIME;
-        m_turned_on = false;
-        GoDisabledState();
-    }
+    m_turn_time = Device.dwTimeGlobal + OVL_TIME;
+    m_turned_on = false;
+    GoDisabledState();
 }
 
 bool CZoneCampfire::is_on() { return m_turned_on; }

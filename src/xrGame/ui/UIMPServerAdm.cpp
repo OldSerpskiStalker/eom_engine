@@ -514,6 +514,7 @@ void CUIMpServerAdm::ShowChangeGameLimitsBtns()
     m_pBackBtn->Show(true);
     m_pGameLimitsSelectionWnd->Show(true);
 }
+
 void CUIMpServerAdm::OnBackBtn()
 {
     m_pMainSelectionWnd->Show(true);

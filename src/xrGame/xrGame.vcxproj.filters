@@ -1903,9 +1903,6 @@
     <Filter Include="Core\Client\Objects\DelayedActionFuse">
       <UniqueIdentifier>{041a8f13-6ef0-4f0c-b02d-f8b14a637b8b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\Client\Objects\inventory_box">
-      <UniqueIdentifier>{9054a88b-8af5-45c8-85c8-259ff58b0179}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\Client\Particles">
       <UniqueIdentifier>{63cdfe35-ce42-4b4a-a114-6488fbcfdfc5}</UniqueIdentifier>
     </Filter>
@@ -2239,9 +2236,6 @@
     <Filter Include="UI\UIWindows\ScrollBar">
       <UniqueIdentifier>{a2ba0397-f13a-4bcc-a6d0-a3613ffcbc71}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI\UIWindows\SpinBox">
-      <UniqueIdentifier>{84975978-12e8-41fd-a796-954a22fdfd2a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="UI\UIWindows\arrow">
       <UniqueIdentifier>{7bdb8f05-f548-40f1-8d33-5c79ee1effbf}</UniqueIdentifier>
     </Filter>
@@ -2493,6 +2487,12 @@
     </Filter>
     <Filter Include="UI\Common\PDA\Encylopedia">
       <UniqueIdentifier>{73dc453e-a9d1-4200-83b7-3564dbf9fc80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\UIWindows\SpinBox">
+      <UniqueIdentifier>{84975978-12e8-41fd-a796-954a22fdfd2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Client\Objects\inventory_box">
+      <UniqueIdentifier>{9054a88b-8af5-45c8-85c8-259ff58b0179}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -6579,51 +6579,6 @@
     <ClInclude Include="stats_submitter.h">
       <Filter>Core\Server\Games\PlayerAccounts</Filter>
     </ClInclude>
-    <ClInclude Include="gamespy\GameSpy_ATLAS.h">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameSpy\GameSpy_Available.h">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameSpy\GameSpy_Base_Defs.h">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameSpy\GameSpy_Browser.h">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClInclude>
-    <ClInclude Include="gamespy\GameSpy_Full.h">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameSpy\GameSpy_FuncDefs.h">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameSpy\GameSpy_GCD_Client.h">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameSpy\GameSpy_GCD_Server.h">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClInclude>
-    <ClInclude Include="gamespy\GameSpy_GP.h">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClInclude>
-    <ClInclude Include="gamespy\GameSpy_HTTP.h">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameSpy\GameSpy_Keys.h">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameSpy\GameSpy_Patching.h">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameSpy\GameSpy_QR2.h">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameSpy\GameSpy_QR2_callbacks.h">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClInclude>
-    <ClInclude Include="gamespy\GameSpy_SAKE.h">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClInclude>
     <ClInclude Include="gamespy\CdkeyDecode\base32.h">
       <Filter>Core\Server\GameSpy\CdkeyDecode</Filter>
     </ClInclude>
@@ -7384,6 +7339,10 @@
       <Filter>Core\Client\Objects\zones\Ameba</Filter>
     </ClInclude>
     <ClInclude Include="HolderEntityObject.h" />
+    <ClInclude Include="ui\UIPdaSpot.h" />
+    <ClInclude Include="CustomDevice.h">
+      <Filter>Core\Client\Objects\items &amp; weapons\Devices</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -9822,9 +9781,6 @@
     <ClCompile Include="game_cl_deathmatch.cpp">
       <Filter>Core\Server\Games\client\deathmatch</Filter>
     </ClCompile>
-    <ClCompile Include="game_cl_deathmatch_buywnd.cpp">
-      <Filter>Core\Server\Games\client\deathmatch</Filter>
-    </ClCompile>
     <ClCompile Include="game_cl_teamdeathmatch.cpp">
       <Filter>Core\Server\Games\client\team_deathmatch</Filter>
     </ClCompile>
@@ -10103,42 +10059,6 @@
     </ClCompile>
     <ClCompile Include="stats_submitter_dsa_params.cpp">
       <Filter>Core\Server\Games\PlayerAccounts</Filter>
-    </ClCompile>
-    <ClCompile Include="gamespy\GameSpy_ATLAS.cpp">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameSpy\GameSpy_Available.cpp">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameSpy\GameSpy_Browser.cpp">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClCompile>
-    <ClCompile Include="gamespy\GameSpy_Full.cpp">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameSpy\GameSpy_GCD_Client.cpp">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameSpy\GameSpy_GCD_Server.cpp">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClCompile>
-    <ClCompile Include="gamespy\GameSpy_GP.cpp">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClCompile>
-    <ClCompile Include="gamespy\GameSpy_HTTP.cpp">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameSpy\GameSpy_Patching.cpp">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameSpy\GameSpy_QR2.cpp">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameSpy\GameSpy_QR2_callbacks.cpp">
-      <Filter>Core\Server\GameSpy</Filter>
-    </ClCompile>
-    <ClCompile Include="gamespy\GameSpy_SAKE.cpp">
-      <Filter>Core\Server\GameSpy</Filter>
     </ClCompile>
     <ClCompile Include="gamespy\CdkeyDecode\base32.c">
       <Filter>Core\Server\GameSpy\CdkeyDecode</Filter>
@@ -11035,6 +10955,59 @@
       <Filter>Core\Client\Objects\zones\Ameba</Filter>
     </ClCompile>
     <ClCompile Include="HolderEntityObject.cpp" />
+    <ClCompile Include="map_manager_script.cpp" />
+    <ClCompile Include="ui\UIPdaSpot.cpp" />
+    <ClCompile Include="game_cl_deathmatch_buywnd.cpp">
+      <Filter>Core\Server\Games\client\deathmatch</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomZone_script.cpp">
+      <Filter>Core\Client\Objects\zones\CustomZone</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomDevice.cpp">
+      <Filter>Core\Client\Objects\items &amp; weapons\Devices</Filter>
+    </ClCompile>
+    <ClCompile Include="ActorCondition_script.cpp">
+      <Filter>Core\Client\Objects\actor\base</Filter>
+    </ClCompile>
+    <ClCompile Include="medkit_script.cpp">
+      <Filter>Core\Client\Objects\items &amp; weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="inventory_item_script.cpp">
+      <Filter>Core\Client\Objects\items &amp; weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="eatable_item_script.cpp">
+      <Filter>Core\Client\Objects\items &amp; weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="antirad_script.cpp">
+      <Filter>Core\Client\Objects\items &amp; weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="WeaponAmmo_script.cpp">
+      <Filter>Core\Client\Objects\items &amp; weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsShellHolder_script.cpp">
+      <Filter>Core\Client\Objects\items &amp; weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="InventoryOwner_script.cpp">
+      <Filter>Core\Client\Objects\items &amp; weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="InventoryBox_script.cpp">
+      <Filter>Core\Client\Objects\items &amp; weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="HudItem_script.cpp">
+      <Filter>Core\Client\Objects\items &amp; weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="FoodItem_script.cpp">
+      <Filter>Core\Client\Objects\items &amp; weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomOutfit_script.cpp">
+      <Filter>Core\Client\Objects\items &amp; weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="BottleItem_script.cpp">
+      <Filter>Core\Client\Objects\items &amp; weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="Grenade_script.cpp">
+      <Filter>Core\Client\Objects\items &amp; weapons\Weapons\Custom Weapon\Grenades &amp; Missiles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="ai\monsters\chimera\chimera_attack_state.h">

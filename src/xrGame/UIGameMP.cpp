@@ -45,6 +45,7 @@ bool UIGameMP::IR_UIOnKeyboardPress(int dik)
 }
 
 bool UIGameMP::IR_UIOnKeyboardRelease(int dik) { return inherited::IR_UIOnKeyboardRelease(dik); }
+
 /*
 bool UIGameMP::IsMapDescShown()
 {
@@ -124,6 +125,7 @@ void UIGameMP::SetServerLogo(u8 const* data_ptr, u32 data_size)
     VERIFY(m_pServerInfo);
     m_pServerInfo->SetServerLogo(data_ptr, data_size);
 }
+
 void UIGameMP::SetServerRules(u8 const* data_ptr, u32 data_size)
 {
     VERIFY(m_pServerInfo);

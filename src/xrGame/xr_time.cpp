@@ -22,12 +22,14 @@ LPCSTR xrTime::dateToString(int mode)
 {
     return *InventoryUtilities::GetDateAsString(m_time, (InventoryUtilities::EDatePrecision)mode);
 }
+
 LPCSTR xrTime::timeToString(int mode)
 {
     return *InventoryUtilities::GetTimeAsString(m_time, (InventoryUtilities::ETimePrecision)mode);
 }
 
 void xrTime::add(const xrTime& other) { m_time += other.m_time; }
+
 void xrTime::sub(const xrTime& other)
 {
     if (*this > other)

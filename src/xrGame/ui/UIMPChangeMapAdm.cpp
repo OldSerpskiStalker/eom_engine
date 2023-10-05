@@ -96,6 +96,7 @@ void CUIMpChangeMapAdm::OnBtnOk()
         smart_cast<CUIDialogWnd*>(GetParent())->HideDialog();
     }
 }
+
 void CUIMpChangeMapAdm::FillUpList()
 {
     lst->Clear();

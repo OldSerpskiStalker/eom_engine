@@ -22,11 +22,13 @@ public:
     u32 GetItemCount(const shared_str& section_name) const;
     shared_str GetItemGroup(const shared_str& section_name) const;
     u32 GetGroupCount(const shared_str& group_name) const;
+
     void SetRank(u32 rank)
     {
         VERIFY(rank >= 0 && rank < 5);
         m_rank = rank;
     }
+
     u32 GetRank() { return m_rank; };
     const shared_str& GetRankName(u32 rank) const { return m_names[rank]; }
 
@@ -54,4 +56,5 @@ private:
     const restr_item* find_restr_item(const u32& rank, const shared_str& what) const;
     restr_item* find_restr_item_internal(const u32& rank, const shared_str& what);
 };
+
 extern CRestrictions g_mp_restrictions;

@@ -61,7 +61,8 @@ void CUIGameDM::SetClGame(game_cl_GameState* g)
 void CUIGameDM::Init(int stage)
 {
     if (stage == 0)
-    { // shared
+    {
+        // shared
         m_pTeamPanels = xr_new<UITeamPanels>();
         m_pMoneyIndicator = xr_new<CUIMoneyIndicator>();
         m_pMoneyIndicator->SetAutoDelete(true);
@@ -82,7 +83,8 @@ void CUIGameDM::Init(int stage)
         m_warm_up_caption = UIHelper::CreateTextWnd(*MsgConfig, "mp_warm_up", Window);
     }
     if (stage == 1)
-    { // unique
+    {
+        // unique
         m_pTeamPanels->Init(TEAM_PANELS_DM_XML_NAME, "team_panels_wnd");
         CUIXml uiXml;
         uiXml.Load(CONFIG_PATH, UI_PATH, "ui_game_dm.xml");
@@ -92,7 +94,8 @@ void CUIGameDM::Init(int stage)
         CUIXmlInit::InitTextWnd(uiXml, "fraglimit", 0, m_pFragLimitIndicator);
     }
     if (stage == 2)
-    { // after
+    {
+        // after
         inherited::Init(stage);
         Window->AttachChild(m_pMoneyIndicator);
         Window->AttachChild(m_pRankIndicator);

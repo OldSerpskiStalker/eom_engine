@@ -67,13 +67,16 @@ private:
         s16 BigID;
         PresetItem(u8 Slot, u8 Item) { set(Slot, Item); };
         PresetItem(s16 Big) { set(Big); };
+
         bool operator==(const s16& ID) { return (BigID) == (ID); }
+
         void set(s16 Big)
         {
             SlotID = u8((Big >> 0x08) & 0x00ff);
             ItemID = u8(Big & 0x00ff);
             BigID = Big;
         }
+
         void set(u8 Slot, u8 Item)
         {
             SlotID = Slot;

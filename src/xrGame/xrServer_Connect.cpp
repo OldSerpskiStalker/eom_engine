@@ -156,7 +156,9 @@ void xrServer::RequestClientDigest(IClient* CL)
     P.w_begin(M_SV_DIGEST);
     SendTo(CL->ID, P);
 }
+
 #define NET_BANNED_STR "Player banned by server!"
+
 void xrServer::ProcessClientDigest(xrClientData* xrCL, NET_Packet* P)
 {
     R_ASSERT(xrCL);

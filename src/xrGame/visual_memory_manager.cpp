@@ -59,6 +59,7 @@ struct SRemoveOfflinePredicate
 struct CVisibleObjectPredicate
 {
     u32 m_id;
+
     CVisibleObjectPredicate(u32 id) : m_id(id) {}
 
     bool operator()(const CObject* object) const
@@ -260,7 +261,8 @@ float CVisualMemoryManager::object_visible_distance(const CGameObject* game_obje
             eye_direction.setHP(-m_stalker->movement().m_head.current.yaw, -m_stalker->movement().m_head.current.pitch);
         }
         else
-        { // if its a monster
+        {
+            // if its a monster
             const MonsterSpace::SBoneRotation& head_orient = m_object->head_orientation();
             eye_direction.setHP(-head_orient.current.yaw, -head_orient.current.pitch);
         }
@@ -652,7 +654,6 @@ IC squad_mask_type CVisualMemoryManager::mask() const
 void CVisualMemoryManager::update(float time_delta)
 {
     START_PROFILE("Memory Manager/visuals/update")
-
     clear_delayed_objects();
 
     if (!enabled())
@@ -719,12 +720,12 @@ void CVisualMemoryManager::update(float time_delta)
     STOP_PROFILE
 
 #if 0 // def DEBUG
-	if (m_stalker) {
-		CAgentMemberManager::MEMBER_STORAGE::const_iterator	I = m_stalker->agent_manager().member().members().begin();
-		CAgentMemberManager::MEMBER_STORAGE::const_iterator	E = m_stalker->agent_manager().member().members().end();
-		for ( ; I != E; ++I)
-			(*I)->object().memory().visual().check_visibles();
-	}
+		if (m_stalker) {
+			CAgentMemberManager::MEMBER_STORAGE::const_iterator	I = m_stalker->agent_manager().member().members().begin();
+			CAgentMemberManager::MEMBER_STORAGE::const_iterator	E = m_stalker->agent_manager().member().members().end();
+			for (; I != E; ++I)
+				(*I)->object().memory().visual().check_visibles();
+		}
 #endif
 
     if (m_object && g_actor && m_object->is_relation_enemy(Actor()))

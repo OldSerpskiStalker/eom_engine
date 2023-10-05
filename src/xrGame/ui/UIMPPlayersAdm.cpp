@@ -172,6 +172,7 @@ void CUIMpPlayersAdm::SetMaxPingLimit()
     xr_sprintf(tmp_string, "ra sv_max_ping_limit %d", ping_limit * 10);
     Console->Execute(tmp_string);
 }
+
 void CUIMpPlayersAdm::SetMaxPingLimitText()
 {
     int ping_limit = m_pPingLimitTrack->GetIValue();
@@ -179,6 +180,7 @@ void CUIMpPlayersAdm::SetMaxPingLimitText()
     xr_sprintf(tmp_string, "%s %d", CStringTable().translate("ui_mp_am_ping_limit").c_str(), ping_limit * 10);
     m_pPingLimitText->SetText(tmp_string);
 }
+
 void CUIMpPlayersAdm::GetSelPlayerScreenshot()
 {
     CUIListBoxItem* itm = m_pPlayersList->GetSelectedItem();
@@ -190,6 +192,7 @@ void CUIMpPlayersAdm::GetSelPlayerScreenshot()
     xr_sprintf(tmp_string, "ra make_screenshot %u", client_id);
     Console->Execute(tmp_string);
 }
+
 void CUIMpPlayersAdm::GetSelPlayerConfig()
 {
     CUIListBoxItem* itm = m_pPlayersList->GetSelectedItem();
@@ -201,6 +204,7 @@ void CUIMpPlayersAdm::GetSelPlayerConfig()
     xr_sprintf(tmp_string, "ra make_config_dump %u", client_id);
     Console->Execute(tmp_string);
 }
+
 void CUIMpPlayersAdm::KickSelPlayer()
 {
     CUIListBoxItem* itm = m_pPlayersList->GetSelectedItem();
@@ -212,6 +216,7 @@ void CUIMpPlayersAdm::KickSelPlayer()
     xr_sprintf(tmp_string, "ra sv_kick_id %u", client_id);
     Console->Execute(tmp_string);
 }
+
 void CUIMpPlayersAdm::BanSelPlayer()
 {
     CUIListBoxItem* itm = m_pPlayersList->GetSelectedItem();

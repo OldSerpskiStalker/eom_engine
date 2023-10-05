@@ -5,29 +5,27 @@
 // void			xrGameSpyServer::QR2_Init			(u32 PortID)
 void xrGameSpyServer::QR2_Init(int PortID)
 {
-    if (!m_QR2.Init(PortID, m_iReportToMasterServer, this))
-        return;
+    // if (!m_QR2.Init(PortID, m_iReportToMasterServer, this)) return;
     m_bQR2_Initialized = TRUE;
 };
 
 void xrGameSpyServer::QR2_ShutDown()
 {
     m_bQR2_Initialized = FALSE;
-    m_QR2.ShutDown(NULL);
+    // m_QR2.ShutDown(NULL);
 };
 
 //------------------------------- CD_Key -----------------------------
 
 void xrGameSpyServer::CDKey_Init()
 {
-    if (!m_GCDServer.Init())
-        return;
+    // if (!m_GCDServer.Init()) return;
     m_bCDKey_Initialized = TRUE;
 };
 
 void xrGameSpyServer::CDKey_ShutDown()
 {
-    m_GCDServer.ShutDown();
+    // m_GCDServer.ShutDown();
     m_bCDKey_Initialized = FALSE;
 };
 
@@ -39,7 +37,7 @@ void xrGameSpyServer::SendChallengeString_2_Client(IClient* C)
         return;
     xrGameSpyClientData* pClient = (xrGameSpyClientData*)C;
 
-    m_GCDServer.CreateRandomChallenge(pClient->m_pChallengeString, 8);
+    // m_GCDServer.CreateRandomChallenge(pClient->m_pChallengeString, 8);
     //--------- Send Respond ---------------------------------------------
     NET_Packet P;
 

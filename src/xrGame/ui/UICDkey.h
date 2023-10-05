@@ -9,7 +9,9 @@ private:
 
 public:
     CUICDkey();
+
     virtual void SetText(LPCSTR str) {}
+
     virtual LPCSTR GetText();
 
     // CUIOptionsItem
@@ -41,6 +43,7 @@ private:
 
 public:
     CUIMPPlayerName(){};
+
     virtual ~CUIMPPlayerName(){};
 
     //	virtual	void	SetText			(LPCSTR str) {}
@@ -50,7 +53,6 @@ public:
     //	virtual bool	IsChanged();
 
     virtual void OnFocusLost();
-
 }; // class CUIMPPlayerName
 
 extern void GetCDKey_FromRegistry(char* cdkey);
