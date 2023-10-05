@@ -7,7 +7,6 @@ using namespace luabind;
 
 namespace gamespy_profile
 {
-
 void profile_store::script_register(lua_State* L)
 {
     module(L)[class_<profile_store>("profile_store")
@@ -27,5 +26,4 @@ void profile_store::script_register(lua_State* L)
                       value("bst_explosive_kills_in_row", int(bst_head_shots_in_row)),
                       value("bst_score_types_count", int(bst_score_types_count))]];
 };
-
 } // namespace gamespy_profile

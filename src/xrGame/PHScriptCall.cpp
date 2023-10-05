@@ -72,6 +72,7 @@ bool CPHScriptObjectAction::compare(const CPHScriptObjectAction* v) const
 {
     return m_method_name == v->m_method_name && compare_safe(*m_lua_object, *(v->m_lua_object));
 }
+
 void CPHScriptObjectAction::run()
 {
     luabind::call_member<void>(*m_lua_object, *m_method_name);
@@ -94,12 +95,14 @@ CPHScriptObjectCondition::CPHScriptObjectCondition(const CPHScriptObjectConditio
 }
 
 CPHScriptObjectCondition::~CPHScriptObjectCondition() { xr_delete(m_lua_object); }
+
 bool CPHScriptObjectCondition::compare(const CPHScriptObjectCondition* v) const
 {
     return m_method_name == v->m_method_name && compare_safe(*m_lua_object, *(v->m_lua_object));
 }
 
 bool CPHScriptObjectCondition::is_true() { return luabind::call_member<bool>(*m_lua_object, *m_method_name); }
+
 bool CPHScriptObjectCondition::obsolete() const { return false; }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -128,4 +131,5 @@ CPHScriptObjectConditionN::CPHScriptObjectConditionN(
 CPHScriptObjectConditionN::~CPHScriptObjectConditionN() { m_callback.clear(); }
 
 bool CPHScriptObjectConditionN::is_true() { return m_callback(); }
+
 bool CPHScriptObjectConditionN::obsolete() const { return false; }

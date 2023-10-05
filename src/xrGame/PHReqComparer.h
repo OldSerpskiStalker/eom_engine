@@ -12,6 +12,7 @@ class CPHConstForceAction;
 class CPHLiquidParticlesPlayCall;
 class CPHLiquidParticlesCondition;
 class CPHFindLiquidParticlesComparer;
+
 class CPHReqComparerV
 {
 public:

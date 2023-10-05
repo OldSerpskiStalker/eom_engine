@@ -8,7 +8,6 @@
 
 namespace gamespy_profile
 {
-
 enum enum_awards_t
 {
     at_award_massacre = 0x00,
@@ -55,6 +54,7 @@ enum enum_award_params
 struct award_data
 {
     award_data(u16 count, u32 const& rdate) : m_count(count), m_last_reward_date(rdate) {}
+
     u16 m_count;
     u32 m_last_reward_date;
 };
@@ -100,7 +100,6 @@ extern char* best_score_value_line;
 extern char* profile_data_section;
 extern char* profile_id_line;
 extern char* profile_last_submit_time;
-
 } // namespace gamespy_profile
 
 typedef gamespy_profile::store_operation_cb gamespy_profile_store_operation_cb;

@@ -3,7 +3,6 @@
 
 namespace gamespy_profile
 {
-
 char* profile_table_name = "PlayerStats_v1";
 
 char* profile_store_file_name = "mp_profile.ltx";
@@ -50,8 +49,8 @@ static char const* awards_names[at_awards_count] = {
 static u16 award_atlas_keys_map[at_awards_count][ap_award_params_count] = {
     {KEY_AwardMasscare, KEY_AwardMasscareLastRewardDate}, // mp_award_massacre
     {KEY_AwardParanoia, KEY_AwardParanoiaLastRewardDate}, // mp_award_paranoia
-    {KEY_AwardOverwhelmingSuperiority,
-        KEY_AwardOverwhelmingSuperiorityLastRewardDate}, // mp_award_overwhelming_superiority
+    {KEY_AwardOverwhelmingSuperiority, KEY_AwardOverwhelmingSuperiorityLastRewardDate},
+    // mp_award_overwhelming_superiority
     {KEY_AwardBlitzkrieg, KEY_AwardBlitzkriegLastRewardDate}, // mp_award_blitzkrieg
     {KEY_AwardDryVictory, KEY_AwardDryVictoryLastRewardDate}, // mp_award_dry_victory
     {KEY_AwardMultichampion, KEY_AwardMultichampionLastRewardDate}, // mp_award_multichampion
@@ -84,8 +83,8 @@ static u16 award_atlas_keys_map[at_awards_count][ap_award_params_count] = {
 static u16 award_atlas_stats_map[at_awards_count][ap_award_params_count] = {
     {STAT_AwardMasscare, STAT_AwardMasscareLastRewardDate}, // mp_award_massacre
     {STAT_AwardParanoia, STAT_AwardParanoiaLastRewardDate}, // mp_award_paranoia
-    {STAT_AwardOwerwhelmingSuperiority,
-        STAT_AwardOwerwhelmingSuperiorityLastRewardDate}, // mp_award_overwhelming_superiority
+    {STAT_AwardOwerwhelmingSuperiority, STAT_AwardOwerwhelmingSuperiorityLastRewardDate},
+    // mp_award_overwhelming_superiority
     {STAT_AwardBlitzkrieg, STAT_AwardBlitzkriegLastRewardDate}, // mp_award_blitzkrieg
     {STAT_AwardDryVictory, STAT_AwardDryVictoryLastRewardDate}, // mp_award_dry_victory
     {STAT_AwardMultichampion, STAT_AwardMultichampionLastRewardDate}, // mp_award_multichampion
@@ -94,7 +93,8 @@ static u16 award_atlas_stats_map[at_awards_count][ap_award_params_count] = {
     {STAT_AwardFasterThanBullets, STAT_AwardFasterThanBulletsLastRewardDate}, // mp_award_fater_than_bullets
     {STAT_AwardHarvestTime, STAT_AwardHarvestTimeLastRewardDate}, // mp_award_harvest_time
     {STAT_AwardSkewer, STAT_AwardSkewerLastRewardDate}, // mp_award_skewer
-    {STAT_AwardDoubleShotDoubleKill, STAT_AwardDoubleShotDoubleKillLastRewardDate}, // mp_award_double_shot_double_kill
+    {STAT_AwardDoubleShotDoubleKill, STAT_AwardDoubleShotDoubleKillLastRewardDate},
+    // mp_award_double_shot_double_kill
     {STAT_AwardClimber, STAT_AwardClimberLastRewardDate}, // mp_award_climber
     {STAT_AwardOpener, STAT_AwardOpenerLastRewardDate}, // mp_award_opener
     {STAT_AwardToughy, STAT_AwardToughyLastRewardDate}, // mp_award_toughy
@@ -202,5 +202,4 @@ enum_best_score_type get_best_score_type_by_sname(char const* stat_name)
     }
     return static_cast<enum_best_score_type>(bst_score_types_count);
 }
-
 } // namespace gamespy_profile

@@ -4,6 +4,7 @@
 #include "script_engine.h"
 #include "script_space_forward.h"
 #include "script_callback_ex.h"
+
 // template<>
 // IC bool compare_safe(const functor<>& f1,const functor<>& f2)
 //{
@@ -74,6 +75,7 @@ public:
     virtual bool compare(const CPHReqComparerV* v) const { return v->compare(this); }
     virtual bool compare(const CPHScriptObjectAction* v) const;
 };
+
 //////////////////////////////////////////////////////////////////////////////////////////
 
 class CPHScriptObjectConditionN : public CPHCondition, public CPHReqComparerV
@@ -117,11 +119,13 @@ public:
         m_obj = gobj;
         b_obsolete = false;
     }
+
     virtual bool is_true()
     {
         b_obsolete = CPHScriptObjectConditionN::is_true();
         return b_obsolete;
     }
+
     virtual bool compare(const CObject* v) const { return m_obj->ID() == v->ID(); }
     virtual bool compare(const CPHReqComparerV* v) const { return v->compare(this); }
     virtual bool obsolete() const { return b_obsolete; }
@@ -137,6 +141,7 @@ public:
     {
         m_obj = gobj;
     }
+
     virtual bool compare(const CPHReqComparerV* v) const { return v->compare(this); }
     virtual bool compare(const CObject* v) const { return m_obj->ID() == v->ID(); }
 };
@@ -147,10 +152,12 @@ class CPHSriptReqObjComparer : public CPHReqComparerV
 
 public:
     CPHSriptReqObjComparer(const luabind::object& lua_object) { m_lua_object = xr_new<luabind::object>(lua_object); }
+
     CPHSriptReqObjComparer(const CPHSriptReqObjComparer& object)
     {
         m_lua_object = xr_new<luabind::object>(*object.m_lua_object);
     }
+
     virtual ~CPHSriptReqObjComparer() { xr_delete(m_lua_object); }
     virtual bool compare(const CPHScriptObjectCondition* v) const { return v->compare(m_lua_object); }
     virtual bool compare(const CPHScriptObjectAction* v) const { return v->compare(m_lua_object); }

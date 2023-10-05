@@ -4,10 +4,12 @@ class CPHReqBase;
 class CPHReqComparerV;
 #include "../xrphysics/iphworld.h"
 class CPhysicsShell;
+
 class CPHReqBase
 {
 public:
     virtual ~CPHReqBase() {}
+
     virtual bool obsolete() const = 0;
     virtual bool compare(const CPHReqComparerV* v) const { return false; };
 };
@@ -30,11 +32,13 @@ class CPHOnesCondition : public CPHCondition
 
 public:
     CPHOnesCondition() { b_called = false; }
+
     virtual bool is_true()
     {
         b_called = true;
         return true;
     }
+
     virtual bool obsolete() const { return b_called; }
 };
 
@@ -64,6 +68,7 @@ public:
 };
 
 DEFINE_VECTOR(CPHCall*, PHCALL_STORAGE, PHCALL_I);
+
 class CPHCommander : public IPHWorldUpdateCallbck
 {
     xrCriticalSection lock;

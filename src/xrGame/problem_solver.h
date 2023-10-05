@@ -53,6 +53,7 @@ public:
 
         _operator_ptr get_operator() const { return (m_operator); }
     };
+
     typedef xr_vector<SOperator> OPERATOR_VECTOR;
     typedef typename OPERATOR_VECTOR::const_iterator const_iterator;
     typedef associative_vector<_condition_type, _condition_evaluator_ptr> EVALUATORS;
@@ -75,6 +76,7 @@ private:
     {
         return is_goal_reached_impl(vertex_index);
     }
+
     template <>
     IC bool is_goal_reached_impl<true>(const _index_type& vertex_index) const
     {

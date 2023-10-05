@@ -14,6 +14,7 @@ cphysics_element_scripted* cphysics_shell_scripted::get_Element(LPCSTR bone_name
         return 0;
     return get_script_wrapper<cphysics_element_scripted>(*E);
 }
+
 cphysics_element_scripted* cphysics_shell_scripted::get_Element(u16 bone_id)
 {
     CPhysicsElement* E = physics_impl().get_Element(bone_id);
@@ -44,6 +45,7 @@ cphysics_joint_scripted* cphysics_shell_scripted::get_Joint(u16 bone_id)
         return 0;
     return get_script_wrapper<cphysics_joint_scripted>(*J);
 }
+
 cphysics_joint_scripted* cphysics_shell_scripted::get_JointByStoreOrder(u16 idx)
 {
     CPhysicsJoint* J = physics_impl().get_JointByStoreOrder(idx);
@@ -90,7 +92,6 @@ Fmatrix	global_transform(CPhysicsElement* E)
     E->GetGlobalTransformDynamic(&m);
     return m;
 }
-
 void CPhysicsElement::script_register(lua_State *L)
 {
     module(L)
@@ -109,7 +110,6 @@ void CPhysicsElement::script_register(lua_State *L)
             .def("global_transform",			&global_transform)
         ];
 }
-
 void CPhysicsJoint::script_register(lua_State *L)
 {
     module(L)
@@ -139,5 +139,4 @@ float,const int ))(&CPhysicsJoint::SetAxisDirVsSecondElement)) .def("set_limits"
             .def("is_breakable",						&CPhysicsJoint::isBreakable)
         ];
 }
-
 */

@@ -4,6 +4,7 @@
 #include "script_export_space.h"
 
 class CPhysicsElement;
+
 class cphysics_element_scripted : public cphysics_game_scripted<CPhysicsElement>
 {
 public:

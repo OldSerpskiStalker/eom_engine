@@ -20,4 +20,5 @@ void profile_data_script_registrator::script_register(lua_State* L)
             .def_readonly("first", &all_best_scores_t::value_type::first)
             .def_readonly("second", &all_best_scores_t::value_type::second)];
 }
+
 DEFINE_MIXED_DELEGATE_SCRIPT(gamespy_profile::store_operation_cb, "store_operation_cb");

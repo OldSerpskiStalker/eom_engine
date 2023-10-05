@@ -13,6 +13,7 @@ public:
     typedef typename DelegateType::param2_type param2_type;
 
     queued_async_method() { pending_proxy_exec.bind(this, &queued_async_method::proxy_execution); }
+
     ~queued_async_method(){};
 
     void execute(Class* obj_ptr, ParametersTuple const& args, DelegateType func)
@@ -38,7 +39,9 @@ public:
 
         (current_obj->*method)(current_args, pending_proxy_exec);
     }
+
     bool is_active() const { return current_delegate; }
+
     void reexecute() { (current_obj->*method)(current_args, pending_proxy_exec); }
 
     void stop()
@@ -94,8 +97,11 @@ template <typename T1>
 struct parameters_tuple1
 {
     parameters_tuple1() {}
+
     parameters_tuple1(T1 t1) : m_t1(t1){};
+
     parameters_tuple1(parameters_tuple1 const& copy) : m_t1(copy.m_t1){};
+
     parameters_tuple1& operator=(parameters_tuple1 const& copy)
     {
         m_t1 = copy.m_t1;
@@ -111,7 +117,9 @@ template <typename T1, typename T2>
 struct parameters_tuple2
 {
     parameters_tuple2() {}
+
     parameters_tuple2(T1 t1, T2 t2) : m_t1(t1), m_t2(t2){};
+
     parameters_tuple2(parameters_tuple2 const& copy) : m_t1(copy.m_t1), m_t2(copy.m_t2){};
 
     parameters_tuple2& operator=(parameters_tuple2 const& copy)
@@ -131,7 +139,9 @@ template <typename T1, typename T2, typename T3>
 struct parameters_tuple3
 {
     parameters_tuple3() {}
+
     parameters_tuple3(T1 t1, T2 t2, T3 t3) : m_t1(t1), m_t2(t2), m_t3(t3){};
+
     parameters_tuple3(parameters_tuple3 const& copy) : m_t1(copy.m_t1), m_t2(copy.m_t2), m_t3(copt.m_t3){};
 
     parameters_tuple3& operator=(parameters_tuple3 const& copy)
@@ -156,7 +166,9 @@ template <typename T1, typename T2, typename T3, typename T4>
 struct parameters_tuple4
 {
     parameters_tuple4() {}
+
     parameters_tuple4(T1 t1, T2 t2, T3 t3, T4 t4) : m_t1(t1), m_t2(t2), m_t3(t3), m_t4(t4){};
+
     parameters_tuple4(parameters_tuple4 const& copy)
         : m_t1(copy.m_t1), m_t2(copy.m_t2), m_t3(copy.m_t3), m_t4(copy.m_t4){};
 
