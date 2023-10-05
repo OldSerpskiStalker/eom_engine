@@ -15,7 +15,6 @@ namespace inventory
 {
 namespace upgrade
 {
-
 class Root : public UpgradeBase
 {
 private:
@@ -46,9 +45,7 @@ public:
 protected:
     shared_str m_upgrade_scheme;
     Upgrades_vec m_contained_upgrades;
-
 }; // class Root
-
 } // namespace upgrade
 } // namespace inventory
 

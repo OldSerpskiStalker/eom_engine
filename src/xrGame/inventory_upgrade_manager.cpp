@@ -20,7 +20,6 @@ namespace inventory
 {
 namespace upgrade
 {
-
 // using inventory::upgrade::Manager;
 // using inventory::upgrade::UpgradeBase;
 // using inventory::upgrade::Upgrade;
@@ -511,6 +510,5 @@ void Manager::reset_highlight(CInventoryItem& item)
         return;
     }
 }
-
 } // namespace upgrade
 } // namespace inventory

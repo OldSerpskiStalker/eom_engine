@@ -110,7 +110,9 @@ public:
     ~Limb() {}
 
     void SetTMatrix(const Matrix TT) { solver.SetTMatrix(TT); }
+
     void SetSMatrix(const Matrix SS) { solver.SetSMatrix(SS); }
+
     int SetGoalPos(const float g[3], const Matrix E, int limits_on);
     int SetGoal(const Matrix G, int limits_on);
     float Length() const { return solver.Length(); }

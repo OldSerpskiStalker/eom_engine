@@ -15,7 +15,6 @@ namespace inventory
 {
 namespace upgrade
 {
-
 class Group : private boost::noncopyable
 {
 public:
@@ -46,9 +45,7 @@ private:
 
     Upgrades_type m_parent_upgrades;
     Upgrades_type m_included_upgrades;
-
 }; // class group
-
 } // namespace upgrade
 } // namespace inventory
 

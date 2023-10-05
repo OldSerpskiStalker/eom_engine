@@ -18,7 +18,6 @@ namespace inventory
 {
 namespace upgrade
 {
-
 Property::Property() {}
 
 Property::~Property() {}
@@ -63,6 +62,5 @@ bool Property::run_functor(LPCSTR parameter, string256& result)
     xr_strcpy(result, sizeof(result), functor_res);
     return true;
 }
-
 } // namespace upgrade
 } // namespace inventory

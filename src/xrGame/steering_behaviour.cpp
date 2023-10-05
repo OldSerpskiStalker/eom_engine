@@ -15,7 +15,6 @@
 
 namespace steering_behaviour
 {
-
 #define STEER_ASSERT VERIFY
 
 namespace detail
@@ -35,7 +34,6 @@ vec random_vec()
 
 ICF float min(float a, float b) { return a < b ? a : b; }
 ICF float max(float a, float b) { return a < b ? a : b; }
-
 } // namespace detail
 
 //----------------------------------------------------------
@@ -312,5 +310,4 @@ void manager::remove_scheduled()
 }
 
 void manager::deleter(base* p) { delete (p); }
-
 } // namespace steering_behaviour

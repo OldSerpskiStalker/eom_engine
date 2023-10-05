@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "associative_vector.h"
 
@@ -26,8 +26,8 @@ struct SStepInfo
 {
     struct
     {
-        bool handled; // обработан
-        u8 cycle; // цикл в котором отработан
+        bool handled; // Г®ГЎГ°Г ГЎГ®ГІГ Г­
+        u8 cycle; // Г¶ГЁГЄГ« Гў ГЄГ®ГІГ®Г°Г®Г¬ Г®ГІГ°Г ГЎГ®ГІГ Г­
     } activity[MAX_LEGS_COUNT];
 
     SStepParam params;

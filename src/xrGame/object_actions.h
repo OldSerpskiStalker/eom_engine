@@ -15,6 +15,7 @@ class CInventoryItem;
 class CFoodItem;
 class CWeaponMagazined;
 class CWeapon;
+
 //////////////////////////////////////////////////////////////////////////
 // CObjectActionBase
 //////////////////////////////////////////////////////////////////////////
@@ -388,4 +389,5 @@ public:
     virtual void initialize();
     virtual void execute();
 };
+
 #include "object_actions_inline.h"

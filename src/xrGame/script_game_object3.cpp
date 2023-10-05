@@ -53,6 +53,8 @@
 #endif
 //-Alundaio
 
+#include "Torch.h"
+
 namespace MemorySpace
 {
 struct CVisibleObject;

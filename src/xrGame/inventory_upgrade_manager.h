@@ -19,7 +19,6 @@ namespace inventory
 {
 namespace upgrade
 {
-
 class Upgrade;
 class Root;
 class Group;
@@ -92,9 +91,7 @@ private:
 
 public:
     Properties_type m_properties;
-
 }; // class Manager
-
 } // namespace upgrade
 } // namespace inventory
 

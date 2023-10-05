@@ -111,7 +111,7 @@ void CStalkerCombatPlanner::initialize()
     inherited::initialize();
 
 #ifdef DEBUG
-//	inherited_planner::m_use_log = true;
+    //	inherited_planner::m_use_log = true;
 #endif // DEBUG
 
     if (!m_loaded)

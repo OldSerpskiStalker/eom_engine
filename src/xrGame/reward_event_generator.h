@@ -9,7 +9,6 @@ class atlas_submit_queue;
 
 namespace award_system
 {
-
 class game_state_accumulator;
 class rewarding_state_events;
 class rewarding_event_handlers;
@@ -21,8 +20,8 @@ public:
     explicit reward_event_generator(u32 const max_rewards_per_game);
     virtual ~reward_event_generator();
 
-    void init_player(
-        game_PlayerState* local_player); // must be called when buy menu and local_player will be initialized
+    void init_player(game_PlayerState* local_player);
+    // must be called when buy menu and local_player will be initialized
     void init_bone_groups(CActor* first_spawned_actor);
     void update();
 
@@ -50,13 +49,12 @@ private:
     best_scores_helper* m_best_scores_helper;
 
     rewarding_event_handlers* m_event_handlers;
-    atlas_submit_queue* m_submit_queue;
+    // atlas_submit_queue*						m_submit_queue;
 
     u32 const m_max_rewards;
     u32 m_rewarded;
     void __stdcall AddRewardTask(u32 award_id);
 }; // class reward_event_generator
-
 } // namespace award_system
 
 #endif // #ifndef REWARD_EVENT_GENERATOR_INCLUDED

@@ -21,7 +21,6 @@ namespace inventory
 {
 namespace upgrade
 {
-
 Upgrade::Upgrade() {}
 
 Upgrade::~Upgrade() {}
@@ -220,6 +219,5 @@ void Upgrade::highlight_down()
     set_highlight(true);
     m_parent_group->highlight_down();
 }
-
 } // namespace upgrade
 } // namespace inventory

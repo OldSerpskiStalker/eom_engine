@@ -83,6 +83,7 @@ struct PsiEquation
     }
 
     PsiEquation() {}
+
     PsiEquation(float a, float b, float x) { Reset(a, b, x); }
 
     float eval(float psi) const

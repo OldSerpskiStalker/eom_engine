@@ -42,6 +42,7 @@ CObjectPropertyEvaluatorWeaponHidden::_value_type CObjectPropertyEvaluatorWeapon
 
     return ((m_item != m_item->m_pInventory->ActiveItem()) || (m_item->GetState() == CWeapon::eShowing));
 }
+
 //////////////////////////////////////////////////////////////////////////
 // CObjectPropertyEvaluatorAmmo
 //////////////////////////////////////////////////////////////////////////

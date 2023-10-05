@@ -24,6 +24,7 @@ public:
     typedef luabind::functor<R> lua_function_type;
 
     mixed_delegate(){};
+
     ~mixed_delegate() {}
 
     template <class ThisRef, class ClassType>
@@ -70,6 +71,7 @@ public:
         FATAL("mixed delegate is not bound");
         return R();
     }
+
     bool operator!() const { return !operator bool(); }
 
     operator bool() const

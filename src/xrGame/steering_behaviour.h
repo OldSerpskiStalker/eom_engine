@@ -17,7 +17,6 @@
 
 namespace steering_behaviour
 {
-
 //----------------------------------------------------------
 // Helper and Types
 //----------------------------------------------------------
@@ -28,7 +27,6 @@ typedef const vec& vec_arg;
 namespace detail
 {
 vec random_vec();
-
 } // namespace detail
 
 //----------------------------------------------------------
@@ -50,6 +48,7 @@ public:
         }
 
         virtual bool update() = 0;
+
         virtual ~params() {}
     };
 
@@ -95,6 +94,7 @@ public:
         }
 
         virtual bool update() = 0;
+
         virtual ~params() {}
     };
 
@@ -132,6 +132,7 @@ public:
         }
 
         virtual bool update() = 0;
+
         virtual ~params() {}
     };
 
@@ -163,6 +164,7 @@ public:
         }
 
         virtual bool update() = 0;
+
         virtual ~params() {}
     };
 
@@ -202,6 +204,7 @@ public:
         }
 
         virtual bool update() = 0;
+
         virtual ~params() {}
     };
 
@@ -287,6 +290,7 @@ public:
         virtual void next_nearest(vec& v) = 0; // next nearest, false if finished
 
         virtual bool update() = 0;
+
         virtual ~params() {}
     };
 
@@ -322,7 +326,6 @@ protected:
     Behaviours m_behaviours;
     Behaviours m_schedule_remove;
 };
-
 } // namespace steering_behaviour
 
 #endif

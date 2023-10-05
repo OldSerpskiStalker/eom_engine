@@ -9,7 +9,6 @@ class CGameObject;
 
 namespace mp_anticheat
 {
-
 extern char const* active_params_section;
 
 class mp_config_sections
@@ -38,7 +37,6 @@ public:
     void dump(IAnticheatDumpable const* dumpable_obj, LPCSTR sect_name_key, CInifile& dest_dumper); // for cheater
     void load_to(LPCSTR sect_name, CInifile& dest_dumper); // for verifyer
 }; // class mp_active_params
-
 } // namespace mp_anticheat
 
 #endif // #ifndef MP_CONFIG_SECTIONS_INCLUDED

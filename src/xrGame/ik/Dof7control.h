@@ -1,4 +1,3 @@
-
 /*
   This source code is a part of IKAN.
   Copyright (c) 2000 University of Pennsylvania
@@ -185,7 +184,9 @@ public:
     ~SRS() {}
 
     void Tmatrix(Matrix TT) { cpmatrix(TT, T); }
+
     void Smatrix(Matrix SS) { cpmatrix(SS, S); }
+
     void SetTMatrix(const Matrix TT) { cpmatrix(T, TT); }
 
     void SetSMatrix(const Matrix SS) { cpmatrix(S, SS); }

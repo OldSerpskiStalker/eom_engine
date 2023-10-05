@@ -19,7 +19,6 @@ namespace inventory
 {
 namespace upgrade
 {
-
 UpgradeBase::UpgradeBase() {}
 
 UpgradeBase::~UpgradeBase() {}
@@ -120,6 +119,5 @@ UpgradeStateResult UpgradeBase::can_install(CInventoryItem& item, bool loading)
     }
     return result_ok;
 }
-
 } // namespace upgrade
 } // namespace inventory

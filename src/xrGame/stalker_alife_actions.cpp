@@ -72,7 +72,7 @@ void CStalkerActionNoALife::initialize()
     object().sight().setup(CSightAction(SightManager::eSightTypeCurrentDirection));
     object().CObjectHandler::set_goal(
         eObjectActionFire1, object().inventory().ItemFromSlot(INV_SLOT_2), 0, 1, 2500, 3000);
-//	object().movement().patrol().set_path		("way_0000",PatrolPathManager::ePatrolStartTypeNearest);
+    //	object().movement().patrol().set_path		("way_0000",PatrolPathManager::ePatrolStartTypeNearest);
 #endif
 }
 
@@ -101,7 +101,7 @@ void CStalkerActionNoALife::execute()
     else
         object().CObjectHandler::set_goal(eObjectActionIdle, object().best_weapon());
 #else
-//	object().movement().set_movement_type		(eMovementTypeRun);
+    //	object().movement().set_movement_type		(eMovementTypeRun);
 #endif
 }
 

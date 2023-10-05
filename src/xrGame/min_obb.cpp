@@ -93,6 +93,7 @@ static float Volume(const float* afAngle, void* pvUserData)
     float fVolume = (kMax.x - kMin.x) * (kMax.y - kMin.y) * (kMax.z - kMin.z);
     return fVolume;
 }
+
 //----------------------------------------------------------------------------
 static void MinimalBoxForAngles(int iQuantity, const Fvector* akPoint, float afAngle[3], MagicBox3& rkBox)
 {
@@ -139,6 +140,7 @@ static void MinimalBoxForAngles(int iQuantity, const Fvector* akPoint, float afA
     rkBox.Extent(1) = kRng.y;
     rkBox.Extent(2) = kRng.z;
 }
+
 //----------------------------------------------------------------------------
 MagicBox3 MagicMinBox(int iQuantity, const Fvector* akPoint)
 {
@@ -184,4 +186,5 @@ MagicBox3 MagicMinBox(int iQuantity, const Fvector* akPoint)
     MinimalBoxForAngles(iQuantity, akPoint, afAMin, kBox);
     return kBox;
 }
+
 //----------------------------------------------------------------------------

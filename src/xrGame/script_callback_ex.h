@@ -99,6 +99,7 @@ public:
     {
         return compare_safe(m_object, (callback.m_object)) && m_functor == (callback.m_functor);
     }
+
     IC bool operator==(const object_type& object) const { return compare_safe(m_object, object); }
     IC void set(const functor_type& functor);
     IC void set(const functor_type& functor, const object_type& object);

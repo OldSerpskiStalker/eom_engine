@@ -128,10 +128,12 @@ public:
     }
 
     AngleInt() : low(0), high(2 * M_PI) {}
+
     AngleInt(float l, float h);
 
     void SetLow(float l);
     void SetHigh(float l);
+
     void Set(float l, float h)
     {
         SetLow(l);

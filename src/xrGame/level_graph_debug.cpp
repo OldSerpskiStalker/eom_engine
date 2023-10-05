@@ -618,7 +618,6 @@ void CLevelGraph::draw_game_graph()
             }
         }
     }
-
     if (GameID() == eGameIDSingle && ai().get_alife()) {
         {
             GameGraph::_LEVEL_ID	J = ai().game_graph().vertex(ai().alife().graph().actor()->m_tGraphID)->level_id();
@@ -645,7 +644,6 @@ void CLevelGraph::draw_game_graph()
                 F->OutI(S.x,-S.y,"%d",i);
             }
         }
-
         ALife::D_OBJECT_P_MAP::const_iterator	I = ai().alife().objects().objects().begin();
         ALife::D_OBJECT_P_MAP::const_iterator	E = ai().alife().objects().objects().end();
         for ( ; I != E; ++I) {

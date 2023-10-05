@@ -86,6 +86,7 @@ IC void CPatrolPathManager::set_path(shared_str path_name, const EPatrolStartTyp
     set_route_type(patrol_route_type);
     set_random(random);
 }
+
 IC u32 CPatrolPathManager::get_current_point_index() const { return (m_curr_point_index); }
 
 IC CRestrictedObject& CPatrolPathManager::object() const

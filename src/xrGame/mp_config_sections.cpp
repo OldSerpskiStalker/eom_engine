@@ -4,7 +4,6 @@
 
 namespace mp_anticheat
 {
-
 static char* important_sections[] = {"mp_actor", "mp_actor_damage", "mp_actor_immunities", "mp_actor_condition",
     "rank_base", "rank_0", "rank_1", "rank_2", "rank_3", "rank_4", "deathmatch_gamedata", "deathmatch_team0",
     "teamdeathmatch_team1", "teamdeathmatch_team2", "artefacthunt_gamedata", "artefacthunt_team1", "artefacthunt_team2",
@@ -95,5 +94,4 @@ void mp_active_params::load_to(LPCSTR sect_name, CInifile& dest_dumper)
         dest_dumper.w_string(sect_name, line_name, line_value);
     }
 }
-
 } // namespace mp_anticheat

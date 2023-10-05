@@ -19,6 +19,7 @@ enum EPatrolStartType
     ePatrolStartTypeNext,
     ePatrolStartTypeDummy = u32(-1),
 };
+
 enum EPatrolRouteType
 {
     ePatrolRouteTypeStop = u32(0),

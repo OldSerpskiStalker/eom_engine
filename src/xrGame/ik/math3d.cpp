@@ -1,4 +1,3 @@
-
 /*
   This source code is a part of IKAN.
   Copyright (c) 2000 University of Pennsylvania
@@ -370,13 +369,13 @@ void rotation_axis_to_matrix(float axis[3], float angle, Matrix R)
     // Assume axis is normalized
 
 #if 0
-    // float normal[3];
-    // cpvector(normal,axis);
-    // unitize(normal);
+	// float normal[3];
+	// cpvector(normal,axis);
+	// unitize(normal);
 
-    // s1 = normal[0];
-    // s2 = normal[1];
-    // s3 = normal[2];
+	// s1 = normal[0];
+	// s2 = normal[1];
+	// s3 = normal[2];
 #else
 
     s1 = axis[0];
@@ -553,7 +552,7 @@ void find_normal_vector(float v[3], float n[3])
         n[min_i] = 1.0;
         break;
 
-    // Vector has at least two nonzero components
+        // Vector has at least two nonzero components
     case 1:
     default:
         if (min_i == 0)
@@ -934,6 +933,7 @@ void vecinterp(float x[], float u[], float v[], float t)
     x[1] = u[1] + t * (v[1] - u[1]);
     x[2] = u[2] + t * (v[2] - u[2]);
 }
+
 float unitize4(float u[4])
 /*
  * Same as unitize, except that arguments are 4-vectors.
@@ -1010,6 +1010,7 @@ void get_row(Matrix M, int row, float v[3])
     v[1] = M[row][1];
     v[2] = M[row][2];
 }
+
 float vecdist(const float t[], const float t2[])
 {
     float t3[3];

@@ -3,6 +3,7 @@
 class IKinematics;
 class CInifile;
 class CGameObject;
+
 class moving_bones_snd_player
 {
     u16 bone_id;

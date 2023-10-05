@@ -22,7 +22,8 @@ enum ESightType
     eSightTypeLookOver,
     eSightTypeCoverLookOver,
     eSightTypeFireObject,
-    eSightTypeFirePosition, // must be removed
+    eSightTypeFirePosition,
+    // must be removed
     eSightTypeAnimationDirection,
     eSightTypeDummy = u32(-1),
 };

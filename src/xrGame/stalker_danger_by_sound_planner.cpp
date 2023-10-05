@@ -34,6 +34,7 @@ void CStalkerDangerBySoundPlanner::initialize() { inherited::initialize(); }
 void CStalkerDangerBySoundPlanner::update() { inherited::update(); }
 
 void CStalkerDangerBySoundPlanner::finalize() { inherited::finalize(); }
+
 void CStalkerDangerBySoundPlanner::add_evaluators()
 {
     add_evaluator(eWorldPropertyDanger, xr_new<CStalkerPropertyEvaluatorDangers>(m_object, "danger"));

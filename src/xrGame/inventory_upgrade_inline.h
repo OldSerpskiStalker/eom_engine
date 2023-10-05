@@ -15,7 +15,6 @@ namespace inventory
 {
 namespace upgrade
 {
-
 IC LPCSTR Upgrade::section() const { return m_section.c_str(); }
 
 IC shared_str const& Upgrade::parent_group_id() const { return m_parent_group->id(); }
@@ -37,7 +36,6 @@ IC shared_str const& Upgrade::get_property_name(u8 index) const
 }
 
 IC Ivector2 const& Upgrade::get_scheme_index() const { return m_scheme_index; }
-
 } // namespace upgrade
 } // namespace inventory
 

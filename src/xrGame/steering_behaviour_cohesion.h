@@ -16,7 +16,6 @@ class CAI_Rat;
 
 namespace steering_behaviour
 {
-
 class cohesion : public base, private debug::make_final<cohesion>, private boost::noncopyable
 {
 public:
@@ -26,7 +25,6 @@ public:
 private:
     typedef base inherited;
 };
-
 } // namespace steering_behaviour
 
 #endif // STEERING_BEHAVIOUR_COHESION_H_INCLUDED

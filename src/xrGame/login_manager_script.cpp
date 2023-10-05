@@ -7,7 +7,6 @@ using namespace luabind;
 
 namespace gamespy_gp
 {
-
 void login_manager::script_register(lua_State* L)
 {
     module(L)[class_<login_manager>("login_manager")
@@ -35,7 +34,6 @@ void profile::script_register(lua_State* L)
 {
     module(L)[class_<profile>("profile").def("unique_nick", &profile::unique_nick).def("online", &profile::online)];
 }
-
 } // namespace gamespy_gp
 
 DEFINE_MIXED_DELEGATE_SCRIPT(gamespy_gp::login_operation_cb, "login_operation_cb");

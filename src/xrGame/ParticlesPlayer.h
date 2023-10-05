@@ -1,6 +1,6 @@
-///////////////////////////////////////////////////////////////
+п»ї///////////////////////////////////////////////////////////////
 // ParticlesPlayer.h
-// интерфейс для проигрывания партиклов на объекте
+// ГЁГ­ГІГҐГ°ГґГҐГ©Г± Г¤Г«Гї ГЇГ°Г®ГЁГЈГ°Г»ГўГ Г­ГЁГї ГЇГ Г°ГІГЁГЄГ«Г®Гў Г­Г  Г®ГЎГєГҐГЄГІГҐ
 ///////////////////////////////////////////////////////////////
 
 #pragma once
@@ -16,17 +16,18 @@ class IKinematics;
 class CParticlesPlayer
 {
 public:
-    // структура с внутренней информацией о партикле
+    // Г±ГІГ°ГіГЄГІГіГ°Г  Г± ГўГ­ГіГІГ°ГҐГ­Г­ГҐГ© ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГҐГ© Г® ГЇГ Г°ГІГЁГЄГ«ГҐ
     struct SParticlesInfo
     {
         CParticlesObject* ps;
         Fvector angles;
-        u16 sender_id; // id - объекта, который запустил партиклы
-        u32 life_time; // время жизни партикла (-1) - бесконечно
+        u16 sender_id; // id - Г®ГЎГєГҐГЄГІГ , ГЄГ®ГІГ®Г°Г»Г© Г§Г ГЇГіГ±ГІГЁГ« ГЇГ Г°ГІГЁГЄГ«Г»
+        u32 life_time; // ГўГ°ГҐГ¬Гї Г¦ГЁГ§Г­ГЁ ГЇГ Г°ГІГЁГЄГ«Г  (-1) - ГЎГҐГ±ГЄГ®Г­ГҐГ·Г­Г®
     };
+
     DEFINE_VECTOR(SParticlesInfo, ParticlesInfoList, ParticlesInfoListIt);
 
-    // структура для косточки с списком запущенных партиклов
+    // Г±ГІГ°ГіГЄГІГіГ°Г  Г¤Г«Гї ГЄГ®Г±ГІГ®Г·ГЄГЁ Г± Г±ГЇГЁГ±ГЄГ®Г¬ Г§Г ГЇГіГ№ГҐГ­Г­Г»Гµ ГЇГ Г°ГІГЁГЄГ«Г®Гў
     struct SBoneInfo
     {
         u16 index;
@@ -40,16 +41,17 @@ public:
         void StopParticles(const shared_str& ps_name, bool bDestroy);
         void StopParticles(u16 sender_id, bool bDestroy);
     };
+
     DEFINE_VECTOR(SBoneInfo, BoneInfoVec, BoneInfoVecIt);
 
 private:
-    // список костей
-    u64 bone_mask; // используемые кости
+    // Г±ГЇГЁГ±Г®ГЄ ГЄГ®Г±ГІГҐГ©
+    u64 bone_mask; // ГЁГ±ГЇГ®Г«ГјГ§ГіГҐГ¬Г»ГҐ ГЄГ®Г±ГІГЁ
     BoneInfoVec m_Bones;
     CObject* m_self_object;
 
 protected:
-    bool m_bActiveBones; // есть ли косточки на которых играются партиклы
+    bool m_bActiveBones; // ГҐГ±ГІГј Г«ГЁ ГЄГ®Г±ГІГ®Г·ГЄГЁ Г­Г  ГЄГ®ГІГ®Г°Г»Гµ ГЁГЈГ°Г ГѕГІГ±Гї ГЇГ Г°ГІГЁГЄГ«Г»
 
 public:
     IC SBoneInfo* get_bone_info(u16 bone_index)
@@ -61,6 +63,7 @@ public:
                 return &(*it);
         return 0;
     }
+
     SBoneInfo* get_nearest_bone_info(IKinematics* K, u16 bone_index);
     Fvector parent_vel;
 

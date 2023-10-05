@@ -16,7 +16,6 @@ class CAI_Rat;
 
 namespace steering_behaviour
 {
-
 class alignment : public base, private debug::make_final<alignment>, private boost::noncopyable
 {
 public:
@@ -26,7 +25,6 @@ public:
 private:
     typedef base inherited;
 };
-
 } // namespace steering_behaviour
 
 #endif // STEERING_BEHAVIOUR_ALIGNMENT_H_INCLUDED

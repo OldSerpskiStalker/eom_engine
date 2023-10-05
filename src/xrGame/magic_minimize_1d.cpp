@@ -10,6 +10,7 @@ Minimize1D::Minimize1D(Function oF, int iMaxLevel, int iMaxBracket, void* pvUser
     m_iMaxBracket = iMaxBracket;
     m_pvUserData = pvUserData;
 }
+
 //----------------------------------------------------------------------------
 void Minimize1D::GetMinimum(float fT0, float fT1, float fTInitial, float& rfTMin, float& rfFMin)
 {
@@ -27,6 +28,7 @@ void Minimize1D::GetMinimum(float fT0, float fT1, float fTInitial, float& rfTMin
     rfTMin = m_fTMin;
     rfFMin = m_fFMin;
 }
+
 //----------------------------------------------------------------------------
 void Minimize1D::GetMinimum(float fT0, float fF0, float fTm, float fFm, float fT1, float fF1, int iLevel)
 {
@@ -110,6 +112,7 @@ void Minimize1D::GetMinimum(float fT0, float fF0, float fTm, float fFm, float fT
         }
     }
 }
+
 //----------------------------------------------------------------------------
 void Minimize1D::GetMinimum(float fT0, float fF0, float fT1, float fF1, int iLevel)
 {
@@ -190,6 +193,7 @@ void Minimize1D::GetMinimum(float fT0, float fF0, float fT1, float fF1, int iLev
         }
     }
 }
+
 //----------------------------------------------------------------------------
 void Minimize1D::GetBracketedMinimum(float fT0, float fF0, float fTm, float fFm, float fT1, float fF1, int iLevel)
 {
@@ -257,4 +261,5 @@ void Minimize1D::GetBracketedMinimum(float fT0, float fF0, float fTm, float fFm,
         }
     }
 }
+
 //----------------------------------------------------------------------------

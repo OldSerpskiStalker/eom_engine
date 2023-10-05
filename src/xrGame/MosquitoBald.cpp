@@ -31,6 +31,7 @@ bool CMosquitoBald::BlowoutState()
 
     return result;
 }
+
 // bool CMosquitoBald::SecondaryHitState()
 //{
 //	bool result = inherited::SecondaryHitState();

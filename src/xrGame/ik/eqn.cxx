@@ -196,7 +196,7 @@ int PsiEquation::clip(float low,
     m = solve_trig1_aux(low-xi,  a2b2, atan2ba,s);
     n = solve_trig1_aux(high-xi, a2b2, atan2ba,t);
     // m = solve_trig1(alpha,beta,low-xi,s);
-    // n = solve_trig1(alpha,beta,high-xi,t);
+// n = solve_trig1(alpha,beta,high-xi,t);
 
 
     /* If no intersections curve is either entirely in or out */

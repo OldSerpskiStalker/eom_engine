@@ -107,7 +107,7 @@ void CStalkerAnimationPair::play(IKinematicsAnimated* skeleton_animated, PlayCal
 #if 0
 #ifdef DEBUG
 		if (psAI_Flags.is(aiAnimation) && blend())
-			Msg				("%6d [%s][%s][%s][%f]",Device.dwTimeGlobal,m_object_name,m_animation_type_name,*animation()->name(),blend()->timeCurrent);
+			Msg("%6d [%s][%s][%s][%f]", Device.dwTimeGlobal, m_object_name, m_animation_type_name, *animation()->name(), blend()->timeCurrent);
 #endif
 #endif
 
@@ -204,7 +204,7 @@ std::pair<LPCSTR, LPCSTR>* CStalkerAnimationPair::blend_id(
     const u32 part_blend = part_blends_num - 2;
     CBlend* b = skeleton_animated->LL_PartBlend(bone_part_id, part_blend);
 #if 0
-	VERIFY2					(
+	VERIFY2(
 		b->motionID != animation(),
 		make_string(
 			"animation is blending with itself (%s)",
@@ -306,7 +306,7 @@ void CStalkerAnimationPair::reset()
 {
 #if 0 // def DEBUG
 	if (m_animation)
-		Msg						("animation [%s][%s] is reset",m_object_name,m_animation_type_name);
+		Msg("animation [%s][%s] is reset", m_object_name, m_animation_type_name);
 #endif // DEBUG
 
     m_animation.invalidate();

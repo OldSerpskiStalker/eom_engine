@@ -26,6 +26,7 @@ void CInventoryItemObject::Load(LPCSTR section)
     CPhysicItem::Load(section);
     CInventoryItem::Load(section);
 }
+
 /* remove
 LPCSTR CInventoryItemObject::Name			()
 {

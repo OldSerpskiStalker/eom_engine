@@ -15,7 +15,6 @@ namespace inventory
 {
 namespace upgrade
 {
-
 class Property : private boost::noncopyable
 {
 public:
@@ -47,9 +46,7 @@ protected:
 
     StrFunctor m_desc;
     FunctorParams_type m_functor_params;
-
 }; // class Property
-
 } // namespace upgrade
 } // namespace inventory
 

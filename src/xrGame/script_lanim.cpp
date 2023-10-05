@@ -18,16 +18,19 @@ struct lanim_wrapper
 
 public:
     lanim_wrapper(LPCSTR name) { load(name); }
+
     void load(LPCSTR name)
     {
         item = LALib.FindItem(name);
         R_ASSERT3(item, "Can't find color anim:", name);
     }
+
     u32 length()
     {
         VERIFY(item);
         return item->Length_ms();
     }
+
     Fcolor calculate(float T)
     {
         int frame;

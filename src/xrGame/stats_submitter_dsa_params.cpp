@@ -3,7 +3,6 @@
 
 namespace gamespy_profile
 {
-
 // DSA params
 u8 const stats_submitter::p_number[crypto::xr_dsa::public_key_length] = {
     0x81,
@@ -419,5 +418,4 @@ u8 const stats_submitter::public_key[crypto::xr_dsa::public_key_length] = {
     0xd6,
     0x2b,
 }; // public_key
-
 } // namespace gamespy_profile

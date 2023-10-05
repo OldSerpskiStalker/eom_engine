@@ -15,12 +15,13 @@ class CAI_Rat;
 
 namespace steering_behaviour
 {
-
 class base : private boost::noncopyable
 {
 public:
     base(CAI_Rat const* object);
+
     virtual ~base() {}
+
     virtual Fvector direction() = 0;
 
 public:
@@ -31,7 +32,6 @@ private:
     CAI_Rat const* m_object;
     bool m_enabled;
 };
-
 } // namespace steering_behaviour
 
 #include "steering_behaviour_base_inline.h"

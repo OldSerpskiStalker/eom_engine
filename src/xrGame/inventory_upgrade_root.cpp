@@ -17,7 +17,6 @@ namespace inventory
 {
 namespace upgrade
 {
-
 Root::Root() {}
 
 Root::~Root() {}
@@ -167,6 +166,5 @@ void Root::reset_highlight()
         (*ib)->set_highlight(false);
     }
 }
-
 } // namespace upgrade
 } // namespace inventory

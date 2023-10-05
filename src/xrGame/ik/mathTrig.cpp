@@ -1,4 +1,3 @@
-
 /*
   This source code is a part of IKAN.
   Copyright (c) 2000 University of Pennsylvania
@@ -46,7 +45,7 @@
 //     return x;
 // }
 
-#if 0  
+#if 0
 //
 // Return the distance between two angles measured either
 // clockwise or anticlockwise depending on which gives

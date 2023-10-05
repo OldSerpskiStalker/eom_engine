@@ -142,7 +142,6 @@ const xr_vector<DetailPathManager::STravelPathPoint>& CMovementManager::path() c
 void CMovementManager::update_path()
 {
     START_PROFILE("Build Path::update")
-
     if (!enabled() || wait_for_distributed_computation())
         return;
 

@@ -15,10 +15,8 @@ namespace inventory
 {
 namespace upgrade
 {
-
 namespace detail
 {
-
 template <typename return_type>
 struct functor_base
 {
@@ -69,7 +67,6 @@ struct functor3<void> : public functor2<void>
     int parameter3;
     IC void operator()() const { functr(parameter, parameter2, parameter3); }
 };
-
 } // namespace detail
 
 enum EMaxProps
@@ -142,7 +139,6 @@ protected:
 
     bool m_highlight;
 };
-
 } // namespace upgrade
 } // namespace inventory
 

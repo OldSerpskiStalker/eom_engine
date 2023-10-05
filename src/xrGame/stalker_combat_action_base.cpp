@@ -98,7 +98,7 @@ void CStalkerActionCombatBase::select_queue_params(const float& distance, u32& m
 
     switch (weapon_type)
     {
-    // pistols
+        // pistols
     case 5: {
         if (distance > object().pstl_queue_fire_dist_far())
         {

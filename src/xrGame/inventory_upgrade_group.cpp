@@ -14,7 +14,6 @@ namespace inventory
 {
 namespace upgrade
 {
-
 Group::Group() {}
 
 Group::~Group() {}
@@ -148,6 +147,5 @@ void Group::highlight_down()
         (*ib)->highlight_down();
     }
 }
-
 } // namespace upgrade
 } // namespace inventory

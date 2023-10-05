@@ -18,7 +18,6 @@ namespace inventory
 {
 namespace upgrade
 {
-
 class Manager;
 class Group;
 class Root;
@@ -52,7 +51,7 @@ public:
 
 #ifdef DEBUG
     virtual void log_hierarchy(LPCSTR nest);
-//	virtual		void		test_all_upgrades( CInventoryItem& item );
+    //	virtual		void		test_all_upgrades( CInventoryItem& item );
 #endif // DEBUG
 
     virtual bool is_root();
@@ -63,6 +62,7 @@ public:
     virtual UpgradeStateResult can_install(CInventoryItem& item, bool loading);
 
     virtual void highlight_up(){};
+
     virtual void highlight_down(){};
 
 protected:
@@ -77,9 +77,7 @@ protected:
 
 protected:
     void add_dependent_groups(LPCSTR groups_str, Manager& manager_r);
-
 }; // class UpgradeBase
-
 } // namespace upgrade
 } // namespace inventory
 

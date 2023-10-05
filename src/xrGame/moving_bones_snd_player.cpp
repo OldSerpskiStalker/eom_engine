@@ -18,7 +18,9 @@ moving_bones_snd_player::moving_bones_snd_player(IKinematics* K, CInifile* ini, 
     VERIFY(ini);
     load(*K, *ini, section, object);
 }
+
 moving_bones_snd_player::~moving_bones_snd_player() { sound.destroy(); }
+
 Fmatrix& moving_bones_snd_player::bone_matrix()
 {
     VERIFY(kinematics);
@@ -30,6 +32,7 @@ BOOL dbg_moving_bones_snd_player = FALSE;
 #endif
 static const float sm_factor = 0.99f;
 static const float play_threthhold = 0.2f;
+
 void moving_bones_snd_player::update(float time_delta, CGameObject& object)
 {
     VERIFY(sound._handle());

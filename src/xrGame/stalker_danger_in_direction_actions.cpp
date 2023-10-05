@@ -94,9 +94,8 @@ void CStalkerActionDangerInDirectionTakeCover::execute()
         //		object().brain().affect_cover				(true);
     }
 
-    if (object().movement().path_completed()) // &&
-                                              // (object().memory().enemy().selected()->Position().distance_to_sqr(object().Position())
-                                              // >= 10.f))
+    if (object().movement().path_completed())
+        // && (object().memory().enemy().selected()->Position().distance_to_sqr(object().Position()) >= 10.f))
         m_storage->set_property(eWorldPropertyInCover, true);
 }
 

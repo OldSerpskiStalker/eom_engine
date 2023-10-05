@@ -19,38 +19,48 @@ IC MagicBox3::MagicBox3(const Fmatrix& m, const Fvector& half_size)
 
 //----------------------------------------------------------------------------
 IC Fvector& MagicBox3::Center() { return m_kCenter; }
+
 //----------------------------------------------------------------------------
 IC const Fvector& MagicBox3::Center() const { return m_kCenter; }
+
 //----------------------------------------------------------------------------
 IC Fvector& MagicBox3::Axis(int i)
 {
     VERIFY(0 <= i && i < 3);
     return m_akAxis[i];
 }
+
 //----------------------------------------------------------------------------
 IC const Fvector& MagicBox3::Axis(int i) const
 {
     VERIFY(0 <= i && i < 3);
     return m_akAxis[i];
 }
+
 //----------------------------------------------------------------------------
 IC Fvector* MagicBox3::Axes() { return m_akAxis; }
+
 //----------------------------------------------------------------------------
 IC const Fvector* MagicBox3::Axes() const { return m_akAxis; }
+
 //----------------------------------------------------------------------------
 IC float& MagicBox3::Extent(int i)
 {
     VERIFY(0 <= i && i < 3);
     return m_afExtent[i];
 }
+
 //----------------------------------------------------------------------------
 IC const float& MagicBox3::Extent(int i) const
 {
     VERIFY(0 <= i && i < 3);
     return m_afExtent[i];
 }
+
 //----------------------------------------------------------------------------
 IC float* MagicBox3::Extents() { return m_afExtent; }
+
 //----------------------------------------------------------------------------
 IC const float* MagicBox3::Extents() const { return m_afExtent; }
+
 //----------------------------------------------------------------------------

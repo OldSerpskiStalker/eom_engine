@@ -17,10 +17,12 @@ struct SIKCollideData;
 class CGameObject;
 class motion_marks;
 class ik_goal_matrix;
+
 namespace extrapolation
 {
 class points;
 };
+
 class CIKLimb
 {
 private:
