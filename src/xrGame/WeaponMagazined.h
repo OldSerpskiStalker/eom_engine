@@ -33,6 +33,8 @@ protected:
     ESoundTypes m_eSoundReloadMisfire;
 #endif //-NEW_SOUNDS
     bool m_sounds_enabled;
+    bool m_nextFireMode;
+    bool m_needReload;
     // General
     // кадр момента пересчета UpdateSounds
     u32 dwUpdateSounds_Frame;
@@ -49,15 +51,20 @@ protected:
     virtual void switch2_Showing();
 
     virtual void OnShot();
-
+    virtual void PlaySoundShot();
     virtual void OnEmptyClick();
 
     virtual void OnAnimationEnd(u32 state);
-    virtual void OnStateSwitch(u32 S);
+    virtual void OnStateSwitch(u32 S, u32 oldState);
 
     virtual void UpdateSounds();
 
     bool TryReload();
+
+private:
+    LPCSTR empty_click_layer;
+    float empty_click_speed;
+    float empty_click_power;
 
 protected:
     virtual void ReloadMagazine();
@@ -86,6 +93,8 @@ public:
     virtual void net_Export(NET_Packet& P);
     virtual void net_Import(NET_Packet& P);
 
+    virtual void OnMotionMark(u32 state, const motion_marks& M);
+
     virtual void OnH_A_Chield();
 
     virtual bool Attach(PIItem pIItem, bool b_send_event);
@@ -103,7 +112,6 @@ public:
     virtual bool GetBriefInfo(II_BriefInfo& info);
 
 public:
-    virtual bool SwitchMode();
     virtual bool SingleShotMode() { return 1 == m_iQueueSize; }
     virtual void SetQueueSize(int size);
     IC int GetQueueSize() const { return m_iQueueSize; };
@@ -142,8 +150,6 @@ protected:
 public:
     virtual void OnZoomIn();
     virtual void OnZoomOut();
-    void OnNextFireMode();
-    void OnPrevFireMode();
     bool HasFireModes() { return m_bHasDifferentFireModes; };
     virtual int GetCurrentFireMode()
     {
@@ -169,9 +175,16 @@ protected:
     virtual void PlayAnimHide();
     virtual void PlayAnimReload();
     virtual void PlayAnimIdle();
+    virtual void PlayAnimIdleMoving();
+    virtual bool PlayAnimCrouchIdleMoving();
+    virtual void PlayAnimIdleSprint();
     virtual void PlayAnimShoot();
     virtual void PlayReloadSound();
     virtual void PlayAnimAim();
+    virtual void PlayAnimFireModeSwitch();
+    virtual bool TryPlayAnimBore();
+
+    virtual void UpdateFireMode();
 
     virtual int ShotsFired() { return m_iShotNum; }
     virtual float GetWeaponDeterioration();

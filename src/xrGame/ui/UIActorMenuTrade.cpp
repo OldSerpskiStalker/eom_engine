@@ -1,4 +1,4 @@
-// #include "stdafx.h"
+
 #include "pch_script.h"
 #include "UIActorMenu.h"
 #include "UI3tButton.h"
@@ -9,7 +9,6 @@
 #include "UICellItem.h"
 #include "UIInventoryUtilities.h"
 #include "UICellItemFactory.h"
-
 #include "../InventoryOwner.h"
 #include "../Inventory.h"
 #include "../Trade.h"
@@ -24,6 +23,7 @@
 #include "../../xrServerEntities/script_engine.h"
 #include "../UIGameSP.h"
 #include "UITalkWnd.h"
+#include "../InventoryBox.h"
 
 // -------------------------------------------------
 
@@ -99,6 +99,31 @@ void CUIActorMenu::InitPartnerInventoryContents()
         }
     }
     m_trade_partner_inventory_state = m_pPartnerInvOwner->inventory().ModifyFrame();
+}
+
+void CUIActorMenu::RefreshDeadBodyInventoryContents() // Debrovski
+{
+    m_pDeadBodyBagList->ClearAll(true);
+
+    TIItemContainer items_list;
+    if (m_pPartnerInvOwner)
+    {
+        m_pPartnerInvOwner->inventory().AddAvailableItems(items_list, false, m_pPartnerInvOwner->is_alive()); // true
+        UpdatePartnerBag();
+    }
+    else
+    {
+        VERIFY(m_pInvBox);
+        m_pInvBox->set_in_use(true);
+        m_pInvBox->AddAvailableItems(items_list);
+    }
+
+    std::sort(items_list.begin(), items_list.end(), InventoryUtilities::GreaterRoomInRuck);
+    for (const auto& item : items_list)
+    {
+        CUICellItem* itm = create_cell_item(item);
+        m_pDeadBodyBagList->SetItem(itm);
+    }
 }
 
 void CUIActorMenu::ColorizeItem(CUICellItem* itm, bool colorize)

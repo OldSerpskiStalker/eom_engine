@@ -87,42 +87,42 @@ void CPlanner::update()
             current_action().m_action_name);
 #endif
 
-    THROW(!solution().empty());
-    // Alundaio:
-    if (solution().empty())
-        return;
-    //-Alundaio
+    THROW(!this->solution().empty());
 
-    if (initialized())
+    if (solution().empty())
     {
-        if (current_action_id() != solution().front())
+        if (initialized())
         {
-            current_action().finalize();
-            m_current_action_id = solution().front();
-            // Alundaio: More detailed logging for initializing action
-            if (bDbgAct == true)
-                Msg("DEBUG: Action [%s] initializing", current_action().m_action_name);
-            current_action().initialize();
+            // Msg("! [CPlanner::update]: %s has solution().empty()", m_object->cName().c_str());
+            if (current_action_id() != _action_id_type(-1))
+            {
+                current_action().finalize();
+                m_current_action_id = _action_id_type(-1);
+            }
+            m_initialized = false;
         }
     }
     else
     {
-        m_initialized = true;
-        m_current_action_id = solution().front();
-        // Alundaio: More detailed logging for initializing action
-        if (bDbgAct == true)
-            Msg("DEBUG: Action [%s] initializing", current_action().m_action_name);
-        current_action().initialize();
+        if (initialized())
+        {
+            if (current_action_id() != solution().front())
+            {
+                current_action().finalize();
+                m_current_action_id = solution().front();
+                current_action().initialize();
+            }
+        }
+        else
+        {
+            m_initialized = true;
+            m_current_action_id = solution().front();
+            current_action().initialize();
+        }
+        current_action().execute();
     }
 
-    // Alundaio: More detailed logging for executing action; Knowing the last executing action before a crash can be
-    // very useful for debugging
-    if (bDbgAct == true)
-        Msg("DEBUG: Action [%s] executing", current_action().m_action_name);
-
-    //-Alundaio: Debug Action
-
-    current_action().execute();
+    //	Msg("!![CPlanner::update] Fatal Error in object: [%s]", object_name());
 }
 
 TEMPLATE_SPECIALIZATION

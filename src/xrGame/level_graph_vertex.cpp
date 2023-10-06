@@ -254,7 +254,10 @@ u32 CLevelGraph::check_position_in_direction_slow(
     u32 start_vertex_id, const Fvector2& start_position, const Fvector2& finish_position) const
 {
     if (!valid_vertex_position(v3d(finish_position)))
+    {
+        Msg("{@} --- Invalid destination [%f][%f]", finish_position.x, finish_position.y);
         return (u32(-1));
+    }
 
     u32 cur_vertex_id = start_vertex_id, prev_vertex_id = u32(-1);
     Fbox2 box;

@@ -3,7 +3,6 @@
 
 #include <boost/noncopyable.hpp>
 #include "mixed_delegate.h"
-#include "../xrGameSpy/GameSpy/GP/gp.h"
 #include "account_manager.h"
 #include "script_export_space.h"
 #include "login_manager.h"
@@ -14,9 +13,10 @@ class CGameSpy_GP;
 class CGameSpy_ATLAS;
 class CGameSpy_Patching;
 
+typedef unsigned int GPProfile;
+
 namespace gamespy_gp
 {
-
 struct profile
 {
     GPProfile m_profile_id;
@@ -24,8 +24,8 @@ struct profile
     shared_str m_login_ticket;
     bool m_online;
 
-    GSLoginCertificate mCertificate;
-    GSLoginPrivateData mPrivateData;
+    // GSLoginCertificate	mCertificate;
+    // GSLoginPrivateData	mPrivateData;
 
     profile(GPProfile const& pid, char const* unique_nick, char const* login_ticket, bool const online)
         : m_profile_id(pid), m_unique_nick(unique_nick), m_login_ticket(login_ticket), m_online(online)
@@ -87,6 +87,7 @@ private:
 
     typedef parameters_tuple1<shared_str> set_unick_params_t;
     void set_unique_nick_raw(set_unick_params_t const& new_unick, login_operation_cb logincb);
+
     void release_set_unique_nick(profile const*, char const*){};
     queued_async_method<login_manager, set_unick_params_t, login_operation_cb, &login_manager::set_unique_nick_raw,
         &login_manager::release_set_unique_nick>
@@ -112,11 +113,12 @@ private:
     ////callbacks
     static void __cdecl login_cb(GPConnection* connection, void* arg, void* param);
 
-    static void __cdecl wslogin_cb(GHTTPResult httpResult, WSLoginResponse* response, void* userData);
+    // static void __cdecl			wslogin_cb			(GHTTPResult httpResult,
+    //												 WSLoginResponse * response,
+    //												 void * userData);
     static void __cdecl setunick_cb(GPConnection* connection, void* arg, void* param);
     DECLARE_SCRIPT_REGISTER_FUNCTION
 }; // class login_manager
-
 } // namespace gamespy_gp
 
 typedef gamespy_gp::profile gamespy_gp_profile;

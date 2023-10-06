@@ -37,6 +37,8 @@ CWeaponKnife::CWeaponKnife()
 
     m_Hit1SpashDir.set(0.f, 0.f, 1.f);
     m_Hit2SpashDir.set(0.f, 0.f, 1.f);
+
+    dwUpdateSounds_Frame = 0;
 }
 
 CWeaponKnife::~CWeaponKnife() {}
@@ -48,6 +50,8 @@ void CWeaponKnife::Load(LPCSTR section)
 
     fWallmarkSize = pSettings->r_float(section, "wm_size");
     m_sounds.LoadSound(section, "snd_shoot", "sndShot", false, SOUND_TYPE_WEAPON_SHOOTING);
+    m_sounds.LoadSound(section, "snd_draw", "sndShow", false, SOUND_TYPE_ITEM_TAKING);
+    m_sounds.LoadSound(section, "snd_holster", "sndHide", false, SOUND_TYPE_ITEM_HIDING);
 
     m_Hit1SpashDir = pSettings->r_fvector3(section, "splash1_direction");
     m_Hit2SpashDir = pSettings->r_fvector3(section, "splash2_direction");
@@ -69,14 +73,19 @@ void CWeaponKnife::Load(LPCSTR section)
     knife_material_idx = GMLib.GetMaterialIdx(KNIFE_MATERIAL_NAME);
 }
 
-void CWeaponKnife::OnStateSwitch(u32 S)
+void CWeaponKnife::OnStateSwitch(u32 S, u32 oldState)
 {
-    inherited::OnStateSwitch(S);
+    inherited::OnStateSwitch(S, oldState);
     switch (S)
     {
     case eIdle: switch2_Idle(); break;
     case eShowing: switch2_Showing(); break;
-    case eHiding: switch2_Hiding(); break;
+    case eHiding:
+        if (oldState != eHiding)
+        {
+            switch2_Hiding();
+        }
+        break;
     case eHidden: switch2_Hidden(); break;
     case eFire: {
         //-------------------------------------------
@@ -242,6 +251,21 @@ void CWeaponKnife::OnAnimationEnd(u32 state)
 
 void CWeaponKnife::state_Attacking(float) {}
 
+void CWeaponKnife::UpdateCL()
+{
+    inherited::UpdateCL();
+
+    if (Device.dwFrame == dwUpdateSounds_Frame)
+        return;
+
+    dwUpdateSounds_Frame = Device.dwFrame;
+
+    Fvector P = get_LastFP();
+
+    m_sounds.SetPosition("sndShow", P);
+    m_sounds.SetPosition("sndHide", P);
+}
+
 void CWeaponKnife::switch2_Attacking(u32 state)
 {
     if (IsPending())
@@ -267,7 +291,9 @@ void CWeaponKnife::switch2_Hiding()
 {
     FireEnd();
     VERIFY(GetState() == eHiding);
+
     PlayHUDMotion("anm_hide", TRUE, this, GetState());
+    PlaySound("sndHide", get_LastFP());
 }
 
 void CWeaponKnife::switch2_Hidden()
@@ -280,28 +306,32 @@ void CWeaponKnife::switch2_Showing()
 {
     VERIFY(GetState() == eShowing);
     PlayHUDMotion("anm_show", FALSE, this, GetState());
+    PlaySound("sndShow", get_LastFP());
 }
 
-void CWeaponKnife::FireStart()
-{
-    inherited::FireStart();
-    SwitchState(eFire);
-}
+void CWeaponKnife::FireStart() { SwitchState(eFire); }
 
 void CWeaponKnife::Fire2Start() { SwitchState(eFire2); }
 
 bool CWeaponKnife::Action(u16 cmd, u32 flags)
 {
-    if (inherited::Action(cmd, flags))
-        return true;
     switch (cmd)
     {
+    case kWPN_FIRE:
+        if (flags & CMD_START && !IsPending())
+            FireStart();
+
+        return true;
     case kWPN_ZOOM:
-        if (flags & CMD_START)
+        if (flags & CMD_START && !IsPending())
             Fire2Start();
 
         return true;
     }
+
+    if (inherited::Action(cmd, flags))
+        return true;
+
     return false;
 }
 

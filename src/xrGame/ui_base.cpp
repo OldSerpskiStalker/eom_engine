@@ -61,7 +61,7 @@ sPoly2D* C2DFrustum::ClipPoly(sPoly2D& S, sPoly2D& D) const
         src->push_back((*src)[0]);
         Fvector2 dir_pt, dir_uv;
         float denum, t;
-        for (j = 0; j < src->size() - 1; j++)
+        for (u32 j = 0; j < src->size() - 1; j++)
         {
             if ((*src)[j].pt.similar((*src)[j + 1].pt, EPS_S))
                 continue;
@@ -264,6 +264,15 @@ bool ui_core::is_widescreen()
     return (Device.dwWidth) / float(Device.dwHeight) > (UI_BASE_WIDTH / UI_BASE_HEIGHT + 0.01f);
 }
 
+u8 ui_core::screenmode()
+{
+    if ((float(Device.dwWidth) / float(Device.dwHeight)) > 1.8f)
+        return u8(2);
+    else if ((float(Device.dwWidth) / float(Device.dwHeight)) > (UI_BASE_WIDTH / UI_BASE_HEIGHT + 0.01f))
+        return u8(1);
+    return u8(0);
+}
+
 float ui_core::get_current_kx()
 {
     float h = float(Device.dwHeight);
@@ -273,36 +282,87 @@ float ui_core::get_current_kx()
     return res;
 }
 
-shared_str ui_core::get_xml_name(LPCSTR fn)
+bool ui_core::is_16_9_mode()
 {
-    string_path str;
-    if (!is_widescreen())
+    float standartRatio = UI_BASE_WIDTH / UI_BASE_HEIGHT + 0.01f;
+    float currRation = float(Device.dwWidth) / float(Device.dwHeight);
+    bool state = (currRation > standartRatio) && (currRation < 1.8f);
+    return state;
+}
+
+bool ui_core::is_21_9_mode()
+{
+    float currRation = float(Device.dwWidth) / float(Device.dwHeight);
+    bool state = currRation > 1.8f;
+    return state;
+}
+
+std::string createFileName(std::string oldFileName, std::string postfix)
+{
+    size_t dot = oldFileName.find_last_of(".");
+    std::string newName;
+    std::string ext;
+    if (dot != std::string::npos)
     {
-        xr_sprintf(str, "%s", fn);
-        if (NULL == strext(fn))
-            xr_strcat(str, ".xml");
+        newName = oldFileName.substr(0, dot);
+        ext = oldFileName.substr(dot, oldFileName.size() - dot);
     }
     else
     {
-        string_path str_;
-        if (strext(fn))
+        newName = oldFileName;
+        ext = ".xml";
+    }
+    newName.append(postfix).append(ext);
+    // Msg("newName = %s", newName);
+    return newName;
+}
+
+shared_str ui_core::get_xml_name(LPCSTR fn)
+{
+    // Msg("Device width x height = %d x %d", Device.dwWidth, Device.dwHeight);
+    std::string file;
+    string_path path;
+    string_path dev_path;
+    xr_sprintf(dev_path, "_%dx%d", Device.dwWidth, Device.dwHeight);
+    file = createFileName(fn, dev_path);
+
+    if (FS.exist(path, "$game_config$", "ui\\", file.c_str()))
+    {
+        return file.c_str();
+    }
+
+    float currRatio = float(Device.dwWidth) / float(Device.dwHeight);
+
+    if (currRatio > 1.8f)
+    {
+        file = createFileName(fn, "_21");
+        // Msg("file1 = %s", file);
+
+        if (!FS.exist(path, "$game_config$", "ui\\", file.c_str()))
         {
-            xr_strcpy(str, fn);
-            *strext(str) = 0;
-            xr_strcat(str, "_16.xml");
+            file = createFileName(fn, "_16");
+            // Msg("file2 = %s", file);
+        }
+    }
+    else if (std::isgreaterequal(currRatio, 1.6f) && std::islessequal(currRatio, 1.8f))
+    {
+        if (fsimilar(currRatio, 1.6f))
+        {
+            file = createFileName(fn, "_16x10");
         }
         else
-            xr_sprintf(str, "%s_16", fn);
+            file = createFileName(fn, "_16x9");
 
-        if (NULL == FS.exist(str_, "$game_config$", "ui\\", str))
+        if (!FS.exist(path, "$game_config$", "ui\\", file.c_str()))
         {
-            xr_sprintf(str, "%s", fn);
-            if (NULL == strext(fn))
-                xr_strcat(str, ".xml");
+            file = createFileName(fn, "_16");
+            // Msg("file3 = %s", file);
         }
-#ifdef DEBUG
-        Msg("[16-9] get_xml_name for[%s] returns [%s]", fn, str);
-#endif // #ifdef DEBUG
     }
-    return str;
+    if (!FS.exist(path, "$game_config$", "ui\\", file.c_str()))
+        file = createFileName(fn, "");
+
+    // Msg("file4 = %s", file);
+
+    return file.c_str();
 }

@@ -10,6 +10,8 @@ private:
     typedef CWeapon inherited;
 
 protected:
+    virtual void UpdateCL();
+
     virtual void switch2_Idle();
     virtual void switch2_Hiding();
     virtual void switch2_Hidden();
@@ -18,7 +20,7 @@ protected:
 
     virtual void OnAnimationEnd(u32 state);
     virtual void OnMotionMark(u32 state, const motion_marks&);
-    virtual void OnStateSwitch(u32 S);
+    virtual void OnStateSwitch(u32 S, u32 oldState);
 
     void state_Attacking(float dt);
 
@@ -43,6 +45,8 @@ protected:
     float fCurrentHit;
 
     float fHitImpulse_cur;
+
+    u32 dwUpdateSounds_Frame;
 
 protected:
     virtual void LoadFireParams(LPCSTR section);

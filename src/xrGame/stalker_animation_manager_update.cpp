@@ -230,10 +230,10 @@ void CStalkerAnimationManager::update()
     {
         Msg("! error in stalker with visual %s", *object().cNameVisual());
         /* avo: prevent game from crashing */
+        global().reset();
         head().reset();
         torso().reset();
         legs().reset();
-        global().reset();
         return;
         // throw;
         /* avo: end */

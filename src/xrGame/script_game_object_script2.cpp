@@ -27,6 +27,10 @@
 #include "relation_registry.h"
 #include "danger_object.h"
 #include "smart_cover_object.h"
+#include "detail_path_manager_space.h"
+#include "patrol_path_manager_space.h"
+
+#include "game_object_space.h"
 
 using namespace luabind;
 
@@ -61,6 +65,7 @@ class_<CScriptGameObject>& script_register_game_object1(class_<CScriptGameObject
         .property("psy_health", &CScriptGameObject::GetPsyHealth, &CScriptGameObject::SetPsyHealth)
         .property("power", &CScriptGameObject::GetPower, &CScriptGameObject::SetPower)
         .property("satiety", &CScriptGameObject::GetSatiety, &CScriptGameObject::ChangeSatiety)
+        .property("thirst", &CScriptGameObject::GetThirst, &CScriptGameObject::ChangeThirst)
         .property("radiation", &CScriptGameObject::GetRadiation, &CScriptGameObject::SetRadiation)
         .property("morale", &CScriptGameObject::GetMorale, &CScriptGameObject::SetMorale)
         .property("bleeding", &CScriptGameObject::GetBleeding, &CScriptGameObject::SetBleeding)
@@ -176,6 +181,7 @@ class_<CScriptGameObject>& script_register_game_object1(class_<CScriptGameObject
         .def("memory_position", &CScriptGameObject::memory_position)
         .def("best_weapon", &CScriptGameObject::best_weapon)
         .def("explode", &CScriptGameObject::explode)
+        .def("is_exploded", &CScriptGameObject::is_exploded)
         .def("get_enemy", &CScriptGameObject::GetEnemy)
         .def("get_corpse", &CScriptGameObject::GetCorpse)
         .def("get_enemy_strength", &CScriptGameObject::GetEnemyStrength)
@@ -305,7 +311,10 @@ class_<CScriptGameObject>& script_register_game_object1(class_<CScriptGameObject
         .def("vertex_in_direction", &CScriptGameObject::vertex_in_direction)
 
         .def("item_in_slot", &CScriptGameObject::item_in_slot)
-        .def("active_detector", &CScriptGameObject::active_detector)
+        .def("active_detector", &CScriptGameObject::active_device)
+        .def("hide_detector", &CScriptGameObject::hide_device)
+        .def("force_hide_detector", &CScriptGameObject::force_hide_device)
+        .def("show_detector", &CScriptGameObject::show_device)
         .def("active_slot", &CScriptGameObject::active_slot)
         .def("activate_slot", &CScriptGameObject::activate_slot)
 

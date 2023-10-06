@@ -537,11 +537,11 @@ _value_type CStalkerPropertyEvaluatorLowCover::evaluate()
 		return					(false);
 
 	Fvector						direction;
-	float						y,p;
-	direction.sub				(mem_object.m_object_params.m_position, cover->position());
-	direction.getHP				(y,p);
+	float						y, p;
+	direction.sub(mem_object.m_object_params.m_position, cover->position());
+	direction.getHP(y, p);
 	float						high_cover_value = ai().level_graph().high_cover_in_direction(y, cover->level_vertex_id());
-	float						low_cover_value  = ai().level_graph().low_cover_in_direction (y, cover->level_vertex_id());
+	float						low_cover_value = ai().level_graph().low_cover_in_direction(y, cover->level_vertex_id());
 
 	if (low_cover_value >= high_cover_value)
 		return					(false);

@@ -77,11 +77,15 @@ protected:
     float m_magnitude;
 
 public:
+    LPCSTR m_value;
+    LPCSTR m_name;
+    LPCSTR m_text;
     ui_actor_state_item();
     virtual ~ui_actor_state_item();
     void init_from_xml(CUIXml& xml, LPCSTR path);
 
-    void set_text(float value); // 0..1
+    bool set_text(float value); // 0..1
+    bool set_text_rad(float value); // 0..1
     void set_progress(float value); // 0..1
     void set_progress_shape(float value); // 0..1
     void set_arrow(float value); // 0..1

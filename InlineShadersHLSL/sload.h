@@ -49,7 +49,6 @@ void UpdateTC( inout p_bumped I)
 		float3	 eye = mul (float3x3(I.M1.x, I.M2.x, I.M3.x,
 									 I.M1.y, I.M2.y, I.M3.y,
 									 I.M1.z, I.M2.z, I.M3.z), -I.position.xyz);
-
 		eye = normalize(eye);
 		
 		//	Calculate number of steps
@@ -74,14 +73,6 @@ void UpdateTC( inout p_bumped I)
 			}
 		}
 
-/*
-		[unroll(25)]	//	Doesn't work with [loop]
-		for( ;fCurrHeight < fCurrentBound; fCurrentBound -= fStepSize )
-		{
-			vTexCurrentOffset += vTexOffsetPerStep;		
-			fCurrHeight = s_bumpX.SampleLevel( smp_base, vTexCurrentOffset.xy, 0 ).a; 
-		}
-*/
 		//	Reconstruct previouse step's data
 		vTexCurrentOffset -= vTexOffsetPerStep;
 		float fPrevHeight = s_bumpX.Sample( smp_base, float3(vTexCurrentOffset.xy,0) ).a;
@@ -101,25 +92,34 @@ void UpdateTC( inout p_bumped I)
 		I.tcdbump = vTexCoord * dt_params;
 #endif
 	}
+	else
+	{
+		float3 eye = mul(float3x3(I.M1.x, I.M2.x, I.M3.x,
+								  I.M1.y, I.M2.y, I.M3.y,
+								  I.M1.z, I.M2.z, I.M3.z),
+						 -I.position.xyz);
 
+		eye = normalize(eye);
+
+		float height = s_bumpX.Sample(smp_base, I.tcdh).w;
+		height = height * (parallax.x) + (parallax.y);
+		I.tcdh += height * normalize(eye);
+	}	
 }
 
 #elif	defined(USE_PARALLAX) || defined(USE_STEEPPARALLAX)
 
 void UpdateTC( inout p_bumped I)
 {
-	float3	 eye = mul (float3x3(I.M1.x, I.M2.x, I.M3.x,
-								 I.M1.y, I.M2.y, I.M3.y,
-								 I.M1.z, I.M2.z, I.M3.z), -I.position.xyz);
-								 
-	float	height	= s_bumpX.Sample( smp_base, I.tcdh).w;	//
-			//height  /= 2;
-			//height  *= 0.8;
-			height	= height*(parallax.x) + (parallax.y);	//
-	float2	new_tc  = I.tcdh + height * normalize(eye);	//
+	float3 eye = mul(float3x3(I.M1.x, I.M2.x, I.M3.x,
+							  I.M1.y, I.M2.y, I.M3.y,
+							  I.M1.z, I.M2.z, I.M3.z),
+					 -I.position.xyz);
 
-	//	Output the result
-	I.tcdh	= new_tc;
+	eye = normalize(eye);
+	float height = s_bumpX.Sample(smp_base, I.tcdh).w; //
+	height = height * (parallax.x) + (parallax.y); //
+	I.tcdh += height * normalize(eye);
 }
 
 #else	//	USE_PARALLAX
@@ -140,28 +140,28 @@ surface_bumped sload_i( p_bumped I)
 	float4 	Nu	= s_bump.Sample( smp_base, I.tcdh );		// IN:	normal.gloss
 	float4 	NuE	= s_bumpX.Sample( smp_base, I.tcdh);	// IN:	normal_error.height
 
+	// XYZW = RGBA (ABGR)
+
 	S.base		= tbase(I.tcdh);				//	IN:  rgb.a
 	S.normal	= Nu.wzy + (NuE.xyz - 1.0h);	//	(Nu.wzyx - .5h) + (E-.5)
-	S.gloss		= Nu.x*Nu.x;					//	S.gloss = Nu.x*Nu.x;
-	S.height	= NuE.z;
-	//S.height	= 0;
+	S.gloss		= Nu.x;					//	S.gloss = Nu.x*Nu.x;
+	S.height	= NuE.w;
 
 #ifdef        USE_TDETAIL
 #ifdef        USE_TDETAIL_BUMP
 	float4 NDetail		= s_detailBump.Sample( smp_base, I.tcdbump);
 	float4 NDetailX		= s_detailBumpX.Sample( smp_base, I.tcdbump);
 	S.gloss				= S.gloss * NDetail.x * 2;
-	//S.normal			+= NDetail.wzy-.5;
 	S.normal			+= NDetail.wzy + NDetailX.xyz - 1.0h; //	(Nu.wzyx - .5h) + (E-.5)
 
 	float4 detail		= s_detail.Sample( smp_base, I.tcdbump);
 	S.base.rgb			= S.base.rgb * detail.rgb * 2;
-
-//	S.base.rgb			= float3(1,0,0);
+	S.normal.z 			+= dot(detail.rgb-(float3).5f,.25f);
 #else        //	USE_TDETAIL_BUMP
 	float4 detail		= s_detail.Sample( smp_base, I.tcdbump);
 	S.base.rgb			= S.base.rgb * detail.rgb * 2;
 	S.gloss				= S.gloss * detail.w * 2;
+	S.normal.z 			+= dot(detail.rgb-(float3).5f,.25f);
 #endif        //	USE_TDETAIL_BUMP
 #endif
 
@@ -183,10 +183,9 @@ surface_bumped sload_i( p_bumped I, float2 pixeloffset )
 	float4 	NuE	= s_bumpX.Sample( smp_base, I.tcdh);	// IN:	normal_error.height
 
 	S.base		= tbase(I.tcdh);				//	IN:  rgb.a
-	S.normal	= Nu.wzyx + (NuE.xyz - 1.0h);	//	(Nu.wzyx - .5h) + (E-.5)
-	S.gloss		= Nu.x*Nu.x;					//	S.gloss = Nu.x*Nu.x;
-	S.height	= NuE.z;
-	//S.height	= 0;
+	S.normal	= Nu.wzy + (NuE.xyz - 1.0h);	//	(Nu.wzyx - .5h) + (E-.5)
+	S.gloss		= Nu.x;					//	S.gloss = Nu.x*Nu.x;
+	S.height	= NuE.w;
 
 #ifdef        USE_TDETAIL
 #ifdef        USE_TDETAIL_BUMP
@@ -199,13 +198,11 @@ surface_bumped sload_i( p_bumped I, float2 pixeloffset )
 	float4 NDetail		= s_detailBump.Sample( smp_base, I.tcdbump);
 	float4 NDetailX		= s_detailBumpX.Sample( smp_base, I.tcdbump);
 	S.gloss				= S.gloss * NDetail.x * 2;
-	//S.normal			+= NDetail.wzy-.5;
 	S.normal			+= NDetail.wzy + NDetailX.xyz - 1.0h; //	(Nu.wzyx - .5h) + (E-.5)
 
 	float4 detail		= s_detail.Sample( smp_base, I.tcdbump);
 	S.base.rgb			= S.base.rgb * detail.rgb * 2;
-
-//	S.base.rgb			= float3(1,0,0);
+	S.normal.z 			+= dot(detail.rgb-(float3).5f,.25f);
 #else        //	USE_TDETAIL_BUMP
 #ifdef MSAA_ALPHATEST_DX10_1
    I.tcdbump.xy += pixeloffset.x * ddx(I.tcdbump.xy) + pixeloffset.y * ddy(I.tcdbump.xy);
@@ -213,6 +210,7 @@ surface_bumped sload_i( p_bumped I, float2 pixeloffset )
 	float4 detail		= s_detail.Sample( smp_base, I.tcdbump);
 	S.base.rgb			= S.base.rgb * detail.rgb * 2;
 	S.gloss				= S.gloss * detail.w * 2;
+	S.normal.z 			+= dot(detail.rgb-(float3).5f,.25f);
 #endif        //	USE_TDETAIL_BUMP
 #endif
 
@@ -222,18 +220,17 @@ surface_bumped sload_i( p_bumped I, float2 pixeloffset )
 surface_bumped sload ( p_bumped I)
 {
       surface_bumped      S   = sload_i	(I);
-		S.normal.z			*=	0.5;		//. make bump twice as contrast (fake, remove me if possible)
-
+	  
 #ifdef	GBUFFER_OPTIMIZATION
 	   S.height = 0;
-#endif	//	GBUFFER_OPTIMIZATION
+#endif	//	GBUFFER_OPTIMIZATION	  
       return              S;
 }
 
 surface_bumped sload ( p_bumped I, float2 pixeloffset )
 {
       surface_bumped      S   = sload_i	(I, pixeloffset );
-		S.normal.z			*=	0.5;		//. make bump twice as contrast (fake, remove me if possible)
+
 #ifdef	GBUFFER_OPTIMIZATION
 	   S.height = 0;
 #endif	//	GBUFFER_OPTIMIZATION

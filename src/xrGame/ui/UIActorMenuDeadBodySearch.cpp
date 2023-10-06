@@ -100,7 +100,7 @@ void CUIActorMenu::InitDeadBodySearchMode()
         known_info_registry.registry().init(m_pPartnerInvOwner->object_id());
         KNOWN_INFO_VECTOR& known_infos = known_info_registry.registry().objects();
 
-        KNOWN_INFO_VECTOR_IT it = known_infos.begin();
+        auto it = known_infos.begin();
         for (int i = 0; it != known_infos.end(); ++it, ++i)
         {
             NET_Packet P;

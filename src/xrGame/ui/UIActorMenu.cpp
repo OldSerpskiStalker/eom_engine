@@ -38,6 +38,11 @@
 #include "UIMainIngameWnd.h"
 #include "../Trade.h"
 
+#include "../xrEngine/xr_ioconsole.h"
+#include "../xrEngine/xr_ioc_cmd.h"
+
+#include "UIInventoryUtilities.h"
+
 void CUIActorMenu::SetActor(CInventoryOwner* io)
 {
     R_ASSERT(!IsShown());
@@ -406,7 +411,7 @@ void CUIActorMenu::InfoCurItem(CUICellItem* cell_item)
             m_ItemInfo->InitItem(cell_item, compare_item, item_price);
     }
     else
-        m_ItemInfo->InitItem(cell_item, compare_item, u32(-1));
+        m_ItemInfo->InitItem(cell_item, compare_item, current_item->Cost());
 
     //	m_ItemInfo->InitItem	( current_item, compare_item );
     float dx_pos = GetWndRect().left;
@@ -481,12 +486,31 @@ void CUIActorMenu::highlight_item_slot(CUICellItem* cell_item)
 
     u16 slot_id = item->BaseSlot();
 
-    if (weapon && (slot_id == INV_SLOT_2 || slot_id == INV_SLOT_3))
+    bool equivalent_slots = pSettings->r_bool("special_functions", "eq_slots");
+
+    if (equivalent_slots)
     {
-        m_InvSlot2Highlight->Show(true);
-        m_InvSlot3Highlight->Show(true);
-        return;
+        if (weapon && (slot_id == INV_SLOT_2 || slot_id == INV_SLOT_3))
+        {
+            m_InvSlot2Highlight->Show(true);
+            m_InvSlot3Highlight->Show(true);
+            return;
+        }
     }
+    else
+    {
+        if (weapon && slot_id == INV_SLOT_2)
+        {
+            m_InvSlot2Highlight->Show(true);
+            return;
+        }
+        if (weapon && slot_id == INV_SLOT_3)
+        {
+            m_InvSlot3Highlight->Show(true);
+            return;
+        }
+    }
+
     if (helmet && slot_id == HELMET_SLOT)
     {
         m_HelmetSlotHighlight->Show(true);
@@ -827,16 +851,35 @@ bool CUIActorMenu::CanSetItemToList(PIItem item, CUIDragDropListEx* l, u16& ret_
         return true;
     }
 
-    if (item_slot == INV_SLOT_3 && l == m_pInventoryPistolList)
-    {
-        ret_slot = INV_SLOT_2;
-        return true;
-    }
+    bool equivalent_slots = pSettings->r_bool("special_functions", "eq_slots");
 
-    if (item_slot == INV_SLOT_2 && l == m_pInventoryAutomaticList)
+    if (equivalent_slots)
     {
-        ret_slot = INV_SLOT_3;
-        return true;
+        if (item_slot == INV_SLOT_3 && l == m_pInventoryPistolList)
+        {
+            ret_slot = INV_SLOT_2;
+            return true;
+        }
+
+        if (item_slot == INV_SLOT_2 && l == m_pInventoryAutomaticList)
+        {
+            ret_slot = INV_SLOT_3;
+            return true;
+        }
+    }
+    else
+    {
+        if (item_slot == INV_SLOT_2 && l == m_pInventoryPistolList)
+        {
+            ret_slot = INV_SLOT_2;
+            return true;
+        }
+
+        if (item_slot == INV_SLOT_3 && l == m_pInventoryAutomaticList)
+        {
+            ret_slot = INV_SLOT_3;
+            return true;
+        }
     }
 
     return false;
@@ -859,15 +902,23 @@ void CUIActorMenu::UpdateConditionProgressBars()
 
     itm = m_pActorInvOwner->inventory().ItemFromSlot(OUTFIT_SLOT);
     if (itm)
+    {
         m_Outfit_progress->SetProgressPos(iCeil(itm->GetCondition() * 15.0f) / 15.0f);
+    }
     else
+    {
         m_Outfit_progress->SetProgressPos(0);
+    }
 
     itm = m_pActorInvOwner->inventory().ItemFromSlot(HELMET_SLOT);
     if (itm)
+    {
         m_Helmet_progress->SetProgressPos(iCeil(itm->GetCondition() * 15.0f) / 15.0f);
+    }
     else
+    {
         m_Helmet_progress->SetProgressPos(0);
+    }
 
     // Highlight 'equipped' items in actor bag
     CUIDragDropListEx* slot_list = m_pInventoryBagList;

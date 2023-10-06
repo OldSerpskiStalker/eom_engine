@@ -98,7 +98,6 @@ static inline float select_speed(
 void CSightManager::Exec_Look(float time_delta)
 {
     START_PROFILE("Sight Manager")
-
     SBoneRotation& body = object().movement().m_body;
     SBoneRotation& head = object().movement().m_head;
 
@@ -246,7 +245,6 @@ void CSightManager::setup(const CSightAction& sight_action)
 void CSightManager::update()
 {
     START_PROFILE("Sight Manager")
-
     if (!enabled())
         return;
 
@@ -330,10 +328,10 @@ Fvector CSightManager::aiming_position() const
 
 #if 0
 	Fmatrix								player_head;
-	IKinematics* actor_kinematics		= smart_cast<IKinematics*>(Actor()->Visual());
-	actor_kinematics->Bone_GetAnimPos	(player_head, actor_kinematics->LL_BoneID("bip01_head"), 1, false);
-	player_head.mulA_43					(Actor()->XFORM());
-	return								( player_head.c );
+	IKinematics* actor_kinematics = smart_cast<IKinematics*>(Actor()->Visual());
+	actor_kinematics->Bone_GetAnimPos(player_head, actor_kinematics->LL_BoneID("bip01_head"), 1, false);
+	player_head.mulA_43(Actor()->XFORM());
+	return								(player_head.c);
 #endif // #if 0
 
 #ifdef DEBUG

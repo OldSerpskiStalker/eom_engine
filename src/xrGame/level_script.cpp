@@ -280,6 +280,8 @@ void map_remove_object_spot(u16 id, LPCSTR spot_type) { Level().MapManager().Rem
 
 u16 map_has_object_spot(u16 id, LPCSTR spot_type) { return Level().MapManager().HasMapLocation(spot_type, id); }
 
+CMapManager* get_map_manager() { return &Level().MapManager(); }
+
 bool patrol_path_exists(LPCSTR patrol_path) { return (!!ai().patrol_paths().path(patrol_path, true)); }
 
 LPCSTR get_name() { return (*Level().name()); }
@@ -357,7 +359,8 @@ void remove_call(const luabind::functor<bool>& condition, const luabind::functor
 void add_call(const luabind::object& lua_object, LPCSTR condition, LPCSTR action)
 {
     //	try{
-    //		CPHScriptObjectCondition	*c=xr_new<CPHScriptObjectCondition>(lua_object,condition);
+    //		CPHScriptObjectCondition
+    //*c=xr_new<CPHScriptObjectCondition>(lua_object,condition);
     //		CPHScriptObjectAction		*a=xr_new<CPHScriptObjectAction>(lua_object,action);
     luabind::functor<bool> _condition = object_cast<luabind::functor<bool>>(lua_object[condition]);
     luabind::functor<void> _action = object_cast<luabind::functor<void>>(lua_object[action]);
@@ -608,6 +611,30 @@ int g_get_general_goodwill_between(u16 from, u16 to)
     return presonal_goodwill + community_to_obj_goodwill + community_to_community_goodwill;
 }
 
+void refresh_npc_names()
+{
+    CALifeObjectRegistry::OBJECT_REGISTRY alobjs = ai().alife().objects().objects();
+    CALifeObjectRegistry::OBJECT_REGISTRY::iterator it = alobjs.begin();
+    CALifeObjectRegistry::OBJECT_REGISTRY::iterator it_e = alobjs.end();
+
+    for (; it != it_e; it++)
+    {
+        CSE_ALifeTraderAbstract* tr = smart_cast<CSE_ALifeTraderAbstract*>(it->second);
+        if (tr)
+        {
+            tr->m_character_name = TranslateName(tr->m_character_name_str.c_str());
+
+            if (g_pGameLevel)
+            {
+                CObject* obj = g_pGameLevel->Objects.net_Find(it->first);
+                CInventoryOwner* owner = smart_cast<CInventoryOwner*>(obj);
+                if (owner)
+                    owner->refresh_npc_name();
+            }
+        }
+    }
+}
+
 u32 vertex_id(Fvector position) { return (ai().level_graph().vertex_id(position)); }
 
 u32 render_get_dx_level() { return ::Render->get_dx_level(); }
@@ -770,7 +797,7 @@ void CLevel::script_register(lua_State* L)
         def("map_add_object_spot_ser", map_add_object_spot_ser), def("map_add_object_spot", map_add_object_spot),
         //-		def("map_add_object_spot_complex",		map_add_object_spot_complex),
         def("map_remove_object_spot", map_remove_object_spot), def("map_has_object_spot", map_has_object_spot),
-        def("map_change_spot_hint", map_change_spot_hint),
+        def("map_change_spot_hint", map_change_spot_hint), def("map_manager", get_map_manager),
 
         def("add_dialog_to_render", add_dialog_to_render), def("remove_dialog_to_render", remove_dialog_to_render),
         def("hide_indicators", hide_indicators), def("hide_indicators_safe", hide_indicators_safe),

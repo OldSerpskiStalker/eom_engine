@@ -72,6 +72,7 @@ CUIWpnParams::CUIWpnParams()
     AttachChild(&m_textAmmoCount2);
     AttachChild(&m_textAmmoTypes);
     AttachChild(&m_textAmmoUsedType);
+    AttachChild(&m_textAmmoUsedType2);
     AttachChild(&m_stAmmoType1);
     AttachChild(&m_stAmmoType2);
 }
@@ -83,12 +84,12 @@ void CUIWpnParams::InitFromXml(CUIXml& xml_doc)
     if (!xml_doc.NavigateToNode("wpn_params", 0))
         return;
     CUIXmlInit::InitWindow(xml_doc, "wpn_params", 0, this);
-    CUIXmlInit::InitStatic(xml_doc, "wpn_params:prop_line", 0, &m_Prop_line);
+    CUIXmlInit::InitStatic(xml_doc, "wpn_params:caption", 0, &m_Prop_line);
 
-    CUIXmlInit::InitStatic(xml_doc, "wpn_params:static_accuracy", 0, &m_icon_acc);
-    CUIXmlInit::InitStatic(xml_doc, "wpn_params:static_damage", 0, &m_icon_dam);
-    CUIXmlInit::InitStatic(xml_doc, "wpn_params:static_handling", 0, &m_icon_han);
-    CUIXmlInit::InitStatic(xml_doc, "wpn_params:static_rpm", 0, &m_icon_rpm);
+    //	CUIXmlInit::InitStatic			(xml_doc, "wpn_params:static_accuracy",		0, &m_icon_acc);
+    //	CUIXmlInit::InitStatic			(xml_doc, "wpn_params:static_damage",		0, &m_icon_dam);
+    //	CUIXmlInit::InitStatic			(xml_doc, "wpn_params:static_handling",		0, &m_icon_han);
+    //	CUIXmlInit::InitStatic			(xml_doc, "wpn_params:static_rpm",			0, &m_icon_rpm);
 
     CUIXmlInit::InitTextWnd(xml_doc, "wpn_params:cap_accuracy", 0, &m_textAccuracy);
     CUIXmlInit::InitTextWnd(xml_doc, "wpn_params:cap_damage", 0, &m_textDamage);
@@ -102,13 +103,14 @@ void CUIWpnParams::InitFromXml(CUIXml& xml_doc)
 
     if (IsGameTypeSingle())
     {
-        CUIXmlInit::InitStatic(xml_doc, "wpn_params:static_ammo", 0, &m_stAmmo);
+        //		CUIXmlInit::InitStatic			(xml_doc, "wpn_params:static_ammo",			0, &m_stAmmo);
         CUIXmlInit::InitTextWnd(xml_doc, "wpn_params:cap_ammo_count", 0, &m_textAmmoCount);
         CUIXmlInit::InitTextWnd(xml_doc, "wpn_params:cap_ammo_count2", 0, &m_textAmmoCount2);
         CUIXmlInit::InitTextWnd(xml_doc, "wpn_params:cap_ammo_types", 0, &m_textAmmoTypes);
         CUIXmlInit::InitTextWnd(xml_doc, "wpn_params:cap_ammo_used_type", 0, &m_textAmmoUsedType);
-        CUIXmlInit::InitStatic(xml_doc, "wpn_params:static_ammo_type1", 0, &m_stAmmoType1);
-        CUIXmlInit::InitStatic(xml_doc, "wpn_params:static_ammo_type2", 0, &m_stAmmoType2);
+        CUIXmlInit::InitTextWnd(xml_doc, "wpn_params:cap_ammo_used_type2", 0, &m_textAmmoUsedType2);
+        //		CUIXmlInit::InitStatic			(xml_doc, "wpn_params:static_ammo_type1",	0, &m_stAmmoType1);
+        //		CUIXmlInit::InitStatic			(xml_doc, "wpn_params:static_ammo_type2",	0, &m_stAmmoType2);
     }
 }
 
@@ -124,12 +126,12 @@ void CUIWpnParams::SetInfo(CInventoryItem* slot_wpn, CInventoryItem& cur_wpn)
     str_upgrades[0] = 0;
     cur_wpn.get_upgrades_str(str_upgrades);
 
-    float cur_rpm = iFloor(g_lua_wpn_params->m_functorRPM(cur_section, str_upgrades) * 53.0f) / 53.0f;
-    float cur_accur = iFloor(g_lua_wpn_params->m_functorAccuracy(cur_section, str_upgrades) * 53.0f) / 53.0f;
-    float cur_hand = iFloor(g_lua_wpn_params->m_functorHandling(cur_section, str_upgrades) * 53.0f) / 53.0f;
+    float cur_rpm = iFloor(g_lua_wpn_params->m_functorRPM(cur_section, str_upgrades));
+    float cur_accur = iFloor(g_lua_wpn_params->m_functorAccuracy(cur_section, str_upgrades));
+    float cur_hand = iFloor(g_lua_wpn_params->m_functorHandling(cur_section, str_upgrades));
     float cur_damage = (GameID() == eGameIDSingle) ?
-        iFloor(g_lua_wpn_params->m_functorDamage(cur_section, str_upgrades) * 53.0f) / 53.0f :
-        iFloor(g_lua_wpn_params->m_functorDamageMP(cur_section, str_upgrades) * 53.0f) / 53.0f;
+        iFloor(g_lua_wpn_params->m_functorDamage(cur_section, str_upgrades)) :
+        iFloor(g_lua_wpn_params->m_functorDamageMP(cur_section, str_upgrades));
 
     float slot_rpm = cur_rpm;
     float slot_accur = cur_accur;
@@ -142,12 +144,12 @@ void CUIWpnParams::SetInfo(CInventoryItem* slot_wpn, CInventoryItem& cur_wpn)
         str_upgrades[0] = 0;
         slot_wpn->get_upgrades_str(str_upgrades);
 
-        slot_rpm = iFloor(g_lua_wpn_params->m_functorRPM(slot_section, str_upgrades) * 53.0f) / 53.0f;
-        slot_accur = iFloor(g_lua_wpn_params->m_functorAccuracy(slot_section, str_upgrades) * 53.0f) / 53.0f;
-        slot_hand = iFloor(g_lua_wpn_params->m_functorHandling(slot_section, str_upgrades) * 53.0f) / 53.0f;
+        slot_rpm = iFloor(g_lua_wpn_params->m_functorRPM(slot_section, str_upgrades));
+        slot_accur = iFloor(g_lua_wpn_params->m_functorAccuracy(slot_section, str_upgrades));
+        slot_hand = iFloor(g_lua_wpn_params->m_functorHandling(slot_section, str_upgrades));
         slot_damage = (GameID() == eGameIDSingle) ?
-            iFloor(g_lua_wpn_params->m_functorDamage(slot_section, str_upgrades) * 53.0f) / 53.0f :
-            iFloor(g_lua_wpn_params->m_functorDamageMP(slot_section, str_upgrades) * 53.0f) / 53.0f;
+            iFloor(g_lua_wpn_params->m_functorDamage(slot_section, str_upgrades)) :
+            iFloor(g_lua_wpn_params->m_functorDamageMP(slot_section, str_upgrades));
     }
 
     m_progressAccuracy.SetTwoPos(cur_accur, slot_accur);
@@ -191,37 +193,47 @@ void CUIWpnParams::SetInfo(CInventoryItem* slot_wpn, CInventoryItem& cur_wpn)
         xr_sprintf(str, sizeof(str), "%s", pSettings->r_string(ammo_types[0].c_str(), "inv_name_short"));
         m_textAmmoUsedType.SetTextST(str);
 
-        m_stAmmoType1.SetShader(InventoryUtilities::GetEquipmentIconsShader());
-        Frect tex_rect;
-        tex_rect.x1 = float(pSettings->r_u32(ammo_types[0].c_str(), "inv_grid_x") * INV_GRID_WIDTH);
-        tex_rect.y1 = float(pSettings->r_u32(ammo_types[0].c_str(), "inv_grid_y") * INV_GRID_HEIGHT);
-        tex_rect.x2 = float(pSettings->r_u32(ammo_types[0].c_str(), "inv_grid_width") * INV_GRID_WIDTH);
-        tex_rect.y2 = float(pSettings->r_u32(ammo_types[0].c_str(), "inv_grid_height") * INV_GRID_HEIGHT);
-        tex_rect.rb.add(tex_rect.lt);
-        m_stAmmoType1.SetTextureRect(tex_rect);
-        m_stAmmoType1.TextureOn();
-        m_stAmmoType1.SetStretchTexture(true);
-        m_stAmmoType1.SetWndSize(
-            Fvector2().set((tex_rect.x2 - tex_rect.x1) * UI().get_current_kx(), tex_rect.y2 - tex_rect.y1));
-
-        m_stAmmoType2.SetShader(InventoryUtilities::GetEquipmentIconsShader());
         if (ammo_types.size() == 1)
         {
-            tex_rect.set(0, 0, 1, 1);
+            m_textAmmoUsedType2.SetText("");
         }
         else
         {
-            tex_rect.x1 = float(pSettings->r_u32(ammo_types[1].c_str(), "inv_grid_x") * INV_GRID_WIDTH);
-            tex_rect.y1 = float(pSettings->r_u32(ammo_types[1].c_str(), "inv_grid_y") * INV_GRID_HEIGHT);
-            tex_rect.x2 = float(pSettings->r_u32(ammo_types[1].c_str(), "inv_grid_width") * INV_GRID_WIDTH);
-            tex_rect.y2 = float(pSettings->r_u32(ammo_types[1].c_str(), "inv_grid_height") * INV_GRID_HEIGHT);
-            tex_rect.rb.add(tex_rect.lt);
+            xr_sprintf(str, sizeof(str), "%s", pSettings->r_string(ammo_types[1].c_str(), "inv_name_short"));
+            m_textAmmoUsedType2.SetTextST(str);
         }
-        m_stAmmoType2.SetTextureRect(tex_rect);
-        m_stAmmoType2.TextureOn();
-        m_stAmmoType2.SetStretchTexture(true);
-        m_stAmmoType2.SetWndSize(
-            Fvector2().set((tex_rect.x2 - tex_rect.x1) * UI().get_current_kx(), tex_rect.y2 - tex_rect.y1));
+        /*
+                m_stAmmoType1.SetShader(InventoryUtilities::GetEquipmentIconsShader());
+                Frect				tex_rect;
+                tex_rect.x1			= float(pSettings->r_u32(ammo_types[0].c_str(), "inv_grid_x") * INV_GRID_WIDTH);
+                tex_rect.y1			= float(pSettings->r_u32(ammo_types[0].c_str(), "inv_grid_y") * INV_GRID_HEIGHT);
+                tex_rect.x2			= float(pSettings->r_u32(ammo_types[0].c_str(), "inv_grid_width") * INV_GRID_WIDTH
+           ); tex_rect.y2			= float(pSettings->r_u32(ammo_types[0].c_str(), "inv_grid_height") *
+           INV_GRID_HEIGHT); tex_rect.rb.add		(tex_rect.lt); m_stAmmoType1.SetTextureRect(tex_rect);
+                m_stAmmoType1.TextureOn();
+                m_stAmmoType1.SetStretchTexture(true);
+                m_stAmmoType1.SetWndSize(Fvector2().set((tex_rect.x2-tex_rect.x1)*UI().get_current_kx(),
+           tex_rect.y2-tex_rect.y1));
+
+                m_stAmmoType2.SetShader(InventoryUtilities::GetEquipmentIconsShader());
+                if(ammo_types.size()==1)
+                {
+                    tex_rect.set(0,0,1,1);
+                }
+                else
+                {
+                    tex_rect.x1			= float(pSettings->r_u32(ammo_types[1].c_str(), "inv_grid_x") * INV_GRID_WIDTH);
+                    tex_rect.y1			= float(pSettings->r_u32(ammo_types[1].c_str(), "inv_grid_y") *
+           INV_GRID_HEIGHT); tex_rect.x2			= float(pSettings->r_u32(ammo_types[1].c_str(), "inv_grid_width") *
+           INV_GRID_WIDTH ); tex_rect.y2			= float(pSettings->r_u32(ammo_types[1].c_str(), "inv_grid_height") *
+           INV_GRID_HEIGHT); tex_rect.rb.add		(tex_rect.lt);
+                }
+                m_stAmmoType2.SetTextureRect(tex_rect);
+                m_stAmmoType2.TextureOn();
+                m_stAmmoType2.SetStretchTexture(true);
+                m_stAmmoType2.SetWndSize(Fvector2().set((tex_rect.x2-tex_rect.x1)*UI().get_current_kx(),
+           tex_rect.y2-tex_rect.y1));
+        */
     }
 }
 

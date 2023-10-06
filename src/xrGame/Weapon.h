@@ -65,6 +65,22 @@ public:
     virtual void OnH_A_Independent();
     virtual void OnEvent(NET_Packet& P, u16 type); // {inherited::OnEvent(P,type);}
 
+    float m_hud_fov_add_mod;
+    float m_nearwall_dist_max;
+    float m_nearwall_dist_min;
+    float m_nearwall_last_hud_fov;
+    float m_nearwall_target_hud_fov;
+    float m_nearwall_speed_mod;
+
+    float m_fLR_ShootingFactor; // Фактор горизонтального сдвига худа при стрельбе [-1; +1]
+    float m_fUD_ShootingFactor; // Фактор вертикального сдвига худа при стрельбе [-1; +1]
+    float m_fBACKW_ShootingFactor; // Фактор сдвига худа в сторону лица при стрельбе [0; +1]
+
+    float GetHudFov();
+    void AddHUDShootingEffect();
+
+    IC float GetZRotatingFactor() const { return m_zoom_params.m_fZoomRotationFactor; }
+
     virtual void Hit(SHit* pHDS);
 
     virtual void reinit();
@@ -93,6 +109,7 @@ protected:
     ALife::_TIME_ID m_dwWeaponIndependencyTime;
 
     virtual bool IsHudModeNow();
+    u8 last_idx;
 
 public:
     void signal_HideComplete();
@@ -106,6 +123,7 @@ public:
         eMisfire,
         eMagEmpty,
         eSwitch,
+        eSwitchMode,
     };
     enum EWeaponSubStates
     {
@@ -134,6 +152,7 @@ protected:
 
     // a misfire happens, you'll need to rearm weapon
     bool bMisfire;
+    bool bClearJamOnly; // used for "reload" misfire animation
 
     BOOL m_bAutoSpawnAmmo;
     virtual bool AllowBore();
@@ -154,6 +173,8 @@ public:
     ALife::EWeaponAddonStatus get_SilencerStatus() const { return m_eSilencerStatus; }
 
     virtual bool UseScopeTexture() { return true; };
+
+    bool IsGrenadeMode() const;
 
     // обновление видимости для косточек аддонов
     void UpdateAddonsVisibility();
@@ -211,6 +232,7 @@ protected:
         float m_fScopeZoomFactor; // коэффициент увеличения прицела
 
         float m_fZoomRotationFactor;
+        float m_fBaseZoomFactor;
 
         Fvector m_ZoomDof;
         Fvector4 m_ReloadDof;
@@ -221,6 +243,9 @@ protected:
         CBinocularsVision* m_pVision;
         CNightVisionEffector* m_pNight_vision;
     } m_zoom_params;
+
+    // Целевой HUD FOV при зуме
+    float m_fZoomHudFov;
 
     float m_fRTZoomFactor; // run-time zoom factor
     CUIWindow* m_UIScope;
@@ -266,6 +291,7 @@ protected:
     bool m_can_be_strapped;
 
     Fmatrix m_Offset;
+    Fvector m_hud_offset[2];
     // 0-используется без участия рук, 1-одна рука, 2-две руки
     EHandDependence eHandDependence;
     bool m_bIsSingleHanded;
@@ -278,11 +304,19 @@ public:
 private:
     firedeps m_current_firedeps;
 
+public:
+    Fmatrix m_shoot_shake_mat;
+
 protected:
     virtual void UpdateFireDependencies_internal();
+    void UpdateUIScope();
+    void SwitchZoomType();
     virtual void UpdatePosition(const Fmatrix& transform); //.
     virtual void UpdateXForm();
-    virtual void UpdateHudAdditonal(Fmatrix&);
+    virtual void UpdateHudAdditional(Fmatrix& trans);
+    float m_fLR_MovingFactor; // !!!!
+    Fvector m_strafe_offset[3][2]; // pos,rot,data/ normal,aim-GL --#SM+#--
+
     IC void UpdateFireDependencies()
     {
         if (dwFP_Frame == Device.dwFrame)
@@ -328,7 +362,7 @@ protected:
     virtual void SetDefaults();
 
     virtual bool MovingAnimAllowedNow();
-    virtual void OnStateSwitch(u32 S);
+    virtual void OnStateSwitch(u32 S, u32 oldState);
     virtual void OnAnimationEnd(u32 state);
 
     // трассирование полета пули
@@ -470,6 +504,9 @@ public:
     SCOPES_VECTOR m_scopes;
     u8 m_cur_scope;
 
+    bool m_altAimPos;
+    u8 m_zoomtype;
+
     CWeaponAmmo* m_pCurrentAmmo;
     u8 m_ammoType;
     //-	shared_str				m_ammoName; <== deleted
@@ -483,6 +520,8 @@ public:
 
     bool unlimited_ammo();
     IC bool can_be_strapped() const { return m_can_be_strapped; };
+
+    float GetMagazineWeight(const decltype(m_magazine)& mag) const;
 
 protected:
     u32 m_ef_main_weapon_type;
@@ -509,10 +548,11 @@ protected:
 public:
     virtual void modify_holder_params(float& range, float& fov) const;
     virtual bool use_crosshair() const { return true; }
+
     bool show_crosshair();
     bool show_indicators();
     virtual BOOL ParentMayHaveAimBullet();
-    virtual BOOL ParentIsActor();
+    virtual bool SOParentIsActor() { return ParentIsActor(); }
 
 private:
     virtual bool install_upgrade_ammo_class(LPCSTR section, bool test);

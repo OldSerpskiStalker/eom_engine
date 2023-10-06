@@ -26,7 +26,8 @@ void RELATION_REGISTRY::FightRegister(
     UpdateFightRegister();
 
     FIGHT_VECTOR& fights = fight_registry();
-    for (FIGHT_VECTOR_IT it = fights.begin(); it != fights.end(); it++)
+    auto it = fights.begin();
+    for (; it != fights.end(); it++)
     {
         FIGHT_DATA& fight_data = *it;
         if (attacker == fight_data.attacker && defender == fight_data.defender)
@@ -50,14 +51,15 @@ void RELATION_REGISTRY::FightRegister(
     }
 }
 
-RELATION_REGISTRY::FIGHT_DATA* RELATION_REGISTRY::FindFight(u16 object_id, bool by_attacker)
+RELATION_REGISTRY::FIGHT_DATA* RELATION_REGISTRY::FindFight(u16 object_id, bool by_attacker, u16 pair_id)
 {
     FIGHT_VECTOR& fights = fight_registry();
     for (FIGHT_VECTOR_IT it = fights.begin(); it != fights.end(); it++)
     {
         FIGHT_DATA& fight_data = *it;
         u16 id_to_find = by_attacker ? fight_data.attacker : fight_data.defender;
-        if (object_id == id_to_find)
+        u16 id_to_find2 = by_attacker ? fight_data.defender : fight_data.attacker;
+        if (object_id == id_to_find && pair_id == id_to_find2)
         {
             return &fight_data;
         }

@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
+п»ї////////////////////////////////////////////////////////////////////////////
 //	Module 		: patrol_path_manager.cpp
 //	Created 	: 03.12.2003
 //  Modified 	: 03.12.2003
@@ -172,14 +172,14 @@ void CPatrolPathManager::select_point(const Fvector& position, u32& dest_vertex_
         m_curr_point_index = vertex->vertex_id();
 
 #if 0
-		// если выбранная нода не соответствует текущей ноде - все ок
-		// иначе выбрать следующую вершину патрульного пути
+		// ГҐГ±Г«ГЁ ГўГ»ГЎГ°Г Г­Г­Г Гї Г­Г®Г¤Г  Г­ГҐ Г±Г®Г®ГІГўГҐГІГ±ГІГўГіГҐГІ ГІГҐГЄГіГ№ГҐГ© Г­Г®Г¤ГҐ - ГўГ±ГҐ Г®ГЄ
+		// ГЁГ­Г Г·ГҐ ГўГ»ГЎГ°Г ГІГј Г±Г«ГҐГ¤ГіГѕГ№ГіГѕ ГўГҐГ°ГёГЁГ­Гі ГЇГ ГІГ°ГіГ«ГјГ­Г®ГЈГ® ГЇГіГІГЁ
 		if (vertex->data().level_vertex_id() != m_game_object->ai_location().level_vertex_id()) {
-			dest_vertex_id		= vertex->data().level_vertex_id();
-			m_dest_position		= vertex->data().position();
-			VERIFY				(accessible(m_dest_position) || show_restrictions(m_object));
-			m_actuality			= true;
-			m_completed			= false;
+			dest_vertex_id = vertex->data().level_vertex_id();
+			m_dest_position = vertex->data().position();
+			VERIFY(accessible(m_dest_position) || show_restrictions(m_object));
+			m_actuality = true;
+			m_completed = false;
 			return;
 		}
 #else
@@ -199,13 +199,13 @@ void CPatrolPathManager::select_point(const Fvector& position, u32& dest_vertex_
     m_game_object->callback(GameObject::ePatrolPathInPoint)(
         m_game_object->lua_game_object(), u32(ScriptEntity::eActionTypeMovement), m_curr_point_index);
 
-    u32 count = 0; // количество разветвлений
-    float sum = 0.f; // сумма весов разветвления
+    u32 count = 0; // ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г°Г Г§ГўГҐГІГўГ«ГҐГ­ГЁГ©
+    float sum = 0.f; // Г±ГіГ¬Г¬Г  ГўГҐГ±Г®Гў Г°Г Г§ГўГҐГІГўГ«ГҐГ­ГЁГї
     vertex = m_path->vertex(m_curr_point_index);
     CPatrolPath::const_iterator I = vertex->edges().begin(), E = vertex->edges().end();
     u32 target = u32(-1);
 
-    // вычислить количество разветвлений
+    // ГўГ»Г·ГЁГ±Г«ГЁГІГј ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г°Г Г§ГўГҐГІГўГ«ГҐГ­ГЁГ©
     for (; I != E; ++I)
     {
         if ((*I).vertex_id() == m_prev_point_index)
@@ -288,14 +288,14 @@ void CPatrolPathManager::select_point(const Fvector& position, u32& dest_vertex_
 
 u32 CPatrolPathManager::get_next_point(u32 prev_point_index)
 {
-    u32 count = 0; // количество разветвлений
-    float sum = 0.f; // сумма весов разветвления
+    u32 count = 0; // ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г°Г Г§ГўГҐГІГўГ«ГҐГ­ГЁГ©
+    float sum = 0.f; // Г±ГіГ¬Г¬Г  ГўГҐГ±Г®Гў Г°Г Г§ГўГҐГІГўГ«ГҐГ­ГЁГї
     const CPatrolPath::CVertex* vertex = m_path->vertex(prev_point_index);
 
     CPatrolPath::const_iterator I = vertex->edges().begin(), E = vertex->edges().end();
     u32 target = u32(-1);
 
-    // вычислить количество разветвлений
+    // ГўГ»Г·ГЁГ±Г«ГЁГІГј ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г°Г Г§ГўГҐГІГўГ«ГҐГ­ГЁГ©
     for (; I != E; ++I)
     {
         if (!accessible(m_path->vertex((*I).vertex_id())))
@@ -305,7 +305,7 @@ u32 CPatrolPathManager::get_next_point(u32 prev_point_index)
         ++count;
     }
 
-    // проверить количество
+    // ГЇГ°Г®ГўГҐГ°ГЁГІГј ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ®
     if (count != 0)
     {
         float fChoosed = 0.f;

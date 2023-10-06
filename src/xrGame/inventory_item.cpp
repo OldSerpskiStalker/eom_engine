@@ -106,6 +106,8 @@ void CInventoryItem::Load(LPCSTR section)
     u32 sl = pSettings->r_u32(section, "slot");
     m_ItemCurrPlace.base_slot_id = (sl == -1) ? 0 : (sl + 1);
 
+    m_actor_psi_helmet = READ_IF_EXISTS(pSettings, r_bool, section, "actor_psi_helmet", FALSE);
+
     m_Description = CStringTable().translate(pSettings->r_string(section, "description"));
 
     m_flags.set(Fbelt, READ_IF_EXISTS(pSettings, r_bool, section, "belt", FALSE));

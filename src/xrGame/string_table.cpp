@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "string_table.h"
+#include "MainMenu.h"
 
 #include "ui/xrUIXmlParser.h"
 #include "xr_level_controller.h"
@@ -17,6 +18,8 @@ void CStringTable::rescan()
     Destroy();
     Init();
 }
+
+extern void refresh_npc_names();
 
 void CStringTable::Init()
 {
@@ -93,6 +96,31 @@ void CStringTable::ReparseKeyBindings()
     {
         pData->m_StringTable[it->first] = ParseLine(*it->second, *it->first, false);
     }
+}
+
+void CStringTable::ReloadLanguage()
+{
+    if (0 == xr_strcmp(pSettings->r_string("string_table", "language"), *(pData->m_sLanguage)))
+        return;
+
+    xr_delete(pData);
+
+    // reload language
+    Destroy();
+    Init();
+
+    // reload language in menu
+    if (MainMenu()->IsActive())
+    {
+        MainMenu()->Activate(FALSE);
+        MainMenu()->Activate(TRUE);
+    }
+
+    if (!g_pGameLevel)
+        return;
+
+    // refresh npc names
+    refresh_npc_names();
 }
 
 STRING_VALUE CStringTable::ParseLine(LPCSTR str, LPCSTR skey, bool bFirst)

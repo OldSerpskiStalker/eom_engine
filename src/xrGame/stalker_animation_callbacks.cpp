@@ -18,11 +18,18 @@ typedef CStalkerAnimationManager::callback_params callback_params;
 
 static void _BCL callback_rotation(CBoneInstance* bone)
 {
+    if (!_valid(bone->mTransform))
+        return;
     R_ASSERT(_valid(bone->mTransform));
     callback_params* parameter = static_cast<callback_params*>(bone->callback_param());
     VERIFY(parameter);
     VERIFY(parameter->m_rotation);
     VERIFY(parameter->m_object);
+
+    if (!parameter || !_valid(*parameter->m_rotation))
+    {
+        return;
+    }
 
     CAI_Stalker const* object = parameter->m_object;
     if (!object->sight().enabled())
@@ -82,11 +89,11 @@ static void _BCL callback_rotation_blend(CBoneInstance* const bone)
     multiplier = parameter->m_forward ? multiplier : (1.f - multiplier);
 
 #if 0
-	Fmatrix rotation				= *parameter->m_rotation;
+	Fmatrix rotation = *parameter->m_rotation;
 	Fvector							angles;
-	rotation.getXYZ					(angles);
-	angles.mul						(multiplier);
-	rotation.setXYZ					(angles);
+	rotation.getXYZ(angles);
+	angles.mul(multiplier);
+	rotation.setXYZ(angles);
 #else // #if 0
     Fquaternion left;
     left.set(Fidentity);

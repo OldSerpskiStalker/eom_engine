@@ -9,6 +9,9 @@
 #include "UIHelper.h"
 #include "../string_table.h"
 
+u32 const red_clr = color_argb(255, 210, 50, 50);
+u32 const green_clr = color_argb(255, 170, 170, 170);
+
 CUIBoosterInfo::CUIBoosterInfo()
 {
     for (u32 i = 0; i < eBoostExplImmunity; ++i)
@@ -16,6 +19,7 @@ CUIBoosterInfo::CUIBoosterInfo()
         m_booster_items[i] = NULL;
     }
     m_booster_satiety = NULL;
+    m_booster_thirst = NULL;
     m_booster_anabiotic = NULL;
     m_booster_time = NULL;
 }
@@ -24,6 +28,7 @@ CUIBoosterInfo::~CUIBoosterInfo()
 {
     delete_data(m_booster_items);
     xr_delete(m_booster_satiety);
+    xr_delete(m_booster_thirst);
     xr_delete(m_booster_anabiotic);
     xr_delete(m_booster_time);
     xr_delete(m_Prop_line);
@@ -48,7 +53,7 @@ void CUIBoosterInfo::InitFromXml(CUIXml& xml)
     m_Prop_line = xr_new<CUIStatic>();
     AttachChild(m_Prop_line);
     m_Prop_line->SetAutoDelete(false);
-    CUIXmlInit::InitStatic(xml, "prop_line", 0, m_Prop_line);
+    CUIXmlInit::InitStatic(xml, "caption", 0, m_Prop_line);
 
     for (u32 i = 0; i < eBoostExplImmunity; ++i)
     {
@@ -67,6 +72,13 @@ void CUIBoosterInfo::InitFromXml(CUIXml& xml)
     m_booster_satiety->SetAutoDelete(false);
     LPCSTR name = CStringTable().translate("ui_inv_satiety").c_str();
     m_booster_satiety->SetCaption(name);
+    xml.SetLocalRoot(base_node);
+
+    m_booster_thirst = xr_new<UIBoosterInfoItem>();
+    m_booster_thirst->Init(xml, "boost_thirst");
+    m_booster_thirst->SetAutoDelete(false);
+    name = CStringTable().translate("ui_inv_thirst").c_str();
+    m_booster_thirst->SetCaption(name);
     xml.SetLocalRoot(base_node);
 
     m_booster_anabiotic = xr_new<UIBoosterInfoItem>();
@@ -96,11 +108,12 @@ void CUIBoosterInfo::SetInfo(shared_str const& section)
         return;
     }
 
-    CEntityCondition::BOOSTER_MAP boosters = actor->conditions().GetCurBoosterInfluences();
+    CEntityCondition::BOOSTER_MAP& boosters = actor->conditions().GetCurBoosterInfluences();
 
     float val = 0.0f, max_val = 1.0f;
     Fvector2 pos;
     float h = m_Prop_line->GetWndPos().y + m_Prop_line->GetWndSize().y;
+    int test_value = 0;
 
     for (u32 i = 0; i < eBoostExplImmunity; ++i)
     {
@@ -136,6 +149,7 @@ void CUIBoosterInfo::SetInfo(shared_str const& section)
 
             h += m_booster_items[i]->GetWndSize().y;
             AttachChild(m_booster_items[i]);
+            test_value += 1;
         }
     }
 
@@ -151,6 +165,23 @@ void CUIBoosterInfo::SetInfo(shared_str const& section)
 
             h += m_booster_satiety->GetWndSize().y;
             AttachChild(m_booster_satiety);
+            test_value += 1;
+        }
+    }
+
+    if (pSettings->line_exist(section.c_str(), "eat_thirst"))
+    {
+        val = pSettings->r_float(section, "eat_thirst");
+        if (!fis_zero(val))
+        {
+            m_booster_thirst->SetValue(val);
+            pos.set(m_booster_thirst->GetWndPos());
+            pos.y = h;
+            m_booster_thirst->SetWndPos(pos);
+
+            h += m_booster_thirst->GetWndSize().y;
+            AttachChild(m_booster_thirst);
+            test_value += 1;
         }
     }
 
@@ -162,6 +193,7 @@ void CUIBoosterInfo::SetInfo(shared_str const& section)
 
         h += m_booster_anabiotic->GetWndSize().y;
         AttachChild(m_booster_anabiotic);
+        test_value += 1;
     }
 
     if (pSettings->line_exist(section.c_str(), "boost_time"))
@@ -176,8 +208,20 @@ void CUIBoosterInfo::SetInfo(shared_str const& section)
 
             h += m_booster_time->GetWndSize().y;
             AttachChild(m_booster_time);
+            test_value += 1;
         }
     }
+
+    if (test_value > 0)
+    {
+        m_Prop_line->SetVisible(true);
+    }
+    else
+    {
+        m_Prop_line->SetVisible(false);
+        h = 0.f;
+    }
+
     SetHeight(h);
 }
 
@@ -205,6 +249,7 @@ void UIBoosterInfoItem::Init(CUIXml& xml, LPCSTR section)
     m_caption = UIHelper::CreateStatic(xml, "caption", this);
     m_value = UIHelper::CreateTextWnd(xml, "value", this);
     m_magnitude = xml.ReadAttribFlt("value", 0, "magnitude", 1.0f);
+    m_sign_inverse = (xml.ReadAttribInt("value", 0, "sign_inverse", 0) == 1);
     m_show_sign = (xml.ReadAttribInt("value", 0, "show_sign", 1) == 1);
 
     LPCSTR unit_str = xml.ReadAttrib("value", 0, "unit_str", "");
@@ -241,7 +286,10 @@ void UIBoosterInfoItem::SetValue(float value)
     m_value->SetText(str);
 
     bool positive = (value >= 0.0f);
-    m_value->SetTextColor(color_rgba(170, 170, 170, 255));
+    positive = (m_sign_inverse) ? !positive : positive;
+    //	m_value->SetTextColor(color_rgba(170,170,170,255));
+    u32 color = (positive) ? green_clr : red_clr;
+    m_value->SetTextColor(color);
 
     if (m_texture_minus.size())
     {

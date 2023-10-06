@@ -11,6 +11,9 @@
 #include "../Include/xrRender/UIRender.h"
 #include "../Include/xrRender/UIShader.h"
 
+#include "../../xrEngine/xr_ioconsole.h"
+#include "../../xrEngine/xr_ioc_cmd.h"
+
 //--------------------------------------------------------------------
 CHitMarker::CHitMarker()
 {
@@ -174,6 +177,12 @@ void SHitMark::Draw(float cam_dir)
     int frame;
     u32 clr = m_lanim->CalculateRGB(Device.fTimeGlobal - m_StartTime, frame);
     m_UIStaticItem->SetTextureColor(subst_alpha(m_UIStaticItem->GetTextureColor(), color_get_A(clr)));
+
+    // Msg("Color anim alpha: %i", color_get_A(clr));
+
+    g_pGamePersistent->Environment().CurrentEnv->hit_power_test = color_get_A(clr);
+
+    //	Msg("Color anim alpha: %i", color_get_A(clr));
 
     m_UIStaticItem->Render(cam_dir + m_HitDirection);
 }

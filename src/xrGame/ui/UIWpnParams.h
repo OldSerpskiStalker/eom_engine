@@ -38,6 +38,7 @@ protected:
     CUITextWnd m_textRPM;
     CUITextWnd m_textAmmoTypes;
     CUITextWnd m_textAmmoUsedType;
+    CUITextWnd m_textAmmoUsedType2;
     CUITextWnd m_textAmmoCount;
     CUITextWnd m_textAmmoCount2;
     CUIStatic m_stAmmoType1;

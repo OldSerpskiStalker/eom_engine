@@ -55,7 +55,7 @@ void CScriptGameObject::explode(u32 level_time)
     {
         Fvector normal;
         explosive->FindNormal(normal);
-        explosive->SetInitiator(object().ID());
+        explosive->SetInitiator(explosive->Initiator());
         explosive->GenExplodeEvent(object().Position(), normal);
     }
 }
@@ -396,11 +396,9 @@ void CScriptGameObject::SetActorDirection(float dir)
     if (actor)
     {
         actor->cam_Active()->Set(dir, 0, 0);
-        //		actor->XFORM().setXYZ(0,dir,0);
+        return;
     }
-    else
-        ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,
-            "ScriptGameObject : attempt to call SetActorDirection method for non-actor object");
+    object().XFORM().setXYZ(0, dir, 0);
 }
 
 void CScriptGameObject::DisableHitMarks(bool disable)
@@ -604,3 +602,10 @@ void CScriptGameObject::set_visual_name(LPCSTR visual)
 }
 
 LPCSTR CScriptGameObject::get_visual_name() const { return object().cNameVisual().c_str(); }
+
+bool CScriptGameObject::is_exploded()
+{
+    CExplosive* explosive = smart_cast<CExplosive*>(&object());
+    // ASSERT(explosive, "[%s]: %s not a CExplosive", __FUNCTION__, cName().c_str());
+    return explosive->IsExploded();
+}

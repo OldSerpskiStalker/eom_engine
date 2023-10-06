@@ -14,7 +14,7 @@
 #include "ai/stalker/ai_stalker.h"
 #include "moving_object.h"
 
-IC const CAI_Stalker& static_obstacles_avoider::object() const { return (movement_manager().object()); }
+const CAI_Stalker& static_obstacles_avoider::object() const { return (movement_manager().object()); }
 
 void static_obstacles_avoider::query(const Fvector& start_position, const Fvector& dest_position)
 {

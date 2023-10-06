@@ -2,6 +2,7 @@
 #include "missile.h"
 #include "explosive.h"
 #include "../xrEngine/feel_touch.h"
+#include "script_export_space.h"
 
 class CGrenade : public CMissile, public CExplosive
 {
@@ -33,7 +34,7 @@ public:
 
     virtual bool Action(u16 cmd, u32 flags);
     virtual bool Useful() const;
-    virtual void State(u32 state);
+    virtual void State(u32 state, u32 old_state);
 
     virtual void OnH_B_Chield() { inherited::OnH_B_Chield(); }
 
@@ -52,9 +53,6 @@ protected:
     ALife::_TIME_ID m_dwGrenadeRemoveTime;
     ALife::_TIME_ID m_dwGrenadeIndependencyTime;
 
-protected:
-    ESoundTypes m_eSoundCheckout;
-
 private:
     float m_grenade_detonation_threshold_hit;
     bool m_thrown;
@@ -71,8 +69,15 @@ public:
     virtual IDamageSource* cast_IDamageSource() { return CExplosive::cast_IDamageSource(); }
 
     typedef fastdelegate::FastDelegate<void(CGrenade*)> destroy_callback;
+
     void set_destroy_callback(destroy_callback callback) { m_destroy_callback = callback; }
 
 private:
     destroy_callback m_destroy_callback;
+
+    DECLARE_SCRIPT_REGISTER_FUNCTION
 };
+
+add_to_type_list(CGrenade)
+#undef script_type_list
+#define script_type_list save_type_list(CGrenade)

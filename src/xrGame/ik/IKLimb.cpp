@@ -106,12 +106,15 @@ void CIKLimb::Invalidate()
     dbg_disabled = false;
 #endif
 }
+
 void XM_IM(const Fmatrix& XM, Fmatrix& IM) { IM.mul_43(xm2im, XM); }
+
 void XM_IM(const Fmatrix& XM, Matrix& IM)
 {
     //((Fmatrix*)(&IM))->mul_43(xm2im,XM);
     XM_IM(XM, *((Fmatrix*)(&IM)));
 }
+
 void IM_XM(const Matrix& IM, Fmatrix& XM) { XM.mul_43(xm2im, *((Fmatrix*)(&IM))); }
 
 void XM2IM(const Fmatrix& XM, Fmatrix& IM)
@@ -121,8 +124,11 @@ void XM2IM(const Fmatrix& XM, Fmatrix& IM)
     tmp.mul_43(xm2im, XM);
     IM.mul_43(tmp, xm2im);
 }
+
 void XM2IM(const Fmatrix& XM, Matrix& IM) { XM2IM(XM, *((Fmatrix*)(&IM))); }
+
 void IM2XM(const Matrix& IM, Fmatrix& XM) { XM2IM(*((Fmatrix*)(&IM)), XM); }
+
 void XV2IV(const Fvector& XV, IVektor& IV) { xm2im.transform_dir(cast_fv(IV), XV); }
 
 void IV2XV(const IVektor& IV, Fvector& XV) { xm2im.transform_dir(XV), cast_fv(IV); }
@@ -136,6 +142,7 @@ void CIKLimb::ApplyState(SCalculateData& cd)
     cd.do_collide = m_collide && cd.do_collide;
     cd.state.foot_step = anim_state.step() && collide_data.collided;
 }
+
 void CIKLimb::SetGoal(SCalculateData& cd)
 {
     SetAnimGoal(cd);
@@ -154,6 +161,7 @@ void CIKLimb::SetGoal(SCalculateData& cd)
 #endif
     SetNewGoal(cld, cd);
 }
+
 void CIKLimb::SolveBones(SCalculateData& cd)
 {
     if (cd.apply)
@@ -508,9 +516,10 @@ void CIKLimb::SetNewGoal(const SIKCollideData& cld, SCalculateData& cd)
     get_blend_speed_limits(cd.l, cd.a, cd, sv_state);
     cd.state.foot_step =
         m_foot.GetFootStepMatrix(cd.state.goal, cd, cld, true, !!ik_allign_free_foot) && cd.state.foot_step;
-
+#ifdef DEBUG
     VERIFY2(fsimilar(1.f, DET(cd.state.goal.get()), det_tolerance),
         dump_string("cd.state.goal", cd.state.goal.get()).c_str());
+#endif
 
     cd.state.blend_to = cd.state.goal;
     sv_state.get_calculate_state(cd.state);
@@ -571,6 +580,7 @@ bool CIKLimb::blend_collide(
 #endif
     return ret;
 }
+
 /*
 bool	CIKLimb::blend_collide( ik_goal_matrix &m, const SCalculateData& cd,  const ik_goal_matrix &m0, const
 ik_goal_matrix &m1 )
@@ -685,27 +695,30 @@ void CIKLimb::Blending(SCalculateData& cd)
     {
         blend_speed_accel(cd);
         ik_goal_matrix m;
+#ifdef DEBUG
         VERIFY(fsimilar(1.f, DET(sv_state.goal(m).get()), det_tolerance));
         VERIFY(fsimilar(1.f, DET(sv_state.blend_to(m).get()), det_tolerance));
-
+#endif
         Fmatrix diff;
         diff.mul_43(Fmatrix().invert(sv_state.blend_to(m).get()), Fmatrix(sv_state.goal(m).get()));
-
+#ifdef DEBUG
         VERIFY(fsimilar(1.f, DET(diff), det_tolerance));
-
+#endif
         Fmatrix blend = Fidentity; // cd.state.blend_to;
-        cd.state.blending =
-            !clamp_change(blend, diff, cd.l, cd.a, linear_tolerance, angualar_tolerance); // 0.01f //0.005f
-
+        cd.state.blending = !clamp_change(blend, diff, cd.l, cd.a, linear_tolerance, angualar_tolerance);
+        // 0.01f //0.005f
+#ifdef DEBUG
         VERIFY(fsimilar(1.f, DET(blend), det_tolerance));
         VERIFY(fsimilar(1.f, DET(cd.state.blend_to.get()), det_tolerance));
-
+#endif
         Fmatrix fm = Fmatrix().mul_43(cd.state.blend_to.get(), blend);
         if (ik_collide_blend)
             m_foot.GetFootStepMatrix(cd.state.goal, fm, collide_data, true, true);
         else
             cd.state.goal.set(fm, cd.state.blend_to.collide_state());
+#ifdef DEBUG
         VERIFY(fsimilar(DET(cd.state.goal.get()), 1.f, det_tolerance));
+#endif
     }
     else
     {
@@ -713,8 +726,8 @@ void CIKLimb::Blending(SCalculateData& cd)
         {
             Fmatrix blend = cd.state.blend_to.get();
             ik_goal_matrix m;
-            cd.state.blending = !clamp_change(
-                blend, sv_state.goal(m).get(), cd.l, cd.a, linear_tolerance, angualar_tolerance); // 0.01f //0.005f
+            cd.state.blending = !clamp_change(blend, sv_state.goal(m).get(), cd.l, cd.a, linear_tolerance,
+                angualar_tolerance); // 0.01f //0.005f
             cd.state.goal.set(blend, cd.state.blend_to.collide_state());
         }
         else
@@ -726,6 +739,7 @@ void CIKLimb::Blending(SCalculateData& cd)
     if (!cd.state.blending)
         reset_blend_speed(cd);
 }
+
 static const s32 unstuck_time_delta_min = 500;
 static const s32 unstuck_time_delta_max = 1200;
 IC void new_foot_matrix(const ik_goal_matrix& m, SCalculateData& cd)
@@ -734,6 +748,7 @@ IC void new_foot_matrix(const ik_goal_matrix& m, SCalculateData& cd)
     cd.state.unstuck_time = Device.dwTimeGlobal + Random.randI(unstuck_time_delta_min, unstuck_time_delta_max);
     reset_blend_speed(cd);
 }
+
 static const float unstuck_tolerance_linear = 0.3f;
 static const float unstuck_tolerance_angular = M_PI / 4.f;
 
@@ -861,6 +876,7 @@ void CIKLimb::ToeTimeDiffPredict(Fvector& v) const { v.set(0, -1, 0); }
 
 static const float pick_dir_mix_in_factor = 0.01f;
 static const float pick_dir_mix_in_doun_factor = 0.01f;
+
 void pick_dir_update(Fvector& v, const Fvector& previous_dir, const Fvector& new_dir)
 {
     Fvector dir = new_dir;
@@ -981,18 +997,22 @@ struct ssaved_callback : private boost::noncopyable
           callback_overwrite(bi.callback_overwrite()), callback_type(bi.callback_type())
     {
     }
+
     void restore() { _bi.set_callback(callback_type, callback, callback_param, callback_overwrite); }
+
     const BoneCallback callback;
     void* callback_param;
     const BOOL callback_overwrite;
     const u32 callback_type;
     CBoneInstance& _bi;
 };
+
 static void _BCL get_matrix(CBoneInstance* P)
 {
     VERIFY(_valid(P->mTransform));
     *((Fmatrix*)P->callback_param()) = P->mTransform;
 }
+
 u16 CIKLimb::foot_matrix_predict(Fmatrix& foot, Fmatrix& toe, float time, IKinematicsAnimated* K) const
 {
     // CBlend *control = 0;
@@ -1033,6 +1053,7 @@ u16 CIKLimb::foot_matrix_predict(Fmatrix& foot, Fmatrix& toe, float time, IKinem
 
     return ref_b;
 }
+
 void CIKLimb::step_predict(CGameObject* O, const CBlend* b, ik_limb_state_predict& state,
     const extrapolation::points& object_pose_extrapolation) // const
 {
@@ -1233,6 +1254,7 @@ void CIKLimb::BonesCallback0(CBoneInstance* B)
 #endif
     VERIFY2(_valid(B->mTransform), "CIKLimb::BonesCallback0");
 }
+
 void CIKLimb::BonesCallback1(CBoneInstance* B)
 {
     SCalculateData* D = (SCalculateData*)B->callback_param();
@@ -1246,6 +1268,7 @@ void CIKLimb::BonesCallback1(CBoneInstance* B)
     B->mTransform.mul_43(start, bm);
     VERIFY2(_valid(B->mTransform), "CIKLimb::BonesCallback1");
 }
+
 void CIKLimb::BonesCallback2(CBoneInstance* B)
 {
     SCalculateData* D = (SCalculateData*)B->callback_param();

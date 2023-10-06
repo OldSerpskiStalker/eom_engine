@@ -53,6 +53,7 @@ public:
     bool IsLooped() const;
 
     void MoveTo(const Fvector& pos, const Fvector& vel);
+    void XFORMMoveTo(const Fvector& pos);
     void SetDirection(const Fvector& dir);
     void SetOrientation(float yaw, float pitch, float roll);
     Fvector LastPosition() const { return m_transform.c; }
@@ -63,6 +64,7 @@ public:
 
     DECLARE_SCRIPT_REGISTER_FUNCTION
 };
+
 add_to_type_list(CScriptParticles)
 #undef script_type_list
 #define script_type_list save_type_list(CScriptParticles)

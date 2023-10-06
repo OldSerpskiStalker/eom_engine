@@ -20,6 +20,7 @@
 #include "../xrphysics/mathutils.h"
 #include "object_broker.h"
 #include "player_hud.h"
+#include "HUDManager.h"
 #include "gamepersistent.h"
 #include "effectorFall.h"
 #include "debug_renderer.h"
@@ -29,14 +30,16 @@
 #include "ui/UIWindow.h"
 #include "ui/UIXmlInit.h"
 #include "Torch.h"
+#include "WeaponMagazinedWGrenade.h"
 
 #define WEAPON_REMOVE_TIME 60000
 #define ROTATION_TIME 0.25f
+ENGINE_API extern float psHUD_FOV_def;
 
 BOOL b_toggle_weapon_aim = FALSE;
 extern CUIXml* pWpnScopeXml;
 
-CWeapon::CWeapon()
+CWeapon::CWeapon() : m_fLR_MovingFactor(0.f), m_strafe_offset{}
 {
     SetState(eHidden);
     SetNextState(eHidden);
@@ -56,7 +59,7 @@ CWeapon::CWeapon()
 
     eHandDependence = hdNone;
 
-    m_zoom_params.m_fCurrentZoomFactor = g_fov;
+    m_zoom_params.m_fCurrentZoomFactor = 1.0;
     m_zoom_params.m_fZoomRotationFactor = 0.f;
     m_zoom_params.m_pVision = NULL;
     m_zoom_params.m_pNight_vision = NULL;
@@ -81,6 +84,15 @@ CWeapon::CWeapon()
     m_activation_speed_is_overriden = false;
     m_cur_scope = NULL;
     m_bRememberActorNVisnStatus = false;
+    m_nearwall_last_hud_fov = psHUD_FOV_def;
+    m_fZoomHudFov = 0.0f;
+
+    m_fLR_ShootingFactor = 0.f;
+    m_fUD_ShootingFactor = 0.f;
+    m_fBACKW_ShootingFactor = 0.f;
+
+    m_altAimPos = false;
+    m_zoomtype = 0;
 }
 
 CWeapon::~CWeapon()
@@ -194,6 +206,97 @@ void CWeapon::UpdateFireDependencies_internal()
             VERIFY(_valid(m_current_firedeps.m_FireParticlesXForm));
         }
     }
+}
+
+void CWeapon::UpdateUIScope()
+{
+    // Load scopes.xml if it's not loaded
+    if (pWpnScopeXml == nullptr)
+    {
+        pWpnScopeXml = new CUIXml();
+        pWpnScopeXml->Load(CONFIG_PATH, UI_PATH, "scopes.xml");
+    }
+
+    // update zoom factor
+    if (m_zoomtype == 2) // GL
+    {
+        m_zoom_params.m_fScopeZoomFactor = g_player_hud->m_adjust_mode ?
+            g_player_hud->m_adjust_zoom_factor[1] :
+            READ_IF_EXISTS(pSettings, r_float, cNameSect(), "gl_zoom_factor", 0);
+    }
+    else if (m_zoomtype == 1) // Alt
+    {
+        m_zoom_params.m_fScopeZoomFactor = g_player_hud->m_adjust_mode ?
+            g_player_hud->m_adjust_zoom_factor[2] :
+            READ_IF_EXISTS(pSettings, r_float, cNameSect(), "scope_zoom_factor_alt", 0);
+    }
+    else // Main Sight
+    {
+        if (g_player_hud->m_adjust_mode)
+        {
+            m_zoom_params.m_fScopeZoomFactor = g_player_hud->m_adjust_zoom_factor[0];
+        }
+        else if (ALife::eAddonPermanent != m_eScopeStatus &&
+            0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonScope) && m_scopes.size())
+        {
+            m_zoom_params.m_fScopeZoomFactor = pSettings->r_float(GetScopeName(), "scope_zoom_factor");
+        }
+        else
+        {
+            m_zoom_params.m_fScopeZoomFactor = m_zoom_params.m_fBaseZoomFactor;
+        }
+    }
+
+    if (IsZoomed())
+        m_zoom_params.m_fCurrentZoomFactor = m_zoom_params.m_fScopeZoomFactor;
+
+    // Change or remove scope texture
+    shared_str scope_tex_name;
+    if (m_zoomtype == 0)
+    {
+        if (0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonScope) && m_scopes.size())
+        {
+            scope_tex_name = pSettings->r_string(GetScopeName(), "scope_texture");
+        }
+        else
+        {
+            scope_tex_name = READ_IF_EXISTS(pSettings, r_string, cNameSect(), "scope_texture", NULL);
+        }
+    }
+    else if (m_zoomtype == 1)
+    {
+        scope_tex_name = READ_IF_EXISTS(pSettings, r_string, cNameSect(), "scope_texture_alt", NULL);
+    }
+
+    if (!g_dedicated_server)
+    {
+        xr_delete(m_UIScope);
+
+        if (!scope_tex_name || scope_tex_name.equal("none") || g_player_hud->m_adjust_mode)
+            return;
+
+        m_UIScope = xr_new<CUIWindow>();
+        CUIXmlInit::InitWindow(*pWpnScopeXml, scope_tex_name.c_str(), 0, m_UIScope);
+    }
+}
+
+void CWeapon::SwitchZoomType()
+{
+    if (m_zoomtype == 0 && (m_altAimPos || g_player_hud->m_adjust_mode))
+    {
+        m_zoomtype = 1;
+    }
+    else if (IsGrenadeLauncherAttached())
+    {
+        SwitchState(eSwitch);
+        return;
+    }
+    else if (m_zoomtype != 0)
+    {
+        m_zoomtype = 0;
+    }
+
+    UpdateUIScope();
 }
 
 void CWeapon::ForceUpdateFireParticles()
@@ -392,8 +495,15 @@ void CWeapon::Load(LPCSTR section)
     m_eSilencerStatus = (ALife::EWeaponAddonStatus)pSettings->r_s32(section, "silencer_status");
     m_eGrenadeLauncherStatus = (ALife::EWeaponAddonStatus)pSettings->r_s32(section, "grenade_launcher_status");
 
+    m_altAimPos = READ_IF_EXISTS(pSettings, r_bool, section, "use_alt_aim_hud", false);
+
     m_zoom_params.m_bZoomEnabled = !!pSettings->r_bool(section, "zoom_enabled");
     m_zoom_params.m_fZoomRotateTime = pSettings->r_float(section, "zoom_rotate_time");
+    m_zoom_params.m_fBaseZoomFactor = READ_IF_EXISTS(pSettings, r_float, cNameSect(), "scope_zoom_factor", 0);
+
+    m_zoom_params.m_bUseDynamicZoom = READ_IF_EXISTS(pSettings, r_bool, section, "scope_dynamic_zoom", FALSE);
+    m_zoom_params.m_sUseZoomPostprocess = 0;
+    m_zoom_params.m_sUseBinocularVision = 0;
 
     if (m_eScopeStatus == ALife::eAddonAttachable)
     {
@@ -415,7 +525,7 @@ void CWeapon::Load(LPCSTR section)
     else if (m_eScopeStatus == ALife::eAddonPermanent)
     {
         shared_str scope_tex_name = pSettings->r_string(cNameSect(), "scope_texture");
-        m_zoom_params.m_fScopeZoomFactor = pSettings->r_float(cNameSect(), "scope_zoom_factor");
+
         if (!g_dedicated_server)
         {
             m_UIScope = xr_new<CUIWindow>();
@@ -481,12 +591,12 @@ void CWeapon::Load(LPCSTR section)
         m_hit_probability[i] = READ_IF_EXISTS(pSettings, r_float, section, temp, 1.f);
     }
 
-    m_zoom_params.m_bUseDynamicZoom = READ_IF_EXISTS(pSettings, r_bool, section, "scope_dynamic_zoom", FALSE);
-    m_zoom_params.m_sUseZoomPostprocess = 0;
-    m_zoom_params.m_sUseBinocularVision = 0;
-
     // Added by Axel, to enable optional condition use on any item
     m_flags.set(FUsingCondition, READ_IF_EXISTS(pSettings, r_bool, section, "use_condition", TRUE));
+
+    UpdateUIScope();
+
+    m_shoot_shake_mat.identity();
 }
 
 void CWeapon::LoadFireParams(LPCSTR section)
@@ -694,7 +804,7 @@ void CWeapon::OnEvent(NET_Packet& P, u16 type)
 
         if (OnClient())
             SetAmmoElapsed(int(AmmoElapsed));
-        OnStateSwitch(u32(state));
+        OnStateSwitch(u32(state), GetState());
     }
     break;
     default: {
@@ -727,12 +837,21 @@ void CWeapon::OnH_B_Independent(bool just_before_destroy)
     m_strapped_mode = false;
     m_zoom_params.m_bIsZoomModeNow = false;
     UpdateXForm();
+
+    m_nearwall_last_hud_fov = psHUD_FOV_def;
 }
 
 void CWeapon::OnH_A_Independent()
 {
     m_dwWeaponIndependencyTime = Level().timeServer();
     inherited::OnH_A_Independent();
+
+    m_fLR_ShootingFactor = 0.f;
+    m_fUD_ShootingFactor = 0.f;
+    m_fBACKW_ShootingFactor = 0.f;
+
+    m_zoom_params.m_fZoomRotationFactor = 0.0f;
+
     Light_Destroy();
     UpdateAddonsVisibility();
 };
@@ -884,11 +1003,7 @@ void CWeapon::renderable_Render()
 
     RenderLight();
 
-    // если мы в режиме снайперки, то сам HUD рисовать не надо
-    if (IsZoomed() && !IsRotatingToZoom() && ZoomTexture())
-        RenderHud(FALSE);
-    else
-        RenderHud(TRUE);
+    RenderHud(TRUE);
 
     inherited::renderable_Render();
 }
@@ -898,6 +1013,12 @@ void CWeapon::signal_HideComplete()
     if (H_Parent())
         setVisible(FALSE);
     SetPending(FALSE);
+
+    m_fLR_ShootingFactor = 0.f;
+    m_fUD_ShootingFactor = 0.f;
+    m_fBACKW_ShootingFactor = 0.f;
+
+    m_zoom_params.m_fZoomRotationFactor = 0.0f;
 }
 
 void CWeapon::SetDefaults()
@@ -921,6 +1042,8 @@ bool CWeapon::Action(u16 cmd, u32 flags)
 {
     if (inherited::Action(cmd, flags))
         return true;
+
+    CActor* pActor = smart_cast<CActor*>(H_Parent());
 
     switch (cmd)
     {
@@ -982,7 +1105,7 @@ bool CWeapon::Action(u16 cmd, u32 flags)
 
     case kWPN_ZOOM_INC:
     case kWPN_ZOOM_DEC:
-        if (IsZoomEnabled() && IsZoomed())
+        if (IsZoomEnabled() && IsZoomed() && (flags & CMD_START))
         {
             if (cmd == kWPN_ZOOM_INC)
                 ZoomInc();
@@ -992,6 +1115,13 @@ bool CWeapon::Action(u16 cmd, u32 flags)
         }
         else
             return false;
+    case kWPN_FUNC: {
+        if (flags & CMD_START && !IsPending())
+        {
+            SwitchZoomType();
+        }
+        return true;
+    }
     }
     return false;
 }
@@ -1231,18 +1361,21 @@ void CWeapon::UpdateHUDAddonsVisibility()
 
     //.	return;
 
-    if (ScopeAttachable())
-    {
-        HudItemData()->set_bone_visible(wpn_scope, IsScopeAttached());
-    }
+    u16 bone_id = HudItemData()->m_model->LL_BoneID(wpn_scope);
 
-    if (m_eScopeStatus == ALife::eAddonDisabled)
+    if (bone_id != BI_NONE)
     {
-        HudItemData()->set_bone_visible(wpn_scope, FALSE, TRUE);
+        if (ScopeAttachable())
+        {
+            HudItemData()->set_bone_visible(wpn_scope, IsScopeAttached());
+        }
+        if (m_eScopeStatus == ALife::eAddonDisabled)
+        {
+            HudItemData()->set_bone_visible(wpn_scope, FALSE, TRUE);
+        }
+        else if (m_eScopeStatus == ALife::eAddonPermanent)
+            HudItemData()->set_bone_visible(wpn_scope, TRUE, TRUE);
     }
-    else if (m_eScopeStatus == ALife::eAddonPermanent)
-        HudItemData()->set_bone_visible(wpn_scope, TRUE, TRUE);
-
     if (SilencerAttachable())
     {
         HudItemData()->set_bone_visible(wpn_silencer, IsSilencerAttached());
@@ -1281,12 +1414,12 @@ void CWeapon::UpdateAddonsVisibility()
     {
         if (IsScopeAttached())
         {
-            if (!pWeaponVisual->LL_GetBoneVisible(bone_id))
+            if (!pWeaponVisual->LL_GetBoneVisible(bone_id) && bone_id != BI_NONE)
                 pWeaponVisual->LL_SetBoneVisible(bone_id, TRUE, TRUE);
         }
         else
         {
-            if (pWeaponVisual->LL_GetBoneVisible(bone_id))
+            if (pWeaponVisual->LL_GetBoneVisible(bone_id) && bone_id != BI_NONE)
                 pWeaponVisual->LL_SetBoneVisible(bone_id, FALSE, TRUE);
         }
     }
@@ -1340,13 +1473,12 @@ void CWeapon::UpdateAddonsVisibility()
     pWeaponVisual->CalculateBones(TRUE);
 }
 
-void CWeapon::InitAddons() {}
+void CWeapon::InitAddons() { UpdateUIScope(); }
 
-float CWeapon::CurrentZoomFactor()
-{
-    return IsScopeAttached() ? m_zoom_params.m_fScopeZoomFactor : m_zoom_params.m_fIronSightZoomFactor;
-};
+float CWeapon::CurrentZoomFactor() { return m_zoom_params.m_fScopeZoomFactor; };
+
 void GetZoomData(const float scope_factor, float& delta, float& min_zoom_factor);
+
 void CWeapon::OnZoomIn()
 {
     m_zoom_params.m_bIsZoomModeNow = true;
@@ -1355,29 +1487,26 @@ void CWeapon::OnZoomIn()
     else
         m_zoom_params.m_fCurrentZoomFactor = CurrentZoomFactor();
 
-    EnableHudInertion(FALSE);
-
-    if (m_zoom_params.m_bZoomDofEnabled && !IsScopeAttached())
-        GamePersistent().SetEffectorDOF(m_zoom_params.m_ZoomDof);
+    // if (m_zoom_params.m_bZoomDofEnabled && !IsScopeAttached())
+    // GamePersistent().SetEffectorDOF(m_zoom_params.m_ZoomDof);
 
     if (GetHUDmode())
-        GamePersistent().SetPickableEffectorDOF(true);
+        GamePersistent().SetPickableEffectorDOF(false);
 
     if (m_zoom_params.m_sUseBinocularVision.size() && IsScopeAttached() && NULL == m_zoom_params.m_pVision)
-        m_zoom_params.m_pVision = xr_new<CBinocularsVision>(m_zoom_params.m_sUseBinocularVision /*"wpn_binoc"*/);
+        m_zoom_params.m_pVision = xr_new<CBinocularsVision>(m_zoom_params.m_sUseBinocularVision);
 
     if (m_zoom_params.m_sUseZoomPostprocess.size() && IsScopeAttached())
     {
         CActor* pA = smart_cast<CActor*>(H_Parent());
-        if (pA)
+        if (pA && NULL == m_zoom_params.m_pNight_vision)
         {
-            if (NULL == m_zoom_params.m_pNight_vision)
-            {
-                m_zoom_params.m_pNight_vision =
-                    xr_new<CNightVisionEffector>(m_zoom_params.m_sUseZoomPostprocess /*"device_torch"*/);
-            }
+            m_zoom_params.m_pNight_vision =
+                xr_new<CNightVisionEffector>(m_zoom_params.m_sUseZoomPostprocess /*"device_torch"*/);
         }
     }
+
+    g_player_hud->updateMovementLayerState();
 }
 
 void CWeapon::OnZoomOut()
@@ -1385,9 +1514,12 @@ void CWeapon::OnZoomOut()
     m_zoom_params.m_bIsZoomModeNow = false;
     m_fRTZoomFactor = GetZoomFactor(); // store current
     m_zoom_params.m_fCurrentZoomFactor = g_fov;
-    EnableHudInertion(TRUE);
+    // EnableHudInertion(TRUE);
 
     GamePersistent().RestoreEffectorDOF();
+
+    //	if (need_renderable())
+    //		g_pGamePersistent->Environment().CurrentEnv->test_scope_shader = false;
 
     if (GetHUDmode())
         GamePersistent().SetPickableEffectorDOF(false);
@@ -1400,12 +1532,16 @@ void CWeapon::OnZoomOut()
         m_zoom_params.m_pNight_vision->Stop(100000.0f, false);
         xr_delete(m_zoom_params.m_pNight_vision);
     }
+
+    g_player_hud->updateMovementLayerState();
 }
 
 CUIWindow* CWeapon::ZoomTexture()
 {
     if (UseScopeTexture())
+    {
         return m_UIScope;
+    }
     else
         return NULL;
 }
@@ -1631,31 +1767,357 @@ bool CWeapon::ready_to_kill() const
         !IsMisfire() && ((GetState() == eIdle) || (GetState() == eFire) || (GetState() == eFire2)) && GetAmmoElapsed());
 }
 
-void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
+bool CWeapon::IsGrenadeMode() const
+{
+    const auto wpn_w_gl = smart_cast<const CWeaponMagazinedWGrenade*>(this);
+    return wpn_w_gl && wpn_w_gl->m_bGrenadeMode;
+}
+
+// Получить индекс текущих координат худа
+u8 CWeapon::GetCurrentHudOffsetIdx()
+{
+    CActor* pActor = smart_cast<CActor*>(H_Parent());
+    if (!pActor)
+        return 0;
+
+    if (!IsZoomed())
+        return 0;
+    else if (m_zoomtype == 1)
+        return 3;
+    else
+        return 1;
+}
+
+// Обновление координат текущего худа
+void CWeapon::UpdateHudAdditional(Fmatrix& trans)
 {
     CActor* pActor = smart_cast<CActor*>(H_Parent());
     if (!pActor)
         return;
 
-    if ((IsZoomed() && m_zoom_params.m_fZoomRotationFactor <= 1.f) ||
-        (!IsZoomed() && m_zoom_params.m_fZoomRotationFactor > 0.f))
-    {
-        u8 idx = GetCurrentHudOffsetIdx();
-        //		if(idx==0)					return;
+    attachable_hud_item* hi = HudItemData();
+    R_ASSERT(hi);
 
-        attachable_hud_item* hi = HudItemData();
-        R_ASSERT(hi);
+    /*PP.RQ.O = 0;
+    PP.RQ.range = 3.f;
+    PP.RQ.element = -1;
+    PP.power = 1.0f;
+    PP.pass = 0;
+    RQS.r_clear();
+
+    const Fmatrix& fire_mat = HudItemData()->m_model->LL_GetTransform(HudItemData()->m_measures.m_fire_bone);
+    Fvector pos; // = get_LastFP();
+    Fvector offs = g_player_hud->m_adjust_mode ? g_player_hud->m_adjust_firepoint_shell[0][0] :
+    HudItemData()->m_measures.m_fire_point_offset; offs.z -= g_freelook_z_offset; fire_mat.transform_tiny(pos, offs);
+    HudItemData()->m_item_transform.transform_tiny(pos);
+    Fvector offs;
+    fire_mat.transform_tiny(offs, { 0, 0, -pos.z -.5f }); //otherwise you can shoot through thin walls
+    pos.add(offs);
+
+    // add RQ for weapon barrel collision
+    collide::ray_defs RD(pos, get_ParticlesXFORM().k, 3.f, CDB::OPT_CULL, collide::rqtBoth);
+    if (Level().ObjectSpace.RayQuery(RQS, RD, pick_trace_callback, &PP, NULL, Level().CurrentEntity()))
+        clamp(PP.RQ.range, 0.f, 3.f);
+
+    //Msg("RQ range: %f", PP.RQ.range);
+    */
+
+    u8 idx = GetCurrentHudOffsetIdx();
+
+    //============= Поворот ствола во время аима =============//
+    {
         Fvector curr_offs, curr_rot;
-        curr_offs = hi->m_measures.m_hands_offset[0][idx]; // pos,aim
-        curr_rot = hi->m_measures.m_hands_offset[1][idx]; // rot,aim
-        curr_offs.mul(m_zoom_params.m_fZoomRotationFactor);
-        curr_rot.mul(m_zoom_params.m_fZoomRotationFactor);
+
+        if (g_player_hud->m_adjust_mode)
+        {
+            if (idx == 0)
+            {
+                curr_offs = {0.f, 0.f, 0.f};
+                curr_rot = {0.f, 0.f, 0.f};
+            }
+            else
+            {
+                curr_offs = g_player_hud->m_adjust_offset[0][idx]; // pos,aim
+                curr_rot = g_player_hud->m_adjust_offset[1][idx]; // rot,aim
+            }
+        }
+        else
+        {
+            curr_offs = hi->m_measures.m_hands_offset[0][idx]; // pos,aim
+            curr_rot = hi->m_measures.m_hands_offset[1][idx]; // rot,aim
+        }
+
+        float factor;
+
+        factor = Device.fTimeDelta / (m_zoom_params.m_fZoomRotateTime);
+
+        if (curr_offs.similar(m_hud_offset[0], EPS))
+        {
+            m_hud_offset[0].set(curr_offs);
+        }
+        else
+        {
+            Fvector diff;
+            diff.set(curr_offs);
+            diff.sub(m_hud_offset[0]);
+            diff.mul(factor * 2.5f);
+            m_hud_offset[0].add(diff);
+        }
+
+        if (curr_rot.similar(m_hud_offset[1], EPS))
+        {
+            m_hud_offset[1].set(curr_rot);
+        }
+        else
+        {
+            Fvector diff;
+            diff.set(curr_rot);
+            diff.sub(m_hud_offset[1]);
+            diff.mul(factor * 2.5f);
+            m_hud_offset[1].add(diff);
+        }
+
+        // Remove pending state before weapon has fully moved to the new position to remove some delay
+        if (curr_offs.similar(m_hud_offset[0], .02f) && curr_rot.similar(m_hud_offset[1], .02f))
+        {
+            if ((idx == 4 || last_idx == 4) && IsPending())
+                SetPending(FALSE);
+            last_idx = idx;
+        }
 
         Fmatrix hud_rotation;
         hud_rotation.identity();
-        hud_rotation.rotateX(curr_rot.x);
+        hud_rotation.rotateX(m_hud_offset[1].x);
 
         Fmatrix hud_rotation_y;
+        hud_rotation_y.identity();
+        hud_rotation_y.rotateY(m_hud_offset[1].y);
+        hud_rotation.mulA_43(hud_rotation_y);
+
+        hud_rotation_y.identity();
+        hud_rotation_y.rotateZ(m_hud_offset[1].z);
+        hud_rotation.mulA_43(hud_rotation_y);
+
+        hud_rotation.translate_over(m_hud_offset[0]);
+        trans.mulB_43(hud_rotation);
+
+        if (pActor->IsZoomAimingMode())
+            m_zoom_params.m_fZoomRotationFactor += factor;
+        else
+            m_zoom_params.m_fZoomRotationFactor -= factor;
+
+        clamp(m_zoom_params.m_fZoomRotationFactor, 0.f, 1.f);
+    }
+
+    //============= Подготавливаем общие переменные =============//
+    clamp(idx, u8(0), u8(1));
+    bool bForAim = (idx == 1);
+
+    static float fAvgTimeDelta = Device.fTimeDelta;
+    fAvgTimeDelta = _inertion(fAvgTimeDelta, Device.fTimeDelta, 0.8f);
+
+    //============= Сдвиг оружия при стрельбе =============//
+    if (hi->m_measures.m_shooting_params.bShootShake)
+    {
+        // Параметры сдвига
+        float fShootingReturnSpeedMod = _lerp(hi->m_measures.m_shooting_params.m_ret_speed,
+            hi->m_measures.m_shooting_params.m_ret_speed_aim, m_zoom_params.m_fZoomRotationFactor);
+
+        float fShootingBackwOffset = _lerp(hi->m_measures.m_shooting_params.m_shot_offset_BACKW.x,
+            hi->m_measures.m_shooting_params.m_shot_offset_BACKW.y, m_zoom_params.m_fZoomRotationFactor);
+
+        Fvector4 vShOffsets; // x = L, y = R, z = U, w = D
+        vShOffsets.x = _lerp(hi->m_measures.m_shooting_params.m_shot_max_offset_LRUD.x,
+            hi->m_measures.m_shooting_params.m_shot_max_offset_LRUD_aim.x, m_zoom_params.m_fZoomRotationFactor);
+        vShOffsets.y = _lerp(hi->m_measures.m_shooting_params.m_shot_max_offset_LRUD.y,
+            hi->m_measures.m_shooting_params.m_shot_max_offset_LRUD_aim.y, m_zoom_params.m_fZoomRotationFactor);
+        vShOffsets.z = _lerp(hi->m_measures.m_shooting_params.m_shot_max_offset_LRUD.z,
+            hi->m_measures.m_shooting_params.m_shot_max_offset_LRUD_aim.z, m_zoom_params.m_fZoomRotationFactor);
+        vShOffsets.w = _lerp(hi->m_measures.m_shooting_params.m_shot_max_offset_LRUD.w,
+            hi->m_measures.m_shooting_params.m_shot_max_offset_LRUD_aim.w, m_zoom_params.m_fZoomRotationFactor);
+
+        // Плавное затухание сдвига от стрельбы (основное, но без линейной никогда не опустит до полного 0.0f)
+        m_fLR_ShootingFactor *= clampr(1.f - fAvgTimeDelta * fShootingReturnSpeedMod, 0.0f, 1.0f);
+        m_fUD_ShootingFactor *= clampr(1.f - fAvgTimeDelta * fShootingReturnSpeedMod, 0.0f, 1.0f);
+        m_fBACKW_ShootingFactor *= clampr(1.f - fAvgTimeDelta * fShootingReturnSpeedMod, 0.0f, 1.0f);
+
+        // Минимальное линейное затухание сдвига от стрельбы при покое (горизонталь)
+        {
+            float fRetSpeedMod = fShootingReturnSpeedMod * 0.125f;
+            if (m_fLR_ShootingFactor < 0.0f)
+            {
+                m_fLR_ShootingFactor += fAvgTimeDelta * fRetSpeedMod;
+                clamp(m_fLR_ShootingFactor, -1.0f, 0.0f);
+            }
+            else
+            {
+                m_fLR_ShootingFactor -= fAvgTimeDelta * fRetSpeedMod;
+                clamp(m_fLR_ShootingFactor, 0.0f, 1.0f);
+            }
+        }
+
+        // Минимальное линейное затухание сдвига от стрельбы при покое (вертикаль)
+        {
+            float fRetSpeedMod = fShootingReturnSpeedMod * 0.125f;
+            if (m_fUD_ShootingFactor < 0.0f)
+            {
+                m_fUD_ShootingFactor += fAvgTimeDelta * fRetSpeedMod;
+                clamp(m_fUD_ShootingFactor, -1.0f, 0.0f);
+            }
+            else
+            {
+                m_fUD_ShootingFactor -= fAvgTimeDelta * fRetSpeedMod;
+                clamp(m_fUD_ShootingFactor, 0.0f, 1.0f);
+            }
+        }
+
+        // Минимальное линейное затухание сдвига от стрельбы при покое (вперёд\назад)
+        {
+            float fRetSpeedMod = fShootingReturnSpeedMod * 0.125f;
+            m_fBACKW_ShootingFactor -= fAvgTimeDelta * fRetSpeedMod;
+            clamp(m_fBACKW_ShootingFactor, 0.0f, 1.0f);
+        }
+
+        // Применяем сдвиг от стрельбы к худу
+        {
+            float fLR_lim = (m_fLR_ShootingFactor < 0.0f ? vShOffsets.x : vShOffsets.y);
+            float fUD_lim = (m_fUD_ShootingFactor < 0.0f ? vShOffsets.z : vShOffsets.w);
+
+            Fvector curr_offs;
+            curr_offs = {fLR_lim * m_fLR_ShootingFactor, fUD_lim * -1.f * m_fUD_ShootingFactor,
+                -1.f * fShootingBackwOffset * m_fBACKW_ShootingFactor};
+
+            m_shoot_shake_mat.translate_over(curr_offs);
+            trans.mulB_43(m_shoot_shake_mat);
+        }
+    }
+
+    //======== Проверяем доступность инерции и стрейфа ========//
+    if (!g_player_hud->inertion_allowed())
+        return;
+
+    float fYMag = pActor->fFPCamYawMagnitude;
+    float fPMag = pActor->fFPCamPitchMagnitude;
+
+    //============= Боковой стрейф с оружием =============//
+    // Рассчитываем фактор боковой ходьбы
+    float fStrafeMaxTime = hi->m_measures.m_strafe_offset[2][idx].y;
+    // Макс. время в секундах, за которое мы наклонимся из центрального положения
+    if (fStrafeMaxTime <= EPS)
+        fStrafeMaxTime = 0.01f;
+
+    float fStepPerUpd = fAvgTimeDelta / fStrafeMaxTime; // Величина изменение фактора поворота
+
+    // Добавляем боковой наклон от движения камеры
+    float fCamReturnSpeedMod = 1.5f;
+    // Восколько ускоряем нормализацию наклона, полученного от движения камеры (только от бедра)
+
+    // Высчитываем минимальную скорость поворота камеры для начала инерции
+    float fStrafeMinAngle = _lerp(hi->m_measures.m_strafe_offset[3][0].y, hi->m_measures.m_strafe_offset[3][1].y,
+        m_zoom_params.m_fZoomRotationFactor);
+
+    // Высчитываем мксимальный наклон от поворота камеры
+    float fCamLimitBlend = _lerp(hi->m_measures.m_strafe_offset[3][0].x, hi->m_measures.m_strafe_offset[3][1].x,
+        m_zoom_params.m_fZoomRotationFactor);
+
+    // Считаем стрейф от поворота камеры
+    if (abs(fYMag) > (m_fLR_CameraFactor == 0.0f ? fStrafeMinAngle : 0.0f))
+    {
+        //--> Камера крутится по оси Y
+        m_fLR_CameraFactor -= (fYMag * fAvgTimeDelta * 0.75f);
+        clamp(m_fLR_CameraFactor, -fCamLimitBlend, fCamLimitBlend);
+    }
+    else
+    {
+        //--> Камера не поворачивается - убираем наклон
+        if (m_fLR_CameraFactor < 0.0f)
+        {
+            m_fLR_CameraFactor += fStepPerUpd * (bForAim ? 1.0f : fCamReturnSpeedMod);
+            clamp(m_fLR_CameraFactor, -fCamLimitBlend, 0.0f);
+        }
+        else
+        {
+            m_fLR_CameraFactor -= fStepPerUpd * (bForAim ? 1.0f : fCamReturnSpeedMod);
+            clamp(m_fLR_CameraFactor, 0.0f, fCamLimitBlend);
+        }
+    }
+
+    // Добавляем боковой наклон от ходьбы вбок
+    float fChangeDirSpeedMod = 3;
+    // Восколько быстро меняем направление направление наклона, если оно в другую сторону от текущего
+    u32 iMovingState = pActor->MovingState();
+    if ((iMovingState & mcLStrafe) != 0)
+    {
+        // Движемся влево
+        float fVal = (m_fLR_MovingFactor > 0.f ? fStepPerUpd * fChangeDirSpeedMod : fStepPerUpd);
+        m_fLR_MovingFactor -= fVal;
+    }
+    else if ((iMovingState & mcRStrafe) != 0)
+    {
+        // Движемся вправо
+        float fVal = (m_fLR_MovingFactor < 0.f ? fStepPerUpd * fChangeDirSpeedMod : fStepPerUpd);
+        m_fLR_MovingFactor += fVal;
+    }
+    else
+    {
+        // Двигаемся в любом другом направлении - плавно убираем наклон
+        if (m_fLR_MovingFactor < 0.0f)
+        {
+            m_fLR_MovingFactor += fStepPerUpd;
+            clamp(m_fLR_MovingFactor, -1.0f, 0.0f);
+        }
+        else
+        {
+            m_fLR_MovingFactor -= fStepPerUpd;
+            clamp(m_fLR_MovingFactor, 0.0f, 1.0f);
+        }
+    }
+    clamp(m_fLR_MovingFactor, -1.0f, 1.0f); // Фактор боковой ходьбы не должен превышать эти лимиты
+
+    // Вычисляем и нормализируем итоговый фактор наклона
+    float fLR_Factor = m_fLR_MovingFactor;
+    fLR_Factor += m_fLR_CameraFactor;
+
+    clamp(fLR_Factor, -1.0f, 1.0f); // Фактор боковой ходьбы не должен превышать эти лимиты
+
+    // Производим наклон ствола для нормального режима и аима
+    for (int _idx = 0; _idx <= 1; _idx++) //<-- Для плавного перехода
+    {
+        bool bEnabled = (hi->m_measures.m_strafe_offset[2][_idx].x != 0.0f);
+        if (!bEnabled)
+            continue;
+
+        Fvector curr_offs, curr_rot;
+
+        // Смещение позиции худа в стрейфе
+        curr_offs = hi->m_measures.m_strafe_offset[0][_idx]; // pos
+        curr_offs.mul(fLR_Factor); // Умножаем на фактор стрейфа
+
+        // Поворот худа в стрейфе
+        curr_rot = hi->m_measures.m_strafe_offset[1][_idx]; // rot
+        curr_rot.mul(-PI / 180.f); // Преобразуем углы в радианы
+        curr_rot.mul(fLR_Factor); // Умножаем на фактор стрейфа
+
+        // Мягкий переход между бедром \ прицелом
+        if (_idx == 0)
+        {
+            // От бедра
+            curr_offs.mul(1.f - m_zoom_params.m_fZoomRotationFactor);
+            curr_rot.mul(1.f - m_zoom_params.m_fZoomRotationFactor);
+        }
+        else
+        {
+            // Во время аима
+            curr_offs.mul(m_zoom_params.m_fZoomRotationFactor);
+            curr_rot.mul(m_zoom_params.m_fZoomRotationFactor);
+        }
+
+        Fmatrix hud_rotation;
+        Fmatrix hud_rotation_y;
+
+        hud_rotation.identity();
+        hud_rotation.rotateX(curr_rot.x);
+
         hud_rotation_y.identity();
         hud_rotation_y.rotateY(curr_rot.y);
         hud_rotation.mulA_43(hud_rotation_y);
@@ -1666,14 +2128,144 @@ void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
 
         hud_rotation.translate_over(curr_offs);
         trans.mulB_43(hud_rotation);
-
-        if (pActor->IsZoomAimingMode())
-            m_zoom_params.m_fZoomRotationFactor += Device.fTimeDelta / m_zoom_params.m_fZoomRotateTime;
-        else
-            m_zoom_params.m_fZoomRotationFactor -= Device.fTimeDelta / m_zoom_params.m_fZoomRotateTime;
-
-        clamp(m_zoom_params.m_fZoomRotationFactor, 0.f, 1.f);
     }
+
+    //============= Инерция оружия =============//
+    // Параметры инерции
+    float fInertiaSpeedMod = _lerp(hi->m_measures.m_inertion_params.m_tendto_speed,
+        hi->m_measures.m_inertion_params.m_tendto_speed_aim, m_zoom_params.m_fZoomRotationFactor);
+
+    float fInertiaReturnSpeedMod = _lerp(hi->m_measures.m_inertion_params.m_tendto_ret_speed,
+        hi->m_measures.m_inertion_params.m_tendto_ret_speed_aim, m_zoom_params.m_fZoomRotationFactor);
+
+    float fInertiaMinAngle = _lerp(hi->m_measures.m_inertion_params.m_min_angle,
+        hi->m_measures.m_inertion_params.m_min_angle_aim, m_zoom_params.m_fZoomRotationFactor);
+
+    Fvector4 vIOffsets; // x = L, y = R, z = U, w = D
+    vIOffsets.x = _lerp(hi->m_measures.m_inertion_params.m_offset_LRUD.x,
+        hi->m_measures.m_inertion_params.m_offset_LRUD_aim.x, m_zoom_params.m_fZoomRotationFactor);
+    vIOffsets.y = _lerp(hi->m_measures.m_inertion_params.m_offset_LRUD.y,
+        hi->m_measures.m_inertion_params.m_offset_LRUD_aim.y, m_zoom_params.m_fZoomRotationFactor);
+    vIOffsets.z = _lerp(hi->m_measures.m_inertion_params.m_offset_LRUD.z,
+        hi->m_measures.m_inertion_params.m_offset_LRUD_aim.z, m_zoom_params.m_fZoomRotationFactor);
+    vIOffsets.w = _lerp(hi->m_measures.m_inertion_params.m_offset_LRUD.w,
+        hi->m_measures.m_inertion_params.m_offset_LRUD_aim.w, m_zoom_params.m_fZoomRotationFactor);
+
+    // Высчитываем инерцию из поворотов камеры
+    bool bIsInertionPresent = m_fLR_InertiaFactor != 0.0f || m_fUD_InertiaFactor != 0.0f;
+    if (abs(fYMag) > fInertiaMinAngle || bIsInertionPresent)
+    {
+        float fSpeed = fInertiaSpeedMod;
+        if (fYMag > 0.0f && m_fLR_InertiaFactor > 0.0f || fYMag < 0.0f && m_fLR_InertiaFactor < 0.0f)
+        {
+            fSpeed *= 2.f; //--> Ускоряем инерцию при движении в противоположную сторону
+        }
+
+        m_fLR_InertiaFactor -= (fYMag * fAvgTimeDelta * fSpeed); // Горизонталь (м.б. > |1.0|)
+    }
+
+    if (abs(fPMag) > fInertiaMinAngle || bIsInertionPresent)
+    {
+        float fSpeed = fInertiaSpeedMod;
+        if (fPMag > 0.0f && m_fUD_InertiaFactor > 0.0f || fPMag < 0.0f && m_fUD_InertiaFactor < 0.0f)
+        {
+            fSpeed *= 2.f; //--> Ускоряем инерцию при движении в противоположную сторону
+        }
+
+        m_fUD_InertiaFactor -= (fPMag * fAvgTimeDelta * fSpeed); // Вертикаль (м.б. > |1.0|)
+    }
+
+    clamp(m_fLR_InertiaFactor, -1.0f, 1.0f);
+    clamp(m_fUD_InertiaFactor, -1.0f, 1.0f);
+
+    // Плавное затухание инерции (основное, но без линейной никогда не опустит инерцию до полного 0.0f)
+    m_fLR_InertiaFactor *= clampr(1.f - fAvgTimeDelta * fInertiaReturnSpeedMod, 0.0f, 1.0f);
+    m_fUD_InertiaFactor *= clampr(1.f - fAvgTimeDelta * fInertiaReturnSpeedMod, 0.0f, 1.0f);
+
+    // Минимальное линейное затухание инерции при покое (горизонталь)
+    if (fYMag == 0.0f)
+    {
+        float fRetSpeedMod = (fYMag == 0.0f ? 1.0f : 0.75f) * (fInertiaReturnSpeedMod * 0.075f);
+        if (m_fLR_InertiaFactor < 0.0f)
+        {
+            m_fLR_InertiaFactor += fAvgTimeDelta * fRetSpeedMod;
+            clamp(m_fLR_InertiaFactor, -1.0f, 0.0f);
+        }
+        else
+        {
+            m_fLR_InertiaFactor -= fAvgTimeDelta * fRetSpeedMod;
+            clamp(m_fLR_InertiaFactor, 0.0f, 1.0f);
+        }
+    }
+
+    // Минимальное линейное затухание инерции при покое (вертикаль)
+    if (fPMag == 0.0f)
+    {
+        float fRetSpeedMod = (fPMag == 0.0f ? 1.0f : 0.75f) * (fInertiaReturnSpeedMod * 0.075f);
+        if (m_fUD_InertiaFactor < 0.0f)
+        {
+            m_fUD_InertiaFactor += fAvgTimeDelta * fRetSpeedMod;
+            clamp(m_fUD_InertiaFactor, -1.0f, 0.0f);
+        }
+        else
+        {
+            m_fUD_InertiaFactor -= fAvgTimeDelta * fRetSpeedMod;
+            clamp(m_fUD_InertiaFactor, 0.0f, 1.0f);
+        }
+    }
+
+    // Применяем инерцию к худу
+    float fLR_lim = (m_fLR_InertiaFactor < 0.0f ? vIOffsets.x : vIOffsets.y);
+    float fUD_lim = (m_fUD_InertiaFactor < 0.0f ? vIOffsets.z : vIOffsets.w);
+
+    Fvector curr_offs;
+    curr_offs = {fLR_lim * -1.f * m_fLR_InertiaFactor, fUD_lim * m_fUD_InertiaFactor, 0.0f};
+
+    Fmatrix hud_rotation;
+    hud_rotation.identity();
+    hud_rotation.translate_over(curr_offs);
+    trans.mulB_43(hud_rotation);
+}
+
+// Добавить эффект сдвига оружия от выстрела
+void CWeapon::AddHUDShootingEffect()
+{
+    if (IsHidden() || ParentIsActor() == false)
+        return;
+
+    // Отдача назад
+    m_fBACKW_ShootingFactor = 1.0f;
+
+    // Отдача в бока
+    float fPowerMin = 0.0f;
+    attachable_hud_item* hi = HudItemData();
+    if (hi != nullptr)
+    {
+        fPowerMin = clampr(hi->m_measures.m_shooting_params.m_min_LRUD_power, 0.0f, 0.99f);
+    }
+
+    float fPowerRnd = 1.0f - fPowerMin;
+
+    m_fLR_ShootingFactor = ::Random.randF(-fPowerRnd, fPowerRnd);
+    m_fLR_ShootingFactor += (m_fLR_ShootingFactor >= 0.0f ? fPowerMin : -fPowerMin);
+
+    m_fUD_ShootingFactor = ::Random.randF(-fPowerRnd, fPowerRnd);
+    m_fUD_ShootingFactor += (m_fUD_ShootingFactor >= 0.0f ? fPowerMin : -fPowerMin);
+}
+
+float CWeapon::GetHudFov()
+{
+    float base = inherited::GetHudFov();
+
+    /*
+    if (m_zoom_params.m_fBaseZoomFactor == 0.f)
+    {
+        base = _lerp(base, base * (g_ironsights_factor / 1.7f), m_zoom_params.m_fZoomRotationFactor);
+        clamp(base, 0.1f, 1.f);
+    }
+    */
+
+    return base;
 }
 
 void CWeapon::SetAmmoElapsed(int ammo_count)
@@ -1731,6 +2323,7 @@ bool CWeapon::render_item_ui_query()
 {
     bool b_is_active_item = (m_pInventory->ActiveItem() == this);
     bool res = b_is_active_item && IsZoomed() && ZoomHideCrosshair() && ZoomTexture() && !IsRotatingToZoom();
+    g_pGamePersistent->Environment().CurrentEnv->test_scope_shader = res;
     return res;
 }
 
@@ -1758,6 +2351,24 @@ bool CWeapon::unlimited_ammo()
     return ((GameID() == eGameIDDeathmatch) && m_DefaultCartridge.m_flags.test(CCartridge::cfCanBeUnlimited));
 };
 
+float CWeapon::GetMagazineWeight(const decltype(CWeapon::m_magazine)& mag) const
+{
+    float res = 0;
+    const char* last_type = nullptr;
+    float last_ammo_weight = 0;
+    for (auto& c : mag)
+    {
+        // Usually ammos in mag have same type, use this fact to improve performance
+        if (last_type != c.m_ammoSect.c_str())
+        {
+            last_type = c.m_ammoSect.c_str();
+            last_ammo_weight = c.Weight();
+        }
+        res += last_ammo_weight;
+    }
+    return res;
+}
+
 float CWeapon::Weight() const
 {
     float res = CInventoryItemObject::Weight();
@@ -1774,20 +2385,13 @@ float CWeapon::Weight() const
         res += pSettings->r_float(GetSilencerName(), "inv_weight");
     }
 
-    if (iAmmoElapsed)
-    {
-        float w = pSettings->r_float(m_ammoTypes[m_ammoType].c_str(), "inv_weight");
-        float bs = pSettings->r_float(m_ammoTypes[m_ammoType].c_str(), "box_size");
-
-        if (bs > 0)
-            res += w * (iAmmoElapsed / bs);
-    }
+    res += GetMagazineWeight(m_magazine);
     return res;
 }
 
 bool CWeapon::show_crosshair() { return !IsPending() && (!IsZoomed() || !ZoomHideCrosshair()); }
 
-bool CWeapon::show_indicators() { return !(IsZoomed() && ZoomTexture()); }
+bool CWeapon::show_indicators() { return true; }
 
 float CWeapon::GetConditionToShow() const
 {
@@ -1798,19 +2402,6 @@ BOOL CWeapon::ParentMayHaveAimBullet()
 {
     CObject* O = H_Parent();
     CEntityAlive* EA = smart_cast<CEntityAlive*>(O);
-    return EA->cast_actor() != 0;
-}
-
-BOOL CWeapon::ParentIsActor()
-{
-    CObject* O = H_Parent();
-    if (!O)
-        return FALSE;
-
-    CEntityAlive* EA = smart_cast<CEntityAlive*>(O);
-    if (!EA)
-        return FALSE;
-
     return EA->cast_actor() != 0;
 }
 
@@ -1841,9 +2432,9 @@ const float& CWeapon::hit_probability() const
     return (m_hit_probability[egdNovice]);
 }
 
-void CWeapon::OnStateSwitch(u32 S)
+void CWeapon::OnStateSwitch(u32 S, u32 oldState)
 {
-    inherited::OnStateSwitch(S);
+    inherited::OnStateSwitch(S, oldState);
     m_BriefInfo_CalcFrame = 0;
 
     if (GetState() == eReload)
@@ -1870,21 +2461,6 @@ void CWeapon::OnStateSwitch(u32 S)
 }
 
 void CWeapon::OnAnimationEnd(u32 state) { inherited::OnAnimationEnd(state); }
-
-u8 CWeapon::GetCurrentHudOffsetIdx()
-{
-    CActor* pActor = smart_cast<CActor*>(H_Parent());
-    if (!pActor)
-        return 0;
-
-    bool b_aiming = ((IsZoomed() && m_zoom_params.m_fZoomRotationFactor <= 1.f) ||
-        (!IsZoomed() && m_zoom_params.m_fZoomRotationFactor > 0.f));
-
-    if (!b_aiming)
-        return 0;
-    else
-        return 1;
-}
 
 void CWeapon::render_hud_mode() { RenderLight(); }
 

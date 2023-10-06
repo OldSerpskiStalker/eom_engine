@@ -61,6 +61,7 @@ void CScriptParticlesCustom::shedule_Update(u32 _dt)
         UpdateParent(m_animator->XFORM(), vel);
     }
 }
+
 void CScriptParticlesCustom::LoadPath(LPCSTR caPathName)
 {
     if (!m_animator)
@@ -71,11 +72,13 @@ void CScriptParticlesCustom::LoadPath(LPCSTR caPathName)
         m_animator->Load(caPathName);
     }
 }
+
 void CScriptParticlesCustom::StartPath(bool looped)
 {
     VERIFY(m_animator);
     m_animator->Play(looped);
 }
+
 void CScriptParticlesCustom::PausePath(bool val)
 {
     VERIFY(m_animator);
@@ -150,6 +153,13 @@ void CScriptParticles::MoveTo(const Fvector& pos, const Fvector& vel)
     m_particles->UpdateParent(m_transform, vel);
 }
 
+void CScriptParticles::XFORMMoveTo(const Fvector& pos)
+{
+    VERIFY(m_particles);
+    m_transform.translate_over(pos);
+    m_particles->SetXFORM(m_transform);
+}
+
 void CScriptParticles::SetDirection(const Fvector& dir)
 {
     Fmatrix matrix;
@@ -187,6 +197,9 @@ void CScriptParticles::LoadPath(LPCSTR caPathName)
     VERIFY(m_particles);
     m_particles->LoadPath(caPathName);
 }
+
 void CScriptParticles::StartPath(bool looped) { m_particles->StartPath(looped); }
+
 void CScriptParticles::StopPath() { m_particles->StopPath(); }
+
 void CScriptParticles::PausePath(bool val) { m_particles->PausePath(val); }

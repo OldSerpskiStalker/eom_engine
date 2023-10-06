@@ -86,6 +86,9 @@ public:
 
     virtual void OnDeviceReset();
     static bool is_widescreen();
+    static u8 screenmode();
+    static bool is_16_9_mode();
+    static bool is_21_9_mode();
     static float get_current_kx();
     shared_str get_xml_name(LPCSTR fn);
 

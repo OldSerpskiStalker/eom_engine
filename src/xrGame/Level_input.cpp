@@ -179,7 +179,6 @@ void CLevel::IR_OnKeyboardPress(int key)
         Console->Show();
         return;
         break;
-
     case kQUIT: {
         if (b_ui_exist && CurrentGameUI()->TopInputReceiver())
         {
@@ -414,7 +413,7 @@ void CLevel::IR_OnKeyboardPress(int key)
                     CHudItem* pHudItem = smart_cast<CHudItem*>(pActor->inventory().ActiveItem());
                     if (pHudItem)
                     {
-                        pHudItem->OnStateSwitch(pHudItem->GetState());
+                        pHudItem->OnStateSwitch(pHudItem->GetState(), pHudItem->GetState());
                     }
                 }
             }

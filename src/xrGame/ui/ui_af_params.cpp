@@ -53,9 +53,10 @@ LPCSTR af_restore_section_names[] = // ALife::EConditionRestoreType
     {
         "health_restore_speed", // eHealthRestoreSpeed=0
         "satiety_restore_speed", // eSatietyRestoreSpeed=1
-        "power_restore_speed", // ePowerRestoreSpeed=2
-        "bleeding_restore_speed", // eBleedingRestoreSpeed=3
-        "radiation_restore_speed", // eRadiationRestoreSpeed=4
+        "thirst_restore_speed", // eThirstRestoreSpeed=2
+        "power_restore_speed", // ePowerRestoreSpeed=3
+        "bleeding_restore_speed", // eBleedingRestoreSpeed=4
+        "radiation_restore_speed", // eRadiationRestoreSpeed=5
 };
 
 LPCSTR af_immunity_caption[] = // ALife::EInfluenceType
@@ -77,6 +78,7 @@ LPCSTR af_restore_caption[] = // ALife::EConditionRestoreType
     {
         "ui_inv_health",
         "ui_inv_satiety",
+        "ui_inv_thirst",
         "ui_inv_power",
         "ui_inv_bleeding",
         "ui_inv_radiation",
@@ -109,15 +111,15 @@ void CUIArtefactParams::InitFromXml(CUIXml& xml)
     m_Prop_line = xr_new<CUIStatic>();
     AttachChild(m_Prop_line);
     m_Prop_line->SetAutoDelete(false);
-    CUIXmlInit::InitStatic(xml, "prop_line", 0, m_Prop_line);
+    CUIXmlInit::InitStatic(xml, "caption", 0, m_Prop_line);
 
     // Alundaio: Show AF Condition
-    m_disp_condition = xr_new<UIArtefactParamItem>();
-    m_disp_condition->Init(xml, "condition");
-    m_disp_condition->SetAutoDelete(false);
-    LPCSTR name = CStringTable().translate("ui_inv_af_condition").c_str();
-    m_disp_condition->SetCaption(name);
-    xml.SetLocalRoot(base_node);
+    //	m_disp_condition = xr_new<UIArtefactParamItem>();
+    //	m_disp_condition->Init(xml,"condition");
+    //	m_disp_condition->SetAutoDelete(false);
+    //	LPCSTR name = CStringTable().translate( "ui_inv_af_condition" ).c_str();
+    //	m_disp_condition->SetCaption(name);
+    //	xml.SetLocalRoot(base_node);
     //-Alundaio
 
     for (u32 i = 0; i < 9; ++i)
@@ -152,7 +154,7 @@ void CUIArtefactParams::InitFromXml(CUIXml& xml)
         LPCSTR name = CStringTable().translate("ui_inv_weight").c_str();
         m_additional_weight->SetCaption(name);
 
-        // xml.SetLocalRoot( base_node );
+        xml.SetLocalRoot(base_node);
     }
 
     xml.SetLocalRoot(stored_root);
@@ -181,12 +183,12 @@ void CUIArtefactParams::SetInfo(CInventoryItem& pInvItem)
     float h = m_Prop_line->GetWndPos().y + m_Prop_line->GetWndSize().y;
 
     // Alundaio: Show AF Condition
-    m_disp_condition->SetValue(pInvItem.GetCondition());
-    pos.set(m_disp_condition->GetWndPos());
-    pos.y = h;
-    m_disp_condition->SetWndPos(pos);
-    h += m_disp_condition->GetWndSize().y;
-    AttachChild(m_disp_condition);
+    //	m_disp_condition->SetValue(pInvItem.GetCondition());
+    //	pos.set(m_disp_condition->GetWndPos());
+    //	pos.y = h;
+    //	m_disp_condition->SetWndPos(pos);
+    //	h += m_disp_condition->GetWndSize().y;
+    //	AttachChild(m_disp_condition);
     //-Alundaio
 
     for (u32 i = 0; i < 9; ++i)

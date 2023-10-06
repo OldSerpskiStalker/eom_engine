@@ -211,6 +211,7 @@ void CUIItemInfo::InitItem(CUICellItem* pCellItem, CInventoryItem* pCompareItem,
     if (UIWeight)
     {
         LPCSTR kg_str = CStringTable().translate("st_kg").c_str();
+        LPCSTR weight_str = CStringTable().translate("st_weight").c_str();
         float weight = pInvItem->Weight();
 
         if (!weight)
@@ -227,7 +228,7 @@ void CUIItemInfo::InitItem(CUICellItem* pCellItem, CInventoryItem* pCompareItem,
             }
         }
 
-        xr_sprintf(str, "%3.2f %s", weight, kg_str);
+        xr_sprintf(str, "%s %3.2f %s", weight_str, weight, kg_str);
         UIWeight->SetText(str);
 
         pos.x = UIWeight->GetWndPos().x;
@@ -238,7 +239,10 @@ void CUIItemInfo::InitItem(CUICellItem* pCellItem, CInventoryItem* pCompareItem,
     }
     if (UICost && IsGameTypeSingle() && item_price != u32(-1))
     {
-        xr_sprintf(str, "%d RU", item_price); // will be owerwritten in multiplayer
+        LPCSTR price_str = CStringTable().translate("st_price_item").c_str();
+        LPCSTR price_symbol = CStringTable().translate("st_price_symbol").c_str();
+        xr_sprintf(str, "%s %d %s", price_str, /* pInvItem->Cost() */ item_price,
+            price_symbol); // will be owerwritten in multiplayer
         UICost->SetText(str);
         pos.x = UICost->GetWndPos().x;
         if (m_complex_desc)
@@ -259,10 +263,10 @@ void CUIItemInfo::InitItem(CUICellItem* pCellItem, CInventoryItem* pCompareItem,
     //	}
     if (UITradeTip && IsGameTypeSingle())
     {
-        pos.y = UITradeTip->GetWndPos().y;
-        if (UIWeight && m_complex_desc)
+        pos.y = UICost->GetWndPos().y;
+        if (UICost && m_complex_desc)
         {
-            pos.y = UIWeight->GetWndPos().y + UIWeight->GetHeight() + 4.0f;
+            pos.y = UICost->GetWndPos().y + UICost->GetHeight() + 4.0f;
         }
 
         if (trade_tip == NULL)
@@ -279,8 +283,8 @@ void CUIItemInfo::InitItem(CUICellItem* pCellItem, CInventoryItem* pCompareItem,
     if (UIDesc)
     {
         pos = UIDesc->GetWndPos();
-        if (UIWeight)
-            pos.y = UIWeight->GetWndPos().y + UIWeight->GetHeight() + 4.0f;
+        if (UICost)
+            pos.y = UICost->GetWndPos().y + UICost->GetHeight() + 4.0f;
 
         if (UITradeTip && trade_tip != NULL)
             pos.y = UITradeTip->GetWndPos().y + UITradeTip->GetHeight() + 4.0f;

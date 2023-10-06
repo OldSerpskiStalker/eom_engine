@@ -14,11 +14,8 @@
 
 #define GRENADE_REMOVE_TIME 30000
 const float default_grenade_detonation_threshold_hit = 100;
-CGrenade::CGrenade(void)
-{
-    m_destroy_callback.clear();
-    m_eSoundCheckout = ESoundTypes(SOUND_TYPE_WEAPON_RECHARGING);
-}
+
+CGrenade::CGrenade(void) { m_destroy_callback.clear(); }
 
 CGrenade::~CGrenade(void) {}
 
@@ -26,8 +23,6 @@ void CGrenade::Load(LPCSTR section)
 {
     inherited::Load(section);
     CExplosive::Load(section);
-
-    m_sounds.LoadSound(section, "snd_checkout", "sndCheckout", false, m_eSoundCheckout);
 
     //////////////////////////////////////
     // время убирания оружия с уровня
@@ -42,7 +37,7 @@ void CGrenade::Load(LPCSTR section)
 void CGrenade::Hit(SHit* pHDS)
 {
     if (ALife::eHitTypeExplosion == pHDS->hit_type && m_grenade_detonation_threshold_hit < pHDS->damage() &&
-        CExplosive::Initiator() == u16(-1))
+        CExplosive ::Initiator() == u16(-1))
     {
         CExplosive::SetCurrentParentID(pHDS->who->ID());
         Destroy();
@@ -91,16 +86,10 @@ void CGrenade::OnH_A_Chield()
     inherited::OnH_A_Chield();
 }
 
-void CGrenade::State(u32 state)
+void CGrenade::State(u32 state, u32 old_state)
 {
     switch (state)
     {
-    case eThrowStart: {
-        Fvector C;
-        Center(C);
-        PlaySound("sndCheckout", C);
-    }
-    break;
     case eThrowEnd: {
         if (m_thrown)
         {
@@ -120,7 +109,7 @@ void CGrenade::State(u32 state)
     }
     break;
     };
-    inherited::State(state);
+    inherited::State(state, old_state);
 }
 
 bool CGrenade::DropGrenade()
@@ -136,8 +125,14 @@ bool CGrenade::DropGrenade()
 
 void CGrenade::DiscardState()
 {
-    if (IsGameTypeSingle() && (GetState() == eReady || GetState() == eThrow))
-        OnStateSwitch(eIdle);
+    if (IsGameTypeSingle())
+    {
+        u32 state = GetState();
+        if (state == eReady || state == eThrow)
+        {
+            OnStateSwitch(eIdle, state);
+        }
+    }
 }
 
 void CGrenade::SendHiddenItem()
@@ -279,27 +274,12 @@ bool CGrenade::Action(u16 cmd, u32 flags)
 
     switch (cmd)
     {
-    // переключение типа гранаты
+        // переключение типа гранаты
     case kWPN_NEXT: {
         if (flags & CMD_START)
         {
             if (m_pInventory)
-            {
-                TIItemContainer::iterator it = m_pInventory->m_ruck.begin();
-                TIItemContainer::iterator it_e = m_pInventory->m_ruck.end();
-                for (; it != it_e; ++it)
-                {
-                    CGrenade* pGrenade = smart_cast<CGrenade*>(*it);
-                    if (pGrenade && xr_strcmp(pGrenade->cNameSect(), cNameSect()))
-                    {
-                        m_pInventory->Ruck(this);
-                        m_pInventory->SetActiveSlot(NO_ACTIVE_SLOT);
-                        m_pInventory->Slot(pGrenade->BaseSlot(), pGrenade);
-                        return true;
-                    }
-                }
-                return true;
-            }
+                m_pInventory->ActivateDeffered();
         }
         return true;
     };

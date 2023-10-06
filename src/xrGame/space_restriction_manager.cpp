@@ -38,6 +38,7 @@ void show_restriction(const shared_str& restrictions)
 }
 
 typedef intrusive_ptr<CSpaceRestriction, RestrictionSpace::CTimeIntrusiveBase> CRestrictionPtr;
+
 void show_restriction(const CRestrictionPtr& restriction)
 {
     Msg("out");
@@ -91,7 +92,7 @@ shared_str CSpaceRestrictionManager::base_out_restrictions(ALife::_OBJECT_ID id)
     return ((*I).second.m_base_out_restrictions);
 }
 
-IC CSpaceRestrictionManager::CRestrictionPtr CSpaceRestrictionManager::restriction(ALife::_OBJECT_ID id)
+CSpaceRestrictionManager::CRestrictionPtr CSpaceRestrictionManager::restriction(ALife::_OBJECT_ID id)
 {
     CLIENT_RESTRICTIONS::iterator I = m_clients->find(id);
     VERIFY(m_clients->end() != I);
@@ -157,6 +158,8 @@ bool CSpaceRestrictionManager::accessible(ALife::_OBJECT_ID id, const Fsphere& s
 
 bool CSpaceRestrictionManager::accessible(ALife::_OBJECT_ID id, u32 level_vertex_id, float radius)
 {
+    if (level_vertex_id == (u32)-1)
+        return false;
     CRestrictionPtr client_restriction = restriction(id);
     if (client_restriction)
         return (client_restriction->accessible(level_vertex_id, radius));

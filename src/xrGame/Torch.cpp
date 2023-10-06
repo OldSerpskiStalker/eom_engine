@@ -13,6 +13,8 @@
 #include "../xrengine/xr_collide_form.h"
 #include "inventory.h"
 #include "game_base_space.h"
+#include "../xrEngine/xr_ioconsole.h"
+#include "../xrEngine/xr_ioc_cmd.h"
 
 #include "UIGameCustom.h"
 #include "actorEffector.h"
@@ -27,8 +29,6 @@ static const Fvector OMNI_OFFSET = {-0.2f, +0.1f, -0.1f};
 static const float OPTIMIZATION_DISTANCE = 100.f;
 
 static bool stalker_use_dynamic_lights = false;
-
-ENGINE_API int g_current_renderer;
 
 CTorch::CTorch(void)
 {
@@ -48,9 +48,7 @@ CTorch::CTorch(void)
     m_delta_h = 0;
     m_night_vision = NULL;
 
-    // Disabling shift by x and z axes for 1st render,
-    // because we don't have dynamic lighting in it.
-    if (g_current_renderer == 1)
+    if (strstr(Core.Params, "-rstatic"))
     {
         TORCH_OFFSET.x = 0;
         TORCH_OFFSET.z = 0;
@@ -211,9 +209,7 @@ BOOL CTorch::net_Spawn(CSE_Abstract* DC)
     if (!inherited::net_Spawn(DC))
         return (FALSE);
 
-    bool b_r2 = !!psDeviceFlags.test(rsR2);
-    b_r2 |= !!psDeviceFlags.test(rsR3);
-    b_r2 |= !!psDeviceFlags.test(rsR4); // Alundaio
+    bool b_r2 = !(strstr(Core.Params, "-rstatic"));
 
     IKinematics* K = smart_cast<IKinematics*>(Visual());
     CInifile* pUserData = K->LL_UserData();
@@ -235,6 +231,13 @@ BOOL CTorch::net_Spawn(CSE_Abstract* DC)
 
     light_render->set_cone(deg2rad(pUserData->r_float("torch_definition", "spot_angle")));
     light_render->set_texture(pUserData->r_string("torch_definition", "spot_texture"));
+
+    //--[[ Volumetric light
+    light_render->set_volumetric(pUserData->r_bool("torch_definition", "volumetric")); // Enable or not
+    light_render->set_volumetric_distance(pUserData->r_float("torch_definition", "volumetric_distance"));
+    light_render->set_volumetric_intensity(pUserData->r_float("torch_definition", "volumetric_intensity"));
+    light_render->set_volumetric_quality(pUserData->r_float("torch_definition", "volumetric_quality"));
+    //--]]
 
     glow_render->set_texture(pUserData->r_string("torch_definition", "glow_texture"));
     glow_render->set_color(clr);
@@ -327,26 +330,14 @@ void CTorch::UpdateCL()
                 offset.mad(M.j, TORCH_OFFSET.y);
                 offset.mad(M.k, TORCH_OFFSET.z);
                 light_render->set_position(offset);
-
-                if (true /*false*/)
-                {
-                    offset = M.c;
-                    offset.mad(M.i, OMNI_OFFSET.x);
-                    offset.mad(M.j, OMNI_OFFSET.y);
-                    offset.mad(M.k, OMNI_OFFSET.z);
-                    light_omni->set_position(offset);
-                }
+                light_omni->set_position(offset);
             } // if (true)
             glow_render->set_position(M.c);
 
             if (true)
             {
                 light_render->set_rotation(dir, right);
-
-                if (true /*false*/)
-                {
-                    light_omni->set_rotation(dir, right);
-                }
+                light_omni->set_rotation(dir, right);
             } // if (true)
             glow_render->set_direction(dir);
 
@@ -487,6 +478,7 @@ void CNightVisionEffector::Start(const shared_str& sect, CActor* pA, bool play_s
 {
     m_pActor = pA;
     AddEffector(m_pActor, effNightvision, sect);
+    g_pGamePersistent->Environment().CurrentEnv->nightvision_enabled = true;
     if (play_sound)
     {
         PlaySounds(eStartSound);
@@ -498,6 +490,7 @@ void CNightVisionEffector::Stop(const float factor, bool play_sound)
 {
     if (!m_pActor)
         return;
+    g_pGamePersistent->Environment().CurrentEnv->nightvision_enabled = false;
     CEffectorPP* pp = m_pActor->Cameras().GetPPEffector((EEffectorPPType)effNightvision);
     if (pp)
     {

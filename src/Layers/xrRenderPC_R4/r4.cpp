@@ -40,8 +40,14 @@ bool CRender::is_sun()
 {
     if (o.sunstatic)
         return FALSE;
-    Fcolor sun_color = ((light*)Lights.sun_adapted._get())->color;
+    Fcolor sun_color = ((light*)Lights.sun._get())->color;
     return (ps_r2_ls_flags.test(R2FLAG_SUN) && (u_diffuse2s(sun_color.r, sun_color.g, sun_color.b) > EPS));
+}
+
+bool CRender::indoor_weather()
+{
+    shared_str test_sect_name = g_pGamePersistent->Environment().GetWeather();
+    return ((test_sect_name == "indoor") || (test_sect_name == "indoor_ambient"));
 }
 
 float r_dtex_range = 50.f;
@@ -149,7 +155,7 @@ void CRender::create()
     m_MSAASample = -1;
 
     // hardware
-    o.smapsize = 2048;
+    o.smapsize = ps_r2_smapsize;
     o.mrt = (HW.Caps.raster.dwMRT_count >= 3);
     o.mrtmixdepth = (HW.Caps.raster.b_MRT_mixdepth);
 
@@ -284,17 +290,9 @@ void CRender::create()
     if (o.nvdbt)
         Msg("* NV-DBT supported and used");
 
-    // options (smap-pool-size)
-    if (strstr(Core.Params, "-smap1536"))
-        o.smapsize = 1536;
-    if (strstr(Core.Params, "-smap2048"))
-        o.smapsize = 2048;
-    if (strstr(Core.Params, "-smap2560"))
-        o.smapsize = 2560;
-    if (strstr(Core.Params, "-smap3072"))
-        o.smapsize = 3072;
-    if (strstr(Core.Params, "-smap4096"))
-        o.smapsize = 4096;
+    o.no_ram_textures = (strstr(Core.Params, "-noramtex")) ? TRUE : ps_r__common_flags.test(RFLAG_NO_RAM_TEXTURES);
+    if (o.no_ram_textures)
+        Msg("* Managed textures disabled");
 
     // gloss
     char* g = strstr(Core.Params, "-gloss ");
@@ -379,9 +377,7 @@ void CRender::create()
         }
     }
 
-    o.dx10_gbuffer_opt = ps_r2_ls_flags.test(R3FLAG_GBUFFER_OPT);
-
-    o.dx10_minmax_sm = ps_r3_minmax_sm;
+    o.dx10_minmax_sm = MMSM_OFF; // ps_r3_minmax_sm;
     o.dx10_minmax_sm_screenarea_threshold = 1600 * 1200;
 
     o.dx11_enable_tessellation =
@@ -454,7 +450,6 @@ void CRender::create()
         R_CHK(HW.pDevice->CreateQuery(&qdesc, &q_sync_point[i]));
     HW.pContext->End(q_sync_point[0]);
 
-    xrRender_apply_tf();
     ::PortalTraverser.initialize();
     FluidManager.Initialize(70, 70, 70);
     //	FluidManager.Initialize( 100, 100, 100 );
@@ -543,7 +538,6 @@ void CRender::reset_end()
     }
     //-AVO
 
-    xrRender_apply_tf();
     FluidManager.SetScreenSize(Device.dwWidth, Device.dwHeight);
 
     // Set this flag true to skip the first render frame,
@@ -1085,8 +1079,6 @@ public:
     }
 };
 
-#include <boost/crc.hpp>
-
 static inline bool match_shader_id(
     LPCSTR const debug_shader_id, LPCSTR const full_shader_id, FS_FileSet const& file_set, string_path& result);
 
@@ -1097,8 +1089,9 @@ HRESULT CRender::shader_compile(LPCSTR name, DWORD const* pSrcData, UINT SrcData
     int def_it = 0;
     char c_smapsize[32];
     char c_sun_shafts[32];
-    char c_ssao[32];
     char c_sun_quality[32];
+    char c_ssao[32];
+    char c_smaa_quality[32];
 
     char sh_name[MAX_PATH] = "";
 
@@ -1114,7 +1107,7 @@ HRESULT CRender::shader_compile(LPCSTR name, DWORD const* pSrcData, UINT SrcData
         defines[def_it].Name = "SMAP_size";
         defines[def_it].Definition = c_smapsize;
         def_it++;
-        VERIFY(xr_strlen(c_smapsize) == 4);
+        VERIFY(xr_strlen(c_smapsize) == 4 || atoi(c_smapsize) < 16384);
         xr_strcat(sh_name, c_smapsize);
         len += 4;
     }
@@ -1406,20 +1399,6 @@ HRESULT CRender::shader_compile(LPCSTR name, DWORD const* pSrcData, UINT SrcData
         ++len;
     }
 
-    if (RImplementation.o.advancedpp && ps_r2_ls_flags.test(R2FLAG_DOF))
-    {
-        defines[def_it].Name = "USE_DOF";
-        defines[def_it].Definition = "1";
-        def_it++;
-        sh_name[len] = '1';
-        ++len;
-    }
-    else
-    {
-        sh_name[len] = '0';
-        ++len;
-    }
-
     if (RImplementation.o.advancedpp && ps_r_sun_shafts)
     {
         xr_sprintf(c_sun_shafts, "%d", ps_r_sun_shafts);
@@ -1479,14 +1458,20 @@ HRESULT CRender::shader_compile(LPCSTR name, DWORD const* pSrcData, UINT SrcData
         ++len;
     }
 
-    if (o.dx10_gbuffer_opt)
+    if (ps_smaa_quality)
     {
-        defines[def_it].Name = "GBUFFER_OPTIMIZATION";
-        defines[def_it].Definition = "1";
+        xr_sprintf(c_smaa_quality, "%d", ps_smaa_quality);
+        defines[def_it].Name = "SMAA_QUALITY";
+        defines[def_it].Definition = c_smaa_quality;
         def_it++;
+        sh_name[len] = '0' + char(ps_smaa_quality);
+        ++len;
     }
-    sh_name[len] = '0' + char(o.dx10_gbuffer_opt);
-    ++len;
+    else
+    {
+        sh_name[len] = '0';
+        ++len;
+    }
 
     // R_ASSERT						( !o.dx10_sm4_1 );
     if (o.dx10_sm4_1)
@@ -1691,14 +1676,11 @@ HRESULT CRender::shader_compile(LPCSTR name, DWORD const* pSrcData, UINT SrcData
         IReader* file = FS.r_open(file_name);
         if (file->length() > 4)
         {
-            u32 crc = 0;
-            crc = file->r_u32();
+            u32 savedBytecodeCrc = file->r_u32();
 
-            boost::crc_32_type processor;
-            processor.process_block(file->pointer(), ((char*)file->pointer()) + file->elapsed());
-            u32 const real_crc = processor.checksum();
+            u32 bytecodeCrc = crc32(file->pointer(), file->elapsed());
 
-            if (real_crc == crc)
+            if (bytecodeCrc == savedBytecodeCrc)
             {
                 _result = create_shader(pTarget, (DWORD*)file->pointer(), file->elapsed(), file_name, result, o.disasm);
             }
@@ -1719,12 +1701,9 @@ HRESULT CRender::shader_compile(LPCSTR name, DWORD const* pSrcData, UINT SrcData
         {
             IWriter* file = FS.w_open(file_name);
 
-            boost::crc_32_type processor;
-            processor.process_block(
-                pShaderBuf->GetBufferPointer(), ((char*)pShaderBuf->GetBufferPointer()) + pShaderBuf->GetBufferSize());
-            u32 const crc = processor.checksum();
+            u32 bytecodeCrc = crc32(pShaderBuf->GetBufferPointer(), pShaderBuf->GetBufferSize());
 
-            file->w_u32(crc);
+            file->w_u32(bytecodeCrc);
             file->w(pShaderBuf->GetBufferPointer(), (u32)pShaderBuf->GetBufferSize());
             FS.w_close(file);
 

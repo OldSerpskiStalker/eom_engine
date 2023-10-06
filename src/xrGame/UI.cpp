@@ -110,17 +110,20 @@ bool CUI::Render()
 				if ( !gSP->PdaMenu().GetVisible() )
 				{
 					m_pMessagesWnd->Draw();
+					UIMainIngameWnd->Draw();
 				}
 			}
 			else
 			{
 				m_pMessagesWnd->Draw();
+				UIMainIngameWnd->Draw();
 			}
 		}	
 	}
 	else
 	{
 		m_pMessagesWnd->Draw();
+		UIMainIngameWnd->Draw();
 	}
 
 	DoRenderDialogs();

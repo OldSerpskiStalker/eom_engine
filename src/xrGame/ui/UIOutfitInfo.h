@@ -45,7 +45,7 @@ protected:
         max_count = ALife::eHitTypeMax - 2
     };
 
-    //	CUIStatic*			m_caption;
+    CUIStatic* m_caption;
     CUIStatic* m_Prop_line;
     CUIOutfitImmunity* m_items[max_count];
 

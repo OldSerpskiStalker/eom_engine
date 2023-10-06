@@ -36,20 +36,6 @@ void CDialogHolder::StartMenu(CUIDialogWnd* pDialog, bool bDoHideIndicators)
     AddDialogToRender(pDialog);
     SetMainInputReceiver(pDialog, false);
 
-    if (UseIndicators() && !m_input_receivers.empty()) // Alundaio
-    {
-        bool b = !!psHUD_Flags.test(HUD_CROSSHAIR_RT);
-        m_input_receivers.back().m_flags.set(recvItem::eCrosshair, b);
-
-        b = CurrentGameUI()->GameIndicatorsShown();
-        m_input_receivers.back().m_flags.set(recvItem::eIndicators, b);
-
-        if (bDoHideIndicators)
-        {
-            psHUD_Flags.set(HUD_CROSSHAIR_RT, FALSE);
-            CurrentGameUI()->ShowGameIndicators(false);
-        }
-    }
     pDialog->SetHolder(this);
 
     if (pDialog->NeedCursor())
@@ -76,14 +62,6 @@ void CDialogHolder::StopMenu(CUIDialogWnd* pDialog)
 
     if (TopInputReceiver() == pDialog)
     {
-        if (UseIndicators() && !m_input_receivers.empty()) // Alundaio
-        {
-            bool b = !!m_input_receivers.back().m_flags.test(recvItem::eCrosshair);
-            psHUD_Flags.set(HUD_CROSSHAIR_RT, b);
-            b = !!m_input_receivers.back().m_flags.test(recvItem::eIndicators);
-            CurrentGameUI()->ShowGameIndicators(b);
-        }
-
         SetMainInputReceiver(NULL, false);
     }
     else

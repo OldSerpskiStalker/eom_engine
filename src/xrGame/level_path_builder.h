@@ -22,25 +22,31 @@ private:
     u32 m_start_vertex_id;
     u32 m_dest_vertex_id;
     const Fvector* m_precise_position;
-    u32 m_last_fail_time;
+    u32 m_next_retry_time;
     bool m_extrapolate_path;
     bool m_use_delay_after_fail;
 
 private:
     enum
     {
-        time_to_wait_after_fail = u32(2000),
+        time_to_wait_after_fail_min = u32(1500),
+        time_to_wait_after_fail_max = u32(2500),
     };
 
 public:
     IC CLevelPathBuilder(CMovementManager* object)
-        : inherited(object), m_last_fail_time(0), m_use_delay_after_fail(true)
+        : inherited(object), m_next_retry_time(0), m_use_delay_after_fail(true)
     {
     }
 
     IC const u32& dest_vertex_id() const { return (m_dest_vertex_id); }
 
-    IC void use_delay_after_fail(bool const value) { m_use_delay_after_fail = value; }
+    IC void use_delay_after_fail(bool const value)
+    {
+        m_use_delay_after_fail = value;
+        if (!value)
+            m_next_retry_time = 0;
+    }
 
     IC void setup(
         const u32& start_vertex_id, const u32& dest_vertex_id, bool extrapolate_path, const Fvector* precise_position)
@@ -64,7 +70,7 @@ public:
     void register_to_process()
     {
         m_object->m_wait_for_distributed_computation = true;
-        if (Device.dwTimeGlobal < m_last_fail_time + time_to_wait_after_fail)
+        if (Device.dwTimeGlobal < m_next_retry_time)
             return;
 
         Device.seqParallel.push_back(fastdelegate::FastDelegate0<>(this, &CLevelPathBuilder::process));
@@ -78,7 +84,8 @@ public:
         if (m_object->level_path().failed())
         {
             if (m_use_delay_after_fail)
-                m_last_fail_time = Device.dwTimeGlobal;
+                m_next_retry_time =
+                    Device.dwTimeGlobal + Random.randI(time_to_wait_after_fail_min, time_to_wait_after_fail_max);
 
             m_object->m_path_state = CMovementManager::ePathStateBuildLevelPath;
             return;
@@ -101,7 +108,7 @@ public:
 
     void __stdcall process()
     {
-        if (Device.dwTimeGlobal < m_last_fail_time + time_to_wait_after_fail)
+        if (Device.dwTimeGlobal < m_next_retry_time)
             return;
 
         m_object->build_level_path();

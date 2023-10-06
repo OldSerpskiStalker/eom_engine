@@ -52,6 +52,10 @@
 #include "inventory_upgrade_manager.h"
 #include "inventory_upgrade_root.h"
 #include "inventory_item.h"
+#include "inventory_item_impl.h"
+#include "xrserver_objects_alife_items.h"
+#include "./xrServerEntities/inventory_space.h"
+#include "ai_space.h"
 //-Alundaio
 
 bool CScriptGameObject::GiveInfoPortion(LPCSTR info_id)
@@ -224,7 +228,7 @@ bool CScriptGameObject::IsInvUpgradeEnabled()
     return pInventoryOwner->IsInvUpgradeEnabled();
 }
 
-void CScriptGameObject::ForEachInventoryItems(const luabind::functor<void>& functor)
+void CScriptGameObject::ForEachInventoryItems(const luabind::functor<bool>& functor)
 {
     CInventoryOwner* owner = smart_cast<CInventoryOwner*>(&object());
     if (!owner)
@@ -244,7 +248,8 @@ void CScriptGameObject::ForEachInventoryItems(const luabind::functor<void>& func
         CGameObject* inv_go = smart_cast<CGameObject*>(*it);
         if (inv_go)
         {
-            functor(inv_go->lua_game_object(), this);
+            if (functor(inv_go->lua_game_object(), this) == true)
+                return;
         }
     }
 }
@@ -1224,7 +1229,7 @@ int CScriptGameObject::animation_slot() const
     return (hud_item->animation_slot());
 }
 
-CScriptGameObject* CScriptGameObject::active_detector() const
+CScriptGameObject* CScriptGameObject::active_device() const
 {
     CInventoryOwner* inventory_owner = smart_cast<CInventoryOwner*>(&object());
     if (!inventory_owner)
@@ -1237,11 +1242,69 @@ CScriptGameObject* CScriptGameObject::active_detector() const
     CInventoryItem* result = inventory_owner->inventory().ItemFromSlot(DETECTOR_SLOT);
     if (result)
     {
-        CCustomDetector* detector = smart_cast<CCustomDetector*>(result);
-        VERIFY(detector);
-        return (detector->IsWorking() ? result->object().lua_game_object() : 0);
+        CCustomDevice* device = smart_cast<CCustomDevice*>(result);
+
+        if (device && device->GetState() != CHUDState::eHidden)
+            return result->object().lua_game_object();
     }
     return (0);
+}
+
+void CScriptGameObject::show_device(bool bFast)
+{
+    CInventoryOwner* inventory_owner = smart_cast<CInventoryOwner*>(&object());
+    if (!inventory_owner)
+    {
+        ai().script_engine().script_log(
+            ScriptStorage::eLuaMessageTypeError, "CInventoryOwner : cannot access class member show_device!");
+        return;
+    }
+
+    CInventoryItem* result = inventory_owner->inventory().ItemFromSlot(DETECTOR_SLOT);
+    if (result)
+    {
+        CCustomDevice* device = smart_cast<CCustomDevice*>(result);
+        if (device && device->GetState() == CHUDState::eHidden)
+            device->ShowDevice(bFast);
+    }
+}
+
+void CScriptGameObject::hide_device(bool bFast)
+{
+    CInventoryOwner* inventory_owner = smart_cast<CInventoryOwner*>(&object());
+    if (!inventory_owner)
+    {
+        ai().script_engine().script_log(
+            ScriptStorage::eLuaMessageTypeError, "CInventoryOwner : cannot access class member hide_device!");
+        return;
+    }
+
+    CInventoryItem* result = inventory_owner->inventory().ItemFromSlot(DETECTOR_SLOT);
+    if (result)
+    {
+        CCustomDevice* device = smart_cast<CCustomDevice*>(result);
+        if (device && device->GetState() != CHUDState::eHidden)
+            device->ShowDevice(bFast);
+    }
+}
+
+void CScriptGameObject::force_hide_device()
+{
+    CInventoryOwner* inventory_owner = smart_cast<CInventoryOwner*>(&object());
+    if (!inventory_owner)
+    {
+        ai().script_engine().script_log(
+            ScriptStorage::eLuaMessageTypeError, "CInventoryOwner : cannot access class member force_hide_device!");
+        return;
+    }
+
+    CInventoryItem* result = inventory_owner->inventory().ItemFromSlot(DETECTOR_SLOT);
+    if (result)
+    {
+        CCustomDevice* device = smart_cast<CCustomDevice*>(result);
+        if (device)
+            device->ForceHide();
+    }
 }
 
 CScriptGameObject* CScriptGameObject::item_in_slot(u32 slot_id) const
@@ -1820,7 +1883,7 @@ bool CScriptGameObject::HasUpgrade(LPCSTR upgrade)
     return item->has_upgrade(upgrade);
 }
 
-void CScriptGameObject::IterateInstalledUpgrades(luabind::functor<void> functor)
+void CScriptGameObject::IterateInstalledUpgrades(const luabind::functor<bool>& functor)
 {
     CInventoryItem* Item = smart_cast<CInventoryItem*>(&object());
     if (!Item)
@@ -1831,7 +1894,8 @@ void CScriptGameObject::IterateInstalledUpgrades(luabind::functor<void> functor)
     CInventoryItem::Upgrades_type::const_iterator ie = m_upgrades.end();
     for (; ib != ie; ++ib)
     {
-        functor((*ib).c_str(), object().lua_game_object());
+        if (functor((*ib).c_str(), object().lua_game_object()) == true)
+            return;
     }
 }
 

@@ -18,6 +18,7 @@ public:
 protected:
     UIBoosterInfoItem* m_booster_items[eBoostExplImmunity];
     UIBoosterInfoItem* m_booster_satiety;
+    UIBoosterInfoItem* m_booster_thirst;
     UIBoosterInfoItem* m_booster_anabiotic;
     UIBoosterInfoItem* m_booster_time;
 
@@ -41,6 +42,7 @@ private:
     CUIStatic* m_caption;
     CUITextWnd* m_value;
     float m_magnitude;
+    bool m_sign_inverse;
     bool m_show_sign;
     shared_str m_unit_str;
     shared_str m_texture_minus;

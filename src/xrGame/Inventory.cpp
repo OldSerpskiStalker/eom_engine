@@ -96,6 +96,7 @@ CInventory::CInventory()
 
     InitPriorityGroupsForQSwitch();
     m_next_item_iteration_time = 0;
+    m_change_after_deactivate = false;
 }
 
 CInventory::~CInventory() {}
@@ -309,7 +310,16 @@ bool CInventory::DropItem(CGameObject* pObj, bool just_before_destroy, bool dont
         if (Level().CurrentViewEntity() == pActor_owner)
             CurrentGameUI()->OnInventoryAction(pIItem, GE_OWNERSHIP_REJECT);
     };
-    pObj->H_SetParent(0, dont_create_shell);
+    if (smart_cast<CWeapon*>(pObj))
+    {
+        Fvector dir = Actor()->Direction();
+        dir.y = sin(-45.f * PI / 180.f);
+        dir.normalize();
+        smart_cast<CWeapon*>(pObj)->SetActivationSpeedOverride(dir.mul(7));
+        pObj->H_SetParent(nullptr, dont_create_shell);
+    }
+    else
+        pObj->H_SetParent(nullptr, dont_create_shell);
     return true;
 }
 
@@ -752,35 +762,10 @@ void CInventory::ActiveWeapon(u16 slot)
     // weapon is in active slot
     if (GetActiveSlot() == slot && ActiveItem())
     {
-        if (IsGameTypeSingle())
-            Activate(NO_ACTIVE_SLOT);
-        else
-            ActivateNextItemInActiveSlot();
-
+        Activate(NO_ACTIVE_SLOT);
         return;
     }
     Activate(slot);
-    /*
-        if ( IsGameTypeSingle() )
-        {
-            Activate(slot);
-            return;
-        }
-        if ( GetActiveSlot() == slot )
-        {
-            return;
-        }
-
-        Activate(slot);
-        if ( slot != NO_ACTIVE_SLOT && ItemFromSlot(slot) == NULL )
-        {
-            u16 prev_activ = GetActiveSlot();
-            m_iActiveSlot  = slot;
-            if ( !ActivateNextItemInActiveSlot() )
-            {
-                m_iActiveSlot = prev_activ;
-            }
-        }*/
 }
 
 void CInventory::Update()
@@ -810,6 +795,9 @@ void CInventory::Update()
                 }
             }
 
+            if (m_change_after_deactivate)
+                ActivateNextGrenage();
+
             if (GetNextActiveSlot() != NO_ACTIVE_SLOT)
             {
                 PIItem tmp_next_active = ItemFromSlot(GetNextActiveSlot());
@@ -826,17 +814,9 @@ void CInventory::Update()
                     }
                 }
             }
-
-            //			if ( m_iActiveSlot != GetNextActiveSlot() ) {
-            //				LPCSTR const name = smart_cast<CGameObject const*>(m_pOwner)->cName().c_str();
-            //				if ( !xr_strcmp("jup_b43_stalker_assistant_pri6695", name) )
-            //					LogStackTrace	("");
-            //				Msg					("[%6d][%s] CInventory::Activate changing active slot from %d to next active slot
-            //%d", Device.dwTimeGlobal, name, m_iActiveSlot, GetNextActiveSlot() );
-            //			}
             m_iActiveSlot = GetNextActiveSlot();
         }
-        if ((GetNextActiveSlot() != NO_ACTIVE_SLOT) && ActiveItem() && ActiveItem()->cast_hud_item()->IsHidden())
+        else if ((GetNextActiveSlot() != NO_ACTIVE_SLOT) && ActiveItem() && ActiveItem()->cast_hud_item()->IsHidden())
             ActiveItem()->ActivateItem();
     }
     UpdateDropTasks();
@@ -852,7 +832,7 @@ void CInventory::UpdateDropTasks()
             UpdateDropItem(itm);
     }
 
-    for (i = 0; i < 2; ++i)
+    for (int i = 0; i < 2; ++i)
     {
         TIItemContainer& list = i ? m_ruck : m_belt;
         TIItemContainer::iterator it = list.begin();

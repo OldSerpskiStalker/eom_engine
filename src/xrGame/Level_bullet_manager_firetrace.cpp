@@ -54,9 +54,9 @@ BOOL CBulletManager::test_callback(const collide::ray_defs& rd, CObject* object,
         if ((NULL != cform) && (cftObject == cform->Type()))
         {
             CActor* actor = smart_cast<CActor*>(entity);
-            CAI_Stalker* stalker = smart_cast<CAI_Stalker*>(entity);
-            // в кого попали?
-            if (actor && IsGameTypeSingle() /**/ || stalker /**/)
+            // CAI_Stalker* stalker= smart_cast<CAI_Stalker*>(entity);
+            //  в кого попали?
+            if (actor /* || stalker*/)
             {
                 // попали в актера или сталкера
                 Fsphere S = cform->getSphere();
@@ -174,27 +174,22 @@ void CBulletManager::FireShotmark(SBullet* bullet, const Fvector& vDir, const Fv
 
     if (R.O)
     {
-        /*  add_SkeletonWallmark not implemented now...
-                particle_dir		 = vDir;
-                particle_dir.invert	();
+        particle_dir = vDir;
+        particle_dir.invert();
 
-                //на текущем актере отметок не ставим
-                if(Level().CurrentEntity() && Level().CurrentEntity()->ID() == R.O->ID()) return;
+        // на текущем актере отметок не ставим
+        if (Level().CurrentEntity() && Level().CurrentEntity()->ID() == R.O->ID())
+            return;
 
-                if (mtl_pair && !mtl_pair->m_pCollideMarks->empty() && ShowMark)
-                {
-                    //добавить отметку на материале
-                    Fvector p;
-                    p.mad(bullet->bullet_pos,bullet->dir,R.range-0.01f);
-                    if(!g_dedicated_server)
-                        ::Render->add_SkeletonWallmark	(	&R.O->renderable.xform,
-                                                            PKinematics(R.O->Visual()),
-                                                            &*mtl_pair->m_pCollideMarks,
-                                                            p,
-                                                            bullet->dir,
-                                                            bullet->wallmark_size);
-                }
-        */
+        if (mtl_pair && !mtl_pair->m_pCollideMarks->empty() && ShowMark)
+        {
+            // добавить отметку на материале
+            Fvector p;
+            p.mad(bullet->bullet_pos, bullet->dir, R.range - 0.01f);
+            if (!g_dedicated_server)
+                ::Render->add_SkeletonWallmark(&R.O->renderable.xform, PKinematics(R.O->Visual()),
+                    &*mtl_pair->m_pCollideMarks, p, bullet->dir, bullet->wallmark_size);
+        }
     }
     else
     {

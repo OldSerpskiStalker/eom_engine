@@ -1,5 +1,4 @@
 #pragma once
-
 #include "script_export_space.h"
 
 #include "UIDialogWnd.h"
@@ -106,7 +105,6 @@ protected:
     CUIDragDropListEx* m_pInventoryOutfitList;
     CUIDragDropListEx* m_pInventoryHelmetList;
     CUIDragDropListEx* m_pInventoryDetectorList;
-    CUIDragDropListEx* m_pInventoryBagList;
 
     CUIDragDropListEx* m_pTradeActorBagList;
     CUIDragDropListEx* m_pTradeActorList;
@@ -191,6 +189,7 @@ protected:
 
 public:
     CUIDragDropReferenceList* m_pQuickSlot;
+    CUIDragDropListEx* m_pInventoryBagList;
 
 public:
     void SetMenuMode(EMenuMode mode);
@@ -315,6 +314,7 @@ protected:
 
     // trade
     void InitPartnerInventoryContents();
+    void RefreshDeadBodyInventoryContents(); // Debrovski
     void ColorizeItem(CUICellItem* itm, bool colorize);
     float CalcItemsWeight(CUIDragDropListEx* pList);
     u32 CalcItemsPrice(CUIDragDropListEx* pList, CTrade* pTrade, bool bBuying);
@@ -367,7 +367,7 @@ public:
 
     CScriptGameObject* GetCurrentItemAsGameObject();
     void HighlightSectionInSlot(LPCSTR section, u8 type, u16 slot_id = 0);
-    void HighlightForEachInSlot(luabind::functor<bool> functor, u8 type, u16 slot_id);
+    void HighlightForEachInSlot(const luabind::functor<bool>& functor, u8 type, u16 slot_id);
 
     //-AxelDominator && Alundaio consumable use condition
     void DonateCurrentItem(CUICellItem* cell_item); // Alundaio: Donate item via context menu while in trade menu

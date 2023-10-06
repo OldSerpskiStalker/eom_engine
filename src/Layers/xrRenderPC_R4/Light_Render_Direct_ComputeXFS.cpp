@@ -64,7 +64,7 @@ void CLight_Compute_XFORM_and_VIS::compute_xf_spot(light* L)
     float factor2 = powf(duel_dot, 1.f / 4.f); // difficult to fast-change this -> visible
     float factor3 = powf(sizefactor, 1.f / 4.f); // this shouldn't make much difference
     float factor4 = powf(widefactor, 1.f / 2.f); // make it linear ???
-    float factor = ps_r2_ls_squality * factor0 * factor1 * factor2 * factor3 * factor4;
+    float factor = 1.f * factor0 * factor1 * factor2 * factor3 * factor4;
 
     // final size calc
     u32 _size = iFloor(factor * SMAP_adapt_optimal);
@@ -88,6 +88,23 @@ void CLight_Compute_XFORM_and_VIS::compute_xf_spot(light* L)
 
     // _min(L->cone + deg2rad(4.5f), PI*0.98f) - Here, it is needed to enlarge the shadow map frustum to include also
     // displaced pixels and the pixels neighbor to the examining one.
-    L->X.S.project.build_projection(_min(L->cone + deg2rad(5.f), PI * 0.98f), 1.f, SMAP_near_plane, L->range + EPS_S);
+    /* Ray Twitty */
+    //	float tan_shift;
+    //	if (L->flags.type == IRender_Light::POINT)	tan_shift = deg2rad(11.5f);
+    //	else										tan_shift = deg2rad(3.5f);
+    /*************************************************** added by Ray Twitty (aka Shadows) END
+     * ***************************************************/
+    //	L->X.S.project.build_projection(L->cone + tan_shift, 1.f,/*SMAP_near_plane*/L->virtual_size, L->range + EPS_S);
+
+    //	L->X.S.combine.mul					(L->X.S.project,L->X.S.view);
+
+    // только для поинта меняем на 11.5
+    float tan_shift;
+    if (L->flags.type == IRender_Light::POINT)
+        tan_shift = deg2rad(11.5f);
+    else
+        tan_shift = deg2rad(3.5f);
+    L->X.S.project.build_projection(L->cone + tan_shift, 1.f, /*SMAP_near_plane*/ L->virtual_size, L->range + EPS_S);
+
     L->X.S.combine.mul(L->X.S.project, L->X.S.view);
 }

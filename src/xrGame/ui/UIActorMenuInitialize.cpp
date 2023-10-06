@@ -23,6 +23,8 @@
 #include "UIProgressBar.h"
 #include "ui_base.h"
 #include "../string_table.h"
+#include "../CustomOutfit.h"
+#include "../Actor.h"
 
 CUIActorMenu::CUIActorMenu()
 {

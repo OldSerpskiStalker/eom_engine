@@ -22,22 +22,27 @@ struct S2DVert
 {
     Fvector2 pt;
     Fvector2 uv;
+
     S2DVert() {}
+
     S2DVert(float pX, float pY, float tU, float tV)
     {
         pt.set(pX, pY);
         uv.set(tU, tV);
     }
+
     void set(float pt_x, float pt_y, float uv_x, float uv_y)
     {
         pt.set(pt_x, pt_y);
         uv.set(uv_x, uv_y);
     }
+
     void set(const Fvector2& _pt, const Fvector2& _uv)
     {
         pt.set(_pt);
         uv.set(_uv);
     }
+
     void rotate_pt(const Fvector2& pivot, const float cosA, const float sinA, const float kx);
 };
 
@@ -53,6 +58,11 @@ class C2DFrustum
 public:
     void CreateFromRect(const Frect& rect);
     sPoly2D* ClipPoly(sPoly2D& S, sPoly2D& D) const;
+    void Clear()
+    {
+        if (planes.size())
+            planes.clear();
+    }
 };
 
 extern ENGINE_API BOOL g_bRendering;

@@ -211,8 +211,8 @@ void CStalkerActionRetreatFromEnemy::execute()
     object().movement().set_movement_type(eMovementTypeRun);
     object().movement().set_path_type(MovementManager::ePathTypeLevelPath);
     object().movement().set_detail_path_type(DetailPathManager::eDetailPathTypeSmooth);
-    object().movement().set_mental_state(
-        eMentalStateDanger); // Alundaio: Panic animation looks ridiculous, danger set is better
+    object().movement().set_mental_state(eMentalStateDanger);
+    // Alundaio: Panic animation looks ridiculous, danger set is better
     object().movement().set_body_state(eBodyStateStand);
 
     CCoverPoint const* point = 0;
@@ -543,7 +543,8 @@ void CStalkerActionTakeCover::execute()
     }
 
     if (object().movement().path_completed())
-    { // && (object().memory().enemy().selected()->Position().distance_to_sqr(object().Position()) >= 10.f))
+    {
+        // && (object().memory().enemy().selected()->Position().distance_to_sqr(object().Position()) >= 10.f))
         object().best_cover_can_try_advance();
         m_storage->set_property(eWorldPropertyInCover, true);
     }
@@ -671,13 +672,13 @@ void CStalkerActionLookOut::execute()
 
     Fvector position = mem_object.m_object_params.m_position;
     object().m_ce_close->setup(position, 0.f, 170.f, 10.f);
-    const CCoverPoint* point = ai().cover_manager().best_cover(
-        object().Position(), 10.f, *object().m_ce_close); //,CStalkerMovementRestrictor(m_object,true,false));
+    const CCoverPoint* point = ai().cover_manager().best_cover(object().Position(), 10.f, *object().m_ce_close);
+    //,CStalkerMovementRestrictor(m_object,true,false));
     if (!point || (point->position().similar(object().Position()) && object().movement().path_completed()))
     {
         object().m_ce_close->setup(position, 0.f, 170.f, 10.f);
-        point = ai().cover_manager().best_cover(
-            object().Position(), 30.f, *object().m_ce_close); //,CStalkerMovementRestrictor(m_object,true,false));
+        point = ai().cover_manager().best_cover(object().Position(), 30.f, *object().m_ce_close);
+        //,CStalkerMovementRestrictor(m_object,true,false));
     }
 
     if (point)

@@ -105,6 +105,7 @@ BOOL CHangingLamp::net_Spawn(CSE_Abstract* DC)
     light_render->set_type(
         lamp->flags.is(CSE_ALifeObjectHangingLamp::flTypeSpot) ? IRender_Light::SPOT : IRender_Light::POINT);
     light_render->set_range(lamp->range);
+    light_render->set_virtual_size(lamp->m_virtual_size);
     light_render->set_color(clr);
     light_render->set_cone(lamp->spot_cone_angle);
     light_render->set_texture(*lamp->light_texture);
@@ -325,6 +326,7 @@ void CHangingLamp::TurnOff()
             make_string("can not Turn Off lamp: %s, visual %s - because all bones become invisible",
                 cNameVisual().c_str(), cName().c_str()));
     }
+    // if(!PPhysicsShell())//if we have physiccs_shell it will call processing deactivate when disable
     processing_deactivate();
     m_bState = 0;
 }

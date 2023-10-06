@@ -56,7 +56,6 @@ void ui_actor_state_wnd::init_from_xml(CUIXml& xml, LPCSTR path)
     }
     //	m_state[stt_stamina]->init_from_xml( xml, "stamina_state" );
     m_state[stt_health]->init_from_xml(xml, "health_state");
-    m_state[stt_bleeding]->init_from_xml(xml, "bleeding_state");
     m_state[stt_radiation]->init_from_xml(xml, "radiation_state");
     //	m_state[stt_armor]->init_from_xml( xml, "armor_state");
 
@@ -84,36 +83,11 @@ void ui_actor_state_wnd::UpdateActorInfo(CInventoryOwner* owner)
     float value = 0.0f;
 
     value = actor->conditions().GetHealth();
-    value = floor(value * 55) / 55; // number of sticks in progress bar
-    // show bleeding icon
     m_state[stt_health]->set_progress(value);
-    value = actor->conditions().BleedingSpeed();
-    m_state[stt_bleeding]->show_static(false, 1);
-    m_state[stt_bleeding]->show_static(false, 2);
-    m_state[stt_bleeding]->show_static(false, 3);
-    if (!fis_zero(value, EPS))
-    {
-        if (value < 0.35f)
-            m_state[stt_bleeding]->show_static(true, 1);
-        else if (value < 0.7f)
-            m_state[stt_bleeding]->show_static(true, 2);
-        else
-            m_state[stt_bleeding]->show_static(true, 3);
-    }
-    // show radiation icon
+
     value = actor->conditions().GetRadiation();
-    m_state[stt_radiation]->show_static(false, 1);
-    m_state[stt_radiation]->show_static(false, 2);
-    m_state[stt_radiation]->show_static(false, 3);
-    if (!fis_zero(value, EPS))
-    {
-        if (value < 0.35f)
-            m_state[stt_radiation]->show_static(true, 1);
-        else if (value < 0.7f)
-            m_state[stt_radiation]->show_static(true, 2);
-        else
-            m_state[stt_radiation]->show_static(true, 3);
-    }
+    m_state[stt_radiation]->set_text_rad(value);
+    m_state[stt_radiation]->show_static(true, 2);
 
     CCustomOutfit* outfit = actor->GetOutfit();
     PIItem itm = actor->inventory().ItemFromSlot(HELMET_SLOT);
@@ -136,7 +110,7 @@ void ui_actor_state_wnd::UpdateActorInfo(CInventoryOwner* owner)
     float shoc_value = 0.0f;
     float fwou_value = 0.0f;
 
-    CEntityCondition::BOOSTER_MAP cur_booster_influences = actor->conditions().GetCurBoosterInfluences();
+    CEntityCondition::BOOSTER_MAP& cur_booster_influences = actor->conditions().GetCurBoosterInfluences();
     CEntityCondition::BOOSTER_MAP::const_iterator it;
     it = cur_booster_influences.find(eBoostRadiationProtection);
     if (it != cur_booster_influences.end())
@@ -165,8 +139,8 @@ void ui_actor_state_wnd::UpdateActorInfo(CInventoryOwner* owner)
         fwou_value += outfit->GetBoneArmor(spine_bone) * outfit->GetCondition();
         if (!outfit->bIsHelmetAvaliable)
         {
-            u16 spine_bone = ikv->LL_BoneID("bip01_head");
-            fwou_value += outfit->GetBoneArmor(spine_bone) * outfit->GetCondition();
+            u16 head_bone = ikv->LL_BoneID("bip01_head");
+            fwou_value += outfit->GetBoneArmor(head_bone) * outfit->GetCondition();
         }
     }
     if (helmet)
@@ -180,63 +154,71 @@ void ui_actor_state_wnd::UpdateActorInfo(CInventoryOwner* owner)
 
         IKinematics* ikv = smart_cast<IKinematics*>(actor->Visual());
         VERIFY(ikv);
-        u16 spine_bone = ikv->LL_BoneID("bip01_head");
-        fwou_value += helmet->GetBoneArmor(spine_bone) * helmet->GetCondition();
+        u16 head_bone = ikv->LL_BoneID("bip01_head");
+        fwou_value += helmet->GetBoneArmor(head_bone) * helmet->GetCondition();
     }
 
     // fire burn protection progress bar
     {
         burn_value += actor->GetProtection_ArtefactsOnBelt(ALife::eHitTypeBurn);
         float max_power = actor->conditions().GetZoneMaxPower(ALife::eHitTypeBurn);
-        burn_value = floor(burn_value / max_power * 31) / 31; // number of sticks in progress bar
-        m_state[stt_fire]->set_progress(burn_value); // 0..1
+        //		burn_value = floor(burn_value / max_power * 31) / 31; // number of sticks in progress bar
+        //		m_state[stt_fire]->set_progress(burn_value);//0..1
+        m_state[stt_fire]->set_text(burn_value / max_power); // 0..1
     }
     // radiation protection progress bar
     {
         radi_value += actor->GetProtection_ArtefactsOnBelt(ALife::eHitTypeRadiation);
         float max_power = actor->conditions().GetZoneMaxPower(ALife::eHitTypeRadiation);
-        radi_value = floor(radi_value / max_power * 31) / 31; // number of sticks in progress bar
-        m_state[stt_radia]->set_progress(radi_value); // 0..1
+        //		radi_value = floor(radi_value / max_power * 31) / 31; // number of sticks in progress bar
+        //		m_state[stt_radia]->set_progress(radi_value);//0..1
+        m_state[stt_radia]->set_text(radi_value / max_power); // 0..1
     }
     // chemical burn protection progress bar
     {
         cmbn_value += actor->GetProtection_ArtefactsOnBelt(ALife::eHitTypeChemicalBurn);
         float max_power = actor->conditions().GetZoneMaxPower(ALife::eHitTypeChemicalBurn);
-        cmbn_value = floor(cmbn_value / max_power * 31) / 31; // number of sticks in progress bar
-        m_state[stt_acid]->set_progress(cmbn_value); // 0..1
+        //		cmbn_value = floor(cmbn_value / max_power * 31) / 31; // number of sticks in progress bar
+        //		m_state[stt_acid]->set_progress(cmbn_value);//0..1
+        m_state[stt_acid]->set_text(cmbn_value / max_power); // 0..1
     }
     // telepatic protection progress bar
     {
         tele_value += actor->GetProtection_ArtefactsOnBelt(ALife::eHitTypeTelepatic);
         float max_power = actor->conditions().GetZoneMaxPower(ALife::eHitTypeTelepatic);
-        tele_value = floor(tele_value / max_power * 31) / 31; // number of sticks in progress bar
-        m_state[stt_psi]->set_progress(tele_value); // 0..1
+        //		tele_value = floor(tele_value / max_power * 31) / 31; // number of sticks in progress bar
+        //		m_state[stt_psi]->set_progress(tele_value);//0..1
+        m_state[stt_psi]->set_text(tele_value / max_power); // 0..1
     }
     // wound protection progress bar
     {
         float max_power = actor->conditions().GetMaxWoundProtection();
-        woun_value = floor(woun_value / max_power * 31) / 31; // number of sticks in progress bar
-        m_state[stt_wound]->set_progress(woun_value); // 0..1
+        //		woun_value = floor(woun_value / max_power * 31) / 31; // number of sticks in progress bar
+        //		m_state[stt_wound]->set_progress(woun_value);//0..1
+        m_state[stt_wound]->set_text(woun_value / max_power); // 0..1
     }
     // shock protection progress bar
     {
         shoc_value += actor->GetProtection_ArtefactsOnBelt(ALife::eHitTypeShock);
         float max_power = actor->conditions().GetZoneMaxPower(ALife::eHitTypeShock);
-        shoc_value = floor(shoc_value / max_power * 31) / 31; // number of sticks in progress bar
-        m_state[stt_shock]->set_progress(shoc_value); // 0..1
+        //		shoc_value = floor(shoc_value / max_power * 31) / 31; // number of sticks in progress bar
+        //		m_state[stt_shock]->set_progress(shoc_value);//0..1
+        m_state[stt_shock]->set_text(shoc_value / max_power); // 0..1
     }
     // fire wound protection progress bar
     {
         float max_power = actor->conditions().GetMaxFireWoundProtection();
-        fwou_value = floor(fwou_value / max_power * 31) / 31; // number of sticks in progress bar
-        m_state[stt_fire_wound]->set_progress(fwou_value);
+        //		fwou_value = floor(fwou_value / max_power * 31) / 31; // number of sticks in progress bar
+        //		m_state[stt_fire_wound]->set_progress(fwou_value);
+        m_state[stt_fire_wound]->set_text(fwou_value / max_power); // 0..1
     }
     // power restore speed progress bar
     {
         value = actor->GetRestoreSpeed(ALife::ePowerRestoreSpeed) / actor->conditions().GetMaxPowerRestoreSpeed();
         ;
-        value = floor(value * 31) / 31; // number of sticks in progress bar
-        m_state[stt_power]->set_progress(value); // 0..1
+        //		value = floor(value * 31) / 31; // number of sticks in progress bar
+        //		m_state[stt_power]->set_progress(value);//0..1
+        m_state[stt_power]->set_text(value); // 0..1
     }
     // -----------------------------------------------------------------------------------
 
@@ -334,13 +316,14 @@ void ui_actor_state_item::init_from_xml(CUIXml& xml, LPCSTR path)
     if (xml.NavigateToNode("icon", 0))
     {
         m_static = UIHelper::CreateStatic(xml, "icon", this);
-        //		m_magnitude = xml.ReadAttribFlt( "icon", 0, "magnitude", 1.0f );
-        m_static->TextItemControl()->SetText("");
+        m_magnitude = xml.ReadAttribFlt("icon", 0, "magnitude", 1.0f);
+        m_name = m_static->TextItemControl()->GetText();
+        m_name = CStringTable().translate(m_name).c_str();
     }
     if (xml.NavigateToNode("icon2", 0))
     {
         m_static2 = UIHelper::CreateStatic(xml, "icon2", this);
-        m_static2->TextItemControl()->SetText("");
+        m_static2->TextItemControl()->SetTextST("st_msv");
     }
     if (xml.NavigateToNode("icon3", 0))
     {
@@ -351,17 +334,34 @@ void ui_actor_state_item::init_from_xml(CUIXml& xml, LPCSTR path)
     xml.SetLocalRoot(stored_root);
 }
 
-void ui_actor_state_item::set_text(float value)
+bool ui_actor_state_item::set_text(float value)
 {
     if (!m_static)
     {
-        return;
+        return false;
     }
     int v = (int)(value * m_magnitude + 0.49f); // m_magnitude=100
-    clamp(v, 0, 99);
+    // clamp(v, 0, 100);
+    string32 text_res;
+    xr_sprintf(text_res, sizeof(text_res), "%d", v);
+    STRCONCAT(m_value, text_res, "", "%");
+    STRCONCAT(m_text, m_name, " ", m_value);
+    m_static->TextItemControl()->SetText(m_text);
+    return true;
+}
+
+bool ui_actor_state_item::set_text_rad(float value)
+{
+    if (!m_static)
+    {
+        return false;
+    }
+    int v = (int)(value * m_magnitude + 0.49f); // m_magnitude=100
+    // clamp(v, 0, 99);
     string32 text_res;
     xr_sprintf(text_res, sizeof(text_res), "%d", v);
     m_static->TextItemControl()->SetText(text_res);
+    return true;
 }
 
 void ui_actor_state_item::set_progress(float value)

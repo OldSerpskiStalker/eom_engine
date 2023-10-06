@@ -58,6 +58,9 @@ void test_key(int dik);
 
 #include "../Include/xrRender/Kinematics.h"
 
+#include "../../xrEngine/xr_ioconsole.h"
+#include "../../xrEngine/xr_ioc_cmd.h"
+
 using namespace InventoryUtilities;
 // BOOL		g_old_style_ui_hud			= FALSE;
 const u32 g_clWhite = 0xffffffff;
@@ -105,20 +108,6 @@ void CUIMainIngameWnd::Init()
 
     Enable(false);
 
-    //	AttachChild					(&UIStaticHealth);	xml_init.InitStatic			(uiXml, "static_health", 0,
-    //&UIStaticHealth); 	AttachChild					(&UIStaticArmor);	xml_init.InitStatic			(uiXml,
-    //"static_armor", 0, &UIStaticArmor); 	AttachChild					(&UIWeaponBack); 	xml_init.InitStatic
-    //(uiXml, "static_weapon", 0, &UIWeaponBack);
-
-    /*	UIWeaponBack.AttachChild	(&UIWeaponSignAmmo);
-        xml_init.InitStatic			(uiXml, "static_ammo", 0, &UIWeaponSignAmmo);
-        UIWeaponSignAmmo.SetEllipsis	(CUIStatic::eepEnd, 2);
-
-        UIWeaponBack.AttachChild	(&UIWeaponIcon);
-        xml_init.InitStatic			(uiXml, "static_wpn_icon", 0, &UIWeaponIcon);
-        UIWeaponIcon.SetShader		(GetEquipmentIconsShader());
-        UIWeaponIcon_rect			= UIWeaponIcon.GetWndRect();
-    */	//---------------------------------------------------------
     UIPickUpItemIcon = UIHelper::CreateStatic(uiXml, "pick_up_item", this);
     UIPickUpItemIcon->SetShader(GetEquipmentIconsShader());
 
@@ -142,8 +131,10 @@ void CUIMainIngameWnd::Init()
     AttachChild(m_UIIcons);
 
     m_ind_bleeding = UIHelper::CreateStatic(uiXml, "indicator_bleeding", this);
+    m_ind_healthblood = UIHelper::CreateStatic(uiXml, "indicator_health", this);
     m_ind_radiation = UIHelper::CreateStatic(uiXml, "indicator_radiation", this);
     m_ind_starvation = UIHelper::CreateStatic(uiXml, "indicator_starvation", this);
+    m_ind_thirst = UIHelper::CreateStatic(uiXml, "indicator_thirst", this);
     m_ind_weapon_broken = UIHelper::CreateStatic(uiXml, "indicator_weapon_broken", this);
     m_ind_helmet_broken = UIHelper::CreateStatic(uiXml, "indicator_helmet_broken", this);
     m_ind_outfit_broken = UIHelper::CreateStatic(uiXml, "indicator_outfit_broken", this);
@@ -166,24 +157,8 @@ void CUIMainIngameWnd::Init()
     m_ind_boost_power->Show(false);
     m_ind_boost_rad->Show(false);
 
-    // Загружаем иконки
-    /*	if ( IsGameTypeSingle() )
-        {
-            xml_init.InitStatic		(uiXml, "starvation_static", 0, &UIStarvationIcon);
-            UIStarvationIcon.Show	(false);
-
-    //		xml_init.InitStatic		(uiXml, "psy_health_static", 0, &UIPsyHealthIcon);
-    //		UIPsyHealthIcon.Show	(false);
-        }
-    */
     UIWeaponJammedIcon = UIHelper::CreateStatic(uiXml, "weapon_jammed_static", NULL);
     UIWeaponJammedIcon->Show(false);
-
-    //	xml_init.InitStatic			(uiXml, "radiation_static", 0, &UIRadiaitionIcon);
-    //	UIRadiaitionIcon.Show		(false);
-
-    //	xml_init.InitStatic			(uiXml, "wound_static", 0, &UIWoundIcon);
-    //	UIWoundIcon.Show			(false);
 
     UIInvincibleIcon = UIHelper::CreateStatic(uiXml, "invincible_static", NULL);
     UIInvincibleIcon->Show(false);
@@ -629,6 +604,8 @@ void CUIMainIngameWnd::DrawZoneMap() { UIZoneMap->Render(); }
 
 void CUIMainIngameWnd::UpdateZoneMap() { UIZoneMap->Update(); }
 
+float lerpui(float v0, float v1, float t) { return v0 + t * (v1 - v0); }
+
 void CUIMainIngameWnd::UpdateMainIndicators()
 {
     CActor* pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
@@ -644,31 +621,32 @@ void CUIMainIngameWnd::UpdateMainIndicators()
     flags |= LA_ONLYALPHA;
     flags |= LA_TEXTURECOLOR;
     // Bleeding icon
+
+    float healthblood = pActor->conditions().GetHealth();
+    //		m_ind_healthblood->Show(true);
+    //		m_ind_healthblood->InitTexture("ui_inGame2_circle_bloodloose_red");
+    //		m_ind_healthblood->SetTextureColor(color_rgba(255, 255, 255, (healthblood - 1) * -255));
+
     float bleeding = pActor->conditions().BleedingSpeed();
-    if (fis_zero(bleeding, EPS))
+    // m_ind_bleeding->Show(true);
+    // m_ind_bleeding->InitTexture("ui_inGame2_circle_bloodloose_green");
+    //		m_ind_bleeding->SetColorAnimation("ui_slow_blinking_alpha", flags);
+    // m_ind_bleeding->SetTextureColor(color_rgba(255, 255, 255, 255 * bleeding));
+
+    if (strstr(Core.Params, "-rstatic"))
     {
-        m_ind_bleeding->Show(false);
-        m_ind_bleeding->ResetColorAnimation();
-    }
-    else
-    {
+        m_ind_healthblood->Show(true);
+        m_ind_healthblood->InitTexture("ui_inGame2_circle_bloodloose_red");
+        m_ind_healthblood->SetTextureColor(color_rgba(255, 255, 255, (healthblood - 1) * -255));
         m_ind_bleeding->Show(true);
-        if (bleeding < 0.35f)
-        {
-            m_ind_bleeding->InitTexture("ui_inGame2_circle_bloodloose_green");
-            m_ind_bleeding->SetColorAnimation("ui_slow_blinking_alpha", flags);
-        }
-        else if (bleeding < 0.7f)
-        {
-            m_ind_bleeding->InitTexture("ui_inGame2_circle_bloodloose_yellow");
-            m_ind_bleeding->SetColorAnimation("ui_medium_blinking_alpha", flags);
-        }
-        else
-        {
-            m_ind_bleeding->InitTexture("ui_inGame2_circle_bloodloose_red");
-            m_ind_bleeding->SetColorAnimation("ui_fast_blinking_alpha", flags);
-        }
+        m_ind_bleeding->InitTexture("ui_inGame2_circle_bloodloose_green");
+        //		m_ind_bleeding->SetColorAnimation("ui_slow_blinking_alpha", flags);
+        m_ind_bleeding->SetTextureColor(color_rgba(255, 255, 255, 255 * bleeding));
     }
+
+    g_pGamePersistent->Environment().CurrentEnv->health_current = healthblood;
+    g_pGamePersistent->Environment().CurrentEnv->bleending_speed = bleeding;
+
     // Radiation icon
     float radiation = pActor->conditions().GetRadiation();
     if (fis_zero(radiation, EPS))
@@ -713,40 +691,96 @@ void CUIMainIngameWnd::UpdateMainIndicators()
         else
             m_ind_starvation->InitTexture("ui_inGame2_circle_hunger_red");
     }
+    // Thirst icon
+    if (m_ind_thirst)
+    {
+        float thirst = pActor->conditions().GetThirst();
+        float thirst_critical = pActor->conditions().ThirstCritical();
+        float thirst_koef =
+            (thirst - thirst_critical) / (thirst >= thirst_critical ? 1 - thirst_critical : thirst_critical);
+        if (thirst_koef > 0.5)
+            m_ind_thirst->Show(false);
+        else
+        {
+            m_ind_thirst->Show(true);
+            if (thirst_koef > 0.0f)
+                m_ind_thirst->InitTexture("ui_inGame2_circle_thirst_green");
+            else if (thirst_koef > -0.5f)
+                m_ind_thirst->InitTexture("ui_inGame2_circle_thirst_yellow");
+            else
+                m_ind_thirst->InitTexture("ui_inGame2_circle_thirst_red");
+        }
+    }
     // Armor broken icon
     CCustomOutfit* outfit = smart_cast<CCustomOutfit*>(pActor->inventory().ItemFromSlot(OUTFIT_SLOT));
-    m_ind_outfit_broken->Show(false);
-    if (outfit)
+    CHelmet* helmet = smart_cast<CHelmet*>(pActor->inventory().ItemFromSlot(HELMET_SLOT));
+    if ((outfit && outfit->bIsHelmetAvaliable == false))
     {
         float condition = outfit->GetCondition();
-        if (condition < 0.75f)
+        if (condition <= 1.0f)
         {
-            m_ind_outfit_broken->Show(true);
-            if (condition > 0.5f)
-                m_ind_outfit_broken->InitTexture("ui_inGame2_circle_Armorbroken_green");
+            g_pGamePersistent->Environment().CurrentEnv->test_helmet_shaders = 1;
+            if (condition > 0.86f)
+            {
+                g_pGamePersistent->Environment().CurrentEnv->test_helmet_shaders = 1;
+            }
+            else if (condition > 0.67f)
+            {
+                g_pGamePersistent->Environment().CurrentEnv->test_helmet_shaders = 2;
+            }
+            else if (condition > 0.52f)
+            {
+                g_pGamePersistent->Environment().CurrentEnv->test_helmet_shaders = 3;
+            }
+            else if (condition > 0.40f)
+            {
+                g_pGamePersistent->Environment().CurrentEnv->test_helmet_shaders = 4;
+            }
             else if (condition > 0.25f)
-                m_ind_outfit_broken->InitTexture("ui_inGame2_circle_Armorbroken_yellow");
+            {
+                g_pGamePersistent->Environment().CurrentEnv->test_helmet_shaders = 5;
+            }
             else
-                m_ind_outfit_broken->InitTexture("ui_inGame2_circle_Armorbroken_red");
+            {
+                g_pGamePersistent->Environment().CurrentEnv->test_helmet_shaders = 6;
+            }
         }
     }
-    // Helmet broken icon
-    CHelmet* helmet = smart_cast<CHelmet*>(pActor->inventory().ItemFromSlot(HELMET_SLOT));
-    m_ind_helmet_broken->Show(false);
-    if (helmet)
+    else if (helmet && helmet->m_bHasGlass != false)
     {
         float condition = helmet->GetCondition();
-        if (condition < 0.75f)
+        if (condition <= 1.0f)
         {
-            m_ind_helmet_broken->Show(true);
-            if (condition > 0.5f)
-                m_ind_helmet_broken->InitTexture("ui_inGame2_circle_Helmetbroken_green");
+            g_pGamePersistent->Environment().CurrentEnv->test_helmet_shaders = 1;
+            if (condition > 0.86f)
+            {
+                g_pGamePersistent->Environment().CurrentEnv->test_helmet_shaders = 1;
+            }
+            else if (condition > 0.67f)
+            {
+                g_pGamePersistent->Environment().CurrentEnv->test_helmet_shaders = 2;
+            }
+            else if (condition > 0.52f)
+            {
+                g_pGamePersistent->Environment().CurrentEnv->test_helmet_shaders = 3;
+            }
+            else if (condition > 0.40f)
+            {
+                g_pGamePersistent->Environment().CurrentEnv->test_helmet_shaders = 4;
+            }
             else if (condition > 0.25f)
-                m_ind_helmet_broken->InitTexture("ui_inGame2_circle_Helmetbroken_yellow");
+            {
+                g_pGamePersistent->Environment().CurrentEnv->test_helmet_shaders = 5;
+            }
             else
-                m_ind_helmet_broken->InitTexture("ui_inGame2_circle_Helmetbroken_red");
+            {
+                g_pGamePersistent->Environment().CurrentEnv->test_helmet_shaders = 6;
+            }
         }
     }
+    else
+        g_pGamePersistent->Environment().CurrentEnv->test_helmet_shaders = 0;
+
     // Weapon broken icon
     u16 slot = pActor->inventory().GetActiveSlot();
     m_ind_weapon_broken->Show(false);
@@ -779,8 +813,6 @@ void CUIMainIngameWnd::UpdateMainIndicators()
         m_ind_overweight->Show(true);
         if (cur_weight > max_weight)
             m_ind_overweight->InitTexture("ui_inGame2_circle_Overweight_red");
-        // else if(cur_weight>max_weight-10.0f)
-        //	m_ind_overweight->InitTexture("ui_inGame2_circle_Overweight_yellow");
         else
             m_ind_overweight->InitTexture("ui_inGame2_circle_Overweight_yellow");
     }
@@ -933,7 +965,7 @@ void CUIMainIngameWnd::DrawMainIndicatorsForInventory()
     m_ui_hud_states->DrawZoneIndicators();
 }
 
-void CUIMainIngameWnd::UpdateBoosterIndicators(const xr_map<EBoostParams, SBooster> influences)
+void CUIMainIngameWnd::UpdateBoosterIndicators(const xr_map<EBoostParams, SBooster>& influences)
 {
     m_ind_boost_psy->Show(false);
     m_ind_boost_radia->Show(false);

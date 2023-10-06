@@ -10,10 +10,11 @@ class CEliteDetector;
 class CUIXml;
 class CLAItem;
 
-class CUIArtefactDetectorBase
+class CUICustomDeviceBase
 {
 public:
-    virtual ~CUIArtefactDetectorBase(){};
+    virtual ~CUICustomDeviceBase(){};
+
     virtual void update(){};
 };
 
@@ -32,9 +33,9 @@ public:
     virtual void Update();
 };
 
-class CUIArtefactDetectorSimple : public CUIArtefactDetectorBase
+class CUIArtefactDetectorSimple : public CUICustomDeviceBase
 {
-    typedef CUIArtefactDetectorBase inherited;
+    typedef CUICustomDeviceBase inherited;
 
     CSimpleDetector* m_parent;
     u16 m_flash_bone;
@@ -55,9 +56,9 @@ public:
     void construct(CSimpleDetector* p);
 };
 
-class CUIArtefactDetectorElite : public CUIArtefactDetectorBase, public CUIWindow
+class CUIArtefactDetectorElite : public CUICustomDeviceBase, public CUIWindow
 {
-    typedef CUIArtefactDetectorBase inherited;
+    typedef CUICustomDeviceBase inherited;
 
     CUIWindow* m_wrk_area;
 
@@ -66,9 +67,11 @@ class CUIArtefactDetectorElite : public CUIArtefactDetectorBase, public CUIWindo
     struct SDrawOneItem
     {
         SDrawOneItem(CUIStatic* s, const Fvector& p) : pStatic(s), pos(p) {}
+
         CUIStatic* pStatic;
         Fvector pos;
     };
+
     xr_vector<SDrawOneItem> m_items_to_draw;
     CEliteDetector* m_parent;
     Fmatrix m_map_attach_offset;
@@ -84,9 +87,9 @@ public:
     void RegisterItemToDraw(const Fvector& p, const shared_str& palette_idx);
 };
 
-class CUIArtefactDetectorAdv : public CUIArtefactDetectorBase
+class CUIArtefactDetectorAdv : public CUICustomDeviceBase
 {
-    typedef CUIArtefactDetectorBase inherited;
+    typedef CUICustomDeviceBase inherited;
 
     CAdvancedDetector* m_parent;
     Fvector m_target_dir;

@@ -26,6 +26,7 @@
 #include "alife_object_registry.h"
 #include "CustomOutfit.h"
 #include "Bolt.h"
+#include "string_table.h"
 
 CInventoryOwner::CInventoryOwner()
 {
@@ -36,8 +37,9 @@ CInventoryOwner::CInventoryOwner()
     m_inventory = xr_new<CInventory>();
     m_pCharacterInfo = xr_new<CCharacterInfo>();
 
-    EnableTalk();
-    EnableTrade();
+    m_bAllowTalk = true;
+    m_bAllowTrade = true;
+    m_bAllowInvUpgrade = false;
     bDisableBreakDialog = false;
 
     m_known_info_registry = xr_new<CInfoPortionWrapper>();
@@ -144,6 +146,7 @@ BOOL CInventoryOwner::net_Spawn(CSE_Abstract* DC)
             dialog_manager->SetStartDialog(CharacterInfo().StartDialog());
             dialog_manager->SetDefaultStartDialog(CharacterInfo().StartDialog());
         }
+        m_game_name_str = pTrader->m_character_name_str;
         m_game_name = pTrader->m_character_name;
 
         m_deadbody_can_take = pTrader->m_deadbody_can_take;
@@ -180,7 +183,7 @@ void CInventoryOwner::save(NET_Packet& output_packet)
         output_packet.w_u8((u8)inventory().GetActiveSlot());
 
     CharacterInfo().save(output_packet);
-    save_data(m_game_name, output_packet);
+    save_data(m_game_name_str, output_packet);
     save_data(m_money, output_packet);
 }
 void CInventoryOwner::load(IReader& input_packet)
@@ -194,9 +197,13 @@ void CInventoryOwner::load(IReader& input_packet)
     m_tmp_active_slot_num = active_slot;
 
     CharacterInfo().load(input_packet);
-    load_data(m_game_name, input_packet);
+    load_data(m_game_name_str, input_packet);
     load_data(m_money, input_packet);
+    if (this->object_id() != Actor()->object_id())
+        m_game_name = TranslateName(m_game_name_str.c_str());
 }
+
+void CInventoryOwner::refresh_npc_name() { m_game_name = TranslateName(m_game_name_str.c_str()); }
 
 void CInventoryOwner::UpdateInventoryOwner(u32 deltaT)
 {
@@ -372,7 +379,7 @@ void CInventoryOwner::spawn_supplies()
 // игровое имя
 LPCSTR CInventoryOwner::Name() const
 {
-    //	return CharacterInfo().Name();
+    // return CharacterInfo().Name();
     return m_game_name.c_str();
 }
 

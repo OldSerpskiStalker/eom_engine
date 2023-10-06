@@ -36,6 +36,11 @@ public:
     IBlender* b_bloom;
     IBlender* b_luminance;
     IBlender* b_combine;
+    IBlender* b_sunshafts;
+    IBlender* b_fxaa;
+    IBlender* b_rain_drops;
+    IBlender* b_zoom;
+    IBlender* b_zoom_msaa[8];
     IBlender* b_postprocess_msaa;
     IBlender* b_bloom_msaa;
     IBlender* b_combine_msaa[8];
@@ -49,7 +54,12 @@ public:
     IBlender* b_accum_reflected_msaa[8];
     IBlender* b_ssao;
     IBlender* b_ssao_msaa[8];
-
+    IBlender* b_hit_effect;
+    IBlender* b_bleed_effect;
+    IBlender* b_health_effect;
+    IBlender* b_stamina_effect;
+    IBlender* b_radiation_effect;
+    IBlender* b_smaa;
     // compute shader for hdao
     IBlender* b_hdao_cs;
     IBlender* b_hdao_msaa_cs;
@@ -78,8 +88,14 @@ public:
     //
     ref_rt rt_Accumulator; // 64bit		(r,g,b,specular)
     ref_rt rt_Accumulator_temp; // only for HW which doesn't feature fp16 blend
+    ref_rt rt_sunshafts_0; // ss0
+    ref_rt rt_sunshafts_1; // ss1
     ref_rt rt_Generic_0; // 32bit		(r,g,b,a)				// post-process, intermidiate results, etc.
     ref_rt rt_Generic_1; // 32bit		(r,g,b,a)				// post-process, intermidiate results, etc.
+
+    ref_rt rt_smaa_edgetex;
+    ref_rt rt_smaa_blendtex;
+
     //	Igor: for volumetric lights
     ref_rt rt_Generic_2; // 32bit		(r,g,b,a)				// post-process, intermidiate results, etc.
     ref_rt rt_Bloom_1; // 32bit, dim/4	(r,g,b,?)
@@ -116,8 +132,19 @@ public:
 
 private:
     // OCCq
-
     ref_shader s_occq;
+
+    // RAIN DROPS
+    ref_shader s_rain_drops;
+    ref_shader s_hit_effect;
+    ref_shader s_bleed_effect;
+    ref_shader s_health_effect;
+    ref_shader s_stamina_effect;
+    ref_shader s_radiation_effect;
+    ref_shader s_zoom;
+    ref_shader s_zoom_msaa[8];
+
+    ref_shader s_sunshafts;
 
     // SSAO
     ref_rt rt_ssao_temp;
@@ -136,6 +163,11 @@ private:
     ref_shader s_accum_spot;
     ref_shader s_accum_reflected;
     ref_shader s_accum_volume;
+
+    ref_shader s_fxaa;
+    ref_geom g_fxaa;
+
+    ref_shader s_smaa;
 
     //	generate min/max
     ref_shader s_create_minmax_sm;
@@ -184,6 +216,7 @@ private:
     float f_luminance_adapt;
 
     // Combine
+    ref_geom g_KD;
     ref_geom g_combine;
     ref_geom g_combine_VP; // xy=p,zw=tc
     ref_geom g_combine_2UV;
@@ -255,6 +288,16 @@ public:
     BOOL u_DBT_enable(float zMin, float zMax);
     void u_DBT_disable();
 
+    void phase_rain_drops();
+    void phase_hit_effect();
+    void phase_bleed_effect();
+    void phase_health_effect();
+    void phase_stamina_effect();
+    void phase_radiation_effect();
+    void phase_zoom(bool Distort);
+    void phase_fxaa();
+    void phase_smaa();
+    void phase_sunshafts();
     void phase_scene_prepare();
     void phase_scene_begin();
     void phase_scene_end();
@@ -274,10 +317,8 @@ public:
 
     //	Generates min/max sm
     void create_minmax_SM();
-
     void phase_rain();
     void draw_rain(light& RainSetup);
-
     void mark_msaa_edges();
 
     bool need_to_render_sunshafts();
@@ -331,6 +372,8 @@ public:
     //	Don't clear when render for the first time
     void reset_light_marker(bool bResetStencil = false);
     void increment_light_marker();
+
+    void render_simple_quad(ref_rt& DEST_RT, ref_selement& SHADER, float downscale);
 
     void DoAsyncScreenshot();
 

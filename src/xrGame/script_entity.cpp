@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
+ï»¿////////////////////////////////////////////////////////////////////////////
 //	Module 		: script_entity.cpp
 //	Created 	: 06.10.2003
 //  Modified 	: 14.12.2004
@@ -135,8 +135,8 @@ bool CScriptEntity::CheckObjectVisibility(const CGameObject* tpObject)
     return (m_monster->memory().visual().visible_now(tpObject));
 }
 
-// îïðåäåëÿåò âèäèìîñòü îïðåäåëåííîãî òèïà îáúåêòîâ,
-// çàäàííîãî ÷åðåç section_name
+// Ã®Ã¯Ã°Ã¥Ã¤Ã¥Ã«Ã¿Ã¥Ã² Ã¢Ã¨Ã¤Ã¨Ã¬Ã®Ã±Ã²Ã¼ Ã®Ã¯Ã°Ã¥Ã¤Ã¥Ã«Ã¥Ã­Ã­Ã®Ã£Ã® Ã²Ã¨Ã¯Ã  Ã®Ã¡ÃºÃ¥ÃªÃ²Ã®Ã¢,
+// Ã§Ã Ã¤Ã Ã­Ã­Ã®Ã£Ã® Ã·Ã¥Ã°Ã¥Ã§ section_name
 bool CScriptEntity::CheckTypeVisibility(const char* section_name)
 {
     if (!m_monster)
@@ -235,9 +235,9 @@ void CScriptEntity::ProcessScripts()
         l_tpEntityAction = m_tpActionQueue.front();
         VERIFY(l_tpEntityAction);
 #ifdef _DEBUG
-//		if (!xr_strcmp("m_stalker_wounded",*object().cName()))
-//			Msg			("%6d Processing action :
-//%s",Device.dwTimeGlobal,*l_tpEntityAction->m_tAnimationAction.m_caAnimationToPlay);
+        //		if (!xr_strcmp("m_stalker_wounded",*object().cName()))
+        //			Msg			("%6d Processing action :
+        //%s",Device.dwTimeGlobal,*l_tpEntityAction->m_tAnimationAction.m_caAnimationToPlay);
 #endif
 
         if (m_tpCurrentEntityAction != l_tpEntityAction)
@@ -249,9 +249,9 @@ void CScriptEntity::ProcessScripts()
             break;
 
 #ifdef _DEBUG
-//		if (!xr_strcmp("m_stalker_wounded",*object().cName()))
-//			Msg			("%6d Action completed :
-//%s",Device.dwTimeGlobal,*l_tpEntityAction->m_tAnimationAction.m_caAnimationToPlay);
+            //		if (!xr_strcmp("m_stalker_wounded",*object().cName()))
+            //			Msg			("%6d Action completed :
+            //%s",Device.dwTimeGlobal,*l_tpEntityAction->m_tAnimationAction.m_caAnimationToPlay);
 #endif
 
         vfFinishAction(l_tpEntityAction);
@@ -276,6 +276,12 @@ void CScriptEntity::ProcessScripts()
             ai().script_engine().script_log(
                 ScriptStorage::eLuaMessageTypeInfo, "Object %s has an empty script queue!", *object().cName());
 #endif
+        return;
+    }
+
+    if (!l_tpEntityAction)
+    {
+        ResetScriptData();
         return;
     }
 
@@ -311,7 +317,7 @@ void CScriptEntity::ProcessScripts()
             object().callback(GameObject::eActionTypeMovement)(
                 object().lua_game_object(), u32(eActionTypeMovement), -1);
 
-        // Óñòàíîâèòü âûáðàííóþ àíèìàöèþ
+        // Ã“Ã±Ã²Ã Ã­Ã®Ã¢Ã¨Ã²Ã¼ Ã¢Ã»Ã¡Ã°Ã Ã­Ã­Ã³Ã¾ Ã Ã­Ã¨Ã¬Ã Ã¶Ã¨Ã¾
         if (!l_tpEntityAction->m_tAnimationAction.m_bCompleted)
             bfScriptAnimation();
 
@@ -384,8 +390,8 @@ bool CScriptEntity::bfAssignSound(CScriptEntityAction* tpEntityAction)
             if (!l_tSoundAction.m_bStartedToPlay)
             {
 #ifdef _DEBUG
-//				Msg									("%6d Starting sound
-//%s",Device.dwTimeGlobal,*l_tSoundAction.m_caSoundToPlay);
+                //				Msg									("%6d Starting sound
+                //%s",Device.dwTimeGlobal,*l_tSoundAction.m_caSoundToPlay);
 #endif
                 const Fmatrix& l_tMatrix = GetUpdatedMatrix(
                     l_tSoundAction.m_caBoneName, l_tSoundAction.m_tSoundPosition, l_tSoundAction.m_tSoundAngles);
@@ -673,6 +679,7 @@ void CScriptEntity::sound_callback(const CObject* object, int sound_type, const 
 }
 
 CEntity* CScriptEntity::GetCurrentEnemy() { return (0); }
+
 CEntity* CScriptEntity::GetCurrentCorpse() { return (0); }
 
 int CScriptEntity::get_enemy_strength() { return (0); }

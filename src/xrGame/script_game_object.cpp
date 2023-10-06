@@ -41,9 +41,14 @@
 #include "physics_shell_scripted.h"
 #include "ai\phantom\phantom.h"
 
+#include "UIGameSP.h"
 #include "uigamecustom.h"
 #include "ui/UIActorMenu.h"
 #include "InventoryBox.h"
+#include "Pda.h"
+#include "player_hud.h"
+
+#include "actorcondition.h"
 
 class CScriptBinderObject;
 
@@ -80,6 +85,7 @@ BIND_FUNCTION10(&object(), CScriptGameObject::GetHealth, CEntityAlive, condition
 BIND_FUNCTION10(&object(), CScriptGameObject::GetPsyHealth, CEntityAlive, conditions().GetPsyHealth, float, -1);
 BIND_FUNCTION10(&object(), CScriptGameObject::GetPower, CEntityAlive, conditions().GetPower, float, -1);
 BIND_FUNCTION10(&object(), CScriptGameObject::GetSatiety, CEntityAlive, conditions().GetSatiety, float, -1);
+BIND_FUNCTION10(&object(), CScriptGameObject::GetThirst, CEntityAlive, conditions().GetThirst, float, -1);
 BIND_FUNCTION10(&object(), CScriptGameObject::GetRadiation, CEntityAlive, conditions().GetRadiation, float, -1);
 BIND_FUNCTION10(&object(), CScriptGameObject::GetBleeding, CEntityAlive, conditions().BleedingSpeed, float, -1);
 BIND_FUNCTION10(&object(), CScriptGameObject::GetMorale, CEntityAlive, conditions().GetEntityMorale, float, -1);
@@ -87,6 +93,7 @@ BIND_FUNCTION01(&object(), CScriptGameObject::SetHealth, CEntityAlive, condition
 BIND_FUNCTION01(&object(), CScriptGameObject::SetPsyHealth, CEntityAlive, conditions().ChangePsyHealth, float, float);
 BIND_FUNCTION01(&object(), CScriptGameObject::SetPower, CEntityAlive, conditions().ChangePower, float, float);
 BIND_FUNCTION01(&object(), CScriptGameObject::ChangeSatiety, CEntityAlive, conditions().ChangeSatiety, float, float);
+BIND_FUNCTION01(&object(), CScriptGameObject::ChangeThirst, CEntityAlive, conditions().ChangeThirst, float, float);
 BIND_FUNCTION01(&object(), CScriptGameObject::SetRadiation, CEntityAlive, conditions().ChangeRadiation, float, float);
 BIND_FUNCTION01(&object(), CScriptGameObject::SetBleeding, CEntityAlive, conditions().ChangeBleeding, float, float);
 BIND_FUNCTION01(
@@ -800,4 +807,28 @@ void CScriptGameObject::StartUpgrade(CScriptGameObject* obj)
 
     ActorMenu.SetMenuMode(mmUpgrade);
     ActorMenu.ShowDialog(true);
+}
+
+CGameObject& CScriptGameObject::object() const
+{
+#ifdef DEBUG
+    __try
+    {
+        if (m_game_object && m_game_object->lua_game_object() == this)
+            return (*m_game_object);
+    }
+    __except (EXCEPTION_EXECUTE_HANDLER)
+    {
+    }
+
+    ai().script_engine().script_log(
+        eLuaMessageTypeError, "you are trying to use a destroyed object [%x]", m_game_object);
+    THROW2(m_game_object && m_game_object->lua_game_object() == this,
+        "Probably, you are trying to use a destroyed object!");
+#endif // #ifdef DEBUG
+    static CGameObject* m_game_object_dummy = NULL;
+    if (!m_game_object || m_game_object->lua_game_object() != this)
+        return (*m_game_object_dummy);
+
+    return (*m_game_object);
 }

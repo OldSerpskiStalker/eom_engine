@@ -25,6 +25,7 @@ void CScriptParticles::script_register(lua_State* L)
                   .def("looped", &CScriptParticles::IsLooped)
 
                   .def("move_to", &CScriptParticles::MoveTo)
+                  .def("set_position", &CScriptParticles::XFORMMoveTo)
                   .def("set_direction", &CScriptParticles::SetDirection)
                   .def("set_orientation", &CScriptParticles::SetOrientation)
 

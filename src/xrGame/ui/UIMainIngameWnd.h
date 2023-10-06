@@ -34,8 +34,10 @@ protected:
     CUIHudStatesWnd* m_ui_hud_states;
 
     CUIStatic* m_ind_bleeding;
+    CUIStatic* m_ind_healthblood;
     CUIStatic* m_ind_radiation;
     CUIStatic* m_ind_starvation;
+    CUIStatic* m_ind_thirst;
     CUIStatic* m_ind_weapon_broken;
     CUIStatic* m_ind_helmet_broken;
     CUIStatic* m_ind_outfit_broken;
@@ -127,7 +129,7 @@ public:
 
     void ReceiveNews(GAME_NEWS_DATA* news);
     void UpdateMainIndicators();
-    void UpdateBoosterIndicators(const xr_map<EBoostParams, SBooster> influences);
+    void UpdateBoosterIndicators(const xr_map<EBoostParams, SBooster>& influences);
 
 protected:
     void UpdateQuickSlots();

@@ -50,9 +50,12 @@
 
 enum
 {
-    ZXY = 0, // left shoulder, ankle, hip
-    YXZ = 1, // left wrist
-    Yxz = 2, // right wrist
+    ZXY = 0,
+    // left shoulder, ankle, hip
+    YXZ = 1,
+    // left wrist
+    Yxz = 2,
+    // right wrist
     zxY = 3 // right shoulder, ankle, hip
 };
 

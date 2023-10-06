@@ -159,6 +159,7 @@ void CPHMovementControl::Calculate(
     Fvector previous_position;
     previous_position.set(vPosition);
     m_character->IPosition(vPosition);
+
     if (bExernalImpulse)
     {
         vAccel.add(vExternalImpulse);
@@ -167,6 +168,7 @@ void CPHMovementControl::Calculate(
 
         bExernalImpulse = false;
     }
+
     // vAccel.y=jump;
     float mAccel = vAccel.magnitude();
     m_character->SetCamDir(camDir);
@@ -520,8 +522,9 @@ void CPHMovementControl::PathNearestPoint(const xr_vector<DetailPathManager::STr
 
     Fvector path_point, vtemp;
     float temp;
+    int i = 0;
 
-    for (int i = 0; i < m_path_size - 1; ++i)
+    for (; i < m_path_size - 1; ++i)
     {
         const Fvector &first = path[i].position, &second = path[i + 1].position;
         from_first.sub(new_position, first);
@@ -610,7 +613,8 @@ void CPHMovementControl::PathNearestPointFindUp(const xr_vector<DetailPathManage
     float temp;
     dir.set(0, 0, 1);
 
-    for (int i = m_start_index; i < m_path_size - 1; ++i)
+    int i = m_start_index;
+    for (; i < m_path_size - 1; ++i)
     {
         const Fvector &first = path[i].position, &second = path[i + 1].position;
         from_first.sub(new_position, first);
@@ -696,7 +700,9 @@ void CPHMovementControl::PathNearestPointFindDown(const xr_vector<DetailPathMana
     float temp;
     //(going down)
     dir.set(0, 0, 1);
-    for (int i = m_start_index; i > 1; --i)
+
+    int i = m_start_index;
+    for (; i > 1; --i)
     {
         const Fvector &first = path[i - 1].position, &second = path[i].position;
         from_first.sub(new_position, first);

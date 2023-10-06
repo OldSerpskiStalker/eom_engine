@@ -172,6 +172,14 @@ MotionID CStalkerAnimationManager::weapon_animation(u32 slot, const EBodyState& 
 {
     const xr_vector<CAniVector>& animation = m_data_storage->m_part_animations.A[body_state].m_torso.A[slot].A;
 
+    // Alun: Fix stalker sprint
+    if (eMentalStatePanic == object().movement().mental_state() &&
+        eMovementTypeRun == object().movement().movement_type() && body_state == eBodyStateStand &&
+        !fis_zero(object().movement().speed(object().character_physics_support()->movement())))
+    {
+        return (animation[15].A[0]);
+    }
+
     switch (m_weapon->GetState())
     {
     case CWeapon::eReload: {
@@ -248,7 +256,7 @@ MotionID CStalkerAnimationManager::missile_animation(u32 slot, const EBodyState&
         return (torso().select(animation[3].A));
     }
     case CMissile::eThrowStart: {
-//			Msg						("CMissile::eThrowStart");
+        //			Msg						("CMissile::eThrowStart");
 #ifdef DEBUG
         if (animation[1].A.empty())
         {
@@ -258,7 +266,7 @@ MotionID CStalkerAnimationManager::missile_animation(u32 slot, const EBodyState&
         return (animation[1].A[0]);
     }
     case CMissile::eReady: {
-//			Msg						("CMissile::eReady");
+        //			Msg						("CMissile::eReady");
 #ifdef DEBUG
         if (animation[1].A.size() < 2)
         {
@@ -268,7 +276,7 @@ MotionID CStalkerAnimationManager::missile_animation(u32 slot, const EBodyState&
         return (animation[1].A[1]);
     }
     case CMissile::eThrow: {
-//			Msg						("CMissile::eThrow");
+        //			Msg						("CMissile::eThrow");
 #ifdef DEBUG
         if (animation[1].A.size() < 3)
         {
@@ -284,7 +292,7 @@ MotionID CStalkerAnimationManager::missile_animation(u32 slot, const EBodyState&
             Msg("! visual %s", object().cNameVisual().c_str());
         }
 #endif // #ifdef DEBUG
-        //			Msg						("CMissile::eThrowEnd");
+       //			Msg						("CMissile::eThrowEnd");
         return (animation[6].A[0]);
     }
     case CMissile::eBore: {

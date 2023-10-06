@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "ParticlesObject.h"
 #include "../xrEngine/gamemtllib.h"
 #include "level.h"
@@ -25,11 +25,12 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 static const float PARTICLE_EFFECT_DIST = 70.f;
 static const float SOUND_EFFECT_DIST = 70.f;
-const float mass_limit =
-    10000.f; // some conventional value used as evaluative param (there is no code restriction on mass)
+const float mass_limit = 10000.f;
+// some conventional value used as evaluative param (there is no code restriction on mass)
 //////////////////////////////////////////////////////////////////////////////////
 static const float SQUARE_PARTICLE_EFFECT_DIST = PARTICLE_EFFECT_DIST * PARTICLE_EFFECT_DIST;
 static const float SQUARE_SOUND_EFFECT_DIST = SOUND_EFFECT_DIST * SOUND_EFFECT_DIST;
+
 class CPHParticlesPlayCall : public CPHAction
 {
     LPCSTR ps_name;
@@ -49,6 +50,7 @@ public:
             c.normal[2] = -c.normal[2];
         }
     }
+
     virtual void run()
     {
         CParticlesObject* ps = CParticlesObject::Create(ps_name, TRUE);
@@ -64,7 +66,9 @@ public:
     };
     virtual bool obsolete() const { return false; }
 };
+
 static const float minimal_plane_distance_between_liquid_particles = 0.2f;
+
 class CPHLiquidParticlesPlayCall : public CPHParticlesPlayCall, public CPHReqComparerV
 {
     u32 remove_time;
@@ -77,6 +81,7 @@ public:
         static const u32 time_to_call_remove = 3000;
         remove_time = Device.dwTimeGlobal + time_to_call_remove;
     }
+
     const Fvector& position() const { return cast_fv(c.pos); }
 
 private:
@@ -89,6 +94,7 @@ private:
         b_called = true;
         CPHParticlesPlayCall::run();
     }
+
     virtual bool obsolete() const { return Device.dwTimeGlobal > remove_time; }
 };
 
@@ -99,6 +105,7 @@ private:
     virtual bool is_true() { return true; }
     virtual bool obsolete() const { return false; }
 };
+
 class CPHFindLiquidParticlesComparer : public CPHReqComparerV
 {
     Fvector m_position;
@@ -109,6 +116,7 @@ public:
 private:
     virtual bool compare(const CPHReqComparerV* v) const { return v->compare(this); }
     virtual bool compare(const CPHLiquidParticlesCondition* v) const { return true; }
+
     virtual bool compare(const CPHLiquidParticlesPlayCall* v) const
     {
         VERIFY(v);
@@ -143,9 +151,10 @@ public:
         pos.set(p);
         T = Tri;
     }
+
     virtual void run()
     {
-        // äîáàâèòü îòìåòêó íà ìàòåðèàëå
+        // Ã¤Ã®Ã¡Ã Ã¢Ã¨Ã²Ã¼ Ã®Ã²Ã¬Ã¥Ã²ÃªÃ³ Ã­Ã  Ã¬Ã Ã²Ã¥Ã°Ã¨Ã Ã«Ã¥
         ::Render->add_StaticWallmark(pWallmarkShader, pos, 0.09f, T, Level().ObjectSpace.GetStaticVerts());
     };
     virtual bool obsolete() const { return false; }
@@ -177,6 +186,7 @@ static void play_object(dxGeomUserData* data, SGameMtlPair* mtl_pair, const dCon
     if (sp)
         sp->Play(mtl_pair, *(Fvector*)c->pos);
 }
+
 template <class Pars>
 IC bool play_liquid_particle_criteria(dxGeomUserData& data, float vel_cret)
 {

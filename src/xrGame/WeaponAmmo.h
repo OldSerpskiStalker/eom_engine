@@ -1,6 +1,7 @@
 #pragma once
 #include "inventory_item_object.h"
 #include "anticheat_dumpable_object.h"
+#include "script_export_space.h"
 
 struct SCartridgeParam
 {
@@ -28,6 +29,7 @@ class CCartridge : public IAnticheatDumpable
 public:
     CCartridge();
     void Load(LPCSTR section, u8 LocalAmmoType);
+    float Weight() const;
 
     shared_str m_ammoSect;
     enum
@@ -85,4 +87,10 @@ public:
 
 public:
     virtual CInventoryItem* can_make_killing(const CInventory* inventory) const;
+
+    DECLARE_SCRIPT_REGISTER_FUNCTION
 };
+
+add_to_type_list(CWeaponAmmo)
+#undef script_type_list
+#define script_type_list save_type_list(CWeaponAmmo)

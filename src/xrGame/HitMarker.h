@@ -3,6 +3,9 @@
 #pragma once
 
 #include "../Include/xrRender/FactoryPtr.h"
+#include "hudsound.h"
+#include "../../xrServerEntities/alife_space.h"
+#include "EntityCondition.h"
 class IUIShader;
 #include "ui_defs.h"
 

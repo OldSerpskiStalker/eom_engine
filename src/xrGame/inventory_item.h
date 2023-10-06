@@ -16,6 +16,7 @@
 #include "attachable_item.h"
 #include "xrserver_objects_alife.h"
 #include "xrserver_objects_alife_items.h"
+#include "script_export_space.h"
 
 enum EHandDependence
 {
@@ -157,6 +158,7 @@ public:
     shared_str m_nameShort;
     shared_str m_nameComplex;
     bool m_highlight_equipped;
+    bool m_actor_psi_helmet;
 
     SInvItemPlace m_ItemCurrPlace;
 
@@ -337,6 +339,12 @@ protected:
 public:
     IC bool is_helper_item() { return !!m_flags.test(FIsHelperItem); }
     IC void set_is_helper(bool is_helper) { m_flags.set(FIsHelperItem, is_helper); }
+
+    DECLARE_SCRIPT_REGISTER_FUNCTION
 }; // class CInventoryItem
 
 #include "inventory_item_inline.h"
+
+add_to_type_list(CInventoryItem)
+#undef script_type_list
+#define script_type_list save_type_list(CInventoryItem)

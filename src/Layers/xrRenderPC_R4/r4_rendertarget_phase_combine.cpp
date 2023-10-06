@@ -93,9 +93,9 @@ void CRenderTarget::phase_combine()
     if (1)
     {
         //	Moved to shader!
-        // RCache.set_ColorWriteEnable					();
+        //	RCache.set_ColorWriteEnable					();
         //	Moved to shader!
-        // RCache.set_Z(FALSE);
+        //	RCache.set_Z(FALSE);
         g_pGamePersistent->Environment().RenderSky();
 
         //	Igor: Render clouds before compine without Z-test
@@ -103,7 +103,7 @@ void CRenderTarget::phase_combine()
         g_pGamePersistent->Environment().RenderClouds();
 
         //	Moved to shader!
-        // RCache.set_Z(TRUE);
+        //	RCache.set_Z(TRUE);
     }
 
     //
@@ -115,22 +115,6 @@ void CRenderTarget::phase_combine()
         RCache.set_ColorWriteEnable();
     }
     //}
-
-    // calc m-blur matrices
-    Fmatrix m_previous, m_current;
-    Fvector2 m_blur_scale;
-    {
-        static Fmatrix m_saved_viewproj;
-
-        // (new-camera) -> (world) -> (old_viewproj)
-        Fmatrix m_invview;
-        m_invview.invert(Device.mView);
-        m_previous.mul(m_saved_viewproj, m_invview);
-        m_current.set(Device.mProject);
-        m_saved_viewproj.set(Device.mFullTransform);
-        float scale = ps_r2_mblur / 2.f;
-        m_blur_scale.set(scale, -scale).div(12.f);
-    }
 
     // Draw full-screen quad textured with our scene image
     if (!_menu_pp)
@@ -145,8 +129,6 @@ void CRenderTarget::phase_combine()
             _max(envdesc.ambient.z * 2, minamb), 0};
         ambclr.mul(ps_r2_sun_lumscale_amb);
 
-        //.		Fvector4	envclr			= { envdesc.sky_color.x*2+EPS,	envdesc.sky_color.y*2+EPS,
-        //envdesc.sky_color.z*2+EPS,	envdesc.weight					};
         Fvector4 envclr = {envdesc.hemi_color.x * 2 + EPS, envdesc.hemi_color.y * 2 + EPS,
             envdesc.hemi_color.z * 2 + EPS, envdesc.weight};
 
@@ -166,7 +148,7 @@ void CRenderTarget::phase_combine()
 
         // sun-params
         {
-            light* fuckingsun = (light*)RImplementation.Lights.sun_adapted._get();
+            light* fuckingsun = (light*)RImplementation.Lights.sun._get();
             Fvector L_dir, L_clr;
             float L_spec;
             L_clr.set(fuckingsun->color.r, fuckingsun->color.g, fuckingsun->color.b);
@@ -242,6 +224,10 @@ void CRenderTarget::phase_combine()
 
         RCache.set_c("ssao_noise_tile_factor", fSSAONoise);
         RCache.set_c("ssao_kernel_size", fSSAOKernelSize);
+
+        Fmatrix ProjectioMatrix;
+        ProjectioMatrix.set(Device.mProject);
+        RCache.set_c("dx_matrix_Projection", ProjectioMatrix);
 
         if (!RImplementation.o.dx10_msaa)
             RCache.Render(D3DPT_TRIANGLELIST, Offset, 0, 4, 0, 2);
@@ -340,15 +326,7 @@ void CRenderTarget::phase_combine()
         }
     }
 
-    /*
-       if( RImplementation.o.dx10_msaa )
-       {
-          // we need to resolve rt_Generic_1 into rt_Generic_1_r
-          if( bDistort )
-             HW.pDevice->ResolveSubresource( rt_Generic_1_r->pTexture->surface_get(), 0,
-       rt_Generic_1->pTexture->surface_get(), 0, DXGI_FORMAT_R8G8B8A8_UNORM );
-       }
-       */
+    RCache.set_Stencil(FALSE);
 
     // PP enabled ?
     //	Render to RT texture to be able to copy RT even in windowed mode.
@@ -380,6 +358,40 @@ void CRenderTarget::phase_combine()
 
     if (1)
     {
+        if (!_menu_pp)
+        {
+            if (ps_smaa_quality)
+            {
+                PIX_EVENT(SMAA);
+                phase_smaa();
+                RCache.set_Stencil(FALSE);
+            }
+
+            if (ps_r2_fxaa)
+            {
+                PIX_EVENT(FXAA);
+                phase_fxaa();
+                RCache.set_Stencil(FALSE);
+            }
+        }
+
+        if (ps_r_sun_shafts > 0 && (ps_sunshafts_mode == R2SS_SCREEN_SPACE || ps_sunshafts_mode == R2SS_COMBINE))
+            phase_sunshafts();
+
+        phase_zoom(bDistort);
+
+        phase_rain_drops();
+
+        phase_stamina_effect();
+
+        phase_health_effect();
+
+        phase_bleed_effect();
+
+        phase_radiation_effect();
+
+        phase_hit_effect();
+
         PIX_EVENT(combine_2);
         //
         struct v_aa
@@ -449,24 +461,15 @@ void CRenderTarget::phase_combine()
         // Draw COLOR
         if (!RImplementation.o.dx10_msaa)
         {
-            if (ps_r2_ls_flags.test(R2FLAG_AA))
-                RCache.set_Element(s_combine->E[bDistort ? 3 : 1]); // look at blender_combine.cpp
-            else
-                RCache.set_Element(s_combine->E[bDistort ? 4 : 2]); // look at blender_combine.cpp
+            RCache.set_Element(s_combine->E[1]); // look at blender_combine.cpp
         }
         else
         {
-            if (ps_r2_ls_flags.test(R2FLAG_AA))
-                RCache.set_Element(s_combine_msaa[0]->E[bDistort ? 3 : 1]); // look at blender_combine.cpp
-            else
-                RCache.set_Element(s_combine_msaa[0]->E[bDistort ? 4 : 2]); // look at blender_combine.cpp
+            RCache.set_Element(s_combine_msaa[0]->E[1]); // look at blender_combine.cpp
         }
         RCache.set_c("e_barrier", ps_r2_aa_barier.x, ps_r2_aa_barier.y, ps_r2_aa_barier.z, 0);
         RCache.set_c("e_weights", ps_r2_aa_weight.x, ps_r2_aa_weight.y, ps_r2_aa_weight.z, 0);
         RCache.set_c("e_kernel", ps_r2_aa_kernel, ps_r2_aa_kernel, ps_r2_aa_kernel, 0);
-        RCache.set_c("m_current", m_current);
-        RCache.set_c("m_previous", m_previous);
-        RCache.set_c("m_blur", m_blur_scale.x, m_blur_scale.y, 0, 0);
         Fvector3 dof;
         g_pGamePersistent->GetCurrentDof(dof);
         RCache.set_c("dof_params", dof.x, dof.y, dof.z, ps_r2_dof_sky);
@@ -478,8 +481,7 @@ void CRenderTarget::phase_combine()
     }
     RCache.set_Stencil(FALSE);
 
-    //	if FP16-BLEND !not! supported - draw flares here, overwise they are already in the bloom target
-    /* if (!RImplementation.o.fp16_blend)*/ g_pGamePersistent->Environment().RenderFlares(); // lens-flares
+    g_pGamePersistent->Environment().RenderFlares();
 
     //	PP-if required
     if (PP_Complex)

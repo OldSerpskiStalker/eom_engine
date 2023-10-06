@@ -123,10 +123,7 @@ void CUIDragDropListEx::DestroyDragItem()
     }
 }
 
-Fvector2 CUIDragDropListEx::GetDragItemPosition()
-{
-    return GetUICursor().GetCursorPosition(); // return m_drag_item->GetPosition();
-}
+Fvector2 CUIDragDropListEx::GetDragItemPosition() { return GetUICursor().GetCursorPosition(); }
 
 void CUIDragDropListEx::OnDragEvent(CUIDragItem* drag_item, bool b_receive)
 {

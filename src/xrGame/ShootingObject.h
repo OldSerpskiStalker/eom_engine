@@ -55,7 +55,7 @@ protected:
 public:
     IC BOOL IsWorking() const { return bWorking; }
     virtual BOOL ParentMayHaveAimBullet() { return FALSE; }
-    virtual BOOL ParentIsActor() { return FALSE; }
+    virtual bool SOParentIsActor() { return false; }
 
 protected:
     // Weapon fires now
@@ -87,6 +87,7 @@ protected:
         float fire_dispersion;
         float cam_dispersion;
         float cam_disper_inc;
+        float shooting_shake; //--#SM+#--
 
         SilencerKoeffs() { Reset(); }
         IC void Reset()
@@ -97,6 +98,7 @@ protected:
             fire_dispersion = 1.0f;
             cam_dispersion = 1.0f;
             cam_disper_inc = 1.0f;
+            shooting_shake = 1.0f; //--#SM+#--
         }
     }; // SilencerKoeffs
     SilencerKoeffs m_silencer_koef;

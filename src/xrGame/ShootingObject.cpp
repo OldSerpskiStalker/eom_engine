@@ -310,7 +310,7 @@ void CShootingObject::OnShellDrop(const Fvector& play_pos, const Fvector& parent
 {
     if (!m_sShellParticles)
         return;
-    if (Device.vCameraPosition.distance_to_sqr(play_pos) > 2 * 2)
+    if (Device.vCameraPosition.distance_to_sqr(play_pos) > 10 * 4)
         return;
 
     CParticlesObject* pShellParticles = CParticlesObject::Create(*m_sShellParticles, TRUE);
@@ -495,7 +495,7 @@ void CShootingObject::FireBullet(const Fvector& pos, const Fvector& shot_dir, fl
     m_fPredBulletTime = Device.fTimeGlobal;
 
     float l_fHitPower = 0.0f;
-    if (ParentIsActor()) // если из оружия стреляет актёр(игрок)
+    if (SOParentIsActor()) // если из оружия стреляет актёр(игрок)
     {
         if (GameID() == eGameIDSingle)
         {

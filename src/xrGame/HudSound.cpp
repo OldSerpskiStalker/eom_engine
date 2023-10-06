@@ -284,6 +284,9 @@ HUD_SOUND_ITEM* HUD_SOUND_COLLECTION_LAYERED::FindSoundItem(LPCSTR alias, bool b
 
 void HUD_SOUND_COLLECTION_LAYERED::LoadSound(LPCSTR section, LPCSTR line, LPCSTR alias, bool exclusive, int type)
 {
+    if (!pSettings->line_exist(section, line))
+        return;
+
     LPCSTR str = pSettings->r_string(section, line);
     string256 buf_str;
 
@@ -318,6 +321,9 @@ void HUD_SOUND_COLLECTION_LAYERED::LoadSound(LPCSTR section, LPCSTR line, LPCSTR
 void HUD_SOUND_COLLECTION_LAYERED::LoadSound(
     CInifile const* ini, LPCSTR section, LPCSTR line, LPCSTR alias, bool exclusive, int type)
 {
+    if (!ini->line_exist(section, line))
+        return;
+
     LPCSTR str = ini->r_string(section, line);
     string256 buf_str;
 

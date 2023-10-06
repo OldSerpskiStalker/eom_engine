@@ -2,10 +2,13 @@
 #include <dinput.h>
 #include "key_binding_registrator.h"
 #include "xr_level_controller.h"
+#include "xrEngine/xr_input.h"
 
 using namespace luabind;
 
 int dik_to_bind(int dik) { return get_binded_action(dik); }
+
+BOOL key_state(int key) { return pInput->iGetAsyncKeyState(key); }
 
 #pragma optimize("s", on)
 void key_binding_registrator::script_register(lua_State* L)
